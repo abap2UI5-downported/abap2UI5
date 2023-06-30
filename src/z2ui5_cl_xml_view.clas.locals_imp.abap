@@ -25,30 +25,51 @@ ENDCLASS.
 
 CLASS lcl_utility IMPLEMENTATION.
   METHOD get_replace.
+    DATA lv_1 TYPE string.
+    DATA lv_2 TYPE string.
+    DATA lv_dummy TYPE string.
+    DATA lv_4 TYPE string.
     result = iv_val.
-    SPLIT result AT iv_begin INTO DATA(lv_1) DATA(lv_2).
-    SPLIT lv_2 AT iv_end INTO DATA(lv_dummy) DATA(lv_4).
+    
+    
+    SPLIT result AT iv_begin INTO lv_1 lv_2.
+    
+    
+    SPLIT lv_2 AT iv_end INTO lv_dummy lv_4.
     IF lv_4 IS NOT INITIAL.
       result = lv_1 && iv_replace && lv_4.
     ENDIF.
   ENDMETHOD.
 
   METHOD get_classname_by_ref.
-    DATA(lv_classname) = cl_abap_classdescr=>get_class_name( in ).
+    DATA lv_classname TYPE abap_abstypename.
+    lv_classname = cl_abap_classdescr=>get_class_name( in ).
     result = substring_after( val = lv_classname sub = `\CLASS=` ).
   ENDMETHOD.
 
   METHOD get_json_boolean.
-    IF check_is_boolean( val ).
-      result = COND #( WHEN val = abap_true THEN `true` ELSE `false` ).
+      DATA temp182 TYPE string.
+    IF check_is_boolean( val ) IS NOT INITIAL.
+      
+      IF val = abap_true.
+        temp182 = `true`.
+      ELSE.
+        temp182 = `false`.
+      ENDIF.
+      result = temp182.
     ELSE.
       result = val.
     ENDIF.
   ENDMETHOD.
 
   METHOD check_is_boolean.
+        DATA temp183 TYPE REF TO cl_abap_elemdescr.
+        DATA lo_ele LIKE temp183.
     TRY.
-        DATA(lo_ele) = CAST cl_abap_elemdescr( cl_abap_elemdescr=>describe_by_data( val ) ).
+        
+        temp183 ?= cl_abap_elemdescr=>describe_by_data( val ).
+        
+        lo_ele = temp183.
         CASE lo_ele->get_relative_name( ).
           WHEN `ABAP_BOOL` OR `ABAP_BOOLEAN` OR `XSDBOOLEAN`.
             result = abap_true.

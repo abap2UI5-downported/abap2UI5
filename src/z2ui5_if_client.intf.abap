@@ -26,7 +26,7 @@ INTERFACE z2ui5_if_client
       name  TYPE string,
       value TYPE string,
     END OF ty_s_name_value.
-  TYPES ty_t_name_value TYPE STANDARD TABLE OF ty_s_name_value WITH EMPTY KEY.
+  TYPES ty_t_name_value TYPE STANDARD TABLE OF ty_s_name_value WITH DEFAULT KEY.
 
   TYPES:
     BEGIN OF ty_s_get,

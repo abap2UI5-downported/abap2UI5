@@ -43,7 +43,7 @@ CLASS ltcl_unit_04_deep_data DEFINITION FINAL FOR TESTING
         checkbox TYPE abap_bool,
       END OF ty_row.
 
-    CLASS-DATA t_tab     TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
+    CLASS-DATA t_tab     TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
 
     CLASS-DATA sv_status TYPE string.
 
@@ -57,10 +57,13 @@ CLASS ltcl_unit_01_json IMPLEMENTATION.
 
   METHOD test_json_attri.
 
-    DATA(lo_tree) = NEW z2ui5_lcl_utility_tree_json( ).
+    DATA lo_tree TYPE REF TO z2ui5_lcl_utility_tree_json.
+    DATA lv_result TYPE string.
+    CREATE OBJECT lo_tree TYPE z2ui5_lcl_utility_tree_json.
     lo_tree->add_attribute( n = `AAA` v = `BBB` ).
 
-    DATA(lv_result) = lo_tree->stringify( ).
+    
+    lv_result = lo_tree->stringify( ).
     IF `{"AAA":"BBB"}` <> lv_result.
       cl_abap_unit_assert=>fail( 'json tree - wrong stringify attributes' ).
     ENDIF.
@@ -69,10 +72,13 @@ CLASS ltcl_unit_01_json IMPLEMENTATION.
 
   METHOD test_json_object.
 
-    DATA(lo_tree) = NEW z2ui5_lcl_utility_tree_json( ).
+    DATA lo_tree TYPE REF TO z2ui5_lcl_utility_tree_json.
+    DATA lv_result TYPE string.
+    CREATE OBJECT lo_tree TYPE z2ui5_lcl_utility_tree_json.
     lo_tree->add_attribute_object( `CCC` )->add_attribute( n = `AAA` v = `BBB` ).
 
-    DATA(lv_result) = lo_tree->stringify( ).
+    
+    lv_result = lo_tree->stringify( ).
     IF `{"CCC":{"AAA":"BBB"}}` <> lv_result.
       cl_abap_unit_assert=>fail( 'json tree - wrong stringify object attributes' ).
     ENDIF.
@@ -81,19 +87,29 @@ CLASS ltcl_unit_01_json IMPLEMENTATION.
 
   METHOD test_json_struc.
 
-    DATA(lo_tree) = NEW z2ui5_lcl_utility_tree_json( ).
+    DATA lo_tree TYPE REF TO z2ui5_lcl_utility_tree_json.
+TYPES BEGIN OF ty_s_test.
+TYPES comp1 TYPE string.
+TYPES comp2 TYPE string.
+TYPES END OF ty_s_test.
+    DATA temp29 TYPE ty_s_test.
+    DATA ls_test LIKE temp29.
+    DATA lv_result TYPE string.
+    CREATE OBJECT lo_tree TYPE z2ui5_lcl_utility_tree_json.
 
-    TYPES:
-      BEGIN OF ty_s_test,
-        comp1 TYPE string,
-        comp2 TYPE string,
-      END OF ty_s_test.
+    
 
-    DATA(ls_test) = VALUE ty_S_test( comp1 = `AAA` comp2 = `BBB` ).
+    
+    CLEAR temp29.
+    temp29-comp1 = `AAA`.
+    temp29-comp2 = `BBB`.
+    
+    ls_test = temp29.
 
     lo_tree->add_attribute_object( `CCC` )->add_attribute_struc( ls_test ).
 
-    DATA(lv_result) = lo_tree->stringify( ).
+    
+    lv_result = lo_tree->stringify( ).
     IF `{"CCC":{"COMP1":"AAA","COMP2":"BBB"}}` <> lv_result.
       cl_abap_unit_assert=>fail( 'json tree - wrong stringify structure' ).
     ENDIF.
@@ -108,14 +124,34 @@ CLASS ltcl_unit_01_json IMPLEMENTATION.
         value    TYPE string,
         selected TYPE abap_bool,
       END OF ty_row.
-    TYPES ty_t_tab TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
+    TYPES ty_t_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
 
-    DATA(lt_tab) = VALUE ty_t_tab( ( title = 'Test'  value = 'this is a description' selected = abap_true )
-                                   ( title = 'Test2' value = 'this is a new descr'   selected = abap_false ) ).
+    DATA temp30 TYPE ty_t_tab.
+    DATA temp31 LIKE LINE OF temp30.
+    DATA lt_tab LIKE temp30.
+    DATA temp32 TYPE ty_t_tab.
+    DATA lt_tab2 LIKE temp32.
+    DATA lv_tab TYPE string.
+    CLEAR temp30.
+    
+    temp31-title = 'Test'.
+    temp31-value = 'this is a description'.
+    temp31-selected = abap_true.
+    INSERT temp31 INTO TABLE temp30.
+    temp31-title = 'Test2'.
+    temp31-value = 'this is a new descr'.
+    temp31-selected = abap_false.
+    INSERT temp31 INTO TABLE temp30.
+    
+    lt_tab = temp30.
 
-    DATA(lt_tab2) = VALUE ty_t_tab( ).
+    
+    CLEAR temp32.
+    
+    lt_tab2 = temp32.
 
-    DATA(lv_tab) = z2ui5_lcl_utility=>trans_any_2_json( lt_tab ).
+    
+    lv_tab = z2ui5_lcl_utility=>trans_any_2_json( lt_tab ).
 
     /ui2/cl_json=>deserialize( EXPORTING json = lv_tab
                                CHANGING  data = lt_tab2 ).
@@ -134,16 +170,37 @@ CLASS ltcl_unit_01_json IMPLEMENTATION.
         value    TYPE string,
         selected TYPE abap_bool,
       END OF ty_row.
-    TYPES ty_t_tab TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
+    TYPES ty_t_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
 
-    DATA(lt_tab) = VALUE ty_t_tab( ( title = 'Test'  value = 'this is a description' selected = abap_true )
-                                   ( title = 'Test2' value = 'this is a new descr'   selected = abap_false ) ).
-
-    DATA(lt_tab2) = VALUE ty_t_tab( ).
-
-    DATA(lv_tab) = z2ui5_lcl_utility=>trans_any_2_json( lt_tab ).
-
+    DATA temp33 TYPE ty_t_tab.
+    DATA temp34 LIKE LINE OF temp33.
+    DATA lt_tab LIKE temp33.
+    DATA temp35 TYPE ty_t_tab.
+    DATA lt_tab2 LIKE temp35.
+    DATA lv_tab TYPE string.
     DATA lo_data TYPE REF TO data.
+    CLEAR temp33.
+    
+    temp34-title = 'Test'.
+    temp34-value = 'this is a description'.
+    temp34-selected = abap_true.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-title = 'Test2'.
+    temp34-value = 'this is a new descr'.
+    temp34-selected = abap_false.
+    INSERT temp34 INTO TABLE temp33.
+    
+    lt_tab = temp33.
+
+    
+    CLEAR temp35.
+    
+    lt_tab2 = temp35.
+
+    
+    lv_tab = z2ui5_lcl_utility=>trans_any_2_json( lt_tab ).
+
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_tab
                                CHANGING  data = lo_data ).
 
@@ -162,16 +219,53 @@ CLASS ltcl_unit_01_utility IMPLEMENTATION.
 
   METHOD test_util_04_attri_by_ref.
 
-    DATA(lo_app) = NEW ltcl_unit_04_deep_data( ).
+    DATA lo_app TYPE REF TO ltcl_unit_04_deep_data.
+    DATA lt_attri TYPE z2ui5_lcl_utility=>ty_t_attri.
+    DATA temp36 TYPE z2ui5_lcl_utility=>ty_t_attri.
+    DATA temp37 LIKE LINE OF temp36.
+    DATA lt_attri_result LIKE temp36.
+    CREATE OBJECT lo_app TYPE ltcl_unit_04_deep_data.
 
-    DATA(lt_attri) = z2ui5_lcl_utility=>get_t_attri_by_ref( lo_app ).
+    
+    lt_attri = z2ui5_lcl_utility=>get_t_attri_by_ref( lo_app ).
 
-    DATA(lt_attri_result) = VALUE z2ui5_lcl_utility=>ty_t_attri(
-( name = `Z2UI5_IF_APP~ID` type_kind = `g` type = `` bind_type = `` data_stringify = `` data_rtti = `` check_ref_data = '' )
-( name = `CHECK_INITIALIZED` type_kind = `C` type = `` bind_type = `` data_stringify = `` data_rtti = `` check_ref_data = '' )
-( name = `SV_STATUS` type_kind = `g` type = `` bind_type = `` data_stringify = `` data_rtti = `` check_ref_data = '' )
-( name = `T_TAB` type_kind = `h` type = `` bind_type = `` data_stringify = `` data_rtti = `` check_ref_data = '' )
- ).
+    
+    CLEAR temp36.
+    
+    temp37-name = `Z2UI5_IF_APP~ID`.
+    temp37-type_kind = `g`.
+    temp37-type = ``.
+    temp37-bind_type = ``.
+    temp37-data_stringify = ``.
+    temp37-data_rtti = ``.
+    temp37-check_ref_data = ''.
+    INSERT temp37 INTO TABLE temp36.
+    temp37-name = `CHECK_INITIALIZED`.
+    temp37-type_kind = `C`.
+    temp37-type = ``.
+    temp37-bind_type = ``.
+    temp37-data_stringify = ``.
+    temp37-data_rtti = ``.
+    temp37-check_ref_data = ''.
+    INSERT temp37 INTO TABLE temp36.
+    temp37-name = `SV_STATUS`.
+    temp37-type_kind = `g`.
+    temp37-type = ``.
+    temp37-bind_type = ``.
+    temp37-data_stringify = ``.
+    temp37-data_rtti = ``.
+    temp37-check_ref_data = ''.
+    INSERT temp37 INTO TABLE temp36.
+    temp37-name = `T_TAB`.
+    temp37-type_kind = `h`.
+    temp37-type = ``.
+    temp37-bind_type = ``.
+    temp37-data_stringify = ``.
+    temp37-data_rtti = ``.
+    temp37-check_ref_data = ''.
+    INSERT temp37 INTO TABLE temp36.
+    
+    lt_attri_result = temp36.
 
     IF lt_attri_result <> lt_attri.
       cl_abap_unit_assert=>fail( msg = 'utility - create t_attri failed' quit = 5 ).
@@ -181,8 +275,11 @@ CLASS ltcl_unit_01_utility IMPLEMENTATION.
 
   METHOD test_util_uuid_session.
 
-    DATA(lv_one) = z2ui5_lcl_utility=>get_uuid_session( ).
-    DATA(lv_two) = z2ui5_lcl_utility=>get_uuid_session( ).
+    DATA lv_one TYPE string.
+    DATA lv_two TYPE string.
+    lv_one = z2ui5_lcl_utility=>get_uuid_session( ).
+    
+    lv_two = z2ui5_lcl_utility=>get_uuid_session( ).
 
     IF lv_one <> `1`.
       cl_abap_unit_assert=>fail( msg = 'utility - create session id' quit = 5 ).
@@ -195,11 +292,15 @@ CLASS ltcl_unit_01_utility IMPLEMENTATION.
 
   METHOD test_util_02_get_attri.
 
-    DATA(lo_app) = NEW ltcl_unit_04_deep_data( ).
+    DATA lo_app TYPE REF TO ltcl_unit_04_deep_data.
+    FIELD-SYMBOLS <any> TYPE any.
+    DATA lv_assign TYPE string.
+    CREATE OBJECT lo_app TYPE ltcl_unit_04_deep_data.
 
     lo_app->sv_status = `ABC`.
-    FIELD-SYMBOLS <any> TYPE any.
-    DATA(lv_assign) = `LO_APP->` && 'SV_STATUS'.
+    
+    
+    lv_assign = `LO_APP->` && 'SV_STATUS'.
     ASSIGN (lv_assign) TO <any>.
 
     IF <any> <> `ABC`.
@@ -210,22 +311,55 @@ CLASS ltcl_unit_01_utility IMPLEMENTATION.
 
   METHOD test_util_01_get_classdescr.
 
-    DATA(lo_app) = NEW ltcl_unit_04_deep_data( ).
+    DATA lo_app TYPE REF TO ltcl_unit_04_deep_data.
+    DATA temp38 TYPE REF TO cl_abap_classdescr.
+    DATA lt_attri LIKE temp38->attributes.
+    DATA temp39 TYPE abap_attrdescr_tab.
+    DATA temp40 LIKE LINE OF temp39.
+    DATA lt_test LIKE temp39.
+    CREATE OBJECT lo_app TYPE ltcl_unit_04_deep_data.
 
-    DATA(lt_attri) = CAST cl_abap_classdescr( cl_abap_objectdescr=>describe_by_object_ref( lo_app ) )->attributes.
+    
+    temp38 ?= cl_abap_objectdescr=>describe_by_object_ref( lo_app ).
+    
+    lt_attri = temp38->attributes.
 
-    DATA(lt_test) = VALUE abap_attrdescr_tab(
-        decimals     = '0'
-        visibility   = 'U'
-        is_inherited = ''
-        is_constant  = ''
-        is_virtual   = ''
-        is_read_only = ''
-        alias_for    = ''
-        ( length = '8' name = 'Z2UI5_IF_APP~ID' type_kind = 'g' is_interface = 'X' is_class = '' )
-        ( length = '2' name = 'CHECK_INITIALIZED' type_kind = 'C' is_interface = '' is_class = '' )
-        ( length = '8' name = 'SV_STATUS' type_kind = 'g' is_interface = '' is_class = 'X' )
-        ( length = '8' name = 'T_TAB' type_kind = 'h' is_interface = '' is_class = 'X' ) ).
+    
+    CLEAR temp39.
+    
+    temp40-decimals = '0'.
+    temp40-visibility = 'U'.
+    temp40-is_inherited = ''.
+    temp40-is_constant = ''.
+    temp40-is_virtual = ''.
+    temp40-is_read_only = ''.
+    temp40-alias_for = ''.
+    temp40-length = '8'.
+    temp40-name = 'Z2UI5_IF_APP~ID'.
+    temp40-type_kind = 'g'.
+    temp40-is_interface = 'X'.
+    temp40-is_class = ''.
+    INSERT temp40 INTO TABLE temp39.
+    temp40-length = '2'.
+    temp40-name = 'CHECK_INITIALIZED'.
+    temp40-type_kind = 'C'.
+    temp40-is_interface = ''.
+    temp40-is_class = ''.
+    INSERT temp40 INTO TABLE temp39.
+    temp40-length = '8'.
+    temp40-name = 'SV_STATUS'.
+    temp40-type_kind = 'g'.
+    temp40-is_interface = ''.
+    temp40-is_class = 'X'.
+    INSERT temp40 INTO TABLE temp39.
+    temp40-length = '8'.
+    temp40-name = 'T_TAB'.
+    temp40-type_kind = 'h'.
+    temp40-is_interface = ''.
+    temp40-is_class = 'X'.
+    INSERT temp40 INTO TABLE temp39.
+    
+    lt_test = temp39.
 
     IF lt_test <> lt_attri.
       cl_abap_unit_assert=>fail( msg = 'utility - get abap_attrdescr_tab table wrong' quit = 5 ).
@@ -270,7 +404,8 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
 
 *    z2ui5_cl_http_handler=>client = VALUE #( t_header = VALUE #( ( name = '~path' value = 'dummy' ) ) ).
 
-    DATA(lv_index_html) = z2ui5_cl_http_handler=>http_get( ).
+    DATA lv_index_html TYPE string.
+    lv_index_html = z2ui5_cl_http_handler=>http_get( ).
 
     IF lv_index_html IS INITIAL.
       cl_abap_unit_assert=>fail( 'HTTP GET - index html initial' ).
@@ -278,6 +413,10 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD z2ui5_if_app~main.
+      DATA temp41 TYPE z2ui5_if_client=>ty_s_get-s_cursor.
+      DATA temp42 TYPE z2ui5_if_client=>ty_t_name_value.
+      DATA temp43 LIKE LINE OF temp42.
+      DATA lo_app TYPE REF TO ltcl_unit_02_app_start.
     IF check_initialized = abap_false.
       check_initialized = abap_true.
       product  = 'tomato'.
@@ -377,16 +516,29 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
     IF sv_state = 'TEST_SCROLL_CURSOR'.
 
       client->view_display( `test` ).
-      client->cursor_set( VALUE #( id = 'id_text2'  cursorpos = '5' selectionstart = '5' selectionend = '10' ) ).
+      
+      CLEAR temp41.
+      temp41-id = 'id_text2'.
+      temp41-cursorpos = '5'.
+      temp41-selectionstart = '5'.
+      temp41-selectionend = '10'.
+      client->cursor_set( temp41 ).
 
-      client->scroll_position_set( VALUE #( value = '99999'
-                                ( name = 'id_page' )
-                                ( name = 'id_text3' ) ) ).
+      
+      CLEAR temp42.
+      
+      temp43-value = '99999'.
+      temp43-name = 'id_page'.
+      INSERT temp43 INTO TABLE temp42.
+      temp43-name = 'id_text3'.
+      INSERT temp43 INTO TABLE temp42.
+      client->scroll_position_set( temp42 ).
 
     ENDIF.
 
     IF sv_state = 'TEST_NAVIGATE'.
-      DATA(lo_app) = NEW ltcl_unit_02_app_start( ).
+      
+      CREATE OBJECT lo_app TYPE ltcl_unit_02_app_start.
       sv_state = 'LEAVE_APP'.
       client->nav_app_call( lo_app ).
       RETURN.
@@ -399,19 +551,25 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_xml_view.
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
+    FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_assign TYPE string.
 
     sv_state = ``.
-    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+    
+    lv_response = z2ui5_cl_http_handler=>http_post(
         body = ``
         path_info = 'LTCL_UNIT_02_APP_START' ).
 
-    DATA lo_data TYPE REF TO data.
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    FIELD-SYMBOLS <val> TYPE any.
+    
     UNASSIGN <val>.
-    DATA(lv_assign) = `PARAMS->S_VIEW->XML->*`.
+    
+    lv_assign = `PARAMS->S_VIEW->XML->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     <val> = shift_left( <val> ).
     IF <val>(9) <> `<mvc:View`.
@@ -420,19 +578,25 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_id.
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
+    FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_assign TYPE string.
 
     sv_state = ``.
-    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+    
+    lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
         path_info = 'LTCL_UNIT_02_APP_START' ).
 
-    DATA lo_data TYPE REF TO data.
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    FIELD-SYMBOLS <val> TYPE any.
+    
     UNASSIGN <val>.
-    DATA(lv_assign) = `ID->*`.
+    
+    lv_assign = `ID->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> IS INITIAL.
       cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
@@ -440,19 +604,25 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_bind_one_way.
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
+    FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_assign TYPE string.
 
     sv_state = `TEST_ONE_WAY`.
-    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+    
+    lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
         path_info = 'LTCL_UNIT_02_APP_START' ).
 
-    DATA lo_data TYPE REF TO data.
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    FIELD-SYMBOLS <val> TYPE any.
+    
     UNASSIGN <val>.
-    DATA(lv_assign) = `OVIEWMODEL->QUANTITY->*`.
+    
+    lv_assign = `OVIEWMODEL->QUANTITY->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> <> `500`.
       cl_abap_unit_assert=>fail( msg = 'data binding - initial set oUpdate wrong' quit = 5 ).
@@ -460,19 +630,25 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_bind_two_way.
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
+    FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_assign TYPE string.
 
     sv_state = ``.
-    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+    
+    lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
       path_info = 'LTCL_UNIT_02_APP_START' ).
 
-    DATA lo_data TYPE REF TO data.
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    FIELD-SYMBOLS <val> TYPE any.
+    
     UNASSIGN <val>.
-    DATA(lv_assign) = `OVIEWMODEL->OUPDATE->QUANTITY->*`.
+    
+    lv_assign = `OVIEWMODEL->OUPDATE->QUANTITY->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> <> `500`.
       cl_abap_unit_assert=>fail( msg = 'data binding - initial set oUpdate wrong' quit = 5 ).
@@ -480,20 +656,26 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_message_box.
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
+    FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_assign TYPE string.
 
     sv_state = `TEST_MESSAGE_BOX`.
-    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+    
+    lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
         path_info = 'LTCL_UNIT_02_APP_START' ).
 
-    DATA lo_data TYPE REF TO data.
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    FIELD-SYMBOLS <val> TYPE any.
+    
 
     UNASSIGN <val>.
-    DATA(lv_assign) = `PARAMS->S_MSG_BOX->TEXT->*`.
+    
+    lv_assign = `PARAMS->S_MSG_BOX->TEXT->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> <> `test message box`.
       cl_abap_unit_assert=>fail( msg = 'message box - text wrong' quit = 5 ).
@@ -508,20 +690,26 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_message_toast.
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
+    FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_assign TYPE string.
 
     sv_state = `TEST_MESSAGE_TOAST`.
-    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+    
+    lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
         path_info = 'LTCL_UNIT_02_APP_START' ).
 
-    DATA lo_data TYPE REF TO data.
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    FIELD-SYMBOLS <val> TYPE any.
+    
 
     UNASSIGN <val>.
-    DATA(lv_assign) = `PARAMS->S_MSG_TOAST->TEXT->*`.
+    
+    lv_assign = `PARAMS->S_MSG_TOAST->TEXT->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> <> `test message toast`.
       cl_abap_unit_assert=>fail( msg = 'message toast - text wrong' quit = 5 ).
@@ -530,20 +718,26 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_timer.
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
+    FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_assign TYPE string.
 
     sv_state = `TEST_TIMER`.
-    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+    
+    lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
         path_info = 'LTCL_UNIT_02_APP_START' ).
 
-    DATA lo_data TYPE REF TO data.
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    FIELD-SYMBOLS <val> TYPE any.
+    
 
     UNASSIGN <val>.
-    DATA(lv_assign) = `PARAMS->S_TIMER->EVENT_FINISHED->*`.
+    
+    lv_assign = `PARAMS->S_TIMER->EVENT_FINISHED->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> <> `TIMER_FINISHED`.
       cl_abap_unit_assert=>fail( msg = 'timer - event wrong' quit = 5 ).
@@ -558,19 +752,25 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_xml_popup.
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
+    FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_assign TYPE string.
 
     sv_state = `TEST_POPUP`.
-    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+    
+    lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
         path_info = 'LTCL_UNIT_02_APP_START' ).
 
-    DATA lo_data TYPE REF TO data.
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    FIELD-SYMBOLS <val> TYPE any.
+    
     UNASSIGN <val>.
-    DATA(lv_assign) = `PARAMS->S_POPUP->XML->*`.
+    
+    lv_assign = `PARAMS->S_POPUP->XML->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     <val> = shift_left( <val> ).
     IF <val>(9) <> `<mvc:View`.
@@ -580,17 +780,22 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
 
   METHOD test_landing_page.
 
-    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
+    FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_assign TYPE string.
+    lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
         path_info = '' ).
 
-    DATA lo_data TYPE REF TO data.
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    FIELD-SYMBOLS <val> TYPE any.
+    
     UNASSIGN <val>.
-    DATA(lv_assign) = `PARAMS->S_VIEW->XML->*`.
+    
+    lv_assign = `PARAMS->S_VIEW->XML->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     <val> = shift_left( <val> ).
     IF <val> NS `Step 4`.
@@ -599,13 +804,16 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_scroll_cursor.
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
 
     sv_state = `TEST_SCROLL_CURSOR`.
-    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+    
+    lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
         path_info = 'LTCL_UNIT_02_APP_START' ).
 
-    DATA lo_data TYPE REF TO data.
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
@@ -615,13 +823,16 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_startup_path.
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
 
     sv_state = `TEST_NAVIGATE`.
-    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+    
+    lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
         path_info = 'LTCL_UNIT_02_APP_START' ).
 
-    DATA lo_data TYPE REF TO data.
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
@@ -629,13 +840,16 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_navigate.
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
 
     sv_state = `TEST_NAVIGATE`.
-    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+    
+    lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
         path_info = 'LTCL_UNIT_02_APP_START' ).
 
-    DATA lo_data TYPE REF TO data.
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
@@ -703,25 +917,37 @@ CLASS ltcl_unit_03_app_ajax IMPLEMENTATION.
 
   METHOD test_app_change_value.
 
-    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
+    FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_assign TYPE string.
+    DATA temp44 TYPE string.
+    DATA lv_id LIKE temp44.
+    DATA lv_request TYPE string.
+    lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
         path_info = 'LTCL_UNIT_02_APP_START' ).
 
-    DATA lo_data TYPE REF TO data.
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    FIELD-SYMBOLS <val> TYPE any.
+    
 
     UNASSIGN <val>.
-    DATA(lv_assign) = `ID->*`.
+    
+    lv_assign = `ID->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> IS INITIAL.
       cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
     ENDIF.
-    DATA(lv_id) = CONV string( <val> ).
+    
+    temp44 = <val>.
+    
+    lv_id = temp44.
 
-    DATA(lv_request) = `{"oUpdate":{"QUANTITY":"600"},"ID": "` && lv_id && `" ,"ARGUMENTS":{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}}`.
+    
+    lv_request = `{"oUpdate":{"QUANTITY":"600"},"ID": "` && lv_id && `" ,"ARGUMENTS":{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}}`.
 *    z2ui5_cl_http_handler=>client = VALUE #( body = lv_request ).
     lv_response = z2ui5_cl_http_handler=>http_post(
           body = lv_request
@@ -741,25 +967,37 @@ CLASS ltcl_unit_03_app_ajax IMPLEMENTATION.
 
   METHOD test_app_event.
 
-    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
+    FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_assign TYPE string.
+    DATA temp45 TYPE string.
+    DATA lv_id LIKE temp45.
+    DATA lv_request TYPE string.
+    lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
         path_info = 'LTCL_UNIT_02_APP_START' ).
 
-    DATA lo_data TYPE REF TO data.
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    FIELD-SYMBOLS <val> TYPE any.
+    
 
     UNASSIGN <val>.
-    DATA(lv_assign) = `ID->*`.
+    
+    lv_assign = `ID->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> IS INITIAL.
       cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
     ENDIF.
-    DATA(lv_id) = CONV string( <val> ).
+    
+    temp45 = <val>.
+    
+    lv_id = temp45.
 
-    DATA(lv_request) = `{"oUpdate":{"QUANTITY":"700"},"ID": "` && lv_id && `" ,"ARGUMENTS": { "0" : {"EVENT":"BUTTON_POST","METHOD":"UPDATE"}  } }`.
+    
+    lv_request = `{"oUpdate":{"QUANTITY":"700"},"ID": "` && lv_id && `" ,"ARGUMENTS": { "0" : {"EVENT":"BUTTON_POST","METHOD":"UPDATE"}  } }`.
 *    z2ui5_cl_http_handler=>client = VALUE #( body = lv_request ).
     lv_response = z2ui5_cl_http_handler=>http_post(
       body = lv_request ).
@@ -801,14 +1039,22 @@ ENDCLASS.
 
 CLASS ltcl_unit_04_deep_data IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
+      DATA temp46 LIKE t_tab.
+      DATA temp47 LIKE LINE OF temp46.
     IF check_initialized = abap_false.
       check_initialized = abap_true.
 
-      t_tab = VALUE #( title = 'Peter'
-                       descr = 'this is a description'
-                       icon  = 'sap-icon://account'
-                       ( info = 'completed' )
-                       ( info = 'incompleted' ) ).
+      
+      CLEAR temp46.
+      
+      temp47-title = 'Peter'.
+      temp47-descr = 'this is a description'.
+      temp47-icon = 'sap-icon://account'.
+      temp47-info = 'completed'.
+      INSERT temp47 INTO TABLE temp46.
+      temp47-info = 'incompleted'.
+      INSERT temp47 INTO TABLE temp46.
+      t_tab = temp46.
 
     ENDIF.
 
@@ -859,25 +1105,37 @@ CLASS ltcl_unit_04_deep_data IMPLEMENTATION.
 
   METHOD test_app_deep_data.
 
-    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
+    FIELD-SYMBOLS <val> TYPE any.
+    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <row> TYPE REF TO data.
+    DATA lv_assign TYPE string.
+    DATA ls_tab_test TYPE ty_row.
+    lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
         path_info = 'LTCL_UNIT_04_DEEP_DATA' ).
 
-    DATA lo_data TYPE REF TO data.
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    FIELD-SYMBOLS <val> TYPE any.
+    
 
     UNASSIGN <val>.
-    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
-    FIELD-SYMBOLS <row> TYPE REF TO data.
-    DATA(lv_assign) = `OVIEWMODEL->T_TAB->*`.
+    
+    
+    
+    lv_assign = `OVIEWMODEL->T_TAB->*`.
     ASSIGN lo_data->(lv_assign) TO <tab>.
-    ASSIGN <tab>[ 1 ] TO <row>.
+    READ TABLE <tab> INDEX 1 ASSIGNING <row>.
 
-    DATA ls_tab_test TYPE ty_row.
-    ls_tab_test = VALUE #( title = 'Peter'  info = 'completed' descr = 'this is a description' icon = 'sap-icon://account' ).
+    
+    CLEAR ls_tab_test.
+    ls_tab_test-title = 'Peter'.
+    ls_tab_test-info = 'completed'.
+    ls_tab_test-descr = 'this is a description'.
+    ls_tab_test-icon = 'sap-icon://account'.
 
     lv_assign = `TITLE->*`.
     ASSIGN <row>->(lv_assign) TO <val>.
@@ -899,27 +1157,44 @@ CLASS ltcl_unit_04_deep_data IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_app_deep_data_change.
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
+    FIELD-SYMBOLS <val> TYPE any.
+    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <row> TYPE REF TO data.
+    DATA lv_assign TYPE string.
+    DATA ls_tab_test TYPE ty_row.
+    DATA temp48 TYPE string.
+    DATA lv_id LIKE temp48.
+    DATA lv_tab TYPE string.
+    DATA lv_request TYPE string.
 
     sv_status = 'CHANGE'.
-    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+    
+    lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
         path_info = 'LTCL_UNIT_04_DEEP_DATA' ).
 
-    DATA lo_data TYPE REF TO data.
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    FIELD-SYMBOLS <val> TYPE any.
+    
 
     UNASSIGN <val>.
-    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
-    FIELD-SYMBOLS <row> TYPE REF TO data.
-    DATA(lv_assign) = `OVIEWMODEL->OUPDATE->T_TAB->*`.
+    
+    
+    
+    lv_assign = `OVIEWMODEL->OUPDATE->T_TAB->*`.
     ASSIGN lo_data->(lv_assign) TO <tab>.
-    ASSIGN <tab>[ 1 ] TO <row>.
+    READ TABLE <tab> INDEX 1 ASSIGNING <row>.
 
-    DATA ls_tab_test TYPE ty_row.
-    ls_tab_test = VALUE #( title = 'Peter'  info = 'completed' descr = 'this is a description' icon = 'sap-icon://account' ).
+    
+    CLEAR ls_tab_test.
+    ls_tab_test-title = 'Peter'.
+    ls_tab_test-info = 'completed'.
+    ls_tab_test-descr = 'this is a description'.
+    ls_tab_test-icon = 'sap-icon://account'.
 
     lv_assign = `TITLE->*`.
     ASSIGN <row>->(lv_assign) TO <val>.
@@ -945,11 +1220,16 @@ CLASS ltcl_unit_04_deep_data IMPLEMENTATION.
     IF <val> IS INITIAL.
       cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
     ENDIF.
-    DATA(lv_id) = CONV string( <val> ).
+    
+    temp48 = <val>.
+    
+    lv_id = temp48.
 
-    DATA(lv_tab) = z2ui5_lcl_utility=>trans_any_2_json( t_tab ).
+    
+    lv_tab = z2ui5_lcl_utility=>trans_any_2_json( t_tab ).
 
-    DATA(lv_request) = `{"oUpdate":{"QUANTITY":"600", "T_TAB":` && lv_tab && `},"oSystem":{"ID": "` && lv_id && `"` && `,"CHECK_DEBUG_ACTIVE":true},"oEvent":{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}}`.
+    
+    lv_request = `{"oUpdate":{"QUANTITY":"600", "T_TAB":` && lv_tab && `},"oSystem":{"ID": "` && lv_id && `"` && `,"CHECK_DEBUG_ACTIVE":true},"oEvent":{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}}`.
 
     lv_response = z2ui5_cl_http_handler=>http_post(
         body = lv_request
