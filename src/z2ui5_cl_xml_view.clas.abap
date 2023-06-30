@@ -20,21 +20,26 @@ CLASS z2ui5_cl_xml_view DEFINITION
     DATA m_parent TYPE REF TO z2ui5_cl_xml_view.
     DATA t_child  TYPE STANDARD TABLE OF REF TO z2ui5_cl_xml_view WITH EMPTY KEY.
 
+    DATA ss_config TYPE z2ui5_if_client=>ty_s_config.
+
     CLASS-METHODS factory
-      IMPORTING t_ns          TYPE ty_t_name_value OPTIONAL
-      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+      IMPORTING
+        t_ns          TYPE ty_t_name_value OPTIONAL
+        client        TYPE REF TO z2ui5_if_client
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     CLASS-METHODS factory_popup
-      IMPORTING t_ns          TYPE ty_t_name_value OPTIONAL
+      IMPORTING
+                t_ns          TYPE ty_t_name_value OPTIONAL
+                client        TYPE REF TO z2ui5_if_client
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
-    CLASS-METHODS hlp_get_source_code_url
-      IMPORTING
-        app           TYPE REF TO z2ui5_if_app
+    METHODS hlp_get_source_code_url
       RETURNING
         VALUE(result) TYPE string.
 
-    CLASS-METHODS hlp_replace_controller_name
+    METHODS hlp_replace_controller_name
       IMPORTING xml           TYPE string
       RETURNING VALUE(result) TYPE string.
 
@@ -60,8 +65,13 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS Illustrated_Message
-      IMPORTING enableVerticalResponsiveness TYPE clike OPTIONAL
+      IMPORTING
+                enableVerticalResponsiveness TYPE clike OPTIONAL
+                enableFormattedText          TYPE clike OPTIONAL
                 illustrationType             TYPE clike OPTIONAL
+                title                        TYPE clike OPTIONAL
+                description                  TYPE clike OPTIONAL
+                illustrationsize             TYPE clike OPTIONAL
       RETURNING VALUE(result)                TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS additional_Content
@@ -137,8 +147,23 @@ CLASS z2ui5_cl_xml_view DEFINITION
     METHODS Object_Page_Dyn_Header_Title
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS GenericTile
+      IMPORTING
+        class         TYPE clike OPTIONAL
+        header        TYPE clike OPTIONAL
+        press         TYPE clike OPTIONAL
+        frametype     TYPE clike OPTIONAL
+        subheader     TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS TileContent
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS expanded_heading
-      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS snapped_heading
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
@@ -223,7 +248,16 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS suggestion_items
-      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS suggestion_columns
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS suggestion_rows
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS vertical_layout
       IMPORTING class         TYPE clike OPTIONAL
@@ -257,25 +291,28 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS input
-      IMPORTING id               TYPE clike OPTIONAL
-                value            TYPE clike OPTIONAL
-                placeholder      TYPE clike OPTIONAL
-                type             TYPE clike OPTIONAL
-                showclearicon    TYPE clike OPTIONAL
-                valuestate       TYPE clike OPTIONAL
-                valuestatetext   TYPE clike OPTIONAL
-                description      TYPE clike OPTIONAL
-                editable         TYPE clike OPTIONAL
-                enabled          TYPE clike OPTIONAL
-                suggestionitems  TYPE clike OPTIONAL
-                showsuggestion   TYPE clike OPTIONAL
-                showvaluehelp    TYPE clike OPTIONAL
-                valuehelprequest TYPE clike OPTIONAL
-                class            TYPE clike OPTIONAL
-                visible          TYPE clike OPTIONAL
-                submit           TYPE clike OPTIONAL
+      IMPORTING id                           TYPE clike OPTIONAL
+                value                        TYPE clike OPTIONAL
+                placeholder                  TYPE clike OPTIONAL
+                type                         TYPE clike OPTIONAL
+                showclearicon                TYPE clike OPTIONAL
+                valuestate                   TYPE clike OPTIONAL
+                valuestatetext               TYPE clike OPTIONAL
+                showTableSuggestionValueHelp TYPE clike OPTIONAL
+                description                  TYPE clike OPTIONAL
+                editable                     TYPE clike OPTIONAL
+                enabled                      TYPE clike OPTIONAL
+                suggestionitems              TYPE clike OPTIONAL
+                suggestionrows               TYPE clike OPTIONAL
+                showsuggestion               TYPE clike OPTIONAL
+                showvaluehelp                TYPE clike OPTIONAL
+                valuehelprequest             TYPE clike OPTIONAL
+                suggest                      TYPE clike OPTIONAL
+                class                        TYPE clike OPTIONAL
+                visible                      TYPE clike OPTIONAL
+                submit                       TYPE clike OPTIONAL
                   PREFERRED PARAMETER value
-      RETURNING VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
+      RETURNING VALUE(result)                TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS dialog
       IMPORTING title         TYPE clike OPTIONAL
@@ -802,11 +839,76 @@ CLASS z2ui5_cl_xml_view DEFINITION
     METHODS xml_get
       RETURNING VALUE(result) TYPE string.
 
+    METHODS stringify
+      RETURNING VALUE(result) TYPE string.
+
+    METHODS tree_table
+      IMPORTING
+        !rows                   TYPE clike
+        !selectionmode          TYPE clike DEFAULT 'Single'
+        !enablecolumnreordering TYPE clike DEFAULT 'false'
+        !expandfirstlevel       TYPE clike DEFAULT 'false'
+        !columnselect           TYPE clike OPTIONAL
+        !rowselectionchange     TYPE clike OPTIONAL
+        !selectionbehavior      TYPE clike DEFAULT 'RowSelector'
+        !selectedindex          TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result)           TYPE REF TO z2ui5_cl_xml_view .
+    METHODS tree_columns
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS tree_column
+      IMPORTING
+        !label        TYPE clike
+        !halign       TYPE clike DEFAULT 'Begin'
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS tree_template
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS filter_bar
+      IMPORTING
+        !usetoolbar   TYPE clike DEFAULT 'false'
+        !search       TYPE clike OPTIONAL
+        !filterchange TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS filter_group_items
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS filter_group_item
+      IMPORTING
+        !name               TYPE clike
+        !label              TYPE clike
+        !groupname          TYPE clike
+        !visibleinfilterbar TYPE clike DEFAULT 'true'
+      RETURNING
+        VALUE(result)       TYPE REF TO z2ui5_cl_xml_view .
+    METHODS filter_control
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS flexible_column_layout
+      IMPORTING
+        !layout       TYPE clike
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS begin_column_pages
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS mid_column_pages
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS end_column_pages
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+
+  PROTECTED SECTION.
+  PRIVATE SECTION.
 ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
+CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD actions.
@@ -846,6 +948,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   METHOD bars.
     result = _generic( name = `bars`
                        ns   = `mchart` ).
+  ENDMETHOD.
+
+
+  METHOD begin_column_pages.
+    " todo, implement method
+    result = me.
   ENDMETHOD.
 
 
@@ -961,7 +1069,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
                           `                    oControl.oUploadButton = new Button({` && |\n| &&
                           `                        text: oControl.getProperty("buttonText"),` && |\n| &&
                           `                        enabled: oControl.getProperty("path") !== "",` && |\n| &&
-                          `                        press: function (oEvent) {` && |\n| &&
+                          `                        press: function (oEvent) { ` && |\n| &&
                           |\n| &&
                           `                            this.setProperty("path", this.oFileUploader.getProperty("value"));` && |\n| &&
                           |\n| &&
@@ -1064,11 +1172,13 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD constructor.
+
     mt_prop = VALUE #( ( n = `xmlns`        v = `sap.m` )
                        ( n = `xmlns:z2ui5`  v = `z2ui5` )
                        ( n = `xmlns:core`   v = `sap.ui.core` )
                        ( n = `xmlns:mvc`    v = `sap.ui.core.mvc` )
                        ( n = `xmlns:layout` v = `sap.ui.layout` )
+                       ( n = `xmlns:table ` v = `sap.ui.table` )
                        ( n = `xmlns:f`      v = `sap.f` )
                        ( n = `xmlns:form`   v = `sap.ui.layout.form` )
                        ( n = `xmlns:editor` v = `sap.ui.codeeditor` )
@@ -1077,7 +1187,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
                        ( n = `xmlns:uxap`   v = `sap.uxap` )
                        ( n = `xmlns:sap`    v = `sap` )
                        ( n = `xmlns:text`   v = `sap.ui.richtextedito` )
-                       ( n = `xmlns:html`   v = `http://www.w3.org/1999/xhtml` ) ).
+                       ( n = `xmlns:html`   v = `http://www.w3.org/1999/xhtml` )
+                       ( n = `xmlns:fb`   v = `sap.ui.comp.filterbar` ) ).
   ENDMETHOD.
 
 
@@ -1169,6 +1280,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD end_column_pages.
+    " todo, implement method
+    result = me.
+  ENDMETHOD.
+
+
   METHOD expanded_content.
     result = _generic( name = `expandedContent`
                        ns   = ns ).
@@ -1182,35 +1299,79 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD factory.
+
     result = NEW #( ).
 
     IF t_ns IS NOT INITIAL.
       result->mt_prop = t_ns.
     ENDIF.
 
+    result->ss_config = client->get( )-s_config.
     result->mt_prop  = VALUE #( BASE result->mt_prop
                                 (  n = 'displayBlock'   v = 'true' )
                                 (  n = 'height'         v = '100%' )
-                                (  n = 'controllerName' v = z2ui5_cl_http_handler=>config-controller_name ) ).
+*                                (  n = 'controllerName' v = z2ui5_cl_http_handler=>config-controller_name ) ).
+                                (  n = 'controllerName' v = result->ss_config-controller_name ) ).
 
     result->m_name   = `View`.
     result->m_ns     = `mvc`.
     result->m_root   = result.
     result->m_parent = result.
+
   ENDMETHOD.
 
 
   METHOD factory_popup.
+
     result = NEW #( ).
 
     IF t_ns IS NOT INITIAL.
       result->mt_prop = t_ns.
     ENDIF.
 
+    result->ss_config = client->get( )-s_config.
     result->m_name   = `FragmentDefinition`.
     result->m_ns     = `core`.
     result->m_root   = result.
     result->m_parent = result.
+  ENDMETHOD.
+
+
+  METHOD filter_bar.
+    result = _generic( name    = `FilterBar`
+                        ns     = 'fb'
+                        t_prop = VALUE #( ( n = 'useToolbar'    v = usetoolbar )
+                                          ( n = 'search'        v = search )
+                                          ( n = 'filterChange'  v = filterchange ) ) ).
+  ENDMETHOD.
+
+
+  METHOD filter_control.
+    result = _generic( name = `control`
+                        ns  = 'fb' ).
+  ENDMETHOD.
+
+
+  METHOD filter_group_item.
+    result = _generic( name    = `FilterGroupItem`
+                        ns     = 'fb'
+                        t_prop = VALUE #( ( n = 'name'                v  = name )
+                                          ( n = 'label'               v  = label )
+                                          ( n = 'groupName'           v  = groupname )
+                                          ( n = 'visibleInFilterBar'  v  = visibleinfilterbar ) ) ).
+  ENDMETHOD.
+
+
+  METHOD filter_group_items.
+    result = _generic( name = `filterGroupItems`
+                        ns  = 'fb' ).
+  ENDMETHOD.
+
+
+  METHOD flexible_column_layout.
+    result = _generic( name   = `FlexibleColumnLayout`
+                       ns     = `f`
+                       t_prop = VALUE #( (  n = `layout` v = layout ) ) ).
   ENDMETHOD.
 
 
@@ -1335,23 +1496,22 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD hlp_get_source_code_url.
-    DATA(lv_url) = z2ui5_cl_http_handler=>client-t_header[ name = `referer` ]-value.
 
-    SPLIT lv_url AT '?' INTO lv_url DATA(lv_dummy).
-
-    result = z2ui5_cl_http_handler=>client-t_header[ name = `origin` ]-value &&
-       `/sap/bc/adt/oo/classes/` && lcl_utility=>get_classname_by_ref( app ) &&
+    result = m_root->ss_config-origin &&
+      `/sap/bc/adt/oo/classes/` && lcl_utility=>get_classname_by_ref( m_root->ss_config-app ) &&
        `/source/main`.
 
   ENDMETHOD.
 
 
   METHOD hlp_replace_controller_name.
+
     result = lcl_utility=>get_replace(
                  iv_val     = xml
                  iv_begin   = 'controllerName="'
                  iv_end     = '"'
-                 iv_replace = `controllerName="` && z2ui5_cl_http_handler=>config-controller_name && `"` ).
+                 iv_replace = `controllerName="` && ss_config-controller_name && `"` ).
+
   ENDMETHOD.
 
 
@@ -1364,9 +1524,15 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD illustrated_message.
+
     result = _generic( name   = `IllustratedMessage`
                        t_prop = VALUE #( ( n = `enableVerticalResponsiveness` v = enableVerticalResponsiveness )
-                                         ( n = `illustrationType`             v = illustrationType ) ) ).
+                      ( n = `illustrationType`             v = illustrationType )
+                      ( n = `enableFormattedText`             v = lcl_utility=>get_json_boolean( enableFormattedText ) )
+                      ( n = `illustrationSize`             v = illustrationSize )
+                      ( n = `description`             v = description )
+                      ( n = `title`             v = title )
+) ).
   ENDMETHOD.
 
 
@@ -1388,10 +1554,13 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
                                 ( n = `editable`         v = lcl_utility=>get_json_boolean( editable ) )
                                 ( n = `enabled`          v = lcl_utility=>get_json_boolean( enabled ) )
                                 ( n = `visible`          v = lcl_utility=>get_json_boolean( visible ) )
+                                ( n = `showTableSuggestionValueHelp`          v = lcl_utility=>get_json_boolean( showTableSuggestionValueHelp ) )
                                 ( n = `valueState`       v = valuestate )
                                 ( n = `valueStateText`   v = valuestatetext )
                                 ( n = `value`            v = value )
+                                ( n = `suggest`          v = suggest )
                                 ( n = `suggestionItems`  v = suggestionitems )
+                                ( n = `suggestionRows`   v = suggestionrows )
                                 ( n = `showSuggestion`   v = lcl_utility=>get_json_boolean( showsuggestion ) )
                                 ( n = `valueHelpRequest` v = valuehelprequest )
                                 ( n = `submit`           v = submit )
@@ -1585,6 +1754,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     result = _generic( name   = `MessageView`
                        t_prop = VALUE #( ( n = `items`      v = items )
                                          ( n = `groupItems` v = lcl_utility=>get_json_boolean( groupItems ) ) ) ).
+  ENDMETHOD.
+
+
+  METHOD mid_column_pages.
+    " todo, implement method
+    result = me.
   ENDMETHOD.
 
 
@@ -1891,6 +2066,13 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD stringify.
+
+    result = get_root( )->xml_get( ).
+
+  ENDMETHOD.
+
+
   METHOD sub_header.
     result = _generic( `subHeader` ).
   ENDMETHOD.
@@ -1902,6 +2084,13 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
                        ns   = `uxap` ).
   ENDMETHOD.
 
+  METHOD suggestion_columns.
+    result = _generic( `suggestionColumns` ).
+  ENDMETHOD.
+
+  METHOD suggestion_rows.
+    result = _generic( `suggestionRows` ).
+  ENDMETHOD.
 
   METHOD suggestion_items.
     result = _generic( `suggestionItems` ).
@@ -2034,6 +2223,42 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD tree_column.
+    result = _generic( name = `Column`
+                  ns        = `table`
+                  t_prop    = VALUE #(
+                          ( n = `label`   v = label )
+                          ( n = `hAlign`  v = halign ) ) ).
+  ENDMETHOD.
+
+
+  METHOD tree_columns.
+    result = _generic( name = `columns`
+                  ns        = `table` ).
+  ENDMETHOD.
+
+
+  METHOD tree_table.
+    result = _generic( name  = `TreeTable`
+                      ns     = `table`
+                      t_prop = VALUE #(
+                                        ( n = `rows`                    v = rows )
+                                        ( n = `selectionMode`           v = selectionmode )
+                                        ( n = `enableColumnReordering`  v = enablecolumnreordering )
+                                        ( n = `expandFirstLevel`        v = expandfirstlevel )
+                                        ( n = `columnSelect`            v = columnselect )
+                                        ( n = `rowSelectionChange`      v = rowselectionchange )
+                                        ( n = `selectionBehavior`       v = selectionBehavior )
+                                        ( n = `selectedIndex`           v = selectedIndex ) ) ).
+  ENDMETHOD.
+
+
+  METHOD tree_template.
+    result = _generic( name = `template`
+                  ns        = `table` ).
+  ENDMETHOD.
+
+
   METHOD vbox.
     result = _generic( name   = `VBox`
                        t_prop = VALUE #( ( n = `height` v = height )
@@ -2102,4 +2327,27 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     m_root->m_last = result2.
     result = result2.
   ENDMETHOD.
+
+  METHOD generictile.
+
+    result = me.
+     _generic(
+        name  = `GenericTile`
+        ns    = ``
+        t_prop = VALUE #(
+                  ( n = `class`      v = class )
+                  ( n = `header`     v = header )
+                  ( n = `press`      v = press )
+                  ( n = `frameType`  v = frametype )
+                  ( n = `subheader`  v = subheader ) ) ).
+
+  ENDMETHOD.
+
+  METHOD tilecontent.
+
+    result = _generic( name  = `TileContent`
+                       ns    = `` ).
+
+  ENDMETHOD.
+
 ENDCLASS.
