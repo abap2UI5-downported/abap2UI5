@@ -311,6 +311,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 class                        TYPE clike OPTIONAL
                 visible                      TYPE clike OPTIONAL
                 submit                       TYPE clike OPTIONAL
+                valueLiveUpdate              TYPE clike OPTIONAL
+                autocomplete                 TYPE clike OPTIONAL
                   PREFERRED PARAMETER value
       RETURNING VALUE(result)                TYPE REF TO z2ui5_cl_xml_view.
 
@@ -496,6 +498,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 id            TYPE clike OPTIONAL
                 change        TYPE clike OPTIONAL
                 liveChange    TYPE clike OPTIONAL
+                autocomplete  TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS message_view
@@ -926,7 +929,6 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !visiblerowcount          TYPE clike OPTIONAL
         !visiblerowcountmode      TYPE clike OPTIONAL
         !alternaterowcolors       TYPE clike OPTIONAL
-        !with                     TYPE clike OPTIONAL
         !footer                   TYPE clike OPTIONAL
         !filter                   TYPE clike OPTIONAL
         !sort                     TYPE clike OPTIONAL
@@ -2108,8 +2110,14 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp68-n = `valueHelpRequest`.
     temp68-v = valuehelprequest.
     INSERT temp68 INTO TABLE temp67.
+    temp68-n = `autocomplete`.
+    temp68-v = lcl_utility=>get_json_boolean( autocomplete ).
+    INSERT temp68 INTO TABLE temp67.
+    temp68-n = `valueLiveUpdate`.
+    temp68-v = lcl_utility=>get_json_boolean( valueLiveUpdate ).
+    INSERT temp68 INTO TABLE temp67.
     temp68-n = `submit`.
-    temp68-v = submit.
+    temp68-v = lcl_utility=>get_json_boolean( submit ).
     INSERT temp68 INTO TABLE temp67.
     temp68-n = `showValueHelp`.
     temp68-v = lcl_utility=>get_json_boolean( showvaluehelp ).
@@ -3032,6 +3040,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp138-n = `change`.
     temp138-v = change.
     INSERT temp138 INTO TABLE temp137.
+    temp138-n = `autocomplete`.
+    temp138-v = lcl_utility=>get_json_boolean( autocomplete ).
+    INSERT temp138 INTO TABLE temp137.
     temp138-n = `liveChange`.
     temp138-v = liveChange.
     INSERT temp138 INTO TABLE temp137.
@@ -3706,9 +3717,6 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp175-n = `visibleRowCountMode`.
     temp175-v = visibleRowCountMode.
     INSERT temp175 INTO TABLE temp174.
-    temp175-n = `with`.
-    temp175-v = with.
-    INSERT temp175 INTO TABLE temp174.
     temp175-n = `footer`.
     temp175-v = footer.
     INSERT temp175 INTO TABLE temp174.
@@ -3727,6 +3735,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     result = _generic( name   = `Table`
                        ns     = 'table'
                        t_prop = temp174 ).
+
   ENDMETHOD.
 
 
