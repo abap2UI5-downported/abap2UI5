@@ -901,6 +901,63 @@ CLASS z2ui5_cl_xml_view DEFINITION
     METHODS end_column_pages
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS ui_table
+      IMPORTING
+        !rows                     TYPE clike OPTIONAL
+        !columnheadervisible      TYPE clike OPTIONAL
+        !editable                 TYPE clike OPTIONAL
+        !enablecellfilter         TYPE clike OPTIONAL
+        !enablegrouping           TYPE clike OPTIONAL
+        !enableselectall          TYPE clike OPTIONAL
+        !firstvisiblerow          TYPE clike OPTIONAL
+        !fixedbottomrowcount      TYPE clike OPTIONAL
+        !fixedcolumncount         TYPE clike OPTIONAL
+        !fixedrowcount            TYPE clike OPTIONAL
+        !minautorowcount          TYPE clike OPTIONAL
+        !rowactioncount           TYPE clike OPTIONAL
+        !rowheight                TYPE clike OPTIONAL
+        !selectionmode            TYPE clike OPTIONAL
+        !showcolumnvisibilitymenu TYPE clike OPTIONAL
+        !shownodata               TYPE clike OPTIONAL
+        !selectedindex            TYPE clike OPTIONAL
+        !threshold                TYPE clike OPTIONAL
+        !visiblerowcount          TYPE clike OPTIONAL
+        !visiblerowcountmode      TYPE clike OPTIONAL
+        !alternaterowcolors       TYPE clike OPTIONAL
+        !with                     TYPE clike OPTIONAL
+        !footer                   TYPE clike OPTIONAL
+        !filter                   TYPE clike OPTIONAL
+        !sort                     TYPE clike OPTIONAL
+        !rowselectionchange       TYPE clike OPTIONAL
+        !customfilter             TYPE clike OPTIONAL
+          PREFERRED PARAMETER rows
+      RETURNING
+        VALUE(result)             TYPE REF TO z2ui5_cl_xml_view .
+    METHODS ui_column
+      IMPORTING
+        !width               TYPE clike OPTIONAL
+        !showsortmenuentry   TYPE clike OPTIONAL
+        !sortproperty        TYPE clike OPTIONAL
+        !filterproperty      TYPE clike OPTIONAL
+        !showfiltermenuentry TYPE clike OPTIONAL
+          PREFERRED PARAMETER width
+      RETURNING
+        VALUE(result)        TYPE REF TO z2ui5_cl_xml_view .
+    METHODS ui_columns
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS ui_extension
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS ui_template
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS currency
+      IMPORTING
+        !value        TYPE clike
+        !currency     TYPE clike
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
   PROTECTED SECTION.
   PRIVATE SECTION.
@@ -908,7 +965,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_xml_view IMPLEMENTATION.
+CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD actions.
@@ -1357,6 +1414,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp22 INTO TABLE temp21.
     temp22-n = `xmlns:fb`.
     temp22-v = `sap.ui.comp.filterbar`.
+    INSERT temp22 INTO TABLE temp21.
+    temp22-n = `xmlns:u`.
+    temp22-v = `sap.ui.unified`.
     INSERT temp22 INTO TABLE temp21.
     mt_prop = temp21.
   ENDMETHOD.
@@ -3106,13 +3166,16 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
                        ns   = `uxap` ).
   ENDMETHOD.
 
+
   METHOD suggestion_columns.
     result = _generic( `suggestionColumns` ).
   ENDMETHOD.
 
+
   METHOD suggestion_rows.
     result = _generic( `suggestionRows` ).
   ENDMETHOD.
+
 
   METHOD suggestion_items.
     result = _generic( `suggestionItems` ).
@@ -3603,35 +3666,37 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     result = result2.
   ENDMETHOD.
 
+
   METHOD generictile.
-     DATA temp180 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
-     DATA temp181 LIKE LINE OF temp180.
+    DATA temp180 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp181 LIKE LINE OF temp180.
 
     result = me.
-     
-     CLEAR temp180.
-     
-     temp181-n = `class`.
-     temp181-v = class.
-     INSERT temp181 INTO TABLE temp180.
-     temp181-n = `header`.
-     temp181-v = header.
-     INSERT temp181 INTO TABLE temp180.
-     temp181-n = `press`.
-     temp181-v = press.
-     INSERT temp181 INTO TABLE temp180.
-     temp181-n = `frameType`.
-     temp181-v = frametype.
-     INSERT temp181 INTO TABLE temp180.
-     temp181-n = `subheader`.
-     temp181-v = subheader.
-     INSERT temp181 INTO TABLE temp180.
-     _generic(
-        name  = `GenericTile`
-        ns    = ``
-        t_prop = temp180 ).
+    
+    CLEAR temp180.
+    
+    temp181-n = `class`.
+    temp181-v = class.
+    INSERT temp181 INTO TABLE temp180.
+    temp181-n = `header`.
+    temp181-v = header.
+    INSERT temp181 INTO TABLE temp180.
+    temp181-n = `press`.
+    temp181-v = press.
+    INSERT temp181 INTO TABLE temp180.
+    temp181-n = `frameType`.
+    temp181-v = frametype.
+    INSERT temp181 INTO TABLE temp180.
+    temp181-n = `subheader`.
+    temp181-v = subheader.
+    INSERT temp181 INTO TABLE temp180.
+    _generic(
+       name  = `GenericTile`
+       ns    = ``
+       t_prop = temp180 ).
 
   ENDMETHOD.
+
 
   METHOD tilecontent.
 
@@ -3640,4 +3705,157 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+  METHOD currency.
+    DATA temp182 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp183 LIKE LINE OF temp182.
+    CLEAR temp182.
+    
+    temp183-n = `value`.
+    temp183-v = value.
+    INSERT temp183 INTO TABLE temp182.
+    temp183-n = `currency`.
+    temp183-v = currency.
+    INSERT temp183 INTO TABLE temp182.
+    result = _generic( name   = `Currency`
+                       ns     = 'u'
+                    t_prop = temp182 ).
+
+  ENDMETHOD.
+
+
+  METHOD ui_column.
+    DATA temp184 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp185 LIKE LINE OF temp184.
+    CLEAR temp184.
+    
+    temp185-n = `width`.
+    temp185-v = width.
+    INSERT temp185 INTO TABLE temp184.
+    temp185-n = `showSortMenuEntry`.
+    temp185-v = showSortMenuEntry.
+    INSERT temp185 INTO TABLE temp184.
+    temp185-n = `sortProperty`.
+    temp185-v = sortProperty.
+    INSERT temp185 INTO TABLE temp184.
+    temp185-n = `showFilterMenuEntry`.
+    temp185-v = showFilterMenuEntry.
+    INSERT temp185 INTO TABLE temp184.
+    temp185-n = `filterProperty`.
+    temp185-v = filterProperty.
+    INSERT temp185 INTO TABLE temp184.
+    result = _generic( name   = `Column`
+                       ns     = 'table'
+                       t_prop = temp184 ).
+  ENDMETHOD.
+
+
+  METHOD ui_columns.
+    result = _generic( name   = `columns`
+                       ns     = 'table' ).
+  ENDMETHOD.
+
+
+  METHOD ui_extension.
+    result = _generic( name   = `extension`
+                       ns     = 'table' ).
+  ENDMETHOD.
+
+
+  METHOD ui_table.
+    DATA temp186 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp187 LIKE LINE OF temp186.
+    CLEAR temp186.
+    
+    temp187-n = `rows`.
+    temp187-v = rows.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `alternateRowColors`.
+    temp187-v = lcl_utility=>get_json_boolean( alternateRowColors ).
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `columnHeaderVisible`.
+    temp187-v = columnheadervisible.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `editable`.
+    temp187-v = lcl_utility=>get_json_boolean( editable ).
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `enableCellFilter`.
+    temp187-v = lcl_utility=>get_json_boolean( enablecellfilter ).
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `enableGrouping`.
+    temp187-v = lcl_utility=>get_json_boolean( enablegrouping ).
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `senableSelectAll`.
+    temp187-v = lcl_utility=>get_json_boolean( enableselectall ).
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `firstVisibleRow`.
+    temp187-v = firstvisiblerow.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `fixedBottomRowCount`.
+    temp187-v = fixedbottomrowcount.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `fixedColumnCount`.
+    temp187-v = fixedColumnCount.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `fixedRowCount`.
+    temp187-v = fixedRowCount.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `minAutoRowCount`.
+    temp187-v = minAutoRowCount.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `minAutoRowCount`.
+    temp187-v = minAutoRowCount.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `rowHeight`.
+    temp187-v = rowHeight.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `selectedIndex`.
+    temp187-v = selectedIndex.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `selectionMode`.
+    temp187-v = selectionMode.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `showColumnVisibilityMenu`.
+    temp187-v = lcl_utility=>get_json_boolean( showColumnVisibilityMenu ).
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `showNoData`.
+    temp187-v = lcl_utility=>get_json_boolean( showNoData ).
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `threshold`.
+    temp187-v = threshold.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `visibleRowCount`.
+    temp187-v = visibleRowCount.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `visibleRowCountMode`.
+    temp187-v = visibleRowCountMode.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `with`.
+    temp187-v = with.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `footer`.
+    temp187-v = footer.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `filter`.
+    temp187-v = filter.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `sort`.
+    temp187-v = sort.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `customFilter`.
+    temp187-v = customFilter.
+    INSERT temp187 INTO TABLE temp186.
+    temp187-n = `rowSelectionChange`.
+    temp187-v = rowSelectionChange.
+    INSERT temp187 INTO TABLE temp186.
+    result = _generic( name   = `Table`
+                       ns     = 'table'
+                       t_prop = temp186 ).
+  ENDMETHOD.
+
+
+  METHOD ui_template.
+    result = _generic( name   = `template`
+                       ns     = 'table' ).
+  ENDMETHOD.
 ENDCLASS.
