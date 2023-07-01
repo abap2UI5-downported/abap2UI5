@@ -8,9 +8,9 @@ CLASS z2ui5_cl_http_handler DEFINITION
       IMPORTING
         t_config                TYPE z2ui5_if_client=>ty_t_name_value OPTIONAL
         content_security_policy TYPE clike                            OPTIONAL
-        check_logging           TYPE abap_bool                        DEFAULT abap_false
+        check_logging           TYPE abap_bool                        OPTIONAL
       RETURNING
-        VALUE(r_result)         TYPE string ##NEEDED.
+        VALUE(r_result)         TYPE string.
 
     CLASS-METHODS http_post
       IMPORTING
@@ -43,23 +43,23 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
       
       CLEAR temp1.
       
-      temp2-name = `data-sap-ui-theme`.
-      temp2-value = `sap_horizon`.
+      temp2-n = `data-sap-ui-theme`.
+      temp2-v = `sap_horizon`.
       INSERT temp2 INTO TABLE temp1.
-      temp2-name = `src`.
-      temp2-value = `https://sdk.openui5.org/resources/sap-ui-cachebuster/sap-ui-core.js`.
+      temp2-n = `src`.
+      temp2-v = `https://sdk.openui5.org/resources/sap-ui-cachebuster/sap-ui-core.js`.
       INSERT temp2 INTO TABLE temp1.
-      temp2-name = `data-sap-ui-libs`.
-      temp2-value = `sap.m`.
+      temp2-n = `data-sap-ui-libs`.
+      temp2-v = `sap.m`.
       INSERT temp2 INTO TABLE temp1.
-      temp2-name = `data-sap-ui-bindingSyntax`.
-      temp2-value = `complex`.
+      temp2-n = `data-sap-ui-bindingSyntax`.
+      temp2-v = `complex`.
       INSERT temp2 INTO TABLE temp1.
-      temp2-name = `data-sap-ui-frameOptions`.
-      temp2-value = `trusted`.
+      temp2-n = `data-sap-ui-frameOptions`.
+      temp2-v = `trusted`.
       INSERT temp2 INTO TABLE temp1.
-      temp2-name = `data-sap-ui-compatVersion`.
-      temp2-value = `edge`.
+      temp2-n = `data-sap-ui-compatVersion`.
+      temp2-v = `edge`.
       INSERT temp2 INTO TABLE temp1.
       lt_config = temp1.
     ENDIF.
@@ -90,7 +90,7 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
     
     
     LOOP AT lt_config REFERENCE INTO lr_config.
-      r_result = r_result && | { lr_config->name }="{ lr_config->value }"|.
+      r_result = r_result && | { lr_config->n }="{ lr_config->v }"|.
     ENDLOOP.
 
     r_result = r_result &&
@@ -412,7 +412,7 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
             CONTINUE.
           ENDIF.
 
-           IF lo_handler->ms_next-o_app_call IS NOT INITIAL.
+          IF lo_handler->ms_next-o_app_call IS NOT INITIAL.
             lo_handler = lo_handler->set_app_call( ).
             CONTINUE.
           ENDIF.

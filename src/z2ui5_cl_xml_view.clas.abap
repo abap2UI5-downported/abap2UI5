@@ -4,46 +4,32 @@ CLASS z2ui5_cl_xml_view DEFINITION
   CREATE PROTECTED.
 
   PUBLIC SECTION.
-    TYPES:
-      BEGIN OF ty_s_name_value,
-        n TYPE string,
-        v TYPE string,
-      END OF ty_s_name_value.
-    TYPES ty_t_name_value TYPE STANDARD TABLE OF ty_s_name_value WITH DEFAULT KEY.
-
-    DATA m_name   TYPE string.
-    DATA m_ns     TYPE string.
-    DATA mt_prop  TYPE ty_t_name_value.
-
-    DATA m_root   TYPE REF TO z2ui5_cl_xml_view.
-    DATA m_last   TYPE REF TO z2ui5_cl_xml_view.
-    DATA m_parent TYPE REF TO z2ui5_cl_xml_view.
-    DATA t_child  TYPE STANDARD TABLE OF REF TO z2ui5_cl_xml_view WITH DEFAULT KEY.
-
-    DATA ss_config TYPE z2ui5_if_client=>ty_s_config.
 
     CLASS-METHODS factory
       IMPORTING
-        t_ns          TYPE ty_t_name_value OPTIONAL
+        t_ns          TYPE z2ui5_if_client=>ty_t_name_value OPTIONAL
         client        TYPE REF TO z2ui5_if_client
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     CLASS-METHODS factory_popup
       IMPORTING
-                t_ns          TYPE ty_t_name_value OPTIONAL
-                client        TYPE REF TO z2ui5_if_client
-      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+        t_ns          TYPE z2ui5_if_client=>ty_t_name_value OPTIONAL
+        client        TYPE REF TO z2ui5_if_client
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS constructor.
 
     METHODS hlp_get_source_code_url
       RETURNING
         VALUE(result) TYPE string.
 
     METHODS hlp_replace_controller_name
-      IMPORTING xml           TYPE string
-      RETURNING VALUE(result) TYPE string.
-
-    METHODS constructor.
+      IMPORTING
+        xml           TYPE string
+      RETURNING
+        VALUE(result) TYPE string.
 
     METHODS horizontal_layout
       IMPORTING class         TYPE clike OPTIONAL
@@ -826,7 +812,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
       IMPORTING
         name          TYPE clike
         ns            TYPE clike           OPTIONAL
-        t_prop        TYPE ty_t_name_value OPTIONAL
+        t_prop        TYPE z2ui5_if_client=>ty_t_name_value OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -967,6 +953,20 @@ CLASS z2ui5_cl_xml_view DEFINITION
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
   PROTECTED SECTION.
+
+    DATA mv_name  TYPE string.
+    DATA mv_ns     TYPE string.
+    DATA mt_prop  TYPE z2ui5_if_client=>ty_t_name_value.
+
+    DATA mo_root   TYPE REF TO z2ui5_cl_xml_view.
+    DATA mo_previous   TYPE REF TO z2ui5_cl_xml_view.
+    DATA mo_parent TYPE REF TO z2ui5_cl_xml_view.
+    DATA mt_child  TYPE STANDARD TABLE OF REF TO z2ui5_cl_xml_view WITH DEFAULT KEY.
+
+    DATA mi_client TYPE REF TO z2ui5_if_client.
+*    DATA ss_config TYPE z2ui5_if_client=>ty_s_config.
+
+
   PRIVATE SECTION.
 ENDCLASS.
 
@@ -987,7 +987,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD avatar.
-    DATA temp1 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp2 LIKE LINE OF temp1.
     result = me.
     
@@ -1008,7 +1008,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD badge_custom_data.
-    DATA temp3 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp3 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp4 LIKE LINE OF temp3.
     result = me.
     
@@ -1052,7 +1052,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD button.
-    DATA temp5 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp5 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp6 LIKE LINE OF temp5.
     result = me.
     
@@ -1092,7 +1092,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD carousel.
 
-    DATA temp7 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp7 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp8 LIKE LINE OF temp7.
     CLEAR temp7.
     
@@ -1112,7 +1112,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD cc_file_uploader.
-    DATA temp9 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp9 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp10 LIKE LINE OF temp9.
     result = me.
     
@@ -1252,7 +1252,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD checkbox.
-    DATA temp11 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp11 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp12 LIKE LINE OF temp11.
     result = me.
     
@@ -1273,7 +1273,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD code_editor.
-    DATA temp13 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp13 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp14 LIKE LINE OF temp13.
     result = me.
     
@@ -1301,7 +1301,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD column.
-    DATA temp15 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp15 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp16 LIKE LINE OF temp15.
     CLEAR temp15.
     
@@ -1325,7 +1325,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD column_list_item.
-    DATA temp17 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp17 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp18 LIKE LINE OF temp17.
     CLEAR temp17.
     
@@ -1347,7 +1347,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD combobox.
-    DATA temp19 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp19 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp20 LIKE LINE OF temp19.
     CLEAR temp19.
     
@@ -1370,7 +1370,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD constructor.
 
-    DATA temp21 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp21 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp22 LIKE LINE OF temp21.
     CLEAR temp21.
     
@@ -1450,7 +1450,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD currency.
-    DATA temp23 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp23 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp24 LIKE LINE OF temp23.
     CLEAR temp23.
     
@@ -1483,7 +1483,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD date_picker.
-    DATA temp25 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp25 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp26 LIKE LINE OF temp25.
     result = me.
     
@@ -1501,7 +1501,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD date_time_picker.
-    DATA temp27 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp27 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp28 LIKE LINE OF temp27.
     result = me.
     
@@ -1520,7 +1520,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD dialog.
 
-    DATA temp29 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp29 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp30 LIKE LINE OF temp29.
     CLEAR temp29.
     
@@ -1552,7 +1552,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD dynamic_page.
-    DATA temp31 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp31 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp32 LIKE LINE OF temp31.
     CLEAR temp31.
     
@@ -1575,7 +1575,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD dynamic_page_header.
-    DATA temp33 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp33 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp34 LIKE LINE OF temp33.
     CLEAR temp33.
     
@@ -1614,7 +1614,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD factory.
-    DATA temp35 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp35 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp36 LIKE LINE OF temp35.
 
     CREATE OBJECT result.
@@ -1623,7 +1623,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
       result->mt_prop = t_ns.
     ENDIF.
 
-    result->ss_config = client->get( )-s_config.
+    result->mi_client = client.
     
     CLEAR temp35.
     temp35 = result->mt_prop.
@@ -1635,14 +1635,14 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp36-v = '100%'.
     INSERT temp36 INTO TABLE temp35.
     temp36-n = 'controllerName'.
-    temp36-v = result->ss_config-controller_name.
+    temp36-v = client->get( )-s_config-controller_name.
     INSERT temp36 INTO TABLE temp35.
     result->mt_prop  = temp35.
 
-    result->m_name   = `View`.
-    result->m_ns     = `mvc`.
-    result->m_root   = result.
-    result->m_parent = result.
+    result->mv_name   = `View`.
+    result->mv_ns     = `mvc`.
+    result->mo_root   = result.
+    result->mo_parent = result.
 
   ENDMETHOD.
 
@@ -1655,16 +1655,17 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
       result->mt_prop = t_ns.
     ENDIF.
 
-    result->ss_config = client->get( )-s_config.
-    result->m_name   = `FragmentDefinition`.
-    result->m_ns     = `core`.
-    result->m_root   = result.
-    result->m_parent = result.
+    result->mi_client = client.
+    result->mv_name   = `FragmentDefinition`.
+    result->mv_ns     = `core`.
+    result->mo_root   = result.
+    result->mo_parent = result.
+
   ENDMETHOD.
 
 
   METHOD filter_bar.
-    DATA temp37 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp37 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp38 LIKE LINE OF temp37.
     CLEAR temp37.
     
@@ -1690,7 +1691,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD filter_group_item.
-    DATA temp39 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp39 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp40 LIKE LINE OF temp39.
     CLEAR temp39.
     
@@ -1719,7 +1720,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD flexible_column_layout.
-    DATA temp41 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp41 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp42 LIKE LINE OF temp41.
     CLEAR temp41.
     
@@ -1733,7 +1734,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD flex_box.
-    DATA temp43 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp43 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp44 LIKE LINE OF temp43.
     CLEAR temp43.
     
@@ -1767,7 +1768,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD flex_item_data.
-    DATA temp45 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp45 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp46 LIKE LINE OF temp45.
     result = me.
 
@@ -1798,7 +1799,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD formatted_text.
-    DATA temp47 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp47 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp48 LIKE LINE OF temp47.
     result = me.
     
@@ -1813,7 +1814,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD generictile.
-    DATA temp49 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp49 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp50 LIKE LINE OF temp49.
 
     result = me.
@@ -1844,7 +1845,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD generic_tag.
-    DATA temp51 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp51 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp52 LIKE LINE OF temp51.
     CLEAR temp51.
     
@@ -1869,15 +1870,15 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD get.
-    result = m_root->m_last.
+    result = mo_root->mo_previous.
   ENDMETHOD.
 
 
   METHOD get_child.
-    DATA temp53 LIKE LINE OF t_child.
+    DATA temp53 LIKE LINE OF mt_child.
     DATA temp54 LIKE sy-tabix.
     temp54 = sy-tabix.
-    READ TABLE t_child INDEX index INTO temp53.
+    READ TABLE mt_child INDEX index INTO temp53.
     sy-tabix = temp54.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
@@ -1887,17 +1888,17 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD get_parent.
-    result = m_parent.
+    result = mo_parent.
   ENDMETHOD.
 
 
   METHOD get_root.
-    result = m_root.
+    result = mo_root.
   ENDMETHOD.
 
 
   METHOD grid.
-    DATA temp55 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp55 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp56 LIKE LINE OF temp55.
     CLEAR temp55.
     
@@ -1914,7 +1915,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD grid_data.
-    DATA temp57 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp57 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp58 LIKE LINE OF temp57.
     result = me.
     
@@ -1930,7 +1931,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD hbox.
-    DATA temp59 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp59 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp60 LIKE LINE OF temp59.
     CLEAR temp59.
     
@@ -1977,8 +1978,11 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD hlp_get_source_code_url.
 
-    result = m_root->ss_config-origin &&
-      `/sap/bc/adt/oo/classes/` && lcl_utility=>get_classname_by_ref( m_root->ss_config-app ) &&
+    DATA ls_config TYPE z2ui5_if_client=>ty_s_config.
+    ls_config = mo_root->mi_client->get( )-s_config.
+
+    result = ls_config-origin &&
+      `/sap/bc/adt/oo/classes/` && lcl_utility=>get_classname_by_ref( ls_config-app ) &&
        `/source/main`.
 
   ENDMETHOD.
@@ -1986,17 +1990,20 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD hlp_replace_controller_name.
 
+    DATA ls_config TYPE z2ui5_if_client=>ty_s_config.
+    ls_config = mo_root->mi_client->get( )-s_config.
+
     result = lcl_utility=>get_replace(
                  iv_val     = xml
                  iv_begin   = 'controllerName="'
                  iv_end     = '"'
-                 iv_replace = `controllerName="` && ss_config-controller_name && `"` ).
+                 iv_replace = `controllerName="` && ls_config-controller_name && `"` ).
 
   ENDMETHOD.
 
 
   METHOD horizontal_layout.
-    DATA temp61 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp61 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp62 LIKE LINE OF temp61.
     CLEAR temp61.
     
@@ -2014,7 +2021,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD illustrated_message.
 
-    DATA temp63 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp63 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp64 LIKE LINE OF temp63.
     CLEAR temp63.
     
@@ -2042,7 +2049,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD image.
-    DATA temp65 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp65 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp66 LIKE LINE OF temp65.
     result = me.
     
@@ -2057,7 +2064,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD input.
-    DATA temp67 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp67 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp68 LIKE LINE OF temp67.
     result = me.
     
@@ -2135,7 +2142,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD input_list_item.
-    DATA temp69 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp69 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp70 LIKE LINE OF temp69.
     CLEAR temp69.
     
@@ -2148,7 +2155,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD interact_bar_chart.
-    DATA temp71 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp71 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp72 LIKE LINE OF temp71.
     CLEAR temp71.
     
@@ -2177,7 +2184,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD interact_bar_chart_bar.
-    DATA temp73 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp73 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp74 LIKE LINE OF temp73.
     CLEAR temp73.
     
@@ -2200,7 +2207,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD interact_donut_chart.
-    DATA temp75 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp75 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp76 LIKE LINE OF temp75.
     CLEAR temp75.
     
@@ -2229,7 +2236,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD interact_donut_chart_segment.
-    DATA temp77 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp77 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp78 LIKE LINE OF temp77.
     CLEAR temp77.
     
@@ -2252,7 +2259,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD interact_line_chart.
-    DATA temp79 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp79 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp80 LIKE LINE OF temp79.
     CLEAR temp79.
     
@@ -2284,7 +2291,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD interact_line_chart_point.
-    DATA temp81 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp81 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp82 LIKE LINE OF temp81.
     CLEAR temp81.
     
@@ -2310,7 +2317,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD item.
-    DATA temp83 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp83 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp84 LIKE LINE OF temp83.
     result = me.
     
@@ -2334,7 +2341,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD label.
-    DATA temp85 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp85 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp86 LIKE LINE OF temp85.
     result = me.
     
@@ -2358,7 +2365,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD link.
-    DATA temp87 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp87 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp88 LIKE LINE OF temp87.
     result = me.
     
@@ -2389,7 +2396,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD list.
-    DATA temp89 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp89 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp90 LIKE LINE OF temp89.
     CLEAR temp89.
     
@@ -2414,7 +2421,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD list_item.
-    DATA temp91 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp91 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp92 LIKE LINE OF temp91.
     result = me.
     
@@ -2433,7 +2440,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD menu_item.
-    DATA temp93 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp93 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp94 LIKE LINE OF temp93.
     result = me.
     
@@ -2454,7 +2461,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD message_item.
-    DATA temp95 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp95 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp96 LIKE LINE OF temp95.
     CLEAR temp95.
     
@@ -2479,7 +2486,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD message_page.
-    DATA temp97 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp97 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp98 LIKE LINE OF temp97.
     CLEAR temp97.
     
@@ -2504,7 +2511,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD message_popover.
-    DATA temp99 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp99 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp100 LIKE LINE OF temp99.
     CLEAR temp99.
     
@@ -2520,7 +2527,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD message_strip.
-    DATA temp101 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp101 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp102 LIKE LINE OF temp101.
     result = me.
     
@@ -2544,7 +2551,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD message_view.
-    DATA temp103 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp103 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp104 LIKE LINE OF temp103.
     CLEAR temp103.
     
@@ -2566,7 +2573,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD multi_input.
-    DATA temp105 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp105 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp106 LIKE LINE OF temp105.
     CLEAR temp105.
     
@@ -2618,7 +2625,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD object_attribute.
-    DATA temp107 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp107 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp108 LIKE LINE OF temp107.
     result = me.
 
@@ -2637,7 +2644,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD object_number.
-    DATA temp109 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp109 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp110 LIKE LINE OF temp109.
     result = me.
     
@@ -2667,7 +2674,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD object_page_layout.
-    DATA temp111 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp111 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp112 LIKE LINE OF temp111.
     CLEAR temp111.
     
@@ -2691,7 +2698,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD object_page_section.
-    DATA temp113 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp113 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp114 LIKE LINE OF temp113.
     CLEAR temp113.
     
@@ -2714,7 +2721,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD object_page_sub_section.
-    DATA temp115 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp115 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp116 LIKE LINE OF temp115.
     CLEAR temp115.
     
@@ -2736,7 +2743,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD overflow_toolbar_button.
-    DATA temp117 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp117 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp118 LIKE LINE OF temp117.
     result = me.
     
@@ -2766,7 +2773,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD overflow_toolbar_menu_button.
-    DATA temp119 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp119 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp120 LIKE LINE OF temp119.
     CLEAR temp119.
     
@@ -2797,7 +2804,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD overflow_toolbar_toggle_button.
-    DATA temp121 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp121 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp122 LIKE LINE OF temp121.
     result = me.
     
@@ -2827,7 +2834,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD page.
-    DATA temp123 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp123 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp124 LIKE LINE OF temp123.
     CLEAR temp123.
     
@@ -2853,7 +2860,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD panel.
-    DATA temp125 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp125 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp126 LIKE LINE OF temp125.
     CLEAR temp125.
     
@@ -2878,7 +2885,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD popover.
-    DATA temp127 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp127 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp128 LIKE LINE OF temp127.
     CLEAR temp127.
     
@@ -2906,7 +2913,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD progress_indicator.
-    DATA temp129 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp129 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp130 LIKE LINE OF temp129.
     result = me.
     
@@ -2930,7 +2937,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD radial_micro_chart.
-    DATA temp131 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp131 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp132 LIKE LINE OF temp131.
     result = me.
     
@@ -2955,7 +2962,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD range_slider.
-    DATA temp133 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp133 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp134 LIKE LINE OF temp133.
     result = me.
     
@@ -2998,7 +3005,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD scroll_container.
-    DATA temp135 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp135 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp136 LIKE LINE OF temp135.
     CLEAR temp135.
     
@@ -3023,7 +3030,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD search_field.
-    DATA temp137 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp137 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp138 LIKE LINE OF temp137.
     result = me.
     
@@ -3062,7 +3069,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD segmented_button.
-    DATA temp139 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp139 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp140 LIKE LINE OF temp139.
     CLEAR temp139.
     
@@ -3078,7 +3085,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD segmented_button_item.
-    DATA temp141 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp141 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp142 LIKE LINE OF temp141.
     result = me.
     
@@ -3111,7 +3118,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD simple_form.
-    DATA temp143 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp143 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp144 LIKE LINE OF temp143.
     CLEAR temp143.
     
@@ -3159,7 +3166,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD standard_list_item.
-    DATA temp145 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp145 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp146 LIKE LINE OF temp145.
     result = me.
     
@@ -3192,7 +3199,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD step_input.
-    DATA temp147 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp147 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp148 LIKE LINE OF temp147.
     result = me.
     
@@ -3250,7 +3257,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD switch.
-    DATA temp149 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp149 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp150 LIKE LINE OF temp149.
     result = me.
     
@@ -3277,7 +3284,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD tab.
-    DATA temp151 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp151 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp152 LIKE LINE OF temp151.
     CLEAR temp151.
     
@@ -3294,7 +3301,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD table.
-    DATA temp153 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp153 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp154 LIKE LINE OF temp153.
     CLEAR temp153.
     
@@ -3343,7 +3350,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD text.
-    DATA temp155 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp155 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp156 LIKE LINE OF temp155.
     result = me.
     
@@ -3362,7 +3369,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD text_area.
-    DATA temp157 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp157 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp158 LIKE LINE OF temp157.
     result = me.
     
@@ -3409,7 +3416,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD time_picker.
-    DATA temp159 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp159 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp160 LIKE LINE OF temp159.
     result = me.
     
@@ -3429,7 +3436,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   METHOD title.
     DATA lv_name TYPE c LENGTH 5.
     DATA temp1 LIKE lv_name.
-    DATA temp162 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp162 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp163 LIKE LINE OF temp162.
     IF ns = 'f'.
       temp1 = 'title'.
@@ -3458,7 +3465,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD toggle_button.
-    DATA temp164 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp164 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp165 LIKE LINE OF temp164.
 
     result = me.
@@ -3489,7 +3496,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD token.
-    DATA temp166 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp166 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp167 LIKE LINE OF temp166.
 
     result = me.
@@ -3541,7 +3548,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD tree_column.
 
-    DATA temp168 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp168 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp169 LIKE LINE OF temp168.
     CLEAR temp168.
     
@@ -3568,7 +3575,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD tree_table.
 
-    DATA temp170 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp170 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp171 LIKE LINE OF temp170.
     CLEAR temp170.
     
@@ -3611,7 +3618,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD ui_column.
-    DATA temp172 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp172 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp173 LIKE LINE OF temp172.
     CLEAR temp172.
     
@@ -3651,7 +3658,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD ui_table.
 
-    DATA temp174 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp174 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp175 LIKE LINE OF temp174.
     CLEAR temp174.
     
@@ -3753,7 +3760,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD vbox.
 
-    DATA temp176 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp176 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp177 LIKE LINE OF temp176.
     CLEAR temp176.
     
@@ -3773,7 +3780,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD vertical_layout.
 
-    DATA temp178 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp178 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp179 LIKE LINE OF temp178.
     CLEAR temp178.
     
@@ -3799,12 +3806,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     DATA row LIKE LINE OF mt_prop.
       DATA temp2 TYPE string.
     DATA lv_tmp3 LIKE temp183.
-    DATA lr_child LIKE LINE OF t_child.
+    DATA lr_child LIKE LINE OF mt_child.
       DATA temp184 TYPE REF TO z2ui5_cl_xml_view.
     DATA temp185 TYPE string.
     DATA lv_ns LIKE temp185.
 
-    CASE m_name.
+    CASE mv_name.
       WHEN `ZZPLAIN`.
         
         
@@ -3819,8 +3826,8 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     ENDCASE.
 
     
-    IF m_ns <> ``.
-      temp182 = |{ m_ns }:|.
+    IF mv_ns <> ``.
+      temp182 = |{ mv_ns }:|.
     ELSE.
       CLEAR temp182.
     ENDIF.
@@ -3843,9 +3850,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     
     lv_tmp3 = temp183.
 
-    result = |{ result } <{ lv_tmp2 }{ m_name } \n { lv_tmp3 }|.
+    result = |{ result } <{ lv_tmp2 }{ mv_name } \n { lv_tmp3 }|.
 
-    IF t_child IS INITIAL.
+    IF mt_child IS INITIAL.
       result = |{ result }/>|.
       RETURN.
     ENDIF.
@@ -3853,27 +3860,27 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     result = |{ result }>|.
 
     
-    LOOP AT t_child INTO lr_child.
+    LOOP AT mt_child INTO lr_child.
       
       temp184 ?= lr_child.
       result = result && temp184->xml_get( ).
     ENDLOOP.
 
     
-    IF m_ns <> ||.
-      temp185 = |{ m_ns }:|.
+    IF mv_ns <> ||.
+      temp185 = |{ mv_ns }:|.
     ELSE.
       CLEAR temp185.
     ENDIF.
     
     lv_ns = temp185.
-    result = |{ result }</{ lv_ns }{ m_name }>|.
+    result = |{ result }</{ lv_ns }{ mv_name }>|.
 
   ENDMETHOD.
 
 
   METHOD zz_plain.
-    DATA temp186 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
+    DATA temp186 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp187 LIKE LINE OF temp186.
     result = me.
     
@@ -3891,14 +3898,14 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
     DATA result2 TYPE REF TO z2ui5_cl_xml_view.
     CREATE OBJECT result2 TYPE z2ui5_cl_xml_view.
-    result2->m_name   = name.
-    result2->m_ns     = ns.
+    result2->mv_name   = name.
+    result2->mv_ns     = ns.
     result2->mt_prop  = t_prop.
-    result2->m_parent = me.
-    result2->m_root   = m_root.
-    INSERT result2 INTO TABLE t_child.
+    result2->mo_parent = me.
+    result2->mo_root   = mo_root.
+    INSERT result2 INTO TABLE mt_child.
 
-    m_root->m_last = result2.
+    mo_root->mo_previous = result2.
     result = result2.
 
   ENDMETHOD.

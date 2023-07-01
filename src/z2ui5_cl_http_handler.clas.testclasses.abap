@@ -413,9 +413,8 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD z2ui5_if_app~main.
-      DATA temp42 TYPE z2ui5_if_client=>ty_s_get-s_cursor.
-      DATA temp43 TYPE z2ui5_if_client=>ty_t_name_value.
-      DATA temp44 LIKE LINE OF temp43.
+      DATA temp42 TYPE z2ui5_if_client=>ty_t_name_value.
+      DATA temp43 LIKE LINE OF temp42.
       DATA lo_app TYPE REF TO ltcl_unit_02_app_start.
     IF check_initialized = abap_false.
       check_initialized = abap_true.
@@ -516,23 +515,17 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
     IF sv_state = 'TEST_SCROLL_CURSOR'.
 
       client->view_display( `test` ).
-      
-      CLEAR temp42.
-      temp42-id = 'id_text2'.
-      temp42-cursorpos = '5'.
-      temp42-selectionstart = '5'.
-      temp42-selectionend = '10'.
-      client->cursor_set( temp42 ).
+      client->cursor_set(  id = 'id_text2'  cursorpos = '5' selectionstart = '5' selectionend = '10'  ).
 
       
-      CLEAR temp43.
+      CLEAR temp42.
       
-      temp44-value = '99999'.
-      temp44-name = 'id_page'.
-      INSERT temp44 INTO TABLE temp43.
-      temp44-name = 'id_text3'.
-      INSERT temp44 INTO TABLE temp43.
-      client->scroll_position_set( temp43 ).
+      temp43-v = '99999'.
+      temp43-n = 'id_page'.
+      INSERT temp43 INTO TABLE temp42.
+      temp43-n = 'id_text3'.
+      INSERT temp43 INTO TABLE temp42.
+      client->scroll_position_set( temp42 ).
 
     ENDIF.
 
@@ -921,8 +914,8 @@ CLASS ltcl_unit_03_app_ajax IMPLEMENTATION.
     DATA lo_data TYPE REF TO data.
     FIELD-SYMBOLS <val> TYPE any.
     DATA lv_assign TYPE string.
-    DATA temp45 TYPE string.
-    DATA lv_id LIKE temp45.
+    DATA temp44 TYPE string.
+    DATA lv_id LIKE temp44.
     DATA lv_request TYPE string.
     lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
@@ -942,9 +935,9 @@ CLASS ltcl_unit_03_app_ajax IMPLEMENTATION.
       cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
     ENDIF.
     
-    temp45 = <val>.
+    temp44 = <val>.
     
-    lv_id = temp45.
+    lv_id = temp44.
 
     
     lv_request = `{"oUpdate":{"QUANTITY":"600"},"ID": "` && lv_id && `" ,"ARGUMENTS":{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}}`.
@@ -971,8 +964,8 @@ CLASS ltcl_unit_03_app_ajax IMPLEMENTATION.
     DATA lo_data TYPE REF TO data.
     FIELD-SYMBOLS <val> TYPE any.
     DATA lv_assign TYPE string.
-    DATA temp46 TYPE string.
-    DATA lv_id LIKE temp46.
+    DATA temp45 TYPE string.
+    DATA lv_id LIKE temp45.
     DATA lv_request TYPE string.
     lv_response = z2ui5_cl_http_handler=>http_post(
       body = ``
@@ -992,9 +985,9 @@ CLASS ltcl_unit_03_app_ajax IMPLEMENTATION.
       cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
     ENDIF.
     
-    temp46 = <val>.
+    temp45 = <val>.
     
-    lv_id = temp46.
+    lv_id = temp45.
 
     
     lv_request = `{"oUpdate":{"QUANTITY":"700"},"ID": "` && lv_id && `" ,"ARGUMENTS": { "0" : {"EVENT":"BUTTON_POST","METHOD":"UPDATE"}  } }`.
@@ -1039,22 +1032,22 @@ ENDCLASS.
 
 CLASS ltcl_unit_04_deep_data IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
-      DATA temp47 LIKE t_tab.
-      DATA temp48 LIKE LINE OF temp47.
+      DATA temp46 LIKE t_tab.
+      DATA temp47 LIKE LINE OF temp46.
     IF check_initialized = abap_false.
       check_initialized = abap_true.
 
       
-      CLEAR temp47.
+      CLEAR temp46.
       
-      temp48-title = 'Peter'.
-      temp48-descr = 'this is a description'.
-      temp48-icon = 'sap-icon://account'.
-      temp48-info = 'completed'.
-      INSERT temp48 INTO TABLE temp47.
-      temp48-info = 'incompleted'.
-      INSERT temp48 INTO TABLE temp47.
-      t_tab = temp47.
+      temp47-title = 'Peter'.
+      temp47-descr = 'this is a description'.
+      temp47-icon = 'sap-icon://account'.
+      temp47-info = 'completed'.
+      INSERT temp47 INTO TABLE temp46.
+      temp47-info = 'incompleted'.
+      INSERT temp47 INTO TABLE temp46.
+      t_tab = temp46.
 
     ENDIF.
 
@@ -1164,8 +1157,8 @@ CLASS ltcl_unit_04_deep_data IMPLEMENTATION.
     FIELD-SYMBOLS <row> TYPE REF TO data.
     DATA lv_assign TYPE string.
     DATA ls_tab_test TYPE ty_row.
-    DATA temp49 TYPE string.
-    DATA lv_id LIKE temp49.
+    DATA temp48 TYPE string.
+    DATA lv_id LIKE temp48.
     DATA lv_tab TYPE string.
     DATA lv_request TYPE string.
 
@@ -1221,9 +1214,9 @@ CLASS ltcl_unit_04_deep_data IMPLEMENTATION.
       cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
     ENDIF.
     
-    temp49 = <val>.
+    temp48 = <val>.
     
-    lv_id = temp49.
+    lv_id = temp48.
 
     
     lv_tab = z2ui5_lcl_utility=>trans_any_2_json( t_tab ).

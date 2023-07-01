@@ -539,6 +539,7 @@ ENDCLASS.
 CLASS z2ui5_lcl_utility_tree_json DEFINITION.
 
   PUBLIC SECTION.
+
     DATA mo_root         TYPE REF TO z2ui5_lcl_utility_tree_json.
     DATA mo_parent       TYPE REF TO z2ui5_lcl_utility_tree_json.
     DATA mv_name         TYPE string.
@@ -604,7 +605,9 @@ ENDCLASS.
 
 
 CLASS z2ui5_lcl_utility_tree_json IMPLEMENTATION.
+
   METHOD add_attribute.
+
     DATA lo_attri TYPE REF TO z2ui5_lcl_utility_tree_json.
     lo_attri = new( io_root = mo_root iv_name = n ).
 
@@ -618,16 +621,20 @@ CLASS z2ui5_lcl_utility_tree_json IMPLEMENTATION.
 
     INSERT lo_attri INTO TABLE mt_values.
     result = me.
+
   ENDMETHOD.
 
   METHOD add_attribute_instance.
+
     val->mo_root   = mo_root.
     val->mo_parent = me.
     INSERT val INTO TABLE mt_values.
     result = val.
+
   ENDMETHOD.
 
   METHOD add_attribute_struc.
+
     FIELD-SYMBOLS <value> TYPE any.
 
     DATA temp14 TYPE REF TO cl_abap_structdescr.
@@ -649,9 +656,11 @@ CLASS z2ui5_lcl_utility_tree_json IMPLEMENTATION.
     ENDLOOP.
 
     result = me.
+
   ENDMETHOD.
 
   METHOD add_attribute_object.
+
     DATA lo_attri TYPE REF TO z2ui5_lcl_utility_tree_json.
     DATA temp16 LIKE mt_values.
     lo_attri = new( io_root = mo_root iv_name = name ).
@@ -662,6 +671,7 @@ CLASS z2ui5_lcl_utility_tree_json IMPLEMENTATION.
     mt_values = temp16.
     lo_attri->mo_parent = me.
     result = lo_attri.
+
   ENDMETHOD.
 
   METHOD constructor.
@@ -670,6 +680,7 @@ CLASS z2ui5_lcl_utility_tree_json IMPLEMENTATION.
 
   METHOD factory.
     DATA temp18 TYPE string.
+
     CREATE OBJECT result.
     result->mo_root = result.
 
@@ -682,27 +693,27 @@ CLASS z2ui5_lcl_utility_tree_json IMPLEMENTATION.
 
   METHOD new.
     DATA temp19 TYPE string.
+
     CREATE OBJECT result.
     result->mo_root = io_root.
     
     temp19 = iv_name.
     result->mv_name = temp19.
+
   ENDMETHOD.
 
   METHOD get_attribute.
-    CONSTANTS c_prefix TYPE string VALUE `MR_ACTUAL->`.
     DATA lo_attri TYPE REF TO z2ui5_lcl_utility_tree_json.
     FIELD-SYMBOLS <attribute> TYPE any.
     DATA lv_name TYPE string.
 
     z2ui5_lcl_utility=>raise( when = boolc( mr_actual IS INITIAL ) ).
-
     
     lo_attri = new( io_root = mo_root iv_name = name ).
 
     
     
-    lv_name = c_prefix && replace( val = name sub = `-` with = `_` occ = 0 ).
+    lv_name = 'MR_ACTUAL->' && replace( val = name sub = `-` with = `_` occ = 0 ).
     ASSIGN (lv_name) TO <attribute>.
     z2ui5_lcl_utility=>raise( when = boolc( sy-subrc <> 0 ) ).
 
@@ -710,17 +721,18 @@ CLASS z2ui5_lcl_utility_tree_json IMPLEMENTATION.
     lo_attri->mo_parent = me.
 
     INSERT lo_attri INTO TABLE mt_values.
-
     result = lo_attri.
+
   ENDMETHOD.
 
   METHOD get_val.
-    FIELD-SYMBOLS <attribute> TYPE any.
 
+    FIELD-SYMBOLS <attribute> TYPE any.
     ASSIGN mr_actual->* TO <attribute>.
     z2ui5_lcl_utility=>raise( when = boolc( sy-subrc <> 0 ) v = `Value of Attribute in JSON not found` ).
 
     result = <attribute>.
+
   ENDMETHOD.
 
   METHOD get_root.
@@ -2082,7 +2094,11 @@ CLASS z2ui5_lcl_fw_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~cursor_set.
 
-    mo_handler->ms_next-s_set-s_cursor = val.
+    CLEAR mo_handler->ms_next-s_set-s_cursor.
+    mo_handler->ms_next-s_set-s_cursor-id = id.
+    mo_handler->ms_next-s_set-s_cursor-cursorpos = cursorpos.
+    mo_handler->ms_next-s_set-s_cursor-selectionend = selectionend.
+    mo_handler->ms_next-s_set-s_cursor-selectionstart = selectionstart.
 
   ENDMETHOD.
 
