@@ -1267,7 +1267,7 @@ CLASS z2ui5_lcl_fw_app IMPLEMENTATION.
     ENDIF.
     lv_xml_main = lv_xml_main && ` <f:content ` && |\n| &&
     ` > <Label/><Button ` && |\n| &&
-    `  press="` && client->_event( val = `DEMOS` check_view_transit = abap_true ) && `" ` && |\n| &&
+    `  press="` && client->_event( val = `DEMOS` check_view_destroy = abap_true ) && `" ` && |\n| &&
     `  text="Continue..." enabled="` && temp5 && |" \n| &&
     ` /><Button visible="false"/><Link text="More on github..."  target="_blank" href="https://github.com/abap2UI5/abap2UI5/blob/main/docs/links.md" /></f:content></f:SimpleForm>`.
 
@@ -1511,17 +1511,12 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
     lv_viewmodel = temp24.
 
     lo_resp->add_attribute( n = `OVIEWMODEL` v = lv_viewmodel apos_active = abap_false ).
-    CLEAR ms_next-s_set-_viewmodel.
-
+    lo_resp->add_attribute( n = `PARAMS`     v = z2ui5_lcl_utility=>trans_any_2_json( ms_next-s_set ) apos_active = abap_false ).
+    lo_resp->add_attribute( n = `ID`         v = ms_db-id ).
 
     ms_next-s_set-path = ss_config-path_info.
 
-    lo_resp->add_attribute( n = `PARAMS` v = z2ui5_lcl_utility=>trans_any_2_json( ms_next-s_set ) apos_active = abap_false ).
-
-    lo_resp->add_attribute( n = `ID`     v = ms_db-id ).
-
     result = lo_resp->get_root( )->stringify( ).
-
     z2ui5_lcl_fw_db=>create( id = ms_db-id db = ms_db ).
 
   ENDMETHOD.
@@ -2070,13 +2065,10 @@ CLASS z2ui5_lcl_fw_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD z2ui5_if_client~_event.
+    DATA temp29 LIKE LINE OF t_arg.
+    DATA lr_arg LIKE REF TO temp29.
 
-    DATA lv_hold_view TYPE string.
-    DATA temp23 LIKE LINE OF t_arg.
-    DATA lr_arg LIKE REF TO temp23.
-    lv_hold_view = boolc( check_view_transit = abap_false ).
-
-    result = `onEvent( { 'EVENT' : '` && val && `', 'METHOD' : 'UPDATE' , 'isHoldView' : ` && z2ui5_lcl_utility=>get_json_boolean( lv_hold_view ) && ` }`.
+    result = `onEvent( { 'EVENT' : '` && val && `', 'METHOD' : 'UPDATE' , 'CHECK_VIEW_DESTROY' : ` && z2ui5_lcl_utility=>get_json_boolean( check_view_destroy ) && ` }`.
 
     
     

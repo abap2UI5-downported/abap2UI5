@@ -317,15 +317,17 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING VALUE(result)                TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS dialog
-      IMPORTING title         TYPE clike OPTIONAL
-                icon          TYPE clike OPTIONAL
-                showheader    TYPE clike OPTIONAL
-                stretch       TYPE clike OPTIONAL
-                contentheight TYPE clike OPTIONAL
-                contentwidth  TYPE clike OPTIONAL
-                resizable     TYPE clike OPTIONAL
-                  PREFERRED PARAMETER title
-      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+      IMPORTING
+        title         TYPE clike OPTIONAL
+        icon          TYPE clike OPTIONAL
+        showheader    TYPE clike OPTIONAL
+        stretch       TYPE clike OPTIONAL
+        contentheight TYPE clike OPTIONAL
+        contentwidth  TYPE clike OPTIONAL
+        resizable     TYPE clike OPTIONAL
+          PREFERRED PARAMETER title
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS carousel
       IMPORTING
@@ -1517,6 +1519,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD dialog.
+
     DATA temp29 TYPE z2ui5_cl_xml_view=>ty_t_name_value.
     DATA temp30 LIKE LINE OF temp29.
     CLEAR temp29.
@@ -1544,6 +1547,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp30 INTO TABLE temp29.
     result = _generic( name   = `Dialog`
                        t_prop = temp29 ).
+
   ENDMETHOD.
 
 
