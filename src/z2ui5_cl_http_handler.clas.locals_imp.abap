@@ -810,6 +810,11 @@ CLASS z2ui5_lcl_fw_handler DEFINITION.
           xml           TYPE string,
           check_destroy TYPE abap_bool,
         END OF s_view,
+        BEGIN OF s_view_nest,
+          xml           TYPE string,
+          id            TYPE string,
+          check_destroy TYPE abap_bool,
+        END OF s_view_nest,
         BEGIN OF s_popup,
           xml         TYPE string,
           id          TYPE string,
@@ -1093,7 +1098,7 @@ CLASS z2ui5_lcl_fw_app IMPLEMENTATION.
     DATA lv_descr TYPE string.
     DATA ls_get TYPE z2ui5_if_client=>ty_s_get.
     DATA lv_url_app TYPE string.
-     DATA lv_url LIKE lv_url_app.
+    DATA lv_url LIKE lv_url_app.
     DATA temp22 TYPE string_table.
     DATA temp5 TYPE string_table.
     DATA lv_xml TYPE string.
@@ -1121,8 +1126,8 @@ CLASS z2ui5_lcl_fw_app IMPLEMENTATION.
     ls_get = client->get( ).
     
     lv_url_app =  ls_get-s_config-origin && ls_get-s_config-pathname.
-     
-     lv_url = lv_url_app.
+    
+    lv_url = lv_url_app.
     SHIFT lv_url RIGHT DELETING TRAILING ls_get-s_config-path_info.
     SHIFT lv_url LEFT DELETING LEADING ` `.
 
@@ -2079,6 +2084,13 @@ CLASS z2ui5_lcl_fw_client IMPLEMENTATION.
   METHOD z2ui5_if_client~view_display.
 
     mo_handler->ms_next-s_set-s_view-xml = val.
+
+  ENDMETHOD.
+
+  METHOD z2ui5_if_client~view_display_nested.
+
+    mo_handler->ms_next-s_set-s_view_nest-xml = val.
+    mo_handler->ms_next-s_set-s_view_nest-id = id.
 
   ENDMETHOD.
 
