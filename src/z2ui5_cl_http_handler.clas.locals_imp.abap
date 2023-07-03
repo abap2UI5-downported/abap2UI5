@@ -1091,6 +1091,11 @@ CLASS z2ui5_lcl_fw_app IMPLEMENTATION.
     DATA lv_link2 TYPE string.
     DATA lv_source TYPE string.
     DATA lv_descr TYPE string.
+    DATA ls_get TYPE z2ui5_if_client=>ty_s_get.
+    DATA lv_url_app TYPE string.
+     DATA lv_url LIKE lv_url_app.
+    DATA temp22 TYPE string_table.
+    DATA temp5 TYPE string_table.
     DATA lv_xml TYPE string.
 
     WHILE ms_error-x_error->previous IS BOUND.
@@ -1112,6 +1117,21 @@ CLASS z2ui5_lcl_fw_app IMPLEMENTATION.
     
     lv_descr = escape( val = lv_txt && lv_source format = cl_abap_format=>e_xml_attr ).
 
+    
+    ls_get = client->get( ).
+    
+    lv_url_app =  ls_get-s_config-origin && ls_get-s_config-pathname.
+     
+     lv_url = lv_url_app.
+    SHIFT lv_url RIGHT DELETING TRAILING ls_get-s_config-path_info.
+    SHIFT lv_url LEFT DELETING LEADING ` `.
+
+    
+    CLEAR temp22.
+    INSERT lv_url INTO TABLE temp22.
+    
+    CLEAR temp5.
+    INSERT lv_url_app INTO TABLE temp5.
     
     lv_xml = `<mvc:View ` && |\n| &&
                    `  xmlns="sap.m" ` && |\n| &&
@@ -1141,12 +1161,12 @@ CLASS z2ui5_lcl_fw_app IMPLEMENTATION.
                    ` > <additionalContent ` && |\n| &&
                    ` > ` &&
                    `<Button ` && |\n| &&
-                   `  press="` && client->_event_client( client->cs_event-leave_home )  && `" ` && |\n| &&
+                   `  press="` && client->_event_client( action = client->cs_event-location_reload t_arg = temp22 )  && `" ` && |\n| &&
                    `  text="Home" ` && |\n| &&
                    `  type="Emphasized" ` && |\n| &&
                    ` />` &&
                    `<Button ` && |\n| &&
-                   `  press="` && client->_event_client( client->cs_event-leave_restart ) && `" ` && |\n| &&
+                   `  press="` && client->_event_client( action = client->cs_event-location_reload t_arg = temp5 ) && `" ` && |\n| &&
                    `  text="Restart" ` && |\n| &&
                    `  ` && |\n| &&
                    ` /></additionalContent></IllustratedMessage></Shell></mvc:View>`.
@@ -1162,7 +1182,7 @@ CLASS z2ui5_lcl_fw_app IMPLEMENTATION.
         DATA lv_params TYPE string.
         DATA lv_link TYPE string.
     DATA lv_xml_main TYPE string.
-    DATA temp5 TYPE string.
+    DATA temp7 TYPE string.
 
     TRY.
 
@@ -1273,14 +1293,14 @@ CLASS z2ui5_lcl_fw_app IMPLEMENTATION.
 
     
     IF lv_check_demo = abap_true.
-      temp5 = `true`.
+      temp7 = `true`.
     ELSE.
-      temp5 = `false`.
+      temp7 = `false`.
     ENDIF.
     lv_xml_main = lv_xml_main && ` <f:content ` && |\n| &&
     ` > <Label/><Button ` && |\n| &&
     `  press="` && client->_event( val = `DEMOS` check_view_destroy = abap_true ) && `" ` && |\n| &&
-    `  text="Continue..." enabled="` && temp5 && |" \n| &&
+    `  text="Continue..." enabled="` && temp7 && |" \n| &&
     ` /><Button visible="false"/><Link text="More on github..."  target="_blank" href="https://github.com/abap2UI5/abap2UI5/blob/main/docs/links.md" /></f:content></f:SimpleForm>`.
 
     lv_xml_main = lv_xml_main && `</l:content></l:Grid></Page></Shell></mvc:View>`.
@@ -1298,10 +1318,10 @@ CLASS z2ui5_lcl_fw_db IMPLEMENTATION.
 
     DATA ls_db TYPE z2ui5_t_draft.
       DATA lv_check_rtti LIKE abap_true.
-    DATA temp22 TYPE REF TO object.
-    DATA lo_app LIKE temp22.
-    DATA temp23 LIKE LINE OF result-t_attri.
-    DATA lr_attri LIKE REF TO temp23.
+    DATA temp24 TYPE REF TO object.
+    DATA lo_app LIKE temp24.
+    DATA temp25 LIKE LINE OF result-t_attri.
+    DATA lr_attri LIKE REF TO temp25.
       DATA lv_assign TYPE string.
       FIELD-SYMBOLS <ref> TYPE any.
     ls_db = read( id ).
@@ -1318,9 +1338,9 @@ CLASS z2ui5_lcl_fw_db IMPLEMENTATION.
     ENDIF.
 
     
-    temp22 ?= result-o_app.
+    temp24 ?= result-o_app.
     
-    lo_app = temp22.
+    lo_app = temp24.
     
     
     LOOP AT result-t_attri REFERENCE INTO lr_attri WHERE check_ref_data = abap_true.
@@ -1343,30 +1363,30 @@ CLASS z2ui5_lcl_fw_db IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD create.
-        DATA temp6 LIKE REF TO db.
+        DATA temp8 LIKE REF TO db.
 DATA lv_xml TYPE string.
         DATA x TYPE REF TO cx_xslt_serialization_error.
             DATA ls_db LIKE db.
-            DATA temp7 TYPE REF TO object.
-            DATA lo_app LIKE temp7.
-            DATA temp8 LIKE sy-subrc.
             DATA temp9 TYPE REF TO object.
-            DATA temp10 LIKE LINE OF ls_db-t_attri.
-            DATA lr_attri LIKE REF TO temp10.
+            DATA lo_app LIKE temp9.
+            DATA temp10 LIKE sy-subrc.
+            DATA temp11 TYPE REF TO object.
+            DATA temp12 LIKE LINE OF ls_db-t_attri.
+            DATA lr_attri LIKE REF TO temp12.
               DATA lv_assign TYPE string.
               FIELD-SYMBOLS <attri> TYPE any.
               FIELD-SYMBOLS <deref_attri> TYPE any.
-            DATA temp11 LIKE REF TO ls_db.
+            DATA temp13 LIKE REF TO ls_db.
             DATA x2 TYPE REF TO cx_root.
-    DATA temp12 TYPE z2ui5_t_draft.
-    DATA ls_draft LIKE temp12.
+    DATA temp14 TYPE z2ui5_t_draft.
+    DATA ls_draft LIKE temp14.
 
     TRY.
 
         
-        GET REFERENCE OF db INTO temp6.
+        GET REFERENCE OF db INTO temp8.
 
-lv_xml = z2ui5_lcl_utility=>trans_object_2_xml( temp6 ).
+lv_xml = z2ui5_lcl_utility=>trans_object_2_xml( temp8 ).
 
         
       CATCH cx_xslt_serialization_error INTO x.
@@ -1375,20 +1395,20 @@ lv_xml = z2ui5_lcl_utility=>trans_object_2_xml( temp6 ).
             
             ls_db = db.
             
-            temp7 ?= ls_db-o_app.
+            temp9 ?= ls_db-o_app.
             
-            lo_app = temp7.
+            lo_app = temp9.
 
             
             READ TABLE ls_db-t_attri WITH KEY check_ref_data = abap_true TRANSPORTING NO FIELDS.
-            temp8 = sy-subrc.
-            IF NOT temp8 = 0.
+            temp10 = sy-subrc.
+            IF NOT temp10 = 0.
               RAISE EXCEPTION x.
             ENDIF.
 
             
-            temp9 ?= ls_db-o_app.
-            lo_app = temp9.
+            temp11 ?= ls_db-o_app.
+            lo_app = temp11.
             
             
             LOOP AT ls_db-t_attri REFERENCE INTO lr_attri WHERE check_ref_data = abap_true.
@@ -1408,8 +1428,8 @@ lv_xml = z2ui5_lcl_utility=>trans_object_2_xml( temp6 ).
             ENDLOOP.
 
             
-            GET REFERENCE OF ls_db INTO temp11.
-lv_xml = z2ui5_lcl_utility=>trans_object_2_xml( temp11 ).
+            GET REFERENCE OF ls_db INTO temp13.
+lv_xml = z2ui5_lcl_utility=>trans_object_2_xml( temp13 ).
 
             
           CATCH cx_root INTO x2.
@@ -1422,16 +1442,16 @@ lv_xml = z2ui5_lcl_utility=>trans_object_2_xml( temp11 ).
     ENDTRY.
 
     
-    CLEAR temp12.
-    temp12-uuid = id.
-    temp12-uuid_prev = db-id_prev.
-    temp12-uuid_prev_app = db-id_prev_app.
-    temp12-uuid_prev_app_stack = db-id_prev_app_stack.
-    temp12-uname = z2ui5_lcl_utility=>get_user_tech( ).
-    temp12-timestampl = z2ui5_lcl_utility=>get_timestampl( ).
-    temp12-data = lv_xml.
+    CLEAR temp14.
+    temp14-uuid = id.
+    temp14-uuid_prev = db-id_prev.
+    temp14-uuid_prev_app = db-id_prev_app.
+    temp14-uuid_prev_app_stack = db-id_prev_app_stack.
+    temp14-uname = z2ui5_lcl_utility=>get_user_tech( ).
+    temp14-timestampl = z2ui5_lcl_utility=>get_timestampl( ).
+    temp14-data = lv_xml.
     
-    ls_draft = temp12.
+    ls_draft = temp14.
 
     MODIFY z2ui5_t_draft FROM ls_draft.
     z2ui5_lcl_utility=>raise( when = boolc( sy-subrc <> 0 ) ).
@@ -1492,35 +1512,93 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
 
   METHOD request_begin.
         DATA lv_id_prev TYPE string.
+        DATA lo_arg TYPE REF TO z2ui5_lcl_utility_tree_json.
+          DATA temp26 TYPE string.
+          DATA lv_val TYPE string.
+        DATA lo_scroll TYPE REF TO z2ui5_lcl_utility_tree_json.
+        DATA lo_cursor TYPE REF TO z2ui5_lcl_utility_tree_json.
+        DATA lo_location TYPE REF TO z2ui5_lcl_utility_tree_json.
 
     so_body = z2ui5_lcl_utility_tree_json=>factory( ss_config-body ).
 
     TRY.
         
         lv_id_prev = so_body->get_attribute( `ID` )->get_val( ).
+        result = set_app_client( lv_id_prev ).
+        result->ms_actual-check_on_navigated = abap_false.
       CATCH cx_root.
         result = set_app_start( ).
-        RETURN.
+        result->ms_actual-check_on_navigated = abap_true.
+*        RETURN.
     ENDTRY.
 
-    result = set_app_client( lv_id_prev ).
+
+    TRY.
+        result->ms_actual-check_launchpad_active = so_body->get_attribute( `CHECKLAUNCHPADACTIVE` )->get_val( ).
+      CATCH cx_root.
+    ENDTRY.
+
+    TRY.
+        
+        lo_arg = so_body->get_attribute( `ARGUMENTS` ).
+        result->ms_actual-event = lo_arg->get_attribute( `0` )->get_attribute( `EVENT` )->get_val( ).
+        DO.
+          
+          temp26 = sy-index.
+          
+          lv_val = lo_arg->get_attribute( temp26 )->get_val( ).
+          INSERT lv_val INTO TABLE result->ms_actual-t_event_arg.
+        ENDDO.
+      CATCH cx_root.
+    ENDTRY.
+
+    TRY.
+        
+        lo_scroll = so_body->get_attribute( `OSCROLL` ).
+        z2ui5_lcl_utility=>trans_ref_tab_2_tab( EXPORTING ir_tab_from = lo_scroll->mr_actual
+                                                IMPORTING t_result    = result->ms_actual-t_scroll_pos ).
+      CATCH cx_root.
+    ENDTRY.
+
+    TRY.
+        
+        lo_cursor = so_body->get_attribute( `OCURSOR` ).
+        result->ms_actual-s_cursor-id = lo_cursor->get_attribute( `ID` )->get_val( ).
+        result->ms_actual-s_cursor-cursorpos = lo_cursor->get_attribute( `CURSORPOS` )->get_val( ).
+        result->ms_actual-s_cursor-selectionend = lo_cursor->get_attribute( `SELECTIONEND` )->get_val( ).
+        result->ms_actual-s_cursor-selectionstart = lo_cursor->get_attribute( `SELECTIONSTART` )->get_val( ).
+      CATCH cx_root.
+    ENDTRY.
+
+    TRY.
+        
+        lo_location  = so_body->get_attribute( `OLOCATION` ).
+        ss_config-origin   = lo_location->get_attribute( `ORIGIN` )->get_val( ).
+        ss_config-pathname = lo_location->get_attribute( `PATHNAME` )->get_val( ).
+        ss_config-search   = lo_location->get_attribute( `SEARCH` )->get_val( ).
+        ss_config-version  = lo_location->get_attribute( `VERSION` )->get_val( ).
+        ss_config-controller_name = `z2ui5_controller`.
+      CATCH cx_root.
+    ENDTRY.
+
+
   ENDMETHOD.
 
   METHOD request_end.
 
     DATA lo_resp TYPE REF TO z2ui5_lcl_utility_tree_json.
-    DATA temp24 TYPE z2ui5_lcl_fw_handler=>ty_s_next2-_viewmodel.
-    DATA lv_viewmodel LIKE temp24.
+    DATA temp27 TYPE z2ui5_lcl_fw_handler=>ty_s_next2-_viewmodel.
+    DATA lv_viewmodel LIKE temp27.
     lo_resp = z2ui5_lcl_utility_tree_json=>factory( ).
 
     
     IF ms_next-s_set-_viewmodel IS NOT INITIAL.
-      temp24 = ms_next-s_set-_viewmodel.
+      temp27 = ms_next-s_set-_viewmodel.
     ELSE.
-      temp24 = model_set_frontend( app = ms_db-o_app t_attri = ms_db-t_attri ).
+      temp27 = model_set_frontend( app = ms_db-o_app t_attri = ms_db-t_attri ).
     ENDIF.
     
-    lv_viewmodel = temp24.
+    lv_viewmodel = temp27.
 
     lo_resp->add_attribute( n = `OVIEWMODEL` v = lv_viewmodel apos_active = abap_false ).
     lo_resp->add_attribute( n = `PARAMS`     v = z2ui5_lcl_utility=>trans_any_2_json( ms_next-s_set ) apos_active = abap_false ).
@@ -1611,20 +1689,20 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
 
   METHOD model_set_frontend.
 
-    DATA temp13 TYPE REF TO object.
-    DATA lo_app LIKE temp13.
+    DATA temp15 TYPE REF TO object.
+    DATA lo_app LIKE temp15.
     DATA lr_view_model TYPE REF TO z2ui5_lcl_utility_tree_json.
     DATA lo_update TYPE REF TO z2ui5_lcl_utility_tree_json.
-    DATA temp14 LIKE LINE OF t_attri.
-    DATA lr_attri LIKE REF TO temp14.
-      DATA temp15 TYPE REF TO z2ui5_lcl_utility_tree_json.
-      DATA lo_actual LIKE temp15.
+    DATA temp16 LIKE LINE OF t_attri.
+    DATA lr_attri LIKE REF TO temp16.
+      DATA temp17 TYPE REF TO z2ui5_lcl_utility_tree_json.
+      DATA lo_actual LIKE temp17.
       FIELD-SYMBOLS <attribute> TYPE any.
       DATA lv_name TYPE string.
-              DATA temp16 TYPE string.
-    temp13 ?= app.
+              DATA temp18 TYPE string.
+    temp15 ?= app.
     
-    lo_app = temp13.
+    lo_app = temp15.
     
     lr_view_model = z2ui5_lcl_utility_tree_json=>factory( ).
     
@@ -1641,12 +1719,12 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
 
       
       IF lr_attri->bind_type = cs_bind_type-one_way.
-        temp15 = lr_view_model.
+        temp17 = lr_view_model.
       ELSE.
-        temp15 = lo_update.
+        temp17 = lo_update.
       ENDIF.
       
-      lo_actual = temp15.
+      lo_actual = temp17.
 
       
       
@@ -1670,12 +1748,12 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
               
               CASE <attribute>.
                 WHEN abap_true.
-                  temp16 = `true`.
+                  temp18 = `true`.
                 WHEN OTHERS.
-                  temp16 = `false`.
+                  temp18 = `false`.
               ENDCASE.
               lo_actual->add_attribute( n           = lr_attri->name
-                                        v           = temp16
+                                        v           = temp18
                                         apos_active = abap_false ).
 
             WHEN OTHERS.
@@ -1692,65 +1770,11 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD set_app_client.
-        DATA lo_arg TYPE REF TO z2ui5_lcl_utility_tree_json.
-          DATA temp25 TYPE string.
-          DATA lv_val TYPE string.
-        DATA lo_scroll TYPE REF TO z2ui5_lcl_utility_tree_json.
-        DATA lo_cursor TYPE REF TO z2ui5_lcl_utility_tree_json.
-        DATA lo_location TYPE REF TO z2ui5_lcl_utility_tree_json.
 
     CREATE OBJECT result.
     result->ms_db         = z2ui5_lcl_fw_db=>load_app( id_prev ).
     result->ms_db-id      = z2ui5_lcl_utility=>get_uuid( ).
     result->ms_db-id_prev = id_prev.
-
-    TRY.
-        result->ms_actual-check_launchpad_active = so_body->get_attribute( `CHECKLAUNCHPADACTIVE` )->get_val( ).
-      CATCH cx_root.
-    ENDTRY.
-
-    TRY.
-        
-        lo_arg = so_body->get_attribute( `ARGUMENTS` ).
-        result->ms_actual-event = lo_arg->get_attribute( `0` )->get_attribute( `EVENT` )->get_val( ).
-        DO.
-          
-          temp25 = sy-index.
-          
-          lv_val = lo_arg->get_attribute( temp25 )->get_val( ).
-          INSERT lv_val INTO TABLE result->ms_actual-t_event_arg.
-        ENDDO.
-      CATCH cx_root.
-    ENDTRY.
-
-    TRY.
-        
-        lo_scroll = so_body->get_attribute( `OSCROLL` ).
-        z2ui5_lcl_utility=>trans_ref_tab_2_tab( EXPORTING ir_tab_from = lo_scroll->mr_actual
-                                                IMPORTING t_result    = result->ms_actual-t_scroll_pos ).
-      CATCH cx_root.
-    ENDTRY.
-
-    TRY.
-        
-        lo_cursor = so_body->get_attribute( `OCURSOR` ).
-        result->ms_actual-s_cursor-id = lo_cursor->get_attribute( `ID` )->get_val( ).
-        result->ms_actual-s_cursor-cursorpos = lo_cursor->get_attribute( `CURSORPOS` )->get_val( ).
-        result->ms_actual-s_cursor-selectionend = lo_cursor->get_attribute( `SELECTIONEND` )->get_val( ).
-        result->ms_actual-s_cursor-selectionstart = lo_cursor->get_attribute( `SELECTIONSTART` )->get_val( ).
-      CATCH cx_root.
-    ENDTRY.
-
-    TRY.
-        
-        lo_location  = so_body->get_attribute( `OLOCATION` ).
-        ss_config-origin   = lo_location->get_attribute( `ORIGIN` )->get_val( ).
-        ss_config-pathname = lo_location->get_attribute( `PATHNAME` )->get_val( ).
-        ss_config-search   = lo_location->get_attribute( `SEARCH` )->get_val( ).
-        ss_config-version  = lo_location->get_attribute( `VERSION` )->get_val( ).
-        ss_config-controller_name = `z2ui5_controller`.
-      CATCH cx_root.
-    ENDTRY.
 
     TRY.
         model_set_backend( model = so_body->get_attribute( `OUPDATE` )->mr_actual
@@ -1759,7 +1783,10 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
       CATCH cx_root.
     ENDTRY.
 
-    result->ms_actual-check_on_navigated = abap_false.
+
+
+
+
 
   ENDMETHOD.
 
@@ -1794,13 +1821,15 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
         ENDTRY.
         result->ms_db-o_app->id = result->ms_db-id.
         result->ms_db-t_attri   = z2ui5_lcl_utility=>get_t_attri_by_ref( result->ms_db-o_app ).
-        result->ms_actual-check_on_navigated = abap_true.
+*        result->ms_actual-check_on_navigated = abap_true.
         RETURN.
 
       CATCH cx_root.
         result = result->set_app_system( error_text = `App with name ` && lv_classname && ` not found...` ).
         RETURN.
     ENDTRY.
+
+
   ENDMETHOD.
 
   METHOD set_app_leave.
@@ -1838,34 +1867,34 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
 
   METHOD _create_binding.
 
-    DATA temp17 TYPE REF TO object.
-    DATA lo_app LIKE temp17.
+    DATA temp19 TYPE REF TO object.
+    DATA lo_app LIKE temp19.
       DATA lv_id TYPE string.
-      DATA temp18 TYPE z2ui5_lcl_utility=>ty_attri.
+      DATA temp20 TYPE z2ui5_lcl_utility=>ty_attri.
     DATA lr_in TYPE REF TO data.
-    DATA temp19 LIKE LINE OF ms_db-t_attri.
-    DATA lr_attri LIKE REF TO temp19.
+    DATA temp21 LIKE LINE OF ms_db-t_attri.
+    DATA lr_attri LIKE REF TO temp21.
       FIELD-SYMBOLS <attribute> TYPE any.
       DATA lv_name TYPE string.
       DATA lr_ref TYPE REF TO data.
         FIELD-SYMBOLS <field> TYPE any.
-        DATA temp20 TYPE REF TO data.
-        DATA temp21 TYPE string.
-    DATA temp22 TYPE z2ui5_lcl_utility=>ty_attri.
-    temp17 ?= ms_db-o_app.
+        DATA temp22 TYPE REF TO data.
+        DATA temp23 TYPE string.
+    DATA temp24 TYPE z2ui5_lcl_utility=>ty_attri.
+    temp19 ?= ms_db-o_app.
     
-    lo_app = temp17.
+    lo_app = temp19.
 
     IF type = cs_bind_type-one_time.
 
       
       lv_id = z2ui5_lcl_utility=>get_uuid_session( ).
       
-      CLEAR temp18.
-      temp18-name = lv_id.
-      temp18-data_stringify = z2ui5_lcl_utility=>trans_any_2_json( value ).
-      temp18-bind_type = type.
-      INSERT temp18
+      CLEAR temp20.
+      temp20-name = lv_id.
+      temp20-data_stringify = z2ui5_lcl_utility=>trans_any_2_json( value ).
+      temp20-bind_type = type.
+      INSERT temp20
              INTO TABLE ms_db-t_attri.
       result = |/{ lv_id }|.
       RETURN.
@@ -1893,8 +1922,8 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
         
         ASSIGN lr_ref->* TO <field>.
         
-        temp20 ?= <field>.
-        lr_ref = temp20.
+        temp22 ?= <field>.
+        lr_ref = temp22.
 
       ENDIF.
 
@@ -1907,11 +1936,11 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
         lr_attri->bind_type = type.
         
         IF type = cs_bind_type-two_way.
-          temp21 = `/oUpdate/`.
+          temp23 = `/oUpdate/`.
         ELSE.
-          temp21 = `/`.
+          temp23 = `/`.
         ENDIF.
-        result = temp21 && lr_attri->name.
+        result = temp23 && lr_attri->name.
         RETURN.
       ENDIF.
 
@@ -1924,11 +1953,11 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
     " one time when not global class attribute
     lv_id = z2ui5_lcl_utility=>get_uuid_session( ).
     
-    CLEAR temp22.
-    temp22-name = lv_id.
-    temp22-data_stringify = z2ui5_lcl_utility=>trans_any_2_json( value ).
-    temp22-bind_type = cs_bind_type-one_time.
-    INSERT temp22
+    CLEAR temp24.
+    temp24-name = lv_id.
+    temp24-data_stringify = z2ui5_lcl_utility=>trans_any_2_json( value ).
+    temp24-bind_type = cs_bind_type-one_time.
+    INSERT temp24
            INTO TABLE ms_db-t_attri.
     result = |/{ lv_id }|.
 
@@ -1960,13 +1989,13 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
 
   METHOD app_set_next.
 
-    DATA temp26 TYPE string.
+    DATA temp28 TYPE string.
     IF app->id IS INITIAL.
-      temp26 = z2ui5_lcl_utility=>get_uuid( ).
+      temp28 = z2ui5_lcl_utility=>get_uuid( ).
     ELSE.
-      temp26 = app->id.
+      temp28 = app->id.
     ENDIF.
-    app->id = temp26.
+    app->id = temp28.
 
     CREATE OBJECT r_result.
 
@@ -1978,8 +2007,10 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
     r_result->ms_db-t_attri     = z2ui5_lcl_utility=>get_t_attri_by_ref( app ).
 
     r_result->ms_actual-check_launchpad_active = ms_actual-check_launchpad_active.
-    r_result->ms_next-s_Set = ms_next-s_set.
+    r_result->ms_actual-s_config = ms_actual-s_config.
     r_result->ms_actual-check_on_navigated = abap_true.
+
+    r_result->ms_next-s_Set = ms_next-s_set.
 
   ENDMETHOD.
 
@@ -2009,16 +2040,16 @@ CLASS z2ui5_lcl_fw_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~get.
 
-    DATA temp27 TYPE z2ui5_if_client=>ty_s_get.
-    CLEAR temp27.
-    MOVE-CORRESPONDING mo_handler->ms_db TO temp27.
-    temp27-event = mo_handler->ms_actual-event.
-    temp27-check_launchpad_active = mo_handler->ms_actual-check_launchpad_active.
-    temp27-t_event_arg = mo_handler->ms_actual-t_event_arg.
-    temp27-t_scroll_pos = mo_handler->ms_actual-t_scroll_pos.
-    temp27-check_on_navigated = mo_handler->ms_actual-check_on_navigated.
-    temp27-s_config = z2ui5_lcl_fw_handler=>ss_config.
-    result = temp27.
+    DATA temp29 TYPE z2ui5_if_client=>ty_s_get.
+    CLEAR temp29.
+    MOVE-CORRESPONDING mo_handler->ms_db TO temp29.
+    temp29-event = mo_handler->ms_actual-event.
+    temp29-check_launchpad_active = mo_handler->ms_actual-check_launchpad_active.
+    temp29-t_event_arg = mo_handler->ms_actual-t_event_arg.
+    temp29-t_scroll_pos = mo_handler->ms_actual-t_scroll_pos.
+    temp29-check_on_navigated = mo_handler->ms_actual-check_on_navigated.
+    temp29-s_config = z2ui5_lcl_fw_handler=>ss_config.
+    result = temp29.
     result-s_config-app = mo_handler->ms_db-o_app.
   ENDMETHOD.
 
@@ -2031,9 +2062,9 @@ CLASS z2ui5_lcl_fw_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD z2ui5_if_client~get_app.
-    DATA temp28 TYPE REF TO z2ui5_if_app.
-    temp28 ?= z2ui5_lcl_fw_db=>load_app( id )-o_app.
-    result = temp28.
+    DATA temp30 TYPE REF TO z2ui5_if_app.
+    temp30 ?= z2ui5_lcl_fw_db=>load_app( id )-o_app.
+    result = temp30.
   ENDMETHOD.
 
 
@@ -2071,14 +2102,24 @@ CLASS z2ui5_lcl_fw_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD z2ui5_if_client~_event_client.
+    DATA temp31 LIKE LINE OF t_arg.
+    DATA lr_arg LIKE REF TO temp31.
 
-    result = `onEventFrontend( { 'EVENT' : '` && val && `' } )`.
+    result = `onEventFrontend( { 'EVENT' : '` && action && `' }`.
+
+    
+    
+    LOOP AT t_arg REFERENCE INTO lr_arg.
+      result = result && `, '` && lr_arg->* && `'`.
+    ENDLOOP.
+
+    result = result &&  ` )`.
 
   ENDMETHOD.
 
   METHOD z2ui5_if_client~_event.
-    DATA temp29 LIKE LINE OF t_arg.
-    DATA lr_arg LIKE REF TO temp29.
+    DATA temp32 LIKE LINE OF t_arg.
+    DATA lr_arg LIKE REF TO temp32.
 
     result = `onEvent( { 'EVENT' : '` && val && `', 'METHOD' : 'UPDATE' , 'CHECK_VIEW_DESTROY' : ` && z2ui5_lcl_utility=>get_json_boolean( check_view_destroy ) && ` }`.
 
