@@ -299,6 +299,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 submit                       TYPE clike OPTIONAL
                 valueLiveUpdate              TYPE clike OPTIONAL
                 autocomplete                 TYPE clike OPTIONAL
+                maxSuggestionWidth           TYPE clike OPTIONAL
                   PREFERRED PARAMETER value
       RETURNING VALUE(result)                TYPE REF TO z2ui5_cl_xml_view.
 
@@ -2148,6 +2149,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp68 INTO TABLE temp67.
     temp68-n = `class`.
     temp68-v = class.
+    INSERT temp68 INTO TABLE temp67.
+    temp68-n = `maxSuggestionWidth`.
+    temp68-v = maxsuggestionwidth.
     INSERT temp68 INTO TABLE temp67.
     _generic( name   = `Input`
               t_prop = temp67 ).
