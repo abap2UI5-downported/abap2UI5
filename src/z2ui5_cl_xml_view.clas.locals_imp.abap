@@ -20,6 +20,10 @@ CLASS lcl_utility DEFINITION INHERITING FROM cx_no_check.
                 iv_replace    TYPE clike DEFAULT ''
       RETURNING VALUE(result) TYPE string.
 
+  CLASS-METHODS get_trim_lower
+      IMPORTING val           TYPE any
+      RETURNING VALUE(result) TYPE string.
+
 ENDCLASS.
 
 
@@ -48,28 +52,28 @@ CLASS lcl_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_json_boolean.
-      DATA temp196 TYPE string.
+      DATA temp206 TYPE string.
     IF check_is_boolean( val ) IS NOT INITIAL.
       
       IF val = abap_true.
-        temp196 = `true`.
+        temp206 = `true`.
       ELSE.
-        temp196 = `false`.
+        temp206 = `false`.
       ENDIF.
-      result = temp196.
+      result = temp206.
     ELSE.
       result = val.
     ENDIF.
   ENDMETHOD.
 
   METHOD check_is_boolean.
-        DATA temp197 TYPE REF TO cl_abap_elemdescr.
-        DATA lo_ele LIKE temp197.
+        DATA temp207 TYPE REF TO cl_abap_elemdescr.
+        DATA lo_ele LIKE temp207.
     TRY.
         
-        temp197 ?= cl_abap_elemdescr=>describe_by_data( val ).
+        temp207 ?= cl_abap_elemdescr=>describe_by_data( val ).
         
-        lo_ele = temp197.
+        lo_ele = temp207.
         CASE lo_ele->get_relative_name( ).
           WHEN `ABAP_BOOL` OR `ABAP_BOOLEAN` OR `XSDBOOLEAN`.
             result = abap_true.
@@ -77,4 +81,14 @@ CLASS lcl_utility IMPLEMENTATION.
       CATCH cx_root.
     ENDTRY.
   ENDMETHOD.
+
+  METHOD get_trim_lower.
+
+    DATA temp208 TYPE string.
+    temp208 = val.
+    result = temp208.
+    result = to_lower( shift_left( shift_right( result ) ) ).
+
+  ENDMETHOD.
+
 ENDCLASS.

@@ -26,6 +26,17 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING
         VALUE(result) TYPE string.
 
+    METHODS hlp_get_url_param
+      IMPORTING
+        !val          TYPE string
+      RETURNING
+        VALUE(result) TYPE string.
+
+    METHODS hlp_set_url_param
+      IMPORTING
+        !n            TYPE clike
+        !v            TYPE clike.
+
     METHODS hlp_replace_controller_name
       IMPORTING
         !xml          TYPE string
@@ -579,6 +590,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !title          TYPE clike OPTIONAL
         !navbuttonpress TYPE clike OPTIONAL
         !shownavbutton  TYPE clike OPTIONAL
+        !showHeader     TYPE clike OPTIONAL
         !id             TYPE clike OPTIONAL
         !class          TYPE clike OPTIONAL
         !ns             TYPE clike OPTIONAL
@@ -1068,39 +1080,39 @@ CLASS z2ui5_cl_xml_view DEFINITION
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
     METHODS ui_row_action_item
       IMPORTING
-        !icon       TYPE clike OPTIONAL
-        !text       TYPE clike OPTIONAL
-        !type       TYPE clike OPTIONAL
-        !press      TYPE clike OPTIONAL
+        !icon         TYPE clike OPTIONAL
+        !text         TYPE clike OPTIONAL
+        !type         TYPE clike OPTIONAL
+        !press        TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
     METHODS radio_button
       IMPORTING
-        !activeHandling    TYPE clike OPTIONAL
-        !editable          TYPE clike OPTIONAL
-        !enabled           TYPE clike OPTIONAL
-        !groupName         TYPE clike OPTIONAL
-        !selected          TYPE clike OPTIONAL
-        !text              TYPE clike OPTIONAL
-        !textAlign         TYPE clike OPTIONAL
-        !textDirection     TYPE clike OPTIONAL
-        !useEntireWidth    TYPE clike OPTIONAL
-        !valueState        TYPE clike OPTIONAL
-        !width             TYPE clike OPTIONAL
+        !activeHandling TYPE clike OPTIONAL
+        !editable       TYPE clike OPTIONAL
+        !enabled        TYPE clike OPTIONAL
+        !groupName      TYPE clike OPTIONAL
+        !selected       TYPE clike OPTIONAL
+        !text           TYPE clike OPTIONAL
+        !textAlign      TYPE clike OPTIONAL
+        !textDirection  TYPE clike OPTIONAL
+        !useEntireWidth TYPE clike OPTIONAL
+        !valueState     TYPE clike OPTIONAL
+        !width          TYPE clike OPTIONAL
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+        VALUE(result)   TYPE REF TO z2ui5_cl_xml_view .
     METHODS radio_button_group
       IMPORTING
-        !id               TYPE clike OPTIONAL
-        !columns          TYPE clike OPTIONAL
-        !editable         TYPE clike OPTIONAL
-        !enabled          TYPE clike OPTIONAL
-        !selectedIndex    TYPE clike OPTIONAL
-        !textDirection    TYPE clike OPTIONAL
-        !valueState       TYPE clike OPTIONAL
-        !width            TYPE clike OPTIONAL
+        !id            TYPE clike OPTIONAL
+        !columns       TYPE clike OPTIONAL
+        !editable      TYPE clike OPTIONAL
+        !enabled       TYPE clike OPTIONAL
+        !selectedIndex TYPE clike OPTIONAL
+        !textDirection TYPE clike OPTIONAL
+        !valueState    TYPE clike OPTIONAL
+        !width         TYPE clike OPTIONAL
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+        VALUE(result)  TYPE REF TO z2ui5_cl_xml_view .
   PROTECTED SECTION.
 
     DATA mv_name  TYPE string.
@@ -1119,7 +1131,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
+CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD actions.
@@ -2135,11 +2147,14 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
   METHOD hlp_get_source_code_url.
 
+    DATA ls_draft TYPE z2ui5_if_client=>ty_s_draft.
     DATA ls_config TYPE z2ui5_if_client=>ty_s_config.
+    ls_draft = mo_root->mi_client->get( )-s_draft.
+    
     ls_config = mo_root->mi_client->get( )-s_config.
 
     result = ls_config-origin &&
-      `/sap/bc/adt/oo/classes/` && lcl_utility=>get_classname_by_ref( ls_config-app ) &&
+      `/sap/bc/adt/oo/classes/` && lcl_utility=>get_classname_by_ref( ls_draft-app ) &&
        `/source/main`.
 
   ENDMETHOD.
@@ -3024,6 +3039,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp126-n = `navButtonPress`.
     temp126-v = navbuttonpress.
     INSERT temp126 INTO TABLE temp125.
+    temp126-n = `showHeader`.
+    temp126-v = lcl_utility=>get_json_boolean( showHeader ).
+    INSERT temp126 INTO TABLE temp125.
     temp126-n = `class`.
     temp126-v = class.
     INSERT temp126 INTO TABLE temp125.
@@ -3139,79 +3157,79 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD radio_button.
-        DATA temp135 TYPE z2ui5_if_client=>ty_t_name_value.
-        DATA temp136 LIKE LINE OF temp135.
-        CLEAR temp135.
-        
-        temp136-n = `activeHandling`.
-        temp136-v = lcl_utility=>get_json_boolean( activeHandling ).
-        INSERT temp136 INTO TABLE temp135.
-        temp136-n = `editable`.
-        temp136-v = lcl_utility=>get_json_boolean( editable ).
-        INSERT temp136 INTO TABLE temp135.
-        temp136-n = `enabled`.
-        temp136-v = lcl_utility=>get_json_boolean( enabled ).
-        INSERT temp136 INTO TABLE temp135.
-        temp136-n = `selected`.
-        temp136-v = lcl_utility=>get_json_boolean( selected ).
-        INSERT temp136 INTO TABLE temp135.
-        temp136-n = `useEntireWidth`.
-        temp136-v = lcl_utility=>get_json_boolean( useEntireWidth ).
-        INSERT temp136 INTO TABLE temp135.
-        temp136-n = `text`.
-        temp136-v = text.
-        INSERT temp136 INTO TABLE temp135.
-        temp136-n = `textDirection`.
-        temp136-v = textDirection.
-        INSERT temp136 INTO TABLE temp135.
-        temp136-n = `textAlign`.
-        temp136-v = textAlign.
-        INSERT temp136 INTO TABLE temp135.
-        temp136-n = `groupName`.
-        temp136-v = groupName.
-        INSERT temp136 INTO TABLE temp135.
-        temp136-n = `valueState`.
-        temp136-v = valueState.
-        INSERT temp136 INTO TABLE temp135.
-        temp136-n = `width`.
-        temp136-v = width.
-        INSERT temp136 INTO TABLE temp135.
-        result = _generic( name   = `RadioButton`
-                       t_prop = temp135 ).
+    DATA temp135 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp136 LIKE LINE OF temp135.
+    CLEAR temp135.
+    
+    temp136-n = `activeHandling`.
+    temp136-v = lcl_utility=>get_json_boolean( activeHandling ).
+    INSERT temp136 INTO TABLE temp135.
+    temp136-n = `editable`.
+    temp136-v = lcl_utility=>get_json_boolean( editable ).
+    INSERT temp136 INTO TABLE temp135.
+    temp136-n = `enabled`.
+    temp136-v = lcl_utility=>get_json_boolean( enabled ).
+    INSERT temp136 INTO TABLE temp135.
+    temp136-n = `selected`.
+    temp136-v = lcl_utility=>get_json_boolean( selected ).
+    INSERT temp136 INTO TABLE temp135.
+    temp136-n = `useEntireWidth`.
+    temp136-v = lcl_utility=>get_json_boolean( useEntireWidth ).
+    INSERT temp136 INTO TABLE temp135.
+    temp136-n = `text`.
+    temp136-v = text.
+    INSERT temp136 INTO TABLE temp135.
+    temp136-n = `textDirection`.
+    temp136-v = textDirection.
+    INSERT temp136 INTO TABLE temp135.
+    temp136-n = `textAlign`.
+    temp136-v = textAlign.
+    INSERT temp136 INTO TABLE temp135.
+    temp136-n = `groupName`.
+    temp136-v = groupName.
+    INSERT temp136 INTO TABLE temp135.
+    temp136-n = `valueState`.
+    temp136-v = valueState.
+    INSERT temp136 INTO TABLE temp135.
+    temp136-n = `width`.
+    temp136-v = width.
+    INSERT temp136 INTO TABLE temp135.
+    result = _generic( name   = `RadioButton`
+                   t_prop = temp135 ).
   ENDMETHOD.
 
 
   METHOD radio_button_group.
-        DATA temp137 TYPE z2ui5_if_client=>ty_t_name_value.
-        DATA temp138 LIKE LINE OF temp137.
-        CLEAR temp137.
-        
-        temp138-n = `id`.
-        temp138-v = id.
-        INSERT temp138 INTO TABLE temp137.
-        temp138-n = `columns`.
-        temp138-v = columns.
-        INSERT temp138 INTO TABLE temp137.
-        temp138-n = `editable`.
-        temp138-v = lcl_utility=>get_json_boolean( editable ).
-        INSERT temp138 INTO TABLE temp137.
-        temp138-n = `enabled`.
-        temp138-v = lcl_utility=>get_json_boolean( enabled ).
-        INSERT temp138 INTO TABLE temp137.
-        temp138-n = `selectedIndex`.
-        temp138-v = selectedIndex.
-        INSERT temp138 INTO TABLE temp137.
-        temp138-n = `textDirection`.
-        temp138-v = textDirection.
-        INSERT temp138 INTO TABLE temp137.
-        temp138-n = `valueState`.
-        temp138-v = valueState.
-        INSERT temp138 INTO TABLE temp137.
-        temp138-n = `width`.
-        temp138-v = width.
-        INSERT temp138 INTO TABLE temp137.
-        result = _generic( name   = `RadioButtonGroup`
-                       t_prop = temp137 ).
+    DATA temp137 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp138 LIKE LINE OF temp137.
+    CLEAR temp137.
+    
+    temp138-n = `id`.
+    temp138-v = id.
+    INSERT temp138 INTO TABLE temp137.
+    temp138-n = `columns`.
+    temp138-v = columns.
+    INSERT temp138 INTO TABLE temp137.
+    temp138-n = `editable`.
+    temp138-v = lcl_utility=>get_json_boolean( editable ).
+    INSERT temp138 INTO TABLE temp137.
+    temp138-n = `enabled`.
+    temp138-v = lcl_utility=>get_json_boolean( enabled ).
+    INSERT temp138 INTO TABLE temp137.
+    temp138-n = `selectedIndex`.
+    temp138-v = selectedIndex.
+    INSERT temp138 INTO TABLE temp137.
+    temp138-n = `textDirection`.
+    temp138-v = textDirection.
+    INSERT temp138 INTO TABLE temp137.
+    temp138-n = `valueState`.
+    temp138-v = valueState.
+    INSERT temp138 INTO TABLE temp137.
+    temp138-n = `width`.
+    temp138-v = width.
+    INSERT temp138 INTO TABLE temp137.
+    result = _generic( name   = `RadioButtonGroup`
+                   t_prop = temp137 ).
   ENDMETHOD.
 
 
@@ -4198,4 +4216,150 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     result = result2.
 
   ENDMETHOD.
+
+  METHOD hlp_get_url_param.
+
+    DATA temp196 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA lt_params LIKE temp196.
+    DATA lv_search TYPE z2ui5_if_client=>ty_s_config-search.
+    DATA lt_param TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA temp197 LIKE LINE OF lt_param.
+    DATA lr_param LIKE REF TO temp197.
+      DATA lv_name TYPE string.
+      DATA lv_value TYPE string.
+      DATA temp198 TYPE z2ui5_if_client=>ty_s_name_value.
+    DATA lv_val TYPE string.
+    DATA temp199 TYPE string.
+    DATA temp200 TYPE z2ui5_if_client=>ty_s_name_value.
+    CLEAR temp196.
+    
+    lt_params = temp196.
+    
+    lv_search = mi_client->get( )-s_config-search.
+
+    lv_search = lcl_utility=>get_trim_lower( lv_search ).
+    SHIFT lv_search LEFT DELETING LEADING `?`.
+
+    
+    SPLIT lv_search AT `&` INTO TABLE lt_param.
+
+    
+    
+    LOOP AT lt_param REFERENCE INTO lr_param.
+
+      
+      
+      SPLIT lr_param->* AT `=` INTO lv_name lv_value.
+
+      
+      CLEAR temp198.
+      temp198-n = lv_name.
+      temp198-v = lv_value.
+      INSERT temp198 INTO TABLE lt_params.
+    ENDLOOP.
+
+    
+    lv_val = lcl_utility=>get_trim_lower( val ).
+    
+    CLEAR temp199.
+    
+    READ TABLE lt_params INTO temp200 WITH KEY n = lv_val.
+    IF sy-subrc = 0.
+      temp199 = temp200-v.
+    ENDIF.
+    result = temp199.
+
+  ENDMETHOD.
+
+  METHOD hlp_set_url_param.
+
+    DATA temp201 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA lt_params LIKE temp201.
+    DATA lv_search TYPE z2ui5_if_client=>ty_s_config-search.
+    DATA lt_param TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA temp202 LIKE LINE OF lt_param.
+    DATA lr_param LIKE REF TO temp202.
+      DATA lv_name TYPE string.
+      DATA lv_value TYPE string.
+      DATA temp203 TYPE z2ui5_if_client=>ty_s_name_value.
+    DATA lv_n TYPE string.
+    DATA temp204 LIKE LINE OF lt_params.
+    DATA lr_params LIKE REF TO temp204.
+      DATA temp205 TYPE z2ui5_if_client=>ty_s_name_value.
+    DATA lv_result TYPE string.
+    DATA temp3 LIKE LINE OF lt_params.
+    DATA temp4 LIKE sy-tabix.
+    DATA temp1 LIKE LINE OF lt_params.
+    DATA temp2 LIKE sy-tabix.
+    CLEAR temp201.
+    
+    lt_params = temp201.
+    
+    lv_search = mi_client->get( )-s_config-search.
+
+    lv_search = lcl_utility=>get_trim_lower( lv_search ).
+    SHIFT lv_search LEFT DELETING LEADING `?`.
+
+    
+    SPLIT lv_search AT `&` INTO TABLE lt_param.
+
+    
+    
+    LOOP AT lt_param REFERENCE INTO lr_param.
+
+      
+      
+      SPLIT lr_param->* AT `=` INTO lv_name lv_value.
+
+      
+      CLEAR temp203.
+      temp203-n = lv_name.
+      temp203-v = lv_value.
+      INSERT temp203 INTO TABLE lt_params.
+    ENDLOOP.
+
+    
+    lv_n = lcl_utility=>get_trim_lower( n ).
+
+    
+    
+    LOOP AT lt_params REFERENCE INTO lr_params
+        WHERE n = lv_n.
+      lr_params->v = lcl_utility=>get_trim_lower( v ).
+    ENDLOOP.
+    IF sy-subrc <> 0.
+      
+      CLEAR temp205.
+      temp205-n = lv_n.
+      temp205-v = lcl_utility=>get_trim_lower( v ).
+      INSERT temp205 INTO TABLE lt_params.
+    ENDIF.
+
+    
+    
+    
+    temp4 = sy-tabix.
+    READ TABLE lt_params INDEX 1 INTO temp3.
+    sy-tabix = temp4.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+    
+    
+    temp2 = sy-tabix.
+    READ TABLE lt_params INDEX 1 INTO temp1.
+    sy-tabix = temp2.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+    lv_result = `?` && temp3-n && `=` && temp1-v.
+
+    LOOP AT lt_params REFERENCE INTO lr_params FROM 2.
+      lv_result = lv_result && `&` && lr_params->n && `=` && lr_params->v.
+    ENDLOOP.
+
+    mi_client->url_param_set( lv_result ).
+
+  ENDMETHOD.
+
 ENDCLASS.
