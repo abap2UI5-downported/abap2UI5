@@ -1113,6 +1113,48 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !width         TYPE clike OPTIONAL
       RETURNING
         VALUE(result)  TYPE REF TO z2ui5_cl_xml_view .
+ methods PLANNINGCALENDAR
+    importing
+      !ROWS type CLIKE optional
+      !STARTDATE type CLIKE optional
+      !APPOINTMENTSVISUALIZATION type CLIKE optional
+      !APPOINTMENTSELECT type CLIKE optional
+      !SHOWEMPTYINTERVALHEADERS type CLIKE optional
+      !SHOWWEEKNUMBERS type CLIKE optional
+    preferred parameter ROWS
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+  methods PLANNINGCALENDARROW
+    importing
+      !APPOINTMENTS type CLIKE optional
+      !INTERVALHEADERS type CLIKE optional
+      !ICON type CLIKE optional
+      !TITLE type CLIKE optional
+      !TEXT type CLIKE optional
+    preferred parameter APPOINTMENTS
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+  methods ROWS
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+  methods APPOINTMENTS
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+  methods CALENDARAPPOINTMENT
+    importing
+      !STARTDATE type CLIKE optional
+      !ENDDATE type CLIKE optional
+      !ICON type CLIKE optional
+      !TITLE type CLIKE optional
+      !TEXT type CLIKE optional
+      !TYPE type CLIKE optional
+      !TENTATIVE type CLIKE optional
+    preferred parameter STARTDATE
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+  methods INTERVALHEADERS
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
   PROTECTED SECTION.
 
     DATA mv_name  TYPE string.
@@ -1131,7 +1173,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_xml_view IMPLEMENTATION.
+CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD actions.
@@ -4217,6 +4259,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   ENDMETHOD.
 
+
   METHOD hlp_get_url_param.
 
     DATA temp196 TYPE z2ui5_if_client=>ty_t_name_value.
@@ -4270,6 +4313,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     result = temp199.
 
   ENDMETHOD.
+
 
   METHOD hlp_set_url_param.
 
@@ -4362,4 +4406,103 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+  METHOD APPOINTMENTS.
+    result = _generic( name   = `appointments` ).
+  ENDMETHOD.
+
+
+  METHOD CALENDARAPPOINTMENT.
+    DATA temp206 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp207 LIKE LINE OF temp206.
+    CLEAR temp206.
+    
+    temp207-n = `startDate`.
+    temp207-v = startDate.
+    INSERT temp207 INTO TABLE temp206.
+    temp207-n = `endDate`.
+    temp207-v = endDate.
+    INSERT temp207 INTO TABLE temp206.
+    temp207-n = `icon`.
+    temp207-v = icon.
+    INSERT temp207 INTO TABLE temp206.
+    temp207-n = `title`.
+    temp207-v = title.
+    INSERT temp207 INTO TABLE temp206.
+    temp207-n = `text`.
+    temp207-v = text.
+    INSERT temp207 INTO TABLE temp206.
+    temp207-n = `type`.
+    temp207-v = type.
+    INSERT temp207 INTO TABLE temp206.
+    temp207-n = `tentative`.
+    temp207-v = tentative.
+    INSERT temp207 INTO TABLE temp206.
+    result = _generic( name   = `CalendarAppointment`
+                       ns     = `unified`
+                       t_prop = temp206 ).
+  ENDMETHOD.
+
+
+  METHOD INTERVALHEADERS.
+    result = _generic( name   = `intervalHeaders` ).
+  ENDMETHOD.
+
+
+  METHOD PLANNINGCALENDAR.
+    DATA temp208 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp209 LIKE LINE OF temp208.
+    CLEAR temp208.
+    
+    temp209-n = `rows`.
+    temp209-v = rows.
+    INSERT temp209 INTO TABLE temp208.
+    temp209-n = `startDate`.
+    temp209-v = startDate.
+    INSERT temp209 INTO TABLE temp208.
+    temp209-n = `appointmentsVisualization`.
+    temp209-v = appointmentsVisualization.
+    INSERT temp209 INTO TABLE temp208.
+    temp209-n = `appointmentSelect`.
+    temp209-v = appointmentSelect.
+    INSERT temp209 INTO TABLE temp208.
+    temp209-n = `showEmptyIntervalHeaders`.
+    temp209-v = showEmptyIntervalHeaders.
+    INSERT temp209 INTO TABLE temp208.
+    temp209-n = `showWeekNumbers`.
+    temp209-v = showWeekNumbers.
+    INSERT temp209 INTO TABLE temp208.
+    result = _generic( name   = `PlanningCalendar`
+                       t_prop = temp208 ).
+  ENDMETHOD.
+
+
+  METHOD PLANNINGCALENDARROW.
+    DATA temp210 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp211 LIKE LINE OF temp210.
+    CLEAR temp210.
+    
+    temp211-n = `appointments`.
+    temp211-v = appointments.
+    INSERT temp211 INTO TABLE temp210.
+    temp211-n = `intervalHeaders`.
+    temp211-v = intervalHeaders.
+    INSERT temp211 INTO TABLE temp210.
+    temp211-n = `icon`.
+    temp211-v = icon.
+    INSERT temp211 INTO TABLE temp210.
+    temp211-n = `title`.
+    temp211-v = title.
+    INSERT temp211 INTO TABLE temp210.
+    temp211-n = `text`.
+    temp211-v = text.
+    INSERT temp211 INTO TABLE temp210.
+    result = _generic( name   = `PlanningCalendarRow`
+                       t_prop = temp210 ).
+  ENDMETHOD.
+
+
+  METHOD ROWS.
+    result = _generic( name   = `rows` ).
+  ENDMETHOD.
 ENDCLASS.
