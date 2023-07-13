@@ -52,28 +52,28 @@ CLASS lcl_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_json_boolean.
-      DATA temp228 TYPE string.
+      DATA temp232 TYPE string.
     IF check_is_boolean( val ) IS NOT INITIAL.
       
       IF val = abap_true.
-        temp228 = `true`.
+        temp232 = `true`.
       ELSE.
-        temp228 = `false`.
+        temp232 = `false`.
       ENDIF.
-      result = temp228.
+      result = temp232.
     ELSE.
       result = val.
     ENDIF.
   ENDMETHOD.
 
   METHOD check_is_boolean.
-        DATA temp229 TYPE REF TO cl_abap_elemdescr.
-        DATA lo_ele LIKE temp229.
+        DATA temp233 TYPE REF TO cl_abap_elemdescr.
+        DATA lo_ele LIKE temp233.
     TRY.
         
-        temp229 ?= cl_abap_elemdescr=>describe_by_data( val ).
+        temp233 ?= cl_abap_elemdescr=>describe_by_data( val ).
         
-        lo_ele = temp229.
+        lo_ele = temp233.
         CASE lo_ele->get_relative_name( ).
           WHEN `ABAP_BOOL` OR `ABAP_BOOLEAN` OR `XSDBOOLEAN`.
             result = abap_true.
@@ -84,9 +84,9 @@ CLASS lcl_utility IMPLEMENTATION.
 
   METHOD get_trim_lower.
 
-    DATA temp230 TYPE string.
-    temp230 = val.
-    result = temp230.
+    DATA temp234 TYPE string.
+    temp234 = val.
+    result = temp234.
     result = to_lower( shift_left( shift_right( result ) ) ).
 
   ENDMETHOD.

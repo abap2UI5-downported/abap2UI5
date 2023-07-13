@@ -12,7 +12,7 @@ CLASS z2ui5_lcl_utility DEFINITION INHERITING FROM cx_no_check.
         data_rtti      TYPE string,
         check_ref_data TYPE abap_bool,
       END OF ty_attri.
-    TYPES ty_T_attri TYPE STANDARD TABLE OF ty_attri WITH DEFAULT KEY.
+    TYPES ty_t_attri TYPE STANDARD TABLE OF ty_attri WITH DEFAULT KEY.
 
     DATA:
       BEGIN OF ms_error,
@@ -201,7 +201,7 @@ CLASS z2ui5_lcl_fw_handler DEFINITION.
       END OF cs_bind_type.
 
     TYPES:
-      BEGIN OF ty_S_next2,
+      BEGIN OF ty_s_next2,
         t_scroll   TYPE z2ui5_if_client=>ty_t_name_value,
         title      TYPE string,
         search     TYPE string,
@@ -269,7 +269,7 @@ CLASS z2ui5_lcl_fw_handler DEFINITION.
       BEGIN OF ty_s_next,
         o_app_call  TYPE REF TO z2ui5_if_app,
         o_app_leave TYPE REF TO z2ui5_if_app,
-        s_set       TYPE ty_S_next2,
+        s_set       TYPE ty_s_next2,
       END OF ty_s_next.
 
     DATA ms_actual TYPE z2ui5_if_client=>ty_s_get.
@@ -733,7 +733,13 @@ CLASS z2ui5_lcl_utility IMPLEMENTATION.
         
         ASSIGN <comp_ui5>->* TO <ls_data_ui5>.
         IF sy-subrc = 0.
-          <comp> = <ls_data_ui5>.
+          CASE ls_comp-type->kind.
+            WHEN cl_abap_typedescr=>kind_table.
+              trans_ref_tab_2_tab( EXPORTING ir_tab_from = <comp_ui5>
+                                   IMPORTING t_result    = <comp> ).
+            WHEN OTHERS.
+              <comp> = <ls_data_ui5>.
+          ENDCASE.
         ENDIF.
       ENDLOOP.
 
@@ -1685,9 +1691,9 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
       CATCH cx_root.
     ENDTRY.
 
-      IF ss_config-search CS `scenario=LAUNCHPAD`.
-        result->ms_actual-check_launchpad_active = abap_true.
-      ENDIF.
+    IF ss_config-search CS `scenario=LAUNCHPAD`.
+      result->ms_actual-check_launchpad_active = abap_true.
+    ENDIF.
 
   ENDMETHOD.
 
@@ -1715,10 +1721,10 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
 *    DATA(lv_q) = z2ui5_lcl_utility=>get_param( `q` ).
 *    DATA(lv_app) = to_lower( z2ui5_lcl_utility=>get_classname_by_ref( ms_db-o_app ) ).
 
-    IF ms_next-S_set-search IS INITIAL.
+    IF ms_next-s_set-search IS INITIAL.
       lo_resp->add_attribute( n = `SEARCH` v = ms_actual-s_config-search ).
     ELSE.
-      lo_resp->add_attribute( n = `SEARCH` v = ms_next-S_set-search ).
+      lo_resp->add_attribute( n = `SEARCH` v = ms_next-s_set-search ).
     ENDIF.
 
     result = lo_resp->get_root( )->stringify( ).
@@ -2106,7 +2112,7 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
     r_result->ms_actual-check_launchpad_active = ms_actual-check_launchpad_active.
     r_result->ms_actual-check_on_navigated = abap_true.
 
-    r_result->ms_next-s_Set = ms_next-s_set.
+    r_result->ms_next-s_set = ms_next-s_set.
 
   ENDMETHOD.
 
@@ -2143,7 +2149,7 @@ CLASS z2ui5_lcl_fw_client IMPLEMENTATION.
     temp33-check_launchpad_active = mo_handler->ms_actual-check_launchpad_active.
     temp33-t_event_arg = mo_handler->ms_actual-t_event_arg.
     temp33-t_scroll_pos = mo_handler->ms_actual-t_scroll_pos.
-    MOVE-CORRESPONDING mo_handler->ms_db TO temp33-s_DRAFT.
+    MOVE-CORRESPONDING mo_handler->ms_db TO temp33-s_draft.
     temp33-check_on_navigated = mo_handler->ms_actual-check_on_navigated.
     temp33-s_config = z2ui5_lcl_fw_handler=>ss_config.
     result = temp33.

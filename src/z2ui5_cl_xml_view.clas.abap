@@ -1243,6 +1243,28 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !press                 TYPE clike OPTIONAL
       RETURNING
         VALUE(result)          TYPE REF TO z2ui5_cl_xml_view .
+    METHODS tree
+      IMPORTING
+        !items                  TYPE clike OPTIONAL
+        !headerText             TYPE clike OPTIONAL
+        !footerText             TYPE clike OPTIONAL
+        !mode                   TYPE clike OPTIONAL
+        !includeItemInSelection TYPE abap_bool OPTIONAL
+        !inset                  TYPE abap_bool OPTIONAL
+        !width                  TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result)           TYPE REF TO z2ui5_cl_xml_view .
+    METHODS standard_tree_item
+      IMPORTING
+        !title        TYPE clike OPTIONAL
+        !icon         TYPE clike OPTIONAL
+        !press        TYPE clike OPTIONAL
+        !detailPress  TYPE clike OPTIONAL
+        !type         TYPE clike OPTIONAL
+        !selected     TYPE clike OPTIONAL
+        !counter      TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
   PROTECTED SECTION.
 
     DATA mv_name  TYPE string.
@@ -1276,7 +1298,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD appointments.
-    result = _generic( name   = `appointments` ).
+    result = _generic( name = `appointments` ).
   ENDMETHOD.
 
 
@@ -2066,15 +2088,15 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp46-n = 'filterChange'.
     temp46-v = filterchange.
     INSERT temp46 INTO TABLE temp45.
-    result = _generic( name    = `FilterBar`
-                        ns     = 'fb'
-                        t_prop = temp45 ).
+    result = _generic( name   = `FilterBar`
+                       ns     = 'fb'
+                       t_prop = temp45 ).
   ENDMETHOD.
 
 
   METHOD filter_control.
     result = _generic( name = `control`
-                        ns  = 'fb' ).
+                       ns   = 'fb' ).
   ENDMETHOD.
 
 
@@ -2095,15 +2117,15 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp48-n = 'visibleInFilterBar'.
     temp48-v = visibleinfilterbar.
     INSERT temp48 INTO TABLE temp47.
-    result = _generic( name    = `FilterGroupItem`
-                        ns     = 'fb'
-                        t_prop = temp47 ).
+    result = _generic( name   = `FilterGroupItem`
+                       ns     = 'fb'
+                       t_prop = temp47 ).
   ENDMETHOD.
 
 
   METHOD filter_group_items.
     result = _generic( name = `filterGroupItems`
-                        ns  = 'fb' ).
+                       ns   = 'fb' ).
   ENDMETHOD.
 
 
@@ -2233,9 +2255,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp58-v = subheader.
     INSERT temp58 INTO TABLE temp57.
     _generic(
-       name  = `GenericTile`
-       ns    = ``
-       t_prop = temp57 ).
+      name   = `GenericTile`
+      ns     = ``
+      t_prop = temp57 ).
 
   ENDMETHOD.
 
@@ -2448,10 +2470,10 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     ls_config = mo_root->mi_client->get( )-s_config.
 
     result = lcl_utility=>get_replace(
-                 iv_val     = xml
-                 iv_begin   = 'controllerName="'
-                 iv_end     = '"'
-                 iv_replace = `controllerName="` && ls_config-controller_name && `"` ).
+      iv_val     = xml
+      iv_begin   = 'controllerName="'
+      iv_end     = '"'
+      iv_replace = `controllerName="` && ls_config-controller_name && `"` ).
 
   ENDMETHOD.
 
@@ -2866,7 +2888,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD intervalheaders.
-    result = _generic( name   = `intervalHeaders` ).
+    result = _generic( name = `intervalHeaders` ).
   ENDMETHOD.
 
 
@@ -3136,8 +3158,8 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp124-n = `id`.
     temp124-v = id.
     INSERT temp124 INTO TABLE temp123.
-    result = _generic( name = `midColumnPages`
-                      ns   = `f`
+    result = _generic( name   = `midColumnPages`
+                       ns     = `f`
                        t_prop = temp123 ).
 
   ENDMETHOD.
@@ -3735,7 +3757,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp164-v = width.
     INSERT temp164 INTO TABLE temp163.
     result = _generic( name   = `RadioButtonGroup`
-                   t_prop = temp163 ).
+                       t_prop = temp163 ).
   ENDMETHOD.
 
 
@@ -3783,7 +3805,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD rows.
-    result = _generic( name   = `rows` ).
+    result = _generic( name = `rows` ).
   ENDMETHOD.
 
 
@@ -4195,6 +4217,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD tilecontent.
 
+
     DATA temp191 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp192 LIKE LINE OF temp191.
     CLEAR temp191.
@@ -4365,7 +4388,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   METHOD tree_columns.
 
     result = _generic( name = `columns`
-                  ns        = `table` ).
+                       ns   = `table` ).
 
   ENDMETHOD.
 
@@ -4409,7 +4432,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   METHOD tree_template.
 
     result = _generic( name = `template`
-                  ns        = `table` ).
+                       ns   = `table` ).
 
   ENDMETHOD.
 
@@ -4441,21 +4464,21 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD ui_columns.
-    result = _generic( name   = `columns`
-                       ns     = 'table' ).
+    result = _generic( name = `columns`
+                       ns   = 'table' ).
   ENDMETHOD.
 
 
   METHOD ui_extension.
 
-    result = _generic( name   = `extension`
-                       ns     = 'table' ).
+    result = _generic( name = `extension`
+                       ns   = 'table' ).
   ENDMETHOD.
 
 
   METHOD ui_row_action.
-    result = _generic( name   = `RowAction`
-                       ns     = `table` ).
+    result = _generic( name = `RowAction`
+                       ns   = `table` ).
   ENDMETHOD.
 
 
@@ -4584,8 +4607,8 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD ui_template.
 
-    result = _generic( name   = `template`
-                       ns     = 'table' ).
+    result = _generic( name = `template`
+                       ns   = 'table' ).
 
   ENDMETHOD.
 
@@ -4745,37 +4768,100 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD numericcontent.
-
+  METHOD tree.
     DATA temp224 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp225 LIKE LINE OF temp224.
     CLEAR temp224.
     
-    temp225-n = `value`.
-    temp225-v = value.
+    temp225-n = `items`.
+    temp225-v = items.
     INSERT temp225 INTO TABLE temp224.
-    temp225-n = `icon`.
-    temp225-v = icon.
+    temp225-n = `headerText`.
+    temp225-v = headertext.
     INSERT temp225 INTO TABLE temp224.
-    temp225-n = `withMargin`.
-    temp225-v = lcl_utility=>get_json_boolean( withMargin ).
+    temp225-n = `footerText`.
+    temp225-v = footerText.
     INSERT temp225 INTO TABLE temp224.
-    result = _generic( name   = `NumericContent`
+    temp225-n = `mode`.
+    temp225-v = mode.
+    INSERT temp225 INTO TABLE temp224.
+    temp225-n = `width`.
+    temp225-v = width.
+    INSERT temp225 INTO TABLE temp224.
+    temp225-n = `includeItemInSelection`.
+    temp225-v = lcl_utility=>get_json_boolean( includeItemInSelection ).
+    INSERT temp225 INTO TABLE temp224.
+    temp225-n = `inset`.
+    temp225-v = lcl_utility=>get_json_boolean( inset ).
+    INSERT temp225 INTO TABLE temp224.
+    result = _generic( name   = `Tree`
                        t_prop = temp224 ).
+  ENDMETHOD.
+
+  METHOD standard_tree_item.
+    DATA temp226 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp227 LIKE LINE OF temp226.
+    result = me.
+    
+    CLEAR temp226.
+    
+    temp227-n = `title`.
+    temp227-v = title.
+    INSERT temp227 INTO TABLE temp226.
+    temp227-n = `icon`.
+    temp227-v = icon.
+    INSERT temp227 INTO TABLE temp226.
+    temp227-n = `press`.
+    temp227-v = press.
+    INSERT temp227 INTO TABLE temp226.
+    temp227-n = `detailPress`.
+    temp227-v = detailPress.
+    INSERT temp227 INTO TABLE temp226.
+    temp227-n = `type`.
+    temp227-v = type.
+    INSERT temp227 INTO TABLE temp226.
+    temp227-n = `counter`.
+    temp227-v = counter.
+    INSERT temp227 INTO TABLE temp226.
+    temp227-n = `selected`.
+    temp227-v = selected.
+    INSERT temp227 INTO TABLE temp226.
+    _generic( name   = `StandardTreeItem`
+              t_prop = temp226 ).
+
+ endmethod.
+
+  METHOD numericcontent.
+
+    DATA temp228 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp229 LIKE LINE OF temp228.
+    CLEAR temp228.
+    
+    temp229-n = `value`.
+    temp229-v = value.
+    INSERT temp229 INTO TABLE temp228.
+    temp229-n = `icon`.
+    temp229-v = icon.
+    INSERT temp229 INTO TABLE temp228.
+    temp229-n = `withMargin`.
+    temp229-v = lcl_utility=>get_json_boolean( withMargin ).
+    INSERT temp229 INTO TABLE temp228.
+    result = _generic( name   = `NumericContent`
+                       t_prop = temp228 ).
 
   ENDMETHOD.
 
   METHOD imagecontent.
 
-        DATA temp226 TYPE z2ui5_if_client=>ty_t_name_value.
-        DATA temp227 LIKE LINE OF temp226.
-        CLEAR temp226.
+        DATA temp230 TYPE z2ui5_if_client=>ty_t_name_value.
+        DATA temp231 LIKE LINE OF temp230.
+        CLEAR temp230.
         
-        temp227-n = `src`.
-        temp227-v = src.
-        INSERT temp227 INTO TABLE temp226.
+        temp231-n = `src`.
+        temp231-v = src.
+        INSERT temp231 INTO TABLE temp230.
         result = _generic( name   = `ImageContent`
-                       t_prop = temp226 ).
+                       t_prop = temp230 ).
 
 
   ENDMETHOD.
