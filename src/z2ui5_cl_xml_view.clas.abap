@@ -1207,6 +1207,25 @@ public section.
       !COUNTER type CLIKE optional
     returning
       value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+  methods ICONTABBAR
+    importing
+      !CLASS type CLIKE optional
+      !SELECT type CLIKE optional
+      !EXPAND type CLIKE optional
+      !EXPANDABLE type ABAP_BOOL optional
+      !EXPANDED type ABAP_BOOL optional
+      !SELECTEDKEY type CLIKE optional
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+  methods ICONTABFILTER
+    importing
+      !ICON type CLIKE optional
+      !ICONCOLOR type CLIKE optional
+      !COUNT type CLIKE optional
+      !TEXT type ABAP_BOOL optional
+      !KEY type ABAP_BOOL optional
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
   PROTECTED SECTION.
 
     DATA mv_name  TYPE string.
@@ -4813,5 +4832,60 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
                        t_prop = temp230 ).
 
 
+  ENDMETHOD.
+
+
+  METHOD icontabbar.
+
+        DATA temp232 TYPE z2ui5_if_client=>ty_t_name_value.
+        DATA temp233 LIKE LINE OF temp232.
+        CLEAR temp232.
+        
+        temp233-n = `class`.
+        temp233-v = class.
+        INSERT temp233 INTO TABLE temp232.
+        temp233-n = `select`.
+        temp233-v = select.
+        INSERT temp233 INTO TABLE temp232.
+        temp233-n = `expand`.
+        temp233-v = expand.
+        INSERT temp233 INTO TABLE temp232.
+        temp233-n = `expandable`.
+        temp233-v = expandable.
+        INSERT temp233 INTO TABLE temp232.
+        temp233-n = `expanded`.
+        temp233-v = expanded.
+        INSERT temp233 INTO TABLE temp232.
+        temp233-n = `selectedKey`.
+        temp233-v = selectedKey.
+        INSERT temp233 INTO TABLE temp232.
+        result = _generic( name   = `IconTabBar`
+                       t_prop = temp232 ).
+  ENDMETHOD.
+
+
+  METHOD icontabfilter.
+
+        DATA temp234 TYPE z2ui5_if_client=>ty_t_name_value.
+        DATA temp235 LIKE LINE OF temp234.
+        CLEAR temp234.
+        
+        temp235-n = `icon`.
+        temp235-v = icon.
+        INSERT temp235 INTO TABLE temp234.
+        temp235-n = `iconColor`.
+        temp235-v = iconColor.
+        INSERT temp235 INTO TABLE temp234.
+        temp235-n = `count`.
+        temp235-v = count.
+        INSERT temp235 INTO TABLE temp234.
+        temp235-n = `text`.
+        temp235-v = text.
+        INSERT temp235 INTO TABLE temp234.
+        temp235-n = `key`.
+        temp235-v = key.
+        INSERT temp235 INTO TABLE temp234.
+        result = _generic( name   = `IconTabFilter`
+                       t_prop = temp234 ).
   ENDMETHOD.
 ENDCLASS.
