@@ -368,6 +368,7 @@ CLASS z2ui5_lcl_utility IMPLEMENTATION.
 
   METHOD get_abap_2_json.
       DATA temp6 TYPE string.
+
     IF check_is_boolean( val ) IS NOT INITIAL.
       
       IF val = abap_true.
@@ -379,6 +380,7 @@ CLASS z2ui5_lcl_utility IMPLEMENTATION.
     ELSE.
       result = |"{ escape( val = val  format = cl_abap_format=>e_json_string ) }"|.
     ENDIF.
+
   ENDMETHOD.
 
   METHOD check_is_boolean.
