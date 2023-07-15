@@ -112,6 +112,8 @@ public section.
       !SELECTIONCHANGE type CLIKE optional
       !ALTERNATEROWCOLORS type CLIKE optional
       !AUTOPOPINMODE type CLIKE optional
+      !INSET type CLIKE optional
+      !SHOWSEPARATORS type CLIKE optional
     preferred parameter ITEMS
     returning
       value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
@@ -388,6 +390,7 @@ public section.
       !WIDTH type CLIKE optional
       !MINSCREENWIDTH type CLIKE optional
       !DEMANDPOPIN type CLIKE optional
+      !HALIGN type CLIKE optional
     preferred parameter WIDTH
     returning
       value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
@@ -1219,11 +1222,15 @@ public section.
       value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
   methods ICONTABFILTER
     importing
+      !SHOWALL type ABAP_BOOL optional
       !ICON type CLIKE optional
       !ICONCOLOR type CLIKE optional
       !COUNT type CLIKE optional
-      !TEXT type ABAP_BOOL optional
-      !KEY type ABAP_BOOL optional
+      !TEXT type CLIKE optional
+      !KEY type CLIKE optional
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+  methods ICONTABSEPARATOR
     returning
       value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
   PROTECTED SECTION.
@@ -1684,6 +1691,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp24 INTO TABLE temp23.
     temp24-n = `minScreenWidth`.
     temp24-v = minScreenWidth.
+    INSERT temp24 INTO TABLE temp23.
+    temp24-n = `hAlign`.
+    temp24-v = hAlign.
     INSERT temp24 INTO TABLE temp23.
     temp24-n = `demandPopin`.
     temp24-v = Lcl_utility=>get_json_boolean( demandPopin ).
@@ -4104,8 +4114,14 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp186-n = `selectionChange`.
     temp186-v = selectionchange.
     INSERT temp186 INTO TABLE temp185.
+    temp186-n = `showSeparators`.
+    temp186-v = showSeparators.
+    INSERT temp186 INTO TABLE temp185.
     temp186-n = `alternateRowColors`.
     temp186-v = lcl_utility=>get_json_boolean( alternateRowColors ).
+    INSERT temp186 INTO TABLE temp185.
+    temp186-n = `inset`.
+    temp186-v = lcl_utility=>get_json_boolean( inset ).
     INSERT temp186 INTO TABLE temp185.
     temp186-n = `autoPopinMode`.
     temp186-v = lcl_utility=>get_json_boolean( autoPopinMode ).
@@ -4876,6 +4892,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
         temp235-n = `iconColor`.
         temp235-v = iconColor.
         INSERT temp235 INTO TABLE temp234.
+        temp235-n = `showAll`.
+        temp235-v = showAll.
+        INSERT temp235 INTO TABLE temp234.
         temp235-n = `count`.
         temp235-v = count.
         INSERT temp235 INTO TABLE temp234.
@@ -4887,5 +4906,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
         INSERT temp235 INTO TABLE temp234.
         result = _generic( name   = `IconTabFilter`
                        t_prop = temp234 ).
+  ENDMETHOD.
+
+
+  METHOD ICONTABSEPARATOR.
+
+        result = _generic( name   = `IconTabSeparator` ).
+
   ENDMETHOD.
 ENDCLASS.
