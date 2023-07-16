@@ -930,11 +930,13 @@ CLASS z2ui5_lcl_utility_tree_json IMPLEMENTATION.
     CREATE OBJECT result.
     result->mo_root = result.
 
+
     
     temp22 = iv_json.
     /ui2/cl_json=>deserialize( EXPORTING json         = temp22
                                          assoc_arrays = abap_true
                                CHANGING  data         = result->mr_actual ).
+
   ENDMETHOD.
 
   METHOD new.
