@@ -1258,7 +1258,8 @@ public section.
 ENDCLASS.
 
 
-CLASS z2ui5_cl_xml_view IMPLEMENTATION.
+
+CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD actions.
@@ -1322,6 +1323,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   METHOD bar.
     result = _generic( name = `Bar` ).
   ENDMETHOD.
+
 
   METHOD begin_column_pages.
     " todo, implement method
@@ -4120,6 +4122,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
               t_prop = temp185 ).
   ENDMETHOD.
 
+
   METHOD step_input.
     DATA temp187 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp188 LIKE LINE OF temp187.
@@ -4890,6 +4893,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   ENDMETHOD.
 
+
   METHOD tree.
     DATA temp232 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp233 LIKE LINE OF temp232.
@@ -4953,5 +4957,4 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
               t_prop = temp234 ).
 
   ENDMETHOD.
-
 ENDCLASS.
