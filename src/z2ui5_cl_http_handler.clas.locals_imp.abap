@@ -798,16 +798,17 @@ CLASS z2ui5_lcl_utility IMPLEMENTATION.
     CLEAR temp13.
     
     lt_params = temp13.
-
     
     lv_search = z2ui5_lcl_fw_handler=>so_body->get_attribute( `OLOCATION` )->get_attribute( `SEARCH` )->get_val( ).
 
-    REPLACE `%3D` IN lv_search WITH `=`.
     
     
     SPLIT lv_search AT `&sap-startup-params=` INTO lv_search1 lv_search2.
     IF lv_search2 IS NOT INITIAL.
       lv_search = lv_search2.
+      REPLACE `%3D` IN lv_search WITH `=`.
+      REPLACE `%26` IN lv_search WITH `&`.
+      REPLACE `%2509` IN lv_search WITH ``.
     ELSE.
       lv_search = lv_search1.
     ENDIF.
@@ -1916,10 +1917,21 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD set_app_start.
+        DATA lv_classname TYPE string.
 
+    TRY.
+        
+        lv_classname = to_upper( so_body->get_attribute( 'APP_START' )->get_val( ) ).
+        SHIFT lv_classname LEFT DELETING LEADING cl_abap_char_utilities=>horizontal_tab.
+        SHIFT lv_classname RIGHT DELETING TRAILING cl_abap_char_utilities=>horizontal_tab.
+        lv_classname = z2ui5_lcl_utility=>get_trim_upper( lv_classname ).
+      CATCH cx_root.
+    ENDTRY.
 
-    DATA lv_classname TYPE string.
-    lv_classname = z2ui5_lcl_utility=>get_param( `app_start` ).
+    IF lv_classname IS INITIAL.
+      lv_classname = z2ui5_lcl_utility=>get_param( `app_start` ).
+    ENDIF.
+
     IF lv_classname IS INITIAL.
       TRY.
           lv_classname = to_upper( so_body->get_attribute( 'APP_START' )->get_val( ) ).
