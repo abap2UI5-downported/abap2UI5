@@ -1471,7 +1471,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp14-v = tentative.
     INSERT temp14 INTO TABLE temp13.
     result = _generic( name   = `CalendarAppointment`
-                       ns     = `unified`
+                       ns     = `u`
                        t_prop = temp13 ).
   ENDMETHOD.
 
