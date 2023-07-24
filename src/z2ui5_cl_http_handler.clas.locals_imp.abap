@@ -1401,7 +1401,7 @@ CLASS z2ui5_lcl_fw_app IMPLEMENTATION.
        ` /></f:content></f:SimpleForm>`.
 
     lv_xml_main = lv_xml_main && `<f:SimpleForm  editable="true" ` && |\n| &&
-   `  title="Demos" ` && |\n| &&
+   `  title="Samples" ` && |\n| &&
    `  layout="ResponsiveGridLayout" ` && |\n| &&
    ` >`.
 
@@ -1421,7 +1421,7 @@ CLASS z2ui5_lcl_fw_app IMPLEMENTATION.
     ` > <Label/><Button ` && |\n| &&
     `  press="` && client->_event( val = `DEMOS` check_view_destroy = abap_true ) && `" ` && |\n| &&
     `  text="Continue..." enabled="` && temp7 && |" \n| &&
-    ` /><Button visible="false"/><Link text="More on github..."  target="_blank" href="https://github.com/abap2UI5/abap2UI5/blob/main/docs/links.md" /></f:content></f:SimpleForm>`.
+    ` /><Button visible="false"/><Link text="More on GitHub..."  target="_blank" href="https://github.com/abap2UI5/abap2UI5/blob/main/docs/links.md" /></f:content></f:SimpleForm>`.
 
     lv_xml_main = lv_xml_main && `</l:content></l:Grid></Page></Shell></mvc:View>`.
 
@@ -1641,6 +1641,7 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
 
     CLEAR ss_config.
     ss_config-controller_name = `z2ui5_controller`.
+    ss_config-view_model_edit_name = `oUpdate`.
     ss_config-body = body.
     so_body = z2ui5_lcl_utility_tree_json=>factory( body ).
 
@@ -1833,7 +1834,7 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
     
     lr_view_model = z2ui5_lcl_utility_tree_json=>factory( ).
     
-    lo_update = lr_view_model->add_attribute_object( `oUpdate` ).
+    lo_update = lr_view_model->add_attribute_object( ss_config-view_model_edit_name ).
 
     
     
@@ -1904,7 +1905,7 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
     result->ms_db-id_prev = id_prev.
 
     TRY.
-        model_set_backend( model = so_body->get_attribute( `OUPDATE` )->mr_actual
+        model_set_backend( model = so_body->get_attribute( ss_config-view_model_edit_name )->mr_actual
                            app   = result->ms_db-o_app
                            t_attri  = result->ms_db-t_attri ).
       CATCH cx_root.
@@ -2056,7 +2057,7 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
         lr_attri->bind_type = type.
         
         IF type = cs_bind_type-two_way.
-          temp23 = `/oUpdate/`.
+          temp23 = `/` && ss_config-view_model_edit_name && `/`.
         ELSE.
           temp23 = `/`.
         ENDIF.

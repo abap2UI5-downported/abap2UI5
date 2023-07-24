@@ -152,15 +152,18 @@ public section.
   methods OBJECT_PAGE_DYN_HEADER_TITLE
     returning
       value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+
   methods GENERICTILE
     importing
-      !CLASS type CLIKE optional
-      !HEADER type CLIKE optional
-      !PRESS type CLIKE optional
+      !CLASS     type CLIKE optional
+      !mode      type CLIKE optional
+      !HEADER    type CLIKE optional
+      !PRESS     type CLIKE optional
       !FRAMETYPE type CLIKE optional
       !SUBHEADER type CLIKE optional
     returning
-      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW.
+
   methods NUMERICCONTENT
     importing
       !VALUE type CLIKE optional
@@ -2354,6 +2357,9 @@ ENDMETHOD.
     INSERT temp60 INTO TABLE temp59.
     temp60-n = `header`.
     temp60-v = header.
+    INSERT temp60 INTO TABLE temp59.
+    temp60-n = `mode`.
+    temp60-v = mode.
     INSERT temp60 INTO TABLE temp59.
     temp60-n = `press`.
     temp60-v = press.
