@@ -347,6 +347,7 @@ public section.
       !VALUELIVEUPDATE type CLIKE optional
       !AUTOCOMPLETE type CLIKE optional
       !MAXSUGGESTIONWIDTH type CLIKE optional
+      !FIELDWIDTH type CLIKE optional
     preferred parameter VALUE
     returning
       value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
@@ -3092,6 +3093,9 @@ METHOD gantt_chart_container.
     INSERT temp100 INTO TABLE temp99.
     temp100-n = `maxSuggestionWidth`.
     temp100-v = maxsuggestionwidth.
+    INSERT temp100 INTO TABLE temp99.
+    temp100-n = `fieldWidth`.
+    temp100-v = fieldwidth.
     INSERT temp100 INTO TABLE temp99.
     _generic( name   = `Input`
               t_prop = temp99 ).
