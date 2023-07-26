@@ -1208,13 +1208,8 @@ CLASS z2ui5_lcl_fw_app IMPLEMENTATION.
       ms_error-x_error = ms_error-x_error->previous.
     ENDWHILE.
 
-*    ms_error-x_error->get_source_position( IMPORTING program_name = DATA(lv_prog) ).
-
     
     lv_txt       = ms_error-x_error->get_text( ).
-*    DATA(lv_classname) = segment( val = lv_prog index = 1 sep = `=` ).
-*    DATA(lv_link2)     = client->get( )-s_config-origin && `/sap/bc/adt/oo/classes/` && lv_classname && `/source/main`.
-*    DATA(lv_source)    = `<p><a href="` && lv_link2 && `" style="color:blue; font-weight:600;">Source Code</a></p>`.
     
     lv_descr     = escape( val = lv_txt format = cl_abap_format=>e_xml_attr ).
 
@@ -1225,7 +1220,8 @@ CLASS z2ui5_lcl_fw_app IMPLEMENTATION.
     SHIFT lv_url LEFT DELETING LEADING ` `.
     
     lv_url_app  = lv_url && ls_get-s_config-search.
-    "`?app_start=` && lv_classname.
+    lv_url = escape( val = lv_url format = cl_abap_format=>e_xml_attr ).
+    lv_url_app = escape( val = lv_url_app format = cl_abap_format=>e_xml_attr ).
 
     
     CLEAR temp26.
@@ -1268,9 +1264,7 @@ CLASS z2ui5_lcl_fw_app IMPLEMENTATION.
                    ` />` &&
                    `<Button ` && |\n| &&
                    `  press="` && client->_event_client( action = client->cs_event-location_reload t_arg = temp5 ) && `" ` && |\n| &&
-                   `  text="Restart" ` && |\n| &&
-                   `  ` && |\n| &&
-                   ` /></additionalContent></IllustratedMessage></Shell></mvc:View>`.
+                   `  text="Restart" /></additionalContent></IllustratedMessage></Shell></mvc:View>`.
 
     client->view_display( lv_xml ).
 
