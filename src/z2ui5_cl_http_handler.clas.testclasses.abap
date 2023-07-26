@@ -92,19 +92,19 @@ TYPES BEGIN OF ty_s_test.
 TYPES comp1 TYPE string.
 TYPES comp2 TYPE string.
 TYPES END OF ty_s_test.
-    DATA temp37 TYPE ty_s_test.
-    DATA ls_test LIKE temp37.
+    DATA temp36 TYPE ty_s_test.
+    DATA ls_test LIKE temp36.
     DATA lv_result TYPE string.
     CREATE OBJECT lo_tree TYPE z2ui5_lcl_utility_tree_json.
 
     
 
     
-    CLEAR temp37.
-    temp37-comp1 = `AAA`.
-    temp37-comp2 = `BBB`.
+    CLEAR temp36.
+    temp36-comp1 = `AAA`.
+    temp36-comp2 = `BBB`.
     
-    ls_test = temp37.
+    ls_test = temp36.
 
     lo_tree->add_attribute_object( `CCC` )->add_attribute_struc( ls_test ).
 
@@ -126,29 +126,29 @@ TYPES END OF ty_s_test.
       END OF ty_row.
     TYPES ty_t_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
 
-    DATA temp38 TYPE ty_t_tab.
-    DATA temp39 LIKE LINE OF temp38.
-    DATA lt_tab LIKE temp38.
-    DATA temp40 TYPE ty_t_tab.
-    DATA lt_tab2 LIKE temp40.
+    DATA temp37 TYPE ty_t_tab.
+    DATA temp38 LIKE LINE OF temp37.
+    DATA lt_tab LIKE temp37.
+    DATA temp39 TYPE ty_t_tab.
+    DATA lt_tab2 LIKE temp39.
     DATA lv_tab TYPE string.
-    CLEAR temp38.
+    CLEAR temp37.
     
-    temp39-title = 'Test'.
-    temp39-value = 'this is a description'.
-    temp39-selected = abap_true.
-    INSERT temp39 INTO TABLE temp38.
-    temp39-title = 'Test2'.
-    temp39-value = 'this is a new descr'.
-    temp39-selected = abap_false.
-    INSERT temp39 INTO TABLE temp38.
+    temp38-title = 'Test'.
+    temp38-value = 'this is a description'.
+    temp38-selected = abap_true.
+    INSERT temp38 INTO TABLE temp37.
+    temp38-title = 'Test2'.
+    temp38-value = 'this is a new descr'.
+    temp38-selected = abap_false.
+    INSERT temp38 INTO TABLE temp37.
     
-    lt_tab = temp38.
+    lt_tab = temp37.
 
     
-    CLEAR temp40.
+    CLEAR temp39.
     
-    lt_tab2 = temp40.
+    lt_tab2 = temp39.
 
     
     lv_tab = z2ui5_lcl_utility=>trans_any_2_json( lt_tab ).
@@ -172,30 +172,30 @@ TYPES END OF ty_s_test.
       END OF ty_row.
     TYPES ty_t_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
 
-    DATA temp41 TYPE ty_t_tab.
-    DATA temp42 LIKE LINE OF temp41.
-    DATA lt_tab LIKE temp41.
-    DATA temp43 TYPE ty_t_tab.
-    DATA lt_tab2 LIKE temp43.
+    DATA temp40 TYPE ty_t_tab.
+    DATA temp41 LIKE LINE OF temp40.
+    DATA lt_tab LIKE temp40.
+    DATA temp42 TYPE ty_t_tab.
+    DATA lt_tab2 LIKE temp42.
     DATA lv_tab TYPE string.
     DATA lo_data TYPE REF TO data.
-    CLEAR temp41.
+    CLEAR temp40.
     
-    temp42-title = 'Test'.
-    temp42-value = 'this is a description'.
-    temp42-selected = abap_true.
-    INSERT temp42 INTO TABLE temp41.
-    temp42-title = 'Test2'.
-    temp42-value = 'this is a new descr'.
-    temp42-selected = abap_false.
-    INSERT temp42 INTO TABLE temp41.
+    temp41-title = 'Test'.
+    temp41-value = 'this is a description'.
+    temp41-selected = abap_true.
+    INSERT temp41 INTO TABLE temp40.
+    temp41-title = 'Test2'.
+    temp41-value = 'this is a new descr'.
+    temp41-selected = abap_false.
+    INSERT temp41 INTO TABLE temp40.
     
-    lt_tab = temp41.
+    lt_tab = temp40.
 
     
-    CLEAR temp43.
+    CLEAR temp42.
     
-    lt_tab2 = temp43.
+    lt_tab2 = temp42.
 
     
     lv_tab = z2ui5_lcl_utility=>trans_any_2_json( lt_tab ).
@@ -221,51 +221,51 @@ CLASS ltcl_unit_01_utility IMPLEMENTATION.
 
     DATA lo_app TYPE REF TO ltcl_unit_04_deep_data.
     DATA lt_attri TYPE z2ui5_lcl_utility=>ty_t_attri.
-    DATA temp44 TYPE z2ui5_lcl_utility=>ty_t_attri.
-    DATA temp45 LIKE LINE OF temp44.
-    DATA lt_attri_result LIKE temp44.
+    DATA temp43 TYPE z2ui5_lcl_utility=>ty_t_attri.
+    DATA temp44 LIKE LINE OF temp43.
+    DATA lt_attri_result LIKE temp43.
     CREATE OBJECT lo_app TYPE ltcl_unit_04_deep_data.
 
     
     lt_attri = z2ui5_lcl_utility=>get_t_attri_by_ref( lo_app ).
 
     
-    CLEAR temp44.
+    CLEAR temp43.
     
-    temp45-name = `Z2UI5_IF_APP~ID`.
-    temp45-type_kind = `g`.
-    temp45-type = ``.
-    temp45-bind_type = ``.
-    temp45-data_stringify = ``.
-    temp45-data_rtti = ``.
-    temp45-check_ref_data = ''.
-    INSERT temp45 INTO TABLE temp44.
-    temp45-name = `CHECK_INITIALIZED`.
-    temp45-type_kind = `C`.
-    temp45-type = ``.
-    temp45-bind_type = ``.
-    temp45-data_stringify = ``.
-    temp45-data_rtti = ``.
-    temp45-check_ref_data = ''.
-    INSERT temp45 INTO TABLE temp44.
-    temp45-name = `SV_STATUS`.
-    temp45-type_kind = `g`.
-    temp45-type = ``.
-    temp45-bind_type = ``.
-    temp45-data_stringify = ``.
-    temp45-data_rtti = ``.
-    temp45-check_ref_data = ''.
-    INSERT temp45 INTO TABLE temp44.
-    temp45-name = `T_TAB`.
-    temp45-type_kind = `h`.
-    temp45-type = ``.
-    temp45-bind_type = ``.
-    temp45-data_stringify = ``.
-    temp45-data_rtti = ``.
-    temp45-check_ref_data = ''.
-    INSERT temp45 INTO TABLE temp44.
+    temp44-name = `Z2UI5_IF_APP~ID`.
+    temp44-type_kind = `g`.
+    temp44-type = ``.
+    temp44-bind_type = ``.
+    temp44-data_stringify = ``.
+    temp44-data_rtti = ``.
+    temp44-check_ref_data = ''.
+    INSERT temp44 INTO TABLE temp43.
+    temp44-name = `CHECK_INITIALIZED`.
+    temp44-type_kind = `C`.
+    temp44-type = ``.
+    temp44-bind_type = ``.
+    temp44-data_stringify = ``.
+    temp44-data_rtti = ``.
+    temp44-check_ref_data = ''.
+    INSERT temp44 INTO TABLE temp43.
+    temp44-name = `SV_STATUS`.
+    temp44-type_kind = `g`.
+    temp44-type = ``.
+    temp44-bind_type = ``.
+    temp44-data_stringify = ``.
+    temp44-data_rtti = ``.
+    temp44-check_ref_data = ''.
+    INSERT temp44 INTO TABLE temp43.
+    temp44-name = `T_TAB`.
+    temp44-type_kind = `h`.
+    temp44-type = ``.
+    temp44-bind_type = ``.
+    temp44-data_stringify = ``.
+    temp44-data_rtti = ``.
+    temp44-check_ref_data = ''.
+    INSERT temp44 INTO TABLE temp43.
     
-    lt_attri_result = temp44.
+    lt_attri_result = temp43.
 
     IF lt_attri_result <> lt_attri.
       cl_abap_unit_assert=>fail( msg = 'utility - create t_attri failed' quit = 5 ).
@@ -312,54 +312,54 @@ CLASS ltcl_unit_01_utility IMPLEMENTATION.
   METHOD test_util_01_get_classdescr.
 
     DATA lo_app TYPE REF TO ltcl_unit_04_deep_data.
-    DATA temp46 TYPE REF TO cl_abap_classdescr.
-    DATA lt_attri LIKE temp46->attributes.
-    DATA temp47 TYPE abap_attrdescr_tab.
-    DATA temp48 LIKE LINE OF temp47.
-    DATA lt_test LIKE temp47.
+    DATA temp45 TYPE REF TO cl_abap_classdescr.
+    DATA lt_attri LIKE temp45->attributes.
+    DATA temp46 TYPE abap_attrdescr_tab.
+    DATA temp47 LIKE LINE OF temp46.
+    DATA lt_test LIKE temp46.
     CREATE OBJECT lo_app TYPE ltcl_unit_04_deep_data.
 
     
-    temp46 ?= cl_abap_objectdescr=>describe_by_object_ref( lo_app ).
+    temp45 ?= cl_abap_objectdescr=>describe_by_object_ref( lo_app ).
     
-    lt_attri = temp46->attributes.
+    lt_attri = temp45->attributes.
 
     
-    CLEAR temp47.
+    CLEAR temp46.
     
-    temp48-decimals = '0'.
-    temp48-visibility = 'U'.
-    temp48-is_inherited = ''.
-    temp48-is_constant = ''.
-    temp48-is_virtual = ''.
-    temp48-is_read_only = ''.
-    temp48-alias_for = ''.
-    temp48-length = '8'.
-    temp48-name = 'Z2UI5_IF_APP~ID'.
-    temp48-type_kind = 'g'.
-    temp48-is_interface = 'X'.
-    temp48-is_class = ''.
-    INSERT temp48 INTO TABLE temp47.
-    temp48-length = '2'.
-    temp48-name = 'CHECK_INITIALIZED'.
-    temp48-type_kind = 'C'.
-    temp48-is_interface = ''.
-    temp48-is_class = ''.
-    INSERT temp48 INTO TABLE temp47.
-    temp48-length = '8'.
-    temp48-name = 'SV_STATUS'.
-    temp48-type_kind = 'g'.
-    temp48-is_interface = ''.
-    temp48-is_class = 'X'.
-    INSERT temp48 INTO TABLE temp47.
-    temp48-length = '8'.
-    temp48-name = 'T_TAB'.
-    temp48-type_kind = 'h'.
-    temp48-is_interface = ''.
-    temp48-is_class = 'X'.
-    INSERT temp48 INTO TABLE temp47.
+    temp47-decimals = '0'.
+    temp47-visibility = 'U'.
+    temp47-is_inherited = ''.
+    temp47-is_constant = ''.
+    temp47-is_virtual = ''.
+    temp47-is_read_only = ''.
+    temp47-alias_for = ''.
+    temp47-length = '8'.
+    temp47-name = 'Z2UI5_IF_APP~ID'.
+    temp47-type_kind = 'g'.
+    temp47-is_interface = 'X'.
+    temp47-is_class = ''.
+    INSERT temp47 INTO TABLE temp46.
+    temp47-length = '2'.
+    temp47-name = 'CHECK_INITIALIZED'.
+    temp47-type_kind = 'C'.
+    temp47-is_interface = ''.
+    temp47-is_class = ''.
+    INSERT temp47 INTO TABLE temp46.
+    temp47-length = '8'.
+    temp47-name = 'SV_STATUS'.
+    temp47-type_kind = 'g'.
+    temp47-is_interface = ''.
+    temp47-is_class = 'X'.
+    INSERT temp47 INTO TABLE temp46.
+    temp47-length = '8'.
+    temp47-name = 'T_TAB'.
+    temp47-type_kind = 'h'.
+    temp47-is_interface = ''.
+    temp47-is_class = 'X'.
+    INSERT temp47 INTO TABLE temp46.
     
-    lt_test = temp47.
+    lt_test = temp46.
 
     IF lt_test <> lt_attri.
       cl_abap_unit_assert=>fail( msg = 'utility - get abap_attrdescr_tab table wrong' quit = 5 ).
@@ -413,8 +413,8 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD z2ui5_if_app~main.
-      DATA temp49 TYPE z2ui5_if_client=>ty_t_name_value.
-      DATA temp50 LIKE LINE OF temp49.
+      DATA temp48 TYPE z2ui5_if_client=>ty_t_name_value.
+      DATA temp49 LIKE LINE OF temp48.
       DATA lo_app TYPE REF TO ltcl_unit_02_app_start.
     IF check_initialized = abap_false.
       check_initialized = abap_true.
@@ -518,14 +518,14 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
       client->cursor_set(  id = 'id_text2'  cursorpos = '5' selectionstart = '5' selectionend = '10'  ).
 
       
-      CLEAR temp49.
+      CLEAR temp48.
       
-      temp50-v = '99999'.
-      temp50-n = 'id_page'.
-      INSERT temp50 INTO TABLE temp49.
-      temp50-n = 'id_text3'.
-      INSERT temp50 INTO TABLE temp49.
-      client->scroll_position_set( temp49 ).
+      temp49-v = '99999'.
+      temp49-n = 'id_page'.
+      INSERT temp49 INTO TABLE temp48.
+      temp49-n = 'id_text3'.
+      INSERT temp49 INTO TABLE temp48.
+      client->scroll_position_set( temp48 ).
 
     ENDIF.
 
@@ -569,6 +569,7 @@ CLASS ltcl_unit_02_app_start IMPLEMENTATION.
     IF <val>(9) <> `<mvc:View`.
       cl_abap_unit_assert=>fail( msg = 'xml view - intital view wrong' quit = 5 ).
     ENDIF.
+
   ENDMETHOD.
 
   METHOD test_id.
@@ -907,6 +908,54 @@ CLASS ltcl_unit_03_app_ajax IMPLEMENTATION.
     DATA lo_data TYPE REF TO data.
     FIELD-SYMBOLS <val> TYPE any.
     DATA lv_assign TYPE string.
+    DATA temp50 TYPE string.
+    DATA lv_id LIKE temp50.
+    DATA lv_request TYPE string.
+    lv_response = z2ui5_cl_http_handler=>http_post(
+       body = `{ "OLOCATION" : { "SEARCH" : "app_start=LTCL_UNIT_02_APP_START"}}` ).
+
+    
+    /ui2/cl_json=>deserialize( EXPORTING json = lv_response
+                               CHANGING  data = lo_data ).
+
+    
+
+    UNASSIGN <val>.
+    
+    lv_assign = `ID->*`.
+    ASSIGN lo_data->(lv_assign) TO <val>.
+    IF <val> IS INITIAL.
+      cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
+    ENDIF.
+    
+    temp50 = <val>.
+    
+    lv_id = temp50.
+
+    
+    lv_request = `{"oUpdate":{"QUANTITY":"600"},"ID": "` && lv_id && `" ,"ARGUMENTS":[{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}] }`.
+    lv_response = z2ui5_cl_http_handler=>http_post(
+          body = lv_request
+           ).
+
+    CLEAR lo_data.
+    /ui2/cl_json=>deserialize( EXPORTING json = lv_response
+                               CHANGING  data = lo_data ).
+
+    UNASSIGN <val>.
+    lv_assign = `OVIEWMODEL->OUPDATE->QUANTITY->*`.
+    ASSIGN lo_data->(lv_assign) TO <val>.
+    IF <val> <> `600`.
+      cl_abap_unit_assert=>fail( msg = 'data binding - frontend updated value wrong after roundtrip' quit = 5 ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD test_app_event.
+
+    DATA lv_response TYPE string.
+    DATA lo_data TYPE REF TO data.
+    FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_assign TYPE string.
     DATA temp51 TYPE string.
     DATA lv_id LIKE temp51.
     DATA lv_request TYPE string.
@@ -932,56 +981,7 @@ CLASS ltcl_unit_03_app_ajax IMPLEMENTATION.
     lv_id = temp51.
 
     
-    lv_request = `{"oUpdate":{"QUANTITY":"600"},"ID": "` && lv_id && `" ,"ARGUMENTS":{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}}`.
-*    z2ui5_cl_http_handler=>client = VALUE #( body = lv_request ).
-    lv_response = z2ui5_cl_http_handler=>http_post(
-          body = lv_request
-           ).
-
-    CLEAR lo_data.
-    /ui2/cl_json=>deserialize( EXPORTING json = lv_response
-                               CHANGING  data = lo_data ).
-
-    UNASSIGN <val>.
-    lv_assign = `OVIEWMODEL->OUPDATE->QUANTITY->*`.
-    ASSIGN lo_data->(lv_assign) TO <val>.
-    IF <val> <> `600`.
-      cl_abap_unit_assert=>fail( msg = 'data binding - frontend updated value wrong after roundtrip' quit = 5 ).
-    ENDIF.
-  ENDMETHOD.
-
-  METHOD test_app_event.
-
-    DATA lv_response TYPE string.
-    DATA lo_data TYPE REF TO data.
-    FIELD-SYMBOLS <val> TYPE any.
-    DATA lv_assign TYPE string.
-    DATA temp52 TYPE string.
-    DATA lv_id LIKE temp52.
-    DATA lv_request TYPE string.
-    lv_response = z2ui5_cl_http_handler=>http_post(
-       body = `{ "OLOCATION" : { "SEARCH" : "app_start=LTCL_UNIT_02_APP_START"}}` ).
-
-    
-    /ui2/cl_json=>deserialize( EXPORTING json = lv_response
-                               CHANGING  data = lo_data ).
-
-    
-
-    UNASSIGN <val>.
-    
-    lv_assign = `ID->*`.
-    ASSIGN lo_data->(lv_assign) TO <val>.
-    IF <val> IS INITIAL.
-      cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
-    ENDIF.
-    
-    temp52 = <val>.
-    
-    lv_id = temp52.
-
-    
-    lv_request = `{"oUpdate":{"QUANTITY":"700"},"ID": "` && lv_id && `" ,"ARGUMENTS": { "0" : {"EVENT":"BUTTON_POST","METHOD":"UPDATE"}  } }`.
+    lv_request = `{"oUpdate":{"QUANTITY":"700"},"ID": "` && lv_id && `" ,"ARGUMENTS": [ {"EVENT":"BUTTON_POST","METHOD":"UPDATE"} ] }`.
 *    z2ui5_cl_http_handler=>client = VALUE #( body = lv_request ).
     lv_response = z2ui5_cl_http_handler=>http_post(
       body = lv_request ).
@@ -1023,22 +1023,22 @@ ENDCLASS.
 
 CLASS ltcl_unit_04_deep_data IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
-      DATA temp53 LIKE t_tab.
-      DATA temp54 LIKE LINE OF temp53.
+      DATA temp52 LIKE t_tab.
+      DATA temp53 LIKE LINE OF temp52.
     IF check_initialized = abap_false.
       check_initialized = abap_true.
 
       
-      CLEAR temp53.
+      CLEAR temp52.
       
-      temp54-title = 'Peter'.
-      temp54-descr = 'this is a description'.
-      temp54-icon = 'sap-icon://account'.
-      temp54-info = 'completed'.
-      INSERT temp54 INTO TABLE temp53.
-      temp54-info = 'incompleted'.
-      INSERT temp54 INTO TABLE temp53.
-      t_tab = temp53.
+      temp53-title = 'Peter'.
+      temp53-descr = 'this is a description'.
+      temp53-icon = 'sap-icon://account'.
+      temp53-info = 'completed'.
+      INSERT temp53 INTO TABLE temp52.
+      temp53-info = 'incompleted'.
+      INSERT temp53 INTO TABLE temp52.
+      t_tab = temp52.
 
     ENDIF.
 
@@ -1147,8 +1147,8 @@ CLASS ltcl_unit_04_deep_data IMPLEMENTATION.
     FIELD-SYMBOLS <row> TYPE REF TO data.
     DATA lv_assign TYPE string.
     DATA ls_tab_test TYPE ty_row.
-    DATA temp55 TYPE string.
-    DATA lv_id LIKE temp55.
+    DATA temp54 TYPE string.
+    DATA lv_id LIKE temp54.
     DATA lv_tab TYPE string.
     DATA lv_request TYPE string.
 
@@ -1203,9 +1203,9 @@ CLASS ltcl_unit_04_deep_data IMPLEMENTATION.
       cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
     ENDIF.
     
-    temp55 = <val>.
+    temp54 = <val>.
     
-    lv_id = temp55.
+    lv_id = temp54.
 
     
     lv_tab = z2ui5_lcl_utility=>trans_any_2_json( t_tab ).
@@ -1220,5 +1220,6 @@ CLASS ltcl_unit_04_deep_data IMPLEMENTATION.
     CLEAR lo_data.
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
+
   ENDMETHOD.
 ENDCLASS.

@@ -1625,9 +1625,9 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
 
   METHOD request_begin.
         DATA lv_id_prev TYPE string.
-        DATA lo_arg TYPE REF TO z2ui5_lcl_utility_tree_json.
-          DATA temp30 TYPE string.
-          DATA lv_val TYPE string.
+        FIELD-SYMBOLS <arg> TYPE STANDARD TABLE.
+        FIELD-SYMBOLS <arg_row> type any.
+            FIELD-SYMBOLS <val> type any.
         DATA lo_scroll TYPE REF TO z2ui5_lcl_utility_tree_json.
         DATA lo_cursor TYPE REF TO z2ui5_lcl_utility_tree_json.
         DATA lo_location TYPE REF TO z2ui5_lcl_utility_tree_json.
@@ -1650,15 +1650,22 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
 
     TRY.
         
-        lo_arg = so_body->get_attribute( `ARGUMENTS` ).
-        result->ms_actual-event = lo_arg->get_attribute( `0` )->get_attribute( `EVENT` )->get_val( ).
-        DO.
-          
-          temp30 = sy-index.
-          
-          lv_val = lo_arg->get_attribute( temp30 )->get_val( ).
-          INSERT lv_val INTO TABLE result->ms_actual-t_event_arg.
-        ENDDO.
+        ASSIGN ('SO_BODY->MR_ACTUAL->ARGUMENTS->*') TO <arg>.
+        z2ui5_lcl_utility=>raise( when = boolc( sy-subrc <> 0 ) ).
+
+        
+        LOOP AT <arg> assigning <arg_row>.
+
+          IF sy-tabix = 1.
+            
+            ASSIGN  ('<ARG_ROW>->EVENT->*') TO <val>.
+            result->ms_actual-event = <val>.
+          ELSE.
+            ASSIGN  <arg_row>->* TO <val>.
+            INSERT <val> INTO TABLE result->ms_actual-t_event_arg.
+          ENDIF.
+
+        ENDLOOP.
       CATCH cx_root.
     ENDTRY.
 
@@ -1700,26 +1707,22 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
   METHOD request_end.
 
     DATA lo_resp TYPE REF TO z2ui5_lcl_utility_tree_json.
-    DATA temp31 TYPE z2ui5_lcl_fw_handler=>ty_s_next2-_viewmodel.
-    DATA lv_viewmodel LIKE temp31.
+    DATA temp30 TYPE z2ui5_lcl_fw_handler=>ty_s_next2-_viewmodel.
+    DATA lv_viewmodel LIKE temp30.
     lo_resp = z2ui5_lcl_utility_tree_json=>factory( ).
 
     
     IF ms_next-s_set-_viewmodel IS NOT INITIAL.
-      temp31 = ms_next-s_set-_viewmodel.
+      temp30 = ms_next-s_set-_viewmodel.
     ELSE.
-      temp31 = model_set_frontend( app = ms_db-o_app t_attri = ms_db-t_attri ).
+      temp30 = model_set_frontend( app = ms_db-o_app t_attri = ms_db-t_attri ).
     ENDIF.
     
-    lv_viewmodel = temp31.
+    lv_viewmodel = temp30.
 
     lo_resp->add_attribute( n = `OVIEWMODEL` v = lv_viewmodel apos_active = abap_false ).
     lo_resp->add_attribute( n = `PARAMS`     v = z2ui5_lcl_utility=>trans_any_2_json( ms_next-s_set ) apos_active = abap_false ).
     lo_resp->add_attribute( n = `ID`         v = ms_db-id ).
-
-*    DATA(lv_app_start) = to_lower( z2ui5_lcl_utility=>get_param( `app_start` ) ).
-*    DATA(lv_q) = z2ui5_lcl_utility=>get_param( `q` ).
-*    DATA(lv_app) = to_lower( z2ui5_lcl_utility=>get_classname_by_ref( ms_db-o_app ) ).
 
     IF ms_next-s_set-search IS INITIAL.
       lo_resp->add_attribute( n = `SEARCH` v = ms_actual-s_config-search ).
@@ -2100,13 +2103,13 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
 
   METHOD app_set_next.
 
-    DATA temp32 TYPE string.
+    DATA temp31 TYPE string.
     IF app->id IS INITIAL.
-      temp32 = z2ui5_lcl_utility=>get_uuid( ).
+      temp31 = z2ui5_lcl_utility=>get_uuid( ).
     ELSE.
-      temp32 = app->id.
+      temp31 = app->id.
     ENDIF.
-    app->id = temp32.
+    app->id = temp31.
 
     CREATE OBJECT r_result.
 
@@ -2150,17 +2153,17 @@ CLASS z2ui5_lcl_fw_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~get.
 
-    DATA temp33 TYPE z2ui5_if_client=>ty_s_get.
-    CLEAR temp33.
-    MOVE-CORRESPONDING mo_handler->ms_db TO temp33.
-    temp33-event = mo_handler->ms_actual-event.
-    temp33-check_launchpad_active = mo_handler->ms_actual-check_launchpad_active.
-    temp33-t_event_arg = mo_handler->ms_actual-t_event_arg.
-    temp33-t_scroll_pos = mo_handler->ms_actual-t_scroll_pos.
-    MOVE-CORRESPONDING mo_handler->ms_db TO temp33-s_draft.
-    temp33-check_on_navigated = mo_handler->ms_actual-check_on_navigated.
-    temp33-s_config = z2ui5_lcl_fw_handler=>ss_config.
-    result = temp33.
+    DATA temp32 TYPE z2ui5_if_client=>ty_s_get.
+    CLEAR temp32.
+    MOVE-CORRESPONDING mo_handler->ms_db TO temp32.
+    temp32-event = mo_handler->ms_actual-event.
+    temp32-check_launchpad_active = mo_handler->ms_actual-check_launchpad_active.
+    temp32-t_event_arg = mo_handler->ms_actual-t_event_arg.
+    temp32-t_scroll_pos = mo_handler->ms_actual-t_scroll_pos.
+    MOVE-CORRESPONDING mo_handler->ms_db TO temp32-s_draft.
+    temp32-check_on_navigated = mo_handler->ms_actual-check_on_navigated.
+    temp32-s_config = z2ui5_lcl_fw_handler=>ss_config.
+    result = temp32.
     result-s_draft-app = mo_handler->ms_db-o_app.
   ENDMETHOD.
 
@@ -2173,9 +2176,9 @@ CLASS z2ui5_lcl_fw_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD z2ui5_if_client~get_app.
-    DATA temp34 TYPE REF TO z2ui5_if_app.
-    temp34 ?= z2ui5_lcl_fw_db=>load_app( id )-o_app.
-    result = temp34.
+    DATA temp33 TYPE REF TO z2ui5_if_app.
+    temp33 ?= z2ui5_lcl_fw_db=>load_app( id )-o_app.
+    result = temp33.
   ENDMETHOD.
 
 
@@ -2235,8 +2238,8 @@ CLASS z2ui5_lcl_fw_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD z2ui5_if_client~_event_client.
-      DATA temp35 LIKE LINE OF t_arg.
-      DATA lr_arg LIKE REF TO temp35.
+      DATA temp34 LIKE LINE OF t_arg.
+      DATA lr_arg LIKE REF TO temp34.
 
     result = `onEventFrontend( { 'EVENT' : '` && action && `'`.
 
@@ -2260,8 +2263,8 @@ CLASS z2ui5_lcl_fw_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD z2ui5_if_client~_event.
-    DATA temp36 LIKE LINE OF t_arg.
-    DATA lr_arg LIKE REF TO temp36.
+    DATA temp35 LIKE LINE OF t_arg.
+    DATA lr_arg LIKE REF TO temp35.
 
     result = `onEvent( { 'EVENT' : '` && val && `', 'METHOD' : 'UPDATE' , 'CHECK_VIEW_DESTROY' : ` && z2ui5_lcl_utility=>get_json_boolean( check_view_destroy ) && ` }`.
 
