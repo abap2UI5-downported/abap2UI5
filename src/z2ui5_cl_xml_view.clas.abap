@@ -1376,7 +1376,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_xml_view IMPLEMENTATION.
+CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD actions.
@@ -1463,6 +1463,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD blocks.
+    result = _generic( name = `blocks`
+                       ns   = `uxap` ).
+  ENDMETHOD.
+
+
   METHOD block_layout.
     DATA temp5 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp6 LIKE LINE OF temp5.
@@ -1520,12 +1526,6 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     result = _generic( name   = `BlockLayoutRow`
                        ns     = `layout`
                        t_prop = temp9 ).
-  ENDMETHOD.
-
-
-  METHOD blocks.
-    result = _generic( name = `blocks`
-                       ns   = `uxap` ).
   ENDMETHOD.
 
 

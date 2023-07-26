@@ -1626,8 +1626,9 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
   METHOD request_begin.
         DATA lv_id_prev TYPE string.
         FIELD-SYMBOLS <arg> TYPE STANDARD TABLE.
-        FIELD-SYMBOLS <arg_row> type any.
-            FIELD-SYMBOLS <val> type any.
+        FIELD-SYMBOLS <any> TYPE any.
+        FIELD-SYMBOLS <arg_row> TYPE any.
+            FIELD-SYMBOLS <val> TYPE any.
         DATA lo_scroll TYPE REF TO z2ui5_lcl_utility_tree_json.
         DATA lo_cursor TYPE REF TO z2ui5_lcl_utility_tree_json.
         DATA lo_location TYPE REF TO z2ui5_lcl_utility_tree_json.
@@ -1650,11 +1651,37 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
 
     TRY.
         
-        ASSIGN ('SO_BODY->MR_ACTUAL->ARGUMENTS->*') TO <arg>.
+        
+        ASSIGN ('SO_BODY->MR_ACTUAL') TO <any>.
+        z2ui5_lcl_utility=>raise( when = boolc( sy-subrc <> 0 ) ).
+        ASSIGN ('<ANY>->ARGUMENTS') TO <any>.
+        z2ui5_lcl_utility=>raise( when = boolc( sy-subrc <> 0 ) ).
+        ASSIGN ('<ANY>->*') TO <any>.
+        z2ui5_lcl_utility=>raise( when = boolc( sy-subrc <> 0 ) ).
+        ASSIGN <any> TO <arg>.
         z2ui5_lcl_utility=>raise( when = boolc( sy-subrc <> 0 ) ).
 
+*        DO.
+*          DATA(lv_index) = sy-index.
+*          FIELD-SYMBOLS <arg_row> TYPE any.
+*          DATA(lv_assign) = '<ARG>[' && sy-index && ']->*'.
+*          ASSIGN (lv_assign) TO <arg_row>.
+*          IF sy-subrc <> 0.
+*            EXIT.
+*          ENDIF.
+*
+*          IF lv_index = 1.
+*            FIELD-SYMBOLS <val> TYPE any.
+*            ASSIGN  ('<ARG_ROW>->EVENT->*') TO <val>.
+*            result->ms_actual-event = <val>.
+*          ELSE.
+*            ASSIGN <arg_row>->* TO <val>.
+*            INSERT <val> INTO TABLE result->ms_actual-t_event_arg.
+*          ENDIF.
+*
+*        ENDDO.
         
-        LOOP AT <arg> assigning <arg_row>.
+        LOOP AT <arg> ASSIGNING <arg_row>.
 
           IF sy-tabix = 1.
             

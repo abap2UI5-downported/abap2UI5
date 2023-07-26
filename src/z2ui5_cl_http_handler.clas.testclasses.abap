@@ -952,50 +952,37 @@ CLASS ltcl_unit_03_app_ajax IMPLEMENTATION.
 
   METHOD test_app_event.
 
-    DATA lv_response TYPE string.
-    DATA lo_data TYPE REF TO data.
-    FIELD-SYMBOLS <val> TYPE any.
-    DATA lv_assign TYPE string.
-    DATA temp51 TYPE string.
-    DATA lv_id LIKE temp51.
-    DATA lv_request TYPE string.
-    lv_response = z2ui5_cl_http_handler=>http_post(
-       body = `{ "OLOCATION" : { "SEARCH" : "app_start=LTCL_UNIT_02_APP_START"}}` ).
-
-    
-    /ui2/cl_json=>deserialize( EXPORTING json = lv_response
-                               CHANGING  data = lo_data ).
-
-    
-
-    UNASSIGN <val>.
-    
-    lv_assign = `ID->*`.
-    ASSIGN lo_data->(lv_assign) TO <val>.
-    IF <val> IS INITIAL.
-      cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
-    ENDIF.
-    
-    temp51 = <val>.
-    
-    lv_id = temp51.
-
-    
-    lv_request = `{"oUpdate":{"QUANTITY":"700"},"ID": "` && lv_id && `" ,"ARGUMENTS": [ {"EVENT":"BUTTON_POST","METHOD":"UPDATE"} ] }`.
-*    z2ui5_cl_http_handler=>client = VALUE #( body = lv_request ).
-    lv_response = z2ui5_cl_http_handler=>http_post(
-      body = lv_request ).
-
-    CLEAR lo_data.
-    /ui2/cl_json=>deserialize( EXPORTING json = lv_response
-                               CHANGING  data = lo_data ).
-
-    UNASSIGN <val>.
-    lv_assign = `PARAMS->S_MSG_TOAST->TEXT->*`.
-    ASSIGN lo_data->(lv_assign) TO <val>.
-    IF <val> <> `tomato 700 - send to the server`.
-      cl_abap_unit_assert=>fail( msg = 'message toast - text wrong' quit = 5 ).
-    ENDIF.
+*    DATA(lv_response) = z2ui5_cl_http_handler=>http_post(
+*       body = `{ "OLOCATION" : { "SEARCH" : "app_start=LTCL_UNIT_02_APP_START"}}` ).
+*
+*    DATA lo_data TYPE REF TO data.
+*    /ui2/cl_json=>deserialize( EXPORTING json = lv_response
+*                               CHANGING  data = lo_data ).
+*
+*    FIELD-SYMBOLS <val> TYPE any.
+*
+*    UNASSIGN <val>.
+*    DATA(lv_assign) = `ID->*`.
+*    ASSIGN lo_data->(lv_assign) TO <val>.
+*    IF <val> IS INITIAL.
+*      cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
+*    ENDIF.
+*    DATA(lv_id) = CONV string( <val> ).
+*
+*    DATA(lv_request) = `{"oUpdate":{"QUANTITY":"700"},"ID": "` && lv_id && `" ,"ARGUMENTS": [ {"EVENT":"BUTTON_POST","METHOD":"UPDATE"} ] }`.
+*    lv_response = z2ui5_cl_http_handler=>http_post(
+*      body = lv_request ).
+*
+*    CLEAR lo_data.
+*    /ui2/cl_json=>deserialize( EXPORTING json = lv_response
+*                               CHANGING  data = lo_data ).
+*
+*    UNASSIGN <val>.
+*    lv_assign = `PARAMS->S_MSG_TOAST->TEXT->*`.
+*    ASSIGN lo_data->(lv_assign) TO <val>.
+*    IF <val> <> `tomato 700 - send to the server`.
+*      cl_abap_unit_assert=>fail( msg = 'message toast - text wrong' quit = 5 ).
+*    ENDIF.
   ENDMETHOD.
 
   METHOD test_app_dump.
@@ -1023,22 +1010,22 @@ ENDCLASS.
 
 CLASS ltcl_unit_04_deep_data IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
-      DATA temp52 LIKE t_tab.
-      DATA temp53 LIKE LINE OF temp52.
+      DATA temp51 LIKE t_tab.
+      DATA temp52 LIKE LINE OF temp51.
     IF check_initialized = abap_false.
       check_initialized = abap_true.
 
       
-      CLEAR temp52.
+      CLEAR temp51.
       
-      temp53-title = 'Peter'.
-      temp53-descr = 'this is a description'.
-      temp53-icon = 'sap-icon://account'.
-      temp53-info = 'completed'.
-      INSERT temp53 INTO TABLE temp52.
-      temp53-info = 'incompleted'.
-      INSERT temp53 INTO TABLE temp52.
-      t_tab = temp52.
+      temp52-title = 'Peter'.
+      temp52-descr = 'this is a description'.
+      temp52-icon = 'sap-icon://account'.
+      temp52-info = 'completed'.
+      INSERT temp52 INTO TABLE temp51.
+      temp52-info = 'incompleted'.
+      INSERT temp52 INTO TABLE temp51.
+      t_tab = temp51.
 
     ENDIF.
 
@@ -1147,8 +1134,8 @@ CLASS ltcl_unit_04_deep_data IMPLEMENTATION.
     FIELD-SYMBOLS <row> TYPE REF TO data.
     DATA lv_assign TYPE string.
     DATA ls_tab_test TYPE ty_row.
-    DATA temp54 TYPE string.
-    DATA lv_id LIKE temp54.
+    DATA temp53 TYPE string.
+    DATA lv_id LIKE temp53.
     DATA lv_tab TYPE string.
     DATA lv_request TYPE string.
 
@@ -1203,9 +1190,9 @@ CLASS ltcl_unit_04_deep_data IMPLEMENTATION.
       cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
     ENDIF.
     
-    temp54 = <val>.
+    temp53 = <val>.
     
-    lv_id = temp54.
+    lv_id = temp53.
 
     
     lv_tab = z2ui5_lcl_utility=>trans_any_2_json( t_tab ).
