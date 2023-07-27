@@ -1358,20 +1358,21 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
-    methods RATINGINDICATOR
-      importing
-        !MAXVALUE type CLIKE optional
-        !ENABLED type ABAP_BOOLEAN optional
-        !CLASS type CLIKE optional
-        !VALUE type CLIKE optional
-        !ICONSIZE type CLIKE optional
-        !TOOLTIP type CLIKE optional
-        !DISPLAYONLY type ABAP_BOOLEAN optional
-        !CHANGE type CLIKE optional
-        !ID type CLIKE optional
-        !EDITABLE type ABAP_BOOLEAN optional
-      returning
-        value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+      METHODS rating_indicator
+      IMPORTING
+        !maxvalue     TYPE clike OPTIONAL
+        !enabled      TYPE clike OPTIONAL
+        !class        TYPE clike OPTIONAL
+        !value        TYPE clike OPTIONAL
+        !iconsize     TYPE clike OPTIONAL
+        !tooltip      TYPE clike OPTIONAL
+        !displayonly  TYPE clike OPTIONAL
+        !change       TYPE clike OPTIONAL
+        !id           TYPE clike OPTIONAL
+        !editable     TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
   PROTECTED SECTION.
 
     DATA mv_name  TYPE string.
@@ -5385,7 +5386,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD ratingindicator.
+  METHOD rating_indicator.
+
     DATA temp248 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp249 LIKE LINE OF temp248.
     CLEAR temp248.
@@ -5425,5 +5427,6 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp249 INTO TABLE temp248.
     result = _generic( name   = `RatingIndicator`
                        t_prop = temp248 ).
+
   ENDMETHOD.
 ENDCLASS.
