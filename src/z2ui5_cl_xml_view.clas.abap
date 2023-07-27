@@ -1358,6 +1358,20 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
+    methods RATINGINDICATOR
+      importing
+        !MAXVALUE type CLIKE optional
+        !ENABLED type ABAP_BOOLEAN optional
+        !CLASS type CLIKE optional
+        !VALUE type CLIKE optional
+        !ICONSIZE type CLIKE optional
+        !TOOLTIP type CLIKE optional
+        !DISPLAYONLY type ABAP_BOOLEAN optional
+        !CHANGE type CLIKE optional
+        !ID type CLIKE optional
+        !EDITABLE type ABAP_BOOLEAN optional
+      returning
+        value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
   PROTECTED SECTION.
 
     DATA mv_name  TYPE string.
@@ -5368,5 +5382,48 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     mo_root->mo_previous = result2.
     result = result2.
 
+  ENDMETHOD.
+
+
+  METHOD ratingindicator.
+    DATA temp248 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp249 LIKE LINE OF temp248.
+    CLEAR temp248.
+    
+    temp249-n = `class`.
+    temp249-v = class.
+    INSERT temp249 INTO TABLE temp248.
+    temp249-n = `maxValue`.
+    temp249-v = maxvalue.
+    INSERT temp249 INTO TABLE temp248.
+    temp249-n = `displayOnly`.
+    temp249-v = displayonly.
+    INSERT temp249 INTO TABLE temp248.
+    temp249-n = `editable`.
+    temp249-v = editable.
+    INSERT temp249 INTO TABLE temp248.
+    temp249-n = `iconSize`.
+    temp249-v = iconSize.
+    INSERT temp249 INTO TABLE temp248.
+    temp249-n = `maxValue`.
+    temp249-v = maxValue.
+    INSERT temp249 INTO TABLE temp248.
+    temp249-n = `value`.
+    temp249-v = value.
+    INSERT temp249 INTO TABLE temp248.
+    temp249-n = `id`.
+    temp249-v = id.
+    INSERT temp249 INTO TABLE temp248.
+    temp249-n = `change`.
+    temp249-v = change.
+    INSERT temp249 INTO TABLE temp248.
+    temp249-n = `enabled`.
+    temp249-v = enabled.
+    INSERT temp249 INTO TABLE temp248.
+    temp249-n = `tooltip`.
+    temp249-v = tooltip.
+    INSERT temp249 INTO TABLE temp248.
+    result = _generic( name   = `RatingIndicator`
+                       t_prop = temp248 ).
   ENDMETHOD.
 ENDCLASS.
