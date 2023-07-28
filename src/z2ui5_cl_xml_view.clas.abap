@@ -5407,9 +5407,6 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp249-n = `iconSize`.
     temp249-v = iconSize.
     INSERT temp249 INTO TABLE temp248.
-    temp249-n = `maxValue`.
-    temp249-v = maxValue.
-    INSERT temp249 INTO TABLE temp248.
     temp249-n = `value`.
     temp249-v = value.
     INSERT temp249 INTO TABLE temp248.
