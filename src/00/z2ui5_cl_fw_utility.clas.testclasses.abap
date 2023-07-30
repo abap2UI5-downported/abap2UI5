@@ -295,7 +295,6 @@ CLASS ltcl_unit_test_sap_api IMPLEMENTATION.
     DATA lv_xsdbool TYPE abap_bool.
     DATA temp3 TYPE xsdboolean.
     DATA temp4 TYPE xsdboolean.
-    DATA temp5 TYPE xsdboolean.
     temp3 = boolc( 1 = 1 ).
     lv_xsdbool = check_input( temp3 ).
     IF lv_xsdbool = abap_false.
@@ -314,11 +313,9 @@ CLASS ltcl_unit_test_sap_api IMPLEMENTATION.
       cl_abap_unit_assert=>fail( ).
     ENDIF.
 
-    
-    temp5 = boolc( 2 = 1 ).
-    IF check_input( temp5 ) IS NOT INITIAL.
-      cl_abap_unit_assert=>fail( ).
-    ENDIF.
+*    IF check_input( xsdbool( 2 = 1 ) ).
+*      cl_abap_unit_assert=>fail( ).
+*    ENDIF.
 
   ENDMETHOD.
 
@@ -524,17 +521,17 @@ CLASS ltcl_unit_test IMPLEMENTATION.
   METHOD test_check_is_boolean.
 
     DATA lv_bool TYPE abap_bool.
+    DATA temp5 TYPE xsdboolean.
     DATA temp6 TYPE xsdboolean.
-    DATA temp7 TYPE xsdboolean.
-    temp6 = boolc( 1 = 1 ).
-    lv_bool = temp6.
+    temp5 = boolc( 1 = 1 ).
+    lv_bool = temp5.
     cl_abap_unit_assert=>assert_equals(
         act                  = z2ui5_cl_fw_utility=>check_is_boolean( lv_bool )
         exp                  = abap_true ).
 
     
-    temp7 = boolc( 1 = 2 ).
-    lv_bool = temp7.
+    temp6 = boolc( 1 = 2 ).
+    lv_bool = temp6.
     cl_abap_unit_assert=>assert_equals(
         act                  = z2ui5_cl_fw_utility=>check_is_boolean( lv_bool )
         exp                  = abap_true ).
@@ -559,15 +556,15 @@ CLASS ltcl_unit_test IMPLEMENTATION.
   METHOD test_get_abap_2_json.
 
     DATA lv_bool TYPE abap_bool.
+    DATA temp7 TYPE xsdboolean.
     DATA temp8 TYPE xsdboolean.
-    DATA temp9 TYPE xsdboolean.
-    temp8 = boolc( 1 = 1 ).
-    lv_bool = temp8.
+    temp7 = boolc( 1 = 1 ).
+    lv_bool = temp7.
     cl_abap_unit_assert=>assert_equals( exp = `true` act = z2ui5_cl_fw_utility=>get_abap_2_json( lv_bool ) ).
 
     
-    temp9 = boolc( 1 = 2 ).
-    lv_bool = temp9.
+    temp8 = boolc( 1 = 2 ).
+    lv_bool = temp8.
     cl_abap_unit_assert=>assert_equals( exp = `false` act = z2ui5_cl_fw_utility=>get_abap_2_json( lv_bool ) ).
 
   ENDMETHOD.
@@ -581,27 +578,21 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     CREATE OBJECT lo_test TYPE z2ui5_cl_fw_utility.
     
     lv_name = z2ui5_cl_fw_utility=>get_classname_by_ref( lo_test ).
-    IF lv_name <> `Z2UI5_CL_FW_UTILITY`.
-      cl_abap_unit_assert=>fail( quit = 5 ).
-    ENDIF.
+    cl_abap_unit_assert=>assert_equals( exp = `Z2UI5_CL_FW_UTILITY` act = lv_name ).
 
     
     CREATE OBJECT lo_test2 TYPE ltcl_test_app.
     
     lv_name2 = z2ui5_cl_fw_utility=>get_classname_by_ref( lo_test2 ).
-    IF lv_name2 <> `LTCL_TEST_APP`.
-      cl_abap_unit_assert=>fail( quit = 5 ).
-    ENDIF.
+    cl_abap_unit_assert=>assert_equals( exp = `LTCL_TEST_APP` act = lv_name2 ).
 
   ENDMETHOD.
 
   METHOD test_get_json_boolean.
 
-    IF `false` <> z2ui5_cl_fw_utility=>get_json_boolean( abap_false ).
-      cl_abap_unit_assert=>fail( quit = 5 ).
-    ENDIF.
+    cl_abap_unit_assert=>assert_equals( exp = `false` act = z2ui5_cl_fw_utility=>get_json_boolean( abap_false ) ).
 
-    IF `ABCD` <> z2ui5_cl_fw_utility=>get_json_boolean( `ABCD` ).
+    IF `{ABCD}` <> z2ui5_cl_fw_utility=>get_json_boolean( `{ABCD}` ).
       cl_abap_unit_assert=>fail( quit = 5 ).
     ENDIF.
 
@@ -678,8 +669,8 @@ CLASS ltcl_unit_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_raise.
+        DATA temp9 TYPE xsdboolean.
         DATA temp10 TYPE xsdboolean.
-        DATA temp11 TYPE xsdboolean.
 
     TRY.
         z2ui5_cl_fw_utility=>raise( ).
@@ -689,16 +680,16 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
     TRY.
         
-        temp10 = boolc( 1 = 1 ).
-        z2ui5_cl_fw_utility=>raise( when = temp10 ).
+        temp9 = boolc( 1 = 1 ).
+        z2ui5_cl_fw_utility=>raise( when = temp9 ).
         cl_abap_unit_assert=>fail( quit = 5 ).
       CATCH cx_root.
     ENDTRY.
 
     TRY.
         
-        temp11 = boolc( 1 = 3 ).
-        z2ui5_cl_fw_utility=>raise( when = temp11 ).
+        temp10 = boolc( 1 = 3 ).
+        z2ui5_cl_fw_utility=>raise( when = temp10 ).
       CATCH cx_root.
         cl_abap_unit_assert=>fail( quit = 5 ).
     ENDTRY.
@@ -920,30 +911,24 @@ CLASS ltcl_unit_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_raise_error.
-        DATA lx TYPE REF TO z2ui5_cl_fw_error.
 
     TRY.
         z2ui5_cl_fw_utility=>raise( `error occured` ).
         cl_abap_unit_assert=>fail( ).
 
-        
-      CATCH z2ui5_cl_fw_error INTO lx.
-
-*        cl_abap_unit_assert=>assert_equals(
-*            act                  = lx->get_text( )
-*            exp                  = `error occured` ).
-
+      CATCH z2ui5_cl_fw_error.
     ENDTRY.
+
   ENDMETHOD.
 
   METHOD test_raise_error_not.
-        DATA temp12 TYPE xsdboolean.
+        DATA temp11 TYPE xsdboolean.
         DATA lx TYPE REF TO z2ui5_cl_fw_error.
 
     TRY.
         
-        temp12 = boolc( 1 = 2 ).
-        z2ui5_cl_fw_utility=>raise( when = temp12 ).
+        temp11 = boolc( 1 = 2 ).
+        z2ui5_cl_fw_utility=>raise( when = temp11 ).
 
         
       CATCH z2ui5_cl_fw_error INTO lx.

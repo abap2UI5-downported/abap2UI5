@@ -1,5 +1,5 @@
 CLASS ltcl_unit_01_json DEFINITION FINAL FOR TESTING
-  DURATION medium
+  DURATION MEDIUM
   RISK LEVEL HARMLESS.
 
   PRIVATE SECTION.
@@ -79,6 +79,7 @@ TYPES END OF ty_s_test.
     DATA lo_json TYPE REF TO z2ui5_cl_fw_utility_json.
     DATA lo_attri TYPE REF TO z2ui5_cl_fw_utility_json.
     DATA lr_ref TYPE REF TO any.
+    FIELD-SYMBOLS <any> TYPE any.
     DATA lv_val TYPE string.
     lo_json = z2ui5_cl_fw_utility_json=>factory( `{"CCC":{"COMP1":"AAA","COMP2":"BBB"}}` ).
 
@@ -87,7 +88,9 @@ TYPES END OF ty_s_test.
 
     
     lr_ref = lo_attri->get_val_ref( ).
-    IF lr_ref->* <> `BBB`.
+    
+    ASSIGN lr_ref->* TO <any>.
+    IF <any> <> `BBB`.
       cl_abap_unit_assert=>fail( quit = 5 ).
     ENDIF.
 
