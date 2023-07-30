@@ -1,0 +1,30 @@
+CLASS ltcl_unit_test DEFINITION FINAL FOR TESTING
+  DURATION SHORT
+  RISK LEVEL critical.
+
+  PRIVATE SECTION.
+    METHODS first_test FOR TESTING RAISING cx_static_check.
+ENDCLASS.
+
+
+CLASS ltcl_unit_test IMPLEMENTATION.
+
+  METHOD first_test.
+
+    DATA lo_handler TYPE REF TO z2ui5_cl_fw_handler.
+    DATA lo_client TYPE REF TO z2ui5_cl_fw_client.
+    DATA temp4 TYPE REF TO z2ui5_if_client.
+    DATA li_client LIKE temp4.
+    CREATE OBJECT lo_handler TYPE z2ui5_cl_fw_handler.
+    
+    CREATE OBJECT lo_client TYPE z2ui5_cl_fw_client EXPORTING HANDLER = lo_handler.
+
+    
+    temp4 ?= lo_client.
+    
+    li_client = temp4.
+
+
+  ENDMETHOD.
+
+ENDCLASS.
