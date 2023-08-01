@@ -24,7 +24,6 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     
     li_client = temp4.
 
-
   ENDMETHOD.
 
 ENDCLASS.
