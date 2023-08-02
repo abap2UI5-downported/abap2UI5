@@ -917,6 +917,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
     METHODS progress_indicator
       IMPORTING
+        !class        TYPE clike OPTIONAL
         !percentvalue TYPE clike OPTIONAL
         !displayvalue TYPE clike OPTIONAL
         !showvalue    TYPE clike OPTIONAL
@@ -1464,7 +1465,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_xml_view IMPLEMENTATION.
+CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD actions.
@@ -4152,6 +4153,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     
     CLEAR temp166.
     
+    temp167-n = `class`.
+    temp167-v = class.
+    INSERT temp167 INTO TABLE temp166.
     temp167-n = `percentValue`.
     temp167-v = percentvalue.
     INSERT temp167 INTO TABLE temp166.
