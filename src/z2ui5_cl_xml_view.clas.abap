@@ -1156,17 +1156,28 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !appointmentselect         TYPE clike OPTIONAL
         !showemptyintervalheaders  TYPE clike OPTIONAL
         !showweeknumbers           TYPE clike OPTIONAL
+        !showdaynamesline          TYPE clike OPTIONAL
+        !legend                    TYPE clike OPTIONAL
           PREFERRED PARAMETER rows
       RETURNING
         VALUE(result)              TYPE REF TO z2ui5_cl_xml_view .
 
     METHODS planning_calendar_row
       IMPORTING
-        !appointments    TYPE clike OPTIONAL
-        !intervalheaders TYPE clike OPTIONAL
-        !icon            TYPE clike OPTIONAL
-        !title           TYPE clike OPTIONAL
-        !text            TYPE clike OPTIONAL
+        !appointments                  TYPE clike OPTIONAL
+        !intervalheaders               TYPE clike OPTIONAL
+        !icon                          TYPE clike OPTIONAL
+        !title                         TYPE clike OPTIONAL
+        !text                          TYPE clike OPTIONAL
+        !enableappointmentscreate      TYPE clike OPTIONAL
+        !enableappointmentsdraganddrop TYPE clike OPTIONAL
+        !enableappointmentsresize      TYPE clike OPTIONAL
+        !nonworkingdays                TYPE clike OPTIONAL
+        !selected                      TYPE clike OPTIONAL
+        !appointmentcreate             TYPE clike OPTIONAL
+        !appointmentdragenter          TYPE clike OPTIONAL
+        !appointmentdrop               TYPE clike OPTIONAL
+        !appointmentresize             TYPE clike OPTIONAL
           PREFERRED PARAMETER appointments
       RETURNING
         VALUE(result)    TYPE REF TO z2ui5_cl_xml_view .
@@ -1188,6 +1199,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !text         TYPE clike OPTIONAL
         !type         TYPE clike OPTIONAL
         !tentative    TYPE clike OPTIONAL
+        !key          TYPE clike OPTIONAL
           PREFERRED PARAMETER startdate
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
@@ -1761,6 +1773,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp16 INTO TABLE temp15.
     temp16-n = `type`.
     temp16-v = type.
+    INSERT temp16 INTO TABLE temp15.
+    temp16-n = `key`.
+    temp16-v = key.
     INSERT temp16 INTO TABLE temp15.
     temp16-n = `tentative`.
     temp16-v = tentative.
@@ -4082,6 +4097,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp161-n = `showWeekNumbers`.
     temp161-v = showweeknumbers.
     INSERT temp161 INTO TABLE temp160.
+    temp161-n = `legend`.
+    temp161-v = legend.
+    INSERT temp161 INTO TABLE temp160.
+    temp161-n = `showDayNamesLine`.
+    temp161-v = showDayNamesLine.
+    INSERT temp161 INTO TABLE temp160.
     result = _generic( name   = `PlanningCalendar`
                        t_prop = temp160 ).
   ENDMETHOD.
@@ -4104,11 +4125,39 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp163-n = `title`.
     temp163-v = title.
     INSERT temp163 INTO TABLE temp162.
+    temp163-n = `enableAppointmentsCreate`.
+    temp163-v = enableAppointmentsCreate.
+    INSERT temp163 INTO TABLE temp162.
+    temp163-n = `appointmentResize`.
+    temp163-v = appointmentResize.
+    INSERT temp163 INTO TABLE temp162.
+    temp163-n = `appointmentDrop`.
+    temp163-v = appointmentDrop.
+    INSERT temp163 INTO TABLE temp162.
+    temp163-n = `appointmentDragEnter`.
+    temp163-v = appointmentDragEnter.
+    INSERT temp163 INTO TABLE temp162.
+    temp163-n = `appointmentCreate`.
+    temp163-v = appointmentCreate.
+    INSERT temp163 INTO TABLE temp162.
+    temp163-n = `selected`.
+    temp163-v = selected.
+    INSERT temp163 INTO TABLE temp162.
+    temp163-n = `nonWorkingDays`.
+    temp163-v = nonWorkingDays.
+    INSERT temp163 INTO TABLE temp162.
+    temp163-n = `enableAppointmentsResize`.
+    temp163-v = enableAppointmentsResize.
+    INSERT temp163 INTO TABLE temp162.
+    temp163-n = `enableAppointmentsDragAndDrop`.
+    temp163-v = enableAppointmentsDragAndDrop.
+    INSERT temp163 INTO TABLE temp162.
     temp163-n = `text`.
     temp163-v = text.
     INSERT temp163 INTO TABLE temp162.
     result = _generic( name   = `PlanningCalendarRow`
                        t_prop = temp162 ).
+
   ENDMETHOD.
 
 
