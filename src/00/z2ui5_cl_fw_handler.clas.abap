@@ -191,44 +191,44 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
                 DATA temp5 TYPE REF TO cl_abap_tabledescr.
                 DATA lo_tab LIKE temp5.
     temp2 ?= app.
-    
+
     lo_app = temp2.
-    
+
     temp3 ?= model.
-    
+
     lr_model = temp3.
 
-    
-    
+
+
     LOOP AT t_attri REFERENCE INTO lr_attri WHERE bind_type = cs_bind_type-two_way.
       TRY.
-          
+
           lv_type_kind = lr_attri->type_kind.
 
-          
-          
+
+
           lv_name = `LO_APP->` && lr_attri->name.
           ASSIGN (lv_name) TO <backend>.
-          
+
           temp1 = boolc( sy-subrc <> 0 ).
           z2ui5_cl_fw_utility=>raise( when = temp1 ).
 
-          
+
           lv_name = `LR_MODEL->` && replace( val  = lr_attri->name
                                              sub  = `-`
                                              with = `_`
                                              occ  = 0 ).
           ASSIGN (lv_name) TO <frontend>.
-          
+
           temp6 = boolc( sy-subrc <> 0 ).
           z2ui5_cl_fw_utility=>raise( when = temp6 ).
 
           IF lr_attri->check_ref_data IS NOT INITIAL.
             ASSIGN <backend>->* TO <backend>.
             TRY.
-                
+
                 temp5 ?= cl_abap_datadescr=>describe_by_data( <backend> ).
-                
+
                 lo_tab = temp5.
                 lv_type_kind = `h`.
               CATCH cx_root.
@@ -282,15 +282,15 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
       DATA temp10 TYPE xsdboolean.
               DATA temp9 TYPE string.
     temp6 ?= app.
-    
+
     lo_app = temp6.
-    
+
     lr_view_model = z2ui5_cl_fw_utility_json=>factory( ).
-    
+
     lo_update = lr_view_model->add_attribute_object( ss_config-view_model_edit_name ).
 
-    
-    
+
+
     LOOP AT t_attri REFERENCE INTO lr_attri WHERE bind_type <> ``.
 
       IF lr_attri->bind_type = cs_bind_type-one_time.
@@ -300,20 +300,20 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
         CONTINUE.
       ENDIF.
 
-      
+
       IF lr_attri->bind_type = cs_bind_type-one_way.
         temp8 = lr_view_model.
       ELSE.
         temp8 = lo_update.
       ENDIF.
-      
+
       lo_actual = temp8.
 
-      
-      
+
+
       lv_name = `LO_APP->` && to_upper( lr_attri->name ).
       ASSIGN (lv_name) TO <attribute>.
-      
+
       temp10 = boolc( sy-subrc <> 0 ).
       z2ui5_cl_fw_utility=>raise( when = temp10 ).
 
@@ -330,7 +330,7 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
 
             WHEN `ABAP_BOOL` OR `ABAP_BOOLEAN` OR `XSDBOOLEAN`.
 
-              
+
               CASE <attribute>.
                 WHEN abap_true.
                   temp9 = `true`.
@@ -372,7 +372,7 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
     so_body = z2ui5_cl_fw_utility_json=>factory( body ).
 
     TRY.
-        
+
         location     = so_body->get_attribute( `OLOCATION` ).
         ss_config-body     = body.
         ss_config-search   = location->get_attribute( `SEARCH` )->get_val( ).
@@ -384,7 +384,7 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
     ss_config-view_model_edit_name = `oUpdate`.
 
     TRY.
-        
+
         lv_id_prev = so_body->get_attribute( `ID` )->get_val( ).
         result = set_app_client( lv_id_prev ).
         result->ms_actual-check_on_navigated = abap_false.
@@ -395,31 +395,31 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
 
     TRY.
 
-        
+
         ASSIGN ('SO_BODY->MR_ACTUAL') TO <any>.
-        
+
         temp11 = boolc( sy-subrc <> 0 ).
         z2ui5_cl_fw_utility=>raise( when = temp11 ).
         ASSIGN ('<ANY>->ARGUMENTS') TO <any>.
-        
+
         temp12 = boolc( sy-subrc <> 0 ).
         z2ui5_cl_fw_utility=>raise( when = temp12 ).
         ASSIGN ('<ANY>->*') TO <any>.
-        
+
         temp13 = boolc( sy-subrc <> 0 ).
         z2ui5_cl_fw_utility=>raise( when = temp13 ).
 
-        
+
         ASSIGN <any> TO <arg>.
-        
+
         temp14 = boolc( sy-subrc <> 0 ).
         z2ui5_cl_fw_utility=>raise( when = temp14 ).
 
-        
+
         LOOP AT <arg> ASSIGNING <arg_row>.
 
           IF sy-tabix = 1.
-            
+
             ASSIGN ('<ARG_ROW>->EVENT->*') TO <val>.
             result->ms_actual-event = <val>.
           ELSE.
@@ -435,7 +435,7 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
     ENDTRY.
 
     TRY.
-        
+
         lo_scroll = so_body->get_attribute( `OSCROLL` ).
         z2ui5_cl_fw_utility=>trans_ref_tab_2_tab(
             EXPORTING
@@ -446,7 +446,7 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
     ENDTRY.
 
     TRY.
-        
+
         lo_cursor = so_body->get_attribute( `OCURSOR` ).
         result->ms_actual-s_cursor-id = lo_cursor->get_attribute( `ID` )->get_val( ).
 
@@ -467,13 +467,13 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
     DATA lv_viewmodel LIKE temp10.
     lo_resp = z2ui5_cl_fw_utility_json=>factory( ).
 
-    
+
     IF ms_next-s_set-_viewmodel IS NOT INITIAL.
       temp10 = ms_next-s_set-_viewmodel.
     ELSE.
       temp10 = model_set_frontend( app = ms_db-app t_attri = ms_db-t_attri ).
     ENDIF.
-    
+
     lv_viewmodel = temp10.
 
     lo_resp->add_attribute( n           = `OVIEWMODEL`
@@ -537,7 +537,7 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
     result = app_set_next( ms_next-o_app_leave ).
 
     TRY.
-        
+
         ls_draft = z2ui5_cl_fw_db=>read( id             = result->ms_db-id
                                                check_load_app = abap_false ).
         result->ms_db-id_prev_app_stack = ls_draft-uuid_prev_app_stack.
@@ -558,7 +558,7 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
         DATA lv_classname TYPE string.
 
     TRY.
-        
+
         lv_classname = to_upper( so_body->get_attribute( 'APP_START' )->get_val( ) ).
         lv_classname = shift_left( val = lv_classname
                                    sub = cl_abap_char_utilities=>horizontal_tab ).
@@ -631,32 +631,32 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
     DATA lv_id TYPE string.
     DATA temp15 TYPE z2ui5_cl_fw_utility=>ty_attri.
     temp11 ?= ms_db-app.
-    
+
     lo_app = temp11.
 
-    
+
     GET REFERENCE OF value INTO lr_in.
 
-    
-    
+
+
     LOOP AT ms_db-t_attri REFERENCE INTO lr_attri
          WHERE bind_type <> cs_bind_type-one_time.
 
-      
-      
+
+
       lv_name = `LO_APP->` && to_upper( lr_attri->name ).
       ASSIGN (lv_name) TO <attribute>.
-      
+
       temp16 = boolc( sy-subrc <> 0 ).
       z2ui5_cl_fw_utility=>raise( when = temp16
                                   v    = `Attribute in App with name ` && lv_name && ` not found` ).
-      
+
       GET REFERENCE OF <attribute> INTO lr_ref.
 
       IF lr_attri->check_ref_data IS NOT INITIAL.
-        
+
         ASSIGN lr_ref->* TO <field>.
-        
+
         temp13 ?= <field>.
         lr_ref = temp13.
       ENDIF.
@@ -671,7 +671,7 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
             `<p>Binding Error - Name of attribute more than 30 characters: ` && lr_attri->name ).
         ENDIF.
         lr_attri->bind_type = type.
-        
+
         IF type = cs_bind_type-two_way.
           temp14 = `/` && ss_config-view_model_edit_name && `/`.
         ELSE.
@@ -687,9 +687,9 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
       z2ui5_cl_fw_utility=>raise( `Binding Error - Two way binding used but no attribute found` ).
     ENDIF.
 
-    
+
     lv_id = z2ui5_cl_fw_utility=>get_uuid( ).
-    
+
     CLEAR temp15.
     temp15-name = lv_id.
     temp15-data_stringify = z2ui5_cl_fw_utility=>trans_any_2_json( value ).

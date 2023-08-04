@@ -47,7 +47,7 @@ CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
     DATA lv_time TYPE timestampl.
     DATA lv_four_hours_ago TYPE tzntstmpl.
     lv_time = z2ui5_cl_fw_utility=>get_timestampl( ).
-    
+
     lv_four_hours_ago = cl_abap_tstmp=>subtractsecs( tstmp = lv_time
                                                            secs  = 60 * 60 * 4 ).
 
@@ -78,40 +78,40 @@ DATA lv_xml TYPE string.
     DATA temp8 TYPE xsdboolean.
 
     TRY.
-        
+
         GET REFERENCE OF db INTO temp1.
 
 lv_xml = z2ui5_cl_fw_utility=>trans_object_2_xml( temp1 ).
 
-        
+
       CATCH cx_xslt_serialization_error INTO x.
         TRY.
 
-            
+
             ls_db = db.
-            
+
             temp2 ?= ls_db-app.
-            
+
             lo_app = temp2.
 
-            
+
             READ TABLE ls_db-t_attri WITH KEY check_ref_data = abap_true TRANSPORTING NO FIELDS.
             temp3 = sy-subrc.
             IF NOT temp3 = 0.
               RAISE EXCEPTION x.
             ENDIF.
 
-            
+
             temp4 ?= ls_db-app.
             lo_app = temp4.
-            
-            
+
+
             LOOP AT ls_db-t_attri REFERENCE INTO lr_attri WHERE check_ref_data = abap_true.
 
-              
+
               lv_assign = 'LO_APP->' && lr_attri->name.
-              
-              
+
+
               ASSIGN (lv_assign) TO <attri>.
               ASSIGN <attri>->* TO <deref_attri>.
 
@@ -121,11 +121,11 @@ lv_xml = z2ui5_cl_fw_utility=>trans_object_2_xml( temp1 ).
 
             ENDLOOP.
 
-            
+
             GET REFERENCE OF ls_db INTO temp6.
 lv_xml = z2ui5_cl_fw_utility=>trans_object_2_xml( temp6 ).
 
-            
+
           CATCH cx_root INTO x2.
 
             RAISE EXCEPTION TYPE z2ui5_cl_fw_error
@@ -135,7 +135,7 @@ lv_xml = z2ui5_cl_fw_utility=>trans_object_2_xml( temp6 ).
         ENDTRY.
     ENDTRY.
 
-    
+
     CLEAR temp7.
     temp7-uuid = id.
     temp7-uuid_prev = db-id_prev.
@@ -144,11 +144,11 @@ lv_xml = z2ui5_cl_fw_utility=>trans_object_2_xml( temp6 ).
     temp7-uname = z2ui5_cl_fw_utility=>get_user_tech( ).
     temp7-timestampl = z2ui5_cl_fw_utility=>get_timestampl( ).
     temp7-data = lv_xml.
-    
+
     ls_draft = temp7.
 
     MODIFY z2ui5_t_draft FROM ls_draft.
-    
+
     temp8 = boolc( sy-subrc <> 0 ).
     z2ui5_cl_fw_utility=>raise( when = temp8 ).
     COMMIT WORK AND WAIT.
@@ -175,23 +175,23 @@ lv_xml = z2ui5_cl_fw_utility=>trans_object_2_xml( temp6 ).
             data = result ).
 
     LOOP AT result-t_attri TRANSPORTING NO FIELDS WHERE data_rtti <> ``.
-      
+
       lv_check_rtti = abap_true.
     ENDLOOP.
     IF lv_check_rtti = abap_false.
       RETURN.
     ENDIF.
 
-    
+
     temp8 ?= result-app.
-    
+
     lo_app = temp8.
-    
-    
+
+
     LOOP AT result-t_attri REFERENCE INTO lr_attri WHERE check_ref_data = abap_true.
 
-      
-      
+
+
       lv_assign = 'LO_APP->' && lr_attri->name.
       ASSIGN (lv_assign) TO <ref>.
 
@@ -226,7 +226,7 @@ lv_xml = z2ui5_cl_fw_utility=>trans_object_2_xml( temp6 ).
 
     ENDIF.
 
-    
+
     temp9 = boolc( sy-subrc <> 0 ).
     z2ui5_cl_fw_utility=>raise( when = temp9 ).
 

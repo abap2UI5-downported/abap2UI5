@@ -50,7 +50,7 @@ CLASS z2ui5_cl_fw_integration_test IMPLEMENTATION.
     CASE sv_state.
 
       WHEN `ERROR`.
-        
+
         lv_test = 1 / 0 ##NEEDED.
 
       WHEN 'TEST_ONE_WAY'.
@@ -137,9 +137,9 @@ CLASS z2ui5_cl_fw_integration_test IMPLEMENTATION.
                           selectionstart = '5'
                           selectionend   = '10' ).
 
-      
+
       CLEAR temp1.
-      
+
       temp2-v = '99999'.
       temp2-n = 'id_page'.
       INSERT temp2 INTO TABLE temp1.
@@ -150,7 +150,7 @@ CLASS z2ui5_cl_fw_integration_test IMPLEMENTATION.
     ENDIF.
 
     IF sv_state = 'TEST_NAVIGATE'.
-      
+
       CREATE OBJECT lo_app TYPE z2ui5_cl_fw_integration_test.
       sv_state = 'LEAVE_APP'.
       client->nav_app_call( lo_app ).

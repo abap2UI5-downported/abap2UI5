@@ -20,7 +20,7 @@ CLASS ltcl_unit_01_json IMPLEMENTATION.
     lo_tree->add_attribute( n = `AAA`
                             v = `BBB` ).
 
-    
+
     lv_result = lo_tree->stringify( ).
     IF `{"AAA":"BBB"}` <> lv_result.
       cl_abap_unit_assert=>fail( 'json tree - wrong stringify attributes' ).
@@ -36,7 +36,7 @@ CLASS ltcl_unit_01_json IMPLEMENTATION.
     lo_tree->add_attribute_object( `CCC` )->add_attribute( n = `AAA`
                                                            v = `BBB` ).
 
-    
+
     lv_result = lo_tree->stringify( ).
     IF `{"CCC":{"AAA":"BBB"}}` <> lv_result.
       cl_abap_unit_assert=>fail( 'json tree - wrong stringify object attributes' ).
@@ -56,17 +56,17 @@ TYPES END OF ty_s_test.
     DATA lv_result TYPE string.
     CREATE OBJECT lo_tree TYPE z2ui5_cl_fw_utility_json.
 
-    
 
-    
+
+
     CLEAR temp6.
     temp6-comp1 = `AAA`.
     temp6-comp2 = `BBB`.
-    
+
     ls_test = temp6.
     lo_tree->add_attribute_object( `CCC` )->add_attribute_struc( ls_test ).
 
-    
+
     lv_result = lo_tree->stringify( ).
     IF `{"CCC":{"COMP1":"AAA","COMP2":"BBB"}}` <> lv_result.
       cl_abap_unit_assert=>fail( 'json tree - wrong stringify structure' ).
@@ -83,18 +83,18 @@ TYPES END OF ty_s_test.
     DATA lv_val TYPE string.
     lo_json = z2ui5_cl_fw_utility_json=>factory( `{"CCC":{"COMP1":"AAA","COMP2":"BBB"}}` ).
 
-    
+
     lo_attri = lo_json->get_attribute( `CCC` )->get_attribute( `COMP2` ).
 
-    
+
     lr_ref = lo_attri->get_val_ref( ).
-    
+
     ASSIGN lr_ref->* TO <any>.
     IF <any> <> `BBB`.
       cl_abap_unit_assert=>fail( quit = 5 ).
     ENDIF.
 
-    
+
     lv_val = lo_attri->get_val( ).
     IF lv_val <> `BBB`.
       cl_abap_unit_assert=>fail( quit = 5 ).
