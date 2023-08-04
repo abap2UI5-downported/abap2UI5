@@ -50,14 +50,14 @@ CLASS z2ui5_cl_fw_error IMPLEMENTATION.
 
     IF ms_error-x_root IS NOT INITIAL.
       result = ms_error-x_root->get_text( ).
-
+      
       error = abap_true.
     ELSEIF ms_error-text IS NOT INITIAL.
       result = ms_error-text.
       error = abap_true.
     ENDIF.
 
-
+    
     IF error = abap_true AND result IS INITIAL.
       temp1 = `unknown error`.
     ELSE.

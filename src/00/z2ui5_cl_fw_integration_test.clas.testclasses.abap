@@ -36,17 +36,17 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lv_assign TYPE string.
 
     z2ui5_cl_fw_integration_test=>sv_state = ``.
-
+    
     lv_response = z2ui5_cl_http_handler=>http_post(
         `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
 
-
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-
+    
     UNASSIGN <val>.
-
+    
     lv_assign = `PARAMS->S_VIEW->XML->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     <val> = shift_left( <val> ).
@@ -74,17 +74,17 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lv_assign TYPE string.
 
     z2ui5_cl_fw_integration_test=>sv_state = ``.
-
+    
     lv_response = z2ui5_cl_http_handler=>http_post(
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
 
-
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-
+    
     UNASSIGN <val>.
-
+    
     lv_assign = `ID->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> IS INITIAL.
@@ -103,18 +103,18 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     CREATE OBJECT lo_test TYPE z2ui5_cl_fw_integration_test.
 
     z2ui5_cl_fw_integration_test=>sv_state = `TEST_ONE_WAY`.
-
+    
     lv_response = z2ui5_cl_http_handler=>http_post(
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
 
 
-
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-
+    
     UNASSIGN <val>.
-
+    
     lv_assign = `OVIEWMODEL->QUANTITY->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> <> `500`.
@@ -130,17 +130,17 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lv_assign TYPE string.
 
     z2ui5_cl_fw_integration_test=>sv_state = ``.
-
+    
     lv_response = z2ui5_cl_http_handler=>http_post(
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
 
-
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-
+    
     UNASSIGN <val>.
-
+    
     lv_assign = `OVIEWMODEL->OUPDATE->QUANTITY->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> <> `500`.
@@ -156,18 +156,18 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lv_assign TYPE string.
 
     z2ui5_cl_fw_integration_test=>sv_state = `TEST_MESSAGE_BOX`.
-
+    
     lv_response = z2ui5_cl_http_handler=>http_post(
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
 
-
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-
+    
 
     UNASSIGN <val>.
-
+    
     lv_assign = `PARAMS->S_MSG_BOX->TEXT->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> <> `test message box`.
@@ -191,18 +191,18 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lv_assign TYPE string.
 
     z2ui5_cl_fw_integration_test=>sv_state = `TEST_MESSAGE_TOAST`.
-
+    
     lv_response = z2ui5_cl_http_handler=>http_post(
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
 
-
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-
+    
 
     UNASSIGN <val>.
-
+    
     lv_assign = `PARAMS->S_MSG_TOAST->TEXT->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> <> `test message toast`.
@@ -219,18 +219,18 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lv_assign TYPE string.
 
     z2ui5_cl_fw_integration_test=>sv_state = `TEST_TIMER`.
-
+    
     lv_response = z2ui5_cl_http_handler=>http_post(
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
 
-
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-
+    
 
     UNASSIGN <val>.
-
+    
     lv_assign = `PARAMS->S_TIMER->EVENT_FINISHED->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> <> `TIMER_FINISHED`.
@@ -254,17 +254,17 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lv_assign TYPE string.
 
     z2ui5_cl_fw_integration_test=>sv_state = `TEST_POPUP`.
-
+    
     lv_response = z2ui5_cl_http_handler=>http_post(
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
 
-
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-
+    
     UNASSIGN <val>.
-
+    
     lv_assign = `PARAMS->S_POPUP->XML->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     <val> = shift_left( <val> ).
@@ -283,13 +283,13 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     lv_response = z2ui5_cl_http_handler=>http_post(
        `{ "OLOCATION" : { "SEARCH" : ""}}` ).
 
-
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-
+    
     UNASSIGN <val>.
-
+    
     lv_assign = `PARAMS->S_VIEW->XML->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     <val> = shift_left( <val> ).
@@ -304,11 +304,11 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lo_data TYPE REF TO data.
 
     z2ui5_cl_fw_integration_test=>sv_state = `TEST_SCROLL_CURSOR`.
-
+    
     lv_response = z2ui5_cl_http_handler=>http_post(
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
 
-
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
@@ -319,11 +319,11 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lo_data TYPE REF TO data.
 
     z2ui5_cl_fw_integration_test=>sv_state = `TEST_NAVIGATE`.
-
+    
     lv_response = z2ui5_cl_http_handler=>http_post(
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
 
-
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
@@ -334,11 +334,11 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lo_data TYPE REF TO data.
 
     z2ui5_cl_fw_integration_test=>sv_state = `TEST_NAVIGATE`.
-
+    
     lv_response = z2ui5_cl_http_handler=>http_post(
        `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
 
-
+    
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
@@ -356,28 +356,28 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lv_request TYPE string.
     lv_response = z2ui5_cl_http_handler=>http_post(  `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
 
-
+    
     /ui2/cl_json=>deserialize(
       EXPORTING
          json            = lv_response
       CHANGING
         data             = lo_data ).
 
-
+    
 
     UNASSIGN <val>.
-
+    
     lv_assign = `ID->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> IS INITIAL.
       cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
     ENDIF.
-
+    
     temp3 = <val>.
-
+    
     lv_id = temp3.
 
-
+    
     lv_request = `{"oUpdate":{"QUANTITY":"600"},"ID": "` && lv_id && `" ,"ARGUMENTS":[{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}]}`.
     lv_response = z2ui5_cl_http_handler=>http_post( lv_request ).
 
@@ -408,30 +408,30 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lv_request TYPE string.
 
     z2ui5_cl_fw_integration_test=>sv_state = ``.
-
+    
     lv_response = z2ui5_cl_http_handler=>http_post(  `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
 
-
+    
     /ui2/cl_json=>deserialize(
       EXPORTING
          json            = lv_response
       CHANGING
         data             = lo_data ).
 
-
+    
 
     UNASSIGN <val>.
-
+    
     lv_assign = `ID->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     cl_abap_unit_assert=>assert_not_initial( <val> ).
 
 
-
+    
     temp4 = <val>.
-
+    
     lv_id = temp4.
-
+    
     lv_request = `{"oUpdate":{"QUANTITY":"700"},"ID": "` && lv_id && `" ,"ARGUMENTS": [{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}]}`.
     lv_response = z2ui5_cl_http_handler=>http_post( lv_request ).
 
@@ -460,18 +460,18 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lv_text TYPE string .
 
     z2ui5_cl_fw_integration_test=>sv_state = `ERROR`.
-
+    
     lv_response = z2ui5_cl_http_handler=>http_post( `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
 
-
+    
     /ui2/cl_json=>deserialize(
       EXPORTING
          json            = lv_response
       CHANGING
         data             = lo_data ).
 
-
-
+    
+    
     UNASSIGN <val>.
     ASSIGN (`LO_DATA->PARAMS->S_VIEW->XML->*`) TO <val>.
     cl_abap_unit_assert=>assert_not_initial( <val> ).

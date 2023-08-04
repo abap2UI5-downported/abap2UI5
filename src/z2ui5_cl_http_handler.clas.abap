@@ -40,9 +40,9 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
     lt_config = t_config.
 
     IF lt_config IS INITIAL.
-
+      
       CLEAR temp1.
-
+      
       temp2-n = `data-sap-ui-theme`.
       temp2-v = `sap_horizon`.
       INSERT temp2 INTO TABLE temp1.
@@ -65,7 +65,7 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
     ENDIF.
 
     IF content_security_policy IS NOT SUPPLIED.
-
+      
       lv_sec_policy = `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: ` &&
         `ui5.sap.com *.ui5.sap.com sapui5.hana.ondemand.com *.sapui5.hana.ondemand.com sdk.openui5.org *.sdk.openui5.org cdn.jsdelivr.net *.cdn.jsdelivr.net"/>`.
     ELSE.
@@ -87,8 +87,8 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
                `    </style> ` &&
                `    <script id="sap-ui-bootstrap"`.
 
-
-
+    
+    
     LOOP AT lt_config REFERENCE INTO lr_config.
       r_result = r_result && | { lr_config->n }="{ lr_config->v }"|.
     ENDLOOP.
@@ -124,15 +124,15 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
                            `                if (sap.z2ui5.oResponse.PARAMS.S_CURSOR.ID !== '') {` && |\n| &&
                            `                    jQuery.sap.delayedCall(50, this, () => {` && |\n| &&
                            `                        var ofocus = sap.z2ui5.oView.byId(sap.z2ui5.oResponse.PARAMS.S_CURSOR.ID).getFocusInfo();` && |\n| &&
-                           `                        ofocus.selectionStart = parseInt(sap.z2ui5.oResponse.PARAMS.S_CURSOR.SELECTIONSTART);` && |\n| &&
-                           `                        ofocus.selectionEnd = parseInt(sap.z2ui5.oResponse.PARAMS.S_CURSOR.SELECTIONEND);` && |\n| &&
+                           `                        ofocus.selectionStart = sap.z2ui5.oResponse.PARAMS.S_CURSOR.SELECTIONSTART;` && |\n| &&
+                           `                        ofocus.selectionEnd = sap.z2ui5.oResponse.PARAMS.S_CURSOR.SELECTIONEND;` && |\n| &&
                            `                        sap.z2ui5.oView.byId(sap.z2ui5.oResponse.PARAMS.S_CURSOR.ID).applyFocusInfo(ofocus);` && |\n| &&
                            `                    });` && |\n| &&
                            `                }` && |\n| &&
                            `                if (sap.z2ui5.oResponse.PARAMS.T_SCROLL) {` && |\n| &&
                            `                    sap.z2ui5.oResponse.PARAMS.T_SCROLL.forEach(item => {` && |\n| &&
                            `                        try {` && |\n| &&
-                           `                            sap.z2ui5.oView.byId(item.N).scrollTo(parseInt(item.V));` && |\n| &&
+                           `                            sap.z2ui5.oView.byId(item.N).scrollTo(item.V);` && |\n| &&
                            `                        } catch {` && |\n| &&
                            `                            try {` && |\n| &&
                            `                                var ele = '#' + sap.z2ui5.oView.byId(item.N).getId() + '-inner';` && |\n| &&
@@ -162,6 +162,7 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
                            `                        sap.z2ui5.oController.NestViewDestroy( );` && |\n| &&
                            `                        new sap.ui.core.mvc.XMLView.create({` && |\n| &&
                            `                            definition: sap.z2ui5.oResponse.PARAMS.S_VIEW_NEST.XML,` && |\n| &&
+                           `                            controller: sap.z2ui5.oController,` && |\n| &&
                            `                        }).then(oView => {` && |\n| &&
                            `                            oView.setModel(new sap.ui.model.json.JSONModel(sap.z2ui5.oResponse.OVIEWMODEL));` && |\n| &&
                            `                            var oParent = sap.z2ui5.oView.byId(sap.z2ui5.oResponse.PARAMS.S_VIEW_NEST.ID);` && |\n| &&
@@ -191,7 +192,7 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
                            `                        sap.z2ui5.oViewPopover = oFragment;` && |\n| &&
                            `                    });` && |\n| &&
                            `                }` && |\n| &&
-                           `                if (sap.z2ui5.oResponse.PARAMS.S_TIMER.INTERVAL_MS !== '') {` && |\n| &&
+                           `                if (sap.z2ui5.oResponse.PARAMS.S_TIMER.EVENT_FINISHED !== '') {` && |\n| &&
                            `                    var oEvent = { 'EVENT': 'BUTTON_CHECK', 'METHOD': 'UPDATE' };` && |\n| &&
                            `                    oEvent.EVENT = sap.z2ui5.oResponse.PARAMS.S_TIMER.EVENT_FINISHED;` && |\n| &&
                            `                    sap.z2ui5.checkTimerActive = true;` && |\n| &&
@@ -201,7 +202,7 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
                            `                            let oEvent = JSON.parse( sap.z2ui5.oResponse.PARAMS.S_TIMER.EVENT_FINISHED.split( '(' )[ 1 ].split( ')' )[ 0 ].replaceAll( "'" , '"' ) );` && |\n| &&
                            `                            if (method == 'onEvent'){  sap.z2ui5.oController.onEvent(oEvent);  }else{ sap.z2ui5.oController.onEventFrontend(oEvent);  }` && |\n| &&
                            `                        }` && |\n| &&
-                           `                    }, parseInt(sap.z2ui5.oResponse.PARAMS.S_TIMER.INTERVAL_MS), oEvent);` && |\n| &&
+                           `                    }, sap.z2ui5.oResponse.PARAMS.S_TIMER.INTERVAL_MS, oEvent);` && |\n| &&
                            `                }` && |\n| &&
                            `                sap.ui.core.BusyIndicator.hide();` && |\n| &&
                            `            },` && |\n| &&
@@ -455,9 +456,9 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
     DO.
       TRY.
           ROLLBACK WORK.
-
+          
           temp4 ?= lo_handler->ms_db-app.
-
+          
           CREATE OBJECT temp1 TYPE z2ui5_cl_fw_client EXPORTING HANDLER = lo_handler.
           temp4->main( temp1 ).
           ROLLBACK WORK.
@@ -474,7 +475,7 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
 
           result = lo_handler->request_end( ).
 
-
+          
         CATCH cx_root INTO x.
           lo_handler = z2ui5_cl_fw_handler=>set_app_system( x ).
           CONTINUE.

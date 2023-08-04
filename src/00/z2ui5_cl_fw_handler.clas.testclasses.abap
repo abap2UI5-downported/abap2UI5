@@ -21,14 +21,14 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     DATA lo_app_fw LIKE temp16.
     lv_body = `{"OLOCATION":{"ORIGIN":"https:/url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100","VERSION":"com.sap.ui5.dist:sapui5-sdk-dist:1.115.0:war"}}`.
 
-
+    
     lo_handler = z2ui5_cl_fw_handler=>request_begin( lv_body ).
 
     cl_abap_unit_assert=>assert_bound( lo_handler->ms_db-app ).
 
-
+    
     temp16 ?= lo_handler->ms_db-app.
-
+    
     lo_app_fw = temp16.
 
 
@@ -43,14 +43,14 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     lv_body = `{"OLOCATION":{"ORIGIN":"https://url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100&app_start=z2ui5_cl_app_hello_world","VERSION":"c` &&
       `om.sap.ui5.dist:sapui5-sdk-dist:1.115.0:war"}}`.
 
-
+    
     lo_handler = z2ui5_cl_fw_handler=>request_begin( lv_body ).
 
     cl_abap_unit_assert=>assert_bound( lo_handler->ms_db-app ).
 
-
+    
     temp17 ?= lo_handler->ms_db-app.
-
+    
     lo_app_fw = temp17.
 
   ENDMETHOD.
@@ -65,16 +65,16 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     lv_body = `{"OLOCATION":{"ORIGIN":"https://url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100&app_start=z2ui5_cl_app_hello_world","VERSION":"c` &&
           `om.sap.ui5.dist:sapui5-sdk-dist:1.115.0:war"}}`.
 
-
+    
     lo_handler = z2ui5_cl_fw_handler=>request_begin( lv_body ).
 
-
+    
     temp18 ?= lo_handler->ms_db-app.
-
+    
     CREATE OBJECT temp1 TYPE z2ui5_cl_fw_client EXPORTING HANDLER = lo_handler.
     temp18->main( temp1 ).
 
-
+    
     lv_frontend = z2ui5_cl_fw_handler=>model_set_frontend(
                           app     = lo_handler->ms_db-app
                           t_attri = lo_handler->ms_db-t_attri
@@ -96,17 +96,17 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     lv_body = `{"OLOCATION":{"ORIGIN":"https://url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100&app_start=z2ui5_cl_app_hello_world","VERSION":"c` &&
           `om.sap.ui5.dist:sapui5-sdk-dist:1.115.0:war"}}`.
 
-
+    
     lo_handler = z2ui5_cl_fw_handler=>request_begin( lv_body ).
 
-
+    
     temp19 ?= lo_handler->ms_db-app.
-
+    
     CREATE OBJECT temp2 TYPE z2ui5_cl_fw_client EXPORTING HANDLER = lo_handler.
     temp19->main( temp2 ).
 
 
-
+    
     lv_resp = lo_handler->request_end( ).
 
     IF lv_resp NS `QUANTITY`.

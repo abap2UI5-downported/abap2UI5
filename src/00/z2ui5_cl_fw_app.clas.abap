@@ -71,16 +71,16 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
     DATA view TYPE REF TO z2ui5_cl_xml_view.
     lv_url = shift_left( val = client->get( )-s_config-origin && client->get( )-s_config-pathname
                                sub = ` ` ).
-
+    
     lv_url_app = lv_url && client->get( )-s_config-search.
 
-
+    
     CLEAR temp1.
     INSERT lv_url INTO TABLE temp1.
-
+    
     CLEAR temp2.
     INSERT lv_url_app INTO TABLE temp2.
-
+    
     view = z2ui5_cl_xml_view=>factory( client )->shell( )->illustrated_message(
         enableformattedtext = abap_true
         illustrationtype    = 'sapIllus-ErrorScreen'
@@ -111,7 +111,7 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
     DATA temp2 TYPE xsdboolean.
     lv_url = z2ui5_cl_xml_view=>factory( client )->hlp_get_app_url( ms_home-classname ).
 
-
+    
     page = z2ui5_cl_xml_view=>factory( client )->shell(
       )->page( shownavbutton = abap_false ).
 
@@ -128,10 +128,10 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
                      target = `_blank`
                      href   = `https://github.com/abap2ui5/abap2ui5` ).
 
-
+    
     grid = page->grid( `XL7 L7 M12 S12`
          )->content( `layout` ).
-
+    
     content = grid->simple_form( title    = `Quickstart`
                                        layout   = `ResponsiveGridLayout`
                                        editable = `true`
@@ -158,7 +158,7 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
       content->text( ms_home-classname ).
     ENDIF.
 
-
+    
     temp1 = boolc( ms_home-class_editable = abap_false ).
     content->button( press = client->_event( ms_home-btn_event_id )
                      text  = ms_home-btn_text
@@ -169,7 +169,7 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
                  href    = lv_url
                  enabled = z2ui5_cl_fw_utility=>get_json_boolean( temp1 ) ).
 
-
+    
     form = grid->simple_form( title    = `Samples`
                                     editable = abap_true
                                     layout   = 'ResponsiveGridLayout' ).
@@ -182,7 +182,7 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
                                                href   = `https://github.com/oblomov-dev/abap2UI5-demos` ).
     ENDIF.
 
-
+    
     temp2 = boolc( mv_check_demo = abap_true ).
     form->content( `form` )->label( )->button(
          text    = 'Continue...'
@@ -232,7 +232,7 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
 
       WHEN `BUTTON_CHECK`.
         TRY.
-
+            
             ms_home-classname = z2ui5_cl_fw_utility=>get_trim_upper( ms_home-classname ).
             CREATE OBJECT li_app_test TYPE (ms_home-classname).
 
@@ -243,7 +243,7 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
             ms_home-class_value_state = `Success`.
             ms_home-class_editable    = abap_false.
 
-
+            
           CATCH cx_root INTO lx.
             ms_home-class_value_state_text = lx->get_text( ).
             ms_home-class_value_state      = `Warning`.
@@ -253,7 +253,7 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
 
       WHEN `DEMOS`.
 
-
+        
         TRY.
             CREATE OBJECT li_app TYPE (`Z2UI5_CL_APP_DEMO_00`).
             mv_check_demo = abap_true.
