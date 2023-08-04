@@ -230,10 +230,10 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
 
     result = `onEvent( { 'EVENT' : '` && val && `', 'METHOD' : 'UPDATE' , 'CHECK_VIEW_DESTROY' : ` && z2ui5_cl_fw_utility=>get_json_boolean( check_view_destroy ) && ` }`.
 
-    
-    
+
+
     LOOP AT t_arg REFERENCE INTO lr_arg.
-      
+
       lv_new = lr_arg->*.
       IF lv_new IS INITIAL.
         CONTINUE.
@@ -259,8 +259,8 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
     IF t_arg IS NOT INITIAL.
       result = result && `, 'T_ARG' : [`.
 
-      
-      
+
+
       LOOP AT t_arg REFERENCE INTO lr_arg.
         IF sy-tabix <> 1.
           result = result && `,`.

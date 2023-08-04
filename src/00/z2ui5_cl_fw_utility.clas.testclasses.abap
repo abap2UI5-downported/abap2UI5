@@ -100,8 +100,8 @@ CLASS ltcl_unit_test_sap_api IMPLEMENTATION.
     CREATE OBJECT lo_app TYPE ltcl_test_app.
 
     lo_app->mv_val = `ABC`.
-    
-    
+
+
     lv_assign = `LO_APP->` && 'MV_VAL'.
     ASSIGN (lv_assign) TO <any>.
 
@@ -134,14 +134,14 @@ CLASS ltcl_unit_test_sap_api IMPLEMENTATION.
     DATA temp35 LIKE sy-tabix.
     CREATE OBJECT lo_app TYPE ltcl_test_app.
 
-    
+
     temp23 ?= cl_abap_objectdescr=>describe_by_object_ref( lo_app ).
-    
+
     lt_attri = temp23->attributes.
 
-    
-    
-    
+
+
+
     temp3 = sy-tabix.
     READ TABLE lt_attri WITH KEY name = `MS_TAB` INTO temp2.
     sy-tabix = temp3.
@@ -149,8 +149,8 @@ CLASS ltcl_unit_test_sap_api IMPLEMENTATION.
       RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
     ENDIF.
     lv_test = temp2.
-    
-    
+
+
     temp25 = sy-tabix.
     READ TABLE lt_attri WITH KEY name = `MT_TAB` INTO temp24.
     sy-tabix = temp25.
@@ -158,8 +158,8 @@ CLASS ltcl_unit_test_sap_api IMPLEMENTATION.
       RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
     ENDIF.
     lv_test = temp24.
-    
-    
+
+
     temp27 = sy-tabix.
     READ TABLE lt_attri WITH KEY name = `MV_VAL` INTO temp26.
     sy-tabix = temp27.
@@ -167,8 +167,8 @@ CLASS ltcl_unit_test_sap_api IMPLEMENTATION.
       RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
     ENDIF.
     lv_test = temp26.
-    
-    
+
+
     temp29 = sy-tabix.
     READ TABLE lt_attri WITH KEY name = `SS_TAB` INTO temp28.
     sy-tabix = temp29.
@@ -176,8 +176,8 @@ CLASS ltcl_unit_test_sap_api IMPLEMENTATION.
       RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
     ENDIF.
     lv_test = temp28.
-    
-    
+
+
     temp31 = sy-tabix.
     READ TABLE lt_attri WITH KEY name = `ST_TAB` INTO temp30.
     sy-tabix = temp31.
@@ -185,8 +185,8 @@ CLASS ltcl_unit_test_sap_api IMPLEMENTATION.
       RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
     ENDIF.
     lv_test = temp30.
-    
-    
+
+
     temp33 = sy-tabix.
     READ TABLE lt_attri WITH KEY name = `SV_STATUS` INTO temp32.
     sy-tabix = temp33.
@@ -194,8 +194,8 @@ CLASS ltcl_unit_test_sap_api IMPLEMENTATION.
       RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
     ENDIF.
     lv_test = temp32.
-    
-    
+
+
     temp35 = sy-tabix.
     READ TABLE lt_attri WITH KEY name = `SV_VAR` INTO temp34.
     sy-tabix = temp35.
@@ -211,7 +211,7 @@ CLASS ltcl_unit_test_sap_api IMPLEMENTATION.
     DATA temp36 TYPE REF TO cl_abap_elemdescr.
     DATA lo_ele LIKE temp36.
     temp36 ?= cl_abap_elemdescr=>describe_by_data( abap_true ).
-    
+
     lo_ele = temp36.
 
     cl_abap_unit_assert=>assert_equals(
@@ -262,7 +262,7 @@ CLASS ltcl_unit_test_sap_api IMPLEMENTATION.
         RAISE EXCEPTION TYPE z2ui5_cl_fw_error.
         cl_abap_unit_assert=>fail( ).
 
-        
+
       CATCH z2ui5_cl_fw_error INTO lx.
         cl_abap_unit_assert=>assert_bound( lx ).
     ENDTRY.
@@ -282,7 +282,7 @@ CLASS ltcl_unit_test_sap_api IMPLEMENTATION.
           exp = abap_false ).
     ENDIF.
 
-    
+
     temp2 = boolc( 1 = 1 ).
     IF temp2 = abap_false.
       cl_abap_unit_assert=>fail( ).
@@ -307,7 +307,7 @@ CLASS ltcl_unit_test_sap_api IMPLEMENTATION.
       cl_abap_unit_assert=>fail( ).
     ENDIF.
 
-    
+
     temp4 = boolc( 1 = 1 ).
     IF check_input( temp4 ) = abap_false.
       cl_abap_unit_assert=>fail( ).
@@ -340,22 +340,22 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
     "dummy for abaplint check green
     ltcl_test_app=>sv_var = ``.
-    
+
     CLEAR temp37.
     ltcl_test_app=>ss_tab = temp37.
-    
+
     CLEAR temp38.
     ltcl_test_app=>st_tab = temp38.
 
-    
+
     CREATE OBJECT lo_app TYPE ltcl_test_app.
 
-    
+
     lt_attri = z2ui5_cl_fw_utility=>get_t_attri_by_ref( lo_app ).
 
-    
+
     CLEAR temp39.
-    
+
     temp40-name = `MT_TAB`.
     temp40-type_kind = `h`.
     temp40-type = ``.
@@ -508,7 +508,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     temp40-data_rtti = ``.
     temp40-check_ref_data = ''.
     INSERT temp40 INTO TABLE temp39.
-    
+
     lt_attri_result = temp39.
 
     IF lt_attri_result <> lt_attri.
@@ -529,7 +529,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
         act                  = z2ui5_cl_fw_utility=>check_is_boolean( lv_bool )
         exp                  = abap_true ).
 
-    
+
     temp6 = boolc( 1 = 2 ).
     lv_bool = temp6.
     cl_abap_unit_assert=>assert_equals(
@@ -562,7 +562,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     lv_bool = temp7.
     cl_abap_unit_assert=>assert_equals( exp = `true` act = z2ui5_cl_fw_utility=>get_abap_2_json( lv_bool ) ).
 
-    
+
     temp8 = boolc( 1 = 2 ).
     lv_bool = temp8.
     cl_abap_unit_assert=>assert_equals( exp = `false` act = z2ui5_cl_fw_utility=>get_abap_2_json( lv_bool ) ).
@@ -576,13 +576,13 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     DATA lo_test2 TYPE REF TO ltcl_test_app.
     DATA lv_name2 TYPE string.
     CREATE OBJECT lo_test TYPE z2ui5_cl_fw_utility.
-    
+
     lv_name = z2ui5_cl_fw_utility=>get_classname_by_ref( lo_test ).
     cl_abap_unit_assert=>assert_equals( exp = `Z2UI5_CL_FW_UTILITY` act = lv_name ).
 
-    
+
     CREATE OBJECT lo_test2 TYPE ltcl_test_app.
-    
+
     lv_name2 = z2ui5_cl_fw_utility=>get_classname_by_ref( lo_test2 ).
     cl_abap_unit_assert=>assert_equals( exp = `LTCL_TEST_APP` act = lv_name2 ).
 
@@ -603,7 +603,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     DATA lv_text TYPE string.
     DATA lv_result TYPE string.
     lv_text = `this is a replace text`.
-    
+
     lv_result = z2ui5_cl_fw_utility=>get_replace(
         iv_val     = lv_text
         iv_begin   = `is a `
@@ -620,7 +620,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     DATA lv_time TYPE timestampl.
     DATA lv_time2 TYPE timestampl.
     lv_time = z2ui5_cl_fw_utility=>get_timestampl( ).
-    
+
     lv_time2 = z2ui5_cl_fw_utility=>get_timestampl( ).
 
     IF lv_time2 < lv_time.
@@ -679,7 +679,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     ENDTRY.
 
     TRY.
-        
+
         temp9 = boolc( 1 = 1 ).
         z2ui5_cl_fw_utility=>raise( when = temp9 ).
         cl_abap_unit_assert=>fail( quit = 5 ).
@@ -687,7 +687,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     ENDTRY.
 
     TRY.
-        
+
         temp10 = boolc( 1 = 3 ).
         z2ui5_cl_fw_utility=>raise( when = temp10 ).
       CATCH cx_root.
@@ -712,7 +712,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     DATA lv_tab_json TYPE string.
     DATA lv_result TYPE string.
     CLEAR temp41.
-    
+
     temp42-title = 'Test'.
     temp42-value = 'this is a description'.
     temp42-selected = abap_true.
@@ -721,14 +721,14 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     temp42-value = 'this is a new descr'.
     temp42-selected = abap_false.
     INSERT temp42 INTO TABLE temp41.
-    
+
     lt_tab = temp41.
 
 
-    
+
     lv_tab_json = z2ui5_cl_fw_utility=>trans_any_2_json( lt_tab ).
 
-    
+
     lv_result = `[{"TITLE":"Test","VALUE":"this is a description","SELECTED":true},{"TITLE":"Test2","VALUE":"this is a new descr","SELECTED":false}]`.
 
     IF lv_result <> lv_tab_json.
@@ -755,7 +755,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     DATA lt_tab2 LIKE temp45.
     DATA lv_tab TYPE string.
     CLEAR temp43.
-    
+
     temp44-title = 'Test'.
     temp44-value = 'this is a description'.
     temp44-selected = abap_true.
@@ -764,14 +764,14 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     temp44-value = 'this is a new descr'.
     temp44-selected = abap_false.
     INSERT temp44 INTO TABLE temp43.
-    
+
     lt_tab = temp43.
 
-    
+
     CLEAR temp45.
-    
+
     lt_tab2 = temp45.
-    
+
     lv_tab = z2ui5_cl_fw_utility=>trans_any_2_json( lt_tab ).
 
     /ui2/cl_json=>deserialize( EXPORTING json = lv_tab
@@ -802,22 +802,22 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     DATA lt_tab LIKE temp47.
     lv_result = `[{"TITLE":"Test","VALUE":"this is a description","SELECTED":true},{"TITLE":"Test2","VALUE":"this is a new descr","SELECTED":false}]`.
 
-    
+
     /ui2/cl_json=>deserialize( EXPORTING json = lv_result
                                CHANGING  data = lo_data ).
 
-    
+
     CLEAR temp46.
-    
+
     lt_tab2 = temp46.
     z2ui5_cl_fw_utility=>trans_ref_tab_2_tab(
         EXPORTING ir_tab_from = lo_data
         IMPORTING t_result    = lt_tab2 ).
 
 
-    
+
     CLEAR temp47.
-    
+
     temp48-title = 'Test'.
     temp48-value = 'this is a description'.
     temp48-selected = abap_true.
@@ -826,7 +826,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     temp48-value = 'this is a new descr'.
     temp48-selected = abap_false.
     INSERT temp48 INTO TABLE temp47.
-    
+
     lt_tab = temp47.
 
     IF lt_tab <> lt_tab2.
@@ -840,7 +840,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     DATA lt_param TYPE z2ui5_if_client=>ty_t_name_value.
     DATA lv_url TYPE string.
     lt_param = z2ui5_cl_fw_utility=>url_param_get_tab( `https://url.com/rvice_for_ui?sap-client=100&app_start=z2ui5_cl_app_hello_world` ).
-    
+
     lv_url = z2ui5_cl_fw_utility=>url_param_create_url( lt_param ).
 
     IF lv_url <> `sap-client=100&app_start=z2ui5_cl_app_hello_world`.
@@ -870,8 +870,8 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     DATA temp51 LIKE LINE OF lt_param.
     DATA temp52 LIKE sy-tabix.
     lt_param = z2ui5_cl_fw_utility=>url_param_get_tab( `https://url.com/rvice_for_ui?sap-client=100&app_start=z2ui5_cl_app_hello_world` ).
-    
-    
+
+
     temp50 = sy-tabix.
     READ TABLE lt_param WITH KEY n = `sap-client` INTO temp49.
     sy-tabix = temp50.
@@ -882,8 +882,8 @@ CLASS ltcl_unit_test IMPLEMENTATION.
       cl_abap_unit_assert=>fail( quit = 5 ).
     ENDIF.
 
-    
-    
+
+
     temp52 = sy-tabix.
     READ TABLE lt_param WITH KEY n = `app_start` INTO temp51.
     sy-tabix = temp52.
@@ -926,11 +926,11 @@ CLASS ltcl_unit_test IMPLEMENTATION.
         DATA lx TYPE REF TO z2ui5_cl_fw_error.
 
     TRY.
-        
+
         temp11 = boolc( 1 = 2 ).
         z2ui5_cl_fw_utility=>raise( when = temp11 ).
 
-        
+
       CATCH z2ui5_cl_fw_error INTO lx.
         cl_abap_unit_assert=>fail( quit = 5 ).
     ENDTRY.

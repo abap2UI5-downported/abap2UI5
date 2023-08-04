@@ -40,9 +40,9 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
     lt_config = t_config.
 
     IF lt_config IS INITIAL.
-      
+
       CLEAR temp1.
-      
+
       temp2-n = `data-sap-ui-theme`.
       temp2-v = `sap_horizon`.
       INSERT temp2 INTO TABLE temp1.
@@ -65,7 +65,7 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
     ENDIF.
 
     IF content_security_policy IS NOT SUPPLIED.
-      
+
       lv_sec_policy = `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: ` &&
         `ui5.sap.com *.ui5.sap.com sapui5.hana.ondemand.com *.sapui5.hana.ondemand.com sdk.openui5.org *.sdk.openui5.org cdn.jsdelivr.net *.cdn.jsdelivr.net"/>`.
     ELSE.
@@ -87,8 +87,8 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
                `    </style> ` &&
                `    <script id="sap-ui-bootstrap"`.
 
-    
-    
+
+
     LOOP AT lt_config REFERENCE INTO lr_config.
       r_result = r_result && | { lr_config->n }="{ lr_config->v }"|.
     ENDLOOP.
@@ -455,9 +455,9 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
     DO.
       TRY.
           ROLLBACK WORK.
-          
+
           temp4 ?= lo_handler->ms_db-app.
-          
+
           CREATE OBJECT temp1 TYPE z2ui5_cl_fw_client EXPORTING HANDLER = lo_handler.
           temp4->main( temp1 ).
           ROLLBACK WORK.
@@ -474,7 +474,7 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
 
           result = lo_handler->request_end( ).
 
-          
+
         CATCH cx_root INTO x.
           lo_handler = z2ui5_cl_fw_handler=>set_app_system( x ).
           CONTINUE.

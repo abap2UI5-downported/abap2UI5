@@ -89,7 +89,7 @@ CLASS Z2UI5_CL_FW_UTILITY_JSON IMPLEMENTATION.
     result = new( io_root = mo_root
                   iv_name = n ).
 
-    
+
     IF apos_active = abap_true.
       temp1 = escape( val = v format = cl_abap_format=>e_json_string ).
     ELSE.
@@ -133,13 +133,13 @@ CLASS Z2UI5_CL_FW_UTILITY_JSON IMPLEMENTATION.
     DATA temp3 LIKE LINE OF lt_comp.
     DATA lr_comp LIKE REF TO temp3.
     temp2 ?= cl_abap_datadescr=>describe_by_data( val ).
-    
+
     lo_struc = temp2.
-    
+
     lt_comp = lo_struc->get_components( ).
 
-    
-    
+
+
     LOOP AT lt_comp REFERENCE INTO lr_comp.
       ASSIGN COMPONENT lr_comp->name OF STRUCTURE val TO <value>.
       add_attribute( n = lr_comp->name
@@ -162,7 +162,7 @@ CLASS Z2UI5_CL_FW_UTILITY_JSON IMPLEMENTATION.
     CREATE OBJECT result.
     result->mo_root = result.
 
-    
+
     temp4 = iv_json.
     /ui2/cl_json=>deserialize(
         EXPORTING
@@ -186,15 +186,15 @@ CLASS Z2UI5_CL_FW_UTILITY_JSON IMPLEMENTATION.
     result = new( io_root = mo_root
                   iv_name = name ).
 
-    
+
     lv_name = 'MR_ACTUAL->' && replace( val  = name
                                               sub  = `-`
                                               with = `_`
                                               occ  = 0 ).
 
-    
+
     ASSIGN (lv_name) TO <attribute>.
-    
+
     temp2 = boolc( sy-subrc <> 0 ).
     z2ui5_cl_fw_utility=>raise( when = temp2 ).
 
@@ -210,7 +210,7 @@ CLASS Z2UI5_CL_FW_UTILITY_JSON IMPLEMENTATION.
     FIELD-SYMBOLS <attribute> TYPE any.
     DATA temp3 TYPE xsdboolean.
     ASSIGN mr_actual->* TO <attribute>.
-    
+
     temp3 = boolc( sy-subrc <> 0 ).
     z2ui5_cl_fw_utility=>raise( when = temp3
                                 v    = `value of attribute in JSON not found` ).
@@ -231,7 +231,7 @@ CLASS Z2UI5_CL_FW_UTILITY_JSON IMPLEMENTATION.
 
     CREATE OBJECT result.
     result->mo_root = io_root.
-    
+
     temp5 = iv_name.
     result->mv_name = temp5.
 
