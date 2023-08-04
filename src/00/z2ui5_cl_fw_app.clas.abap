@@ -66,6 +66,7 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
 
     DATA lv_url TYPE string.
     DATA lv_url_app TYPE string.
+    DATA lv_text TYPE string.
     DATA temp1 TYPE string_table.
     DATA temp2 TYPE string_table.
     DATA view TYPE REF TO z2ui5_cl_xml_view.
@@ -73,6 +74,9 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
                                sub = ` ` ).
     
     lv_url_app = lv_url && client->get( )-s_config-search.
+
+    
+    lv_text = mx_error->get_text( ).
 
     
     CLEAR temp1.
@@ -85,7 +89,7 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
         enableformattedtext = abap_true
         illustrationtype    = 'sapIllus-ErrorScreen'
         title               = '500 Internal Server Error'
-        description         = mx_error->get_text( )
+        description         = lv_text
       )->additional_content(
         )->button(
             text  = 'Home'

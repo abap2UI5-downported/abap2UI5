@@ -12,7 +12,7 @@ CLASS z2ui5_cl_fw_error DEFINITION INHERITING FROM cx_no_check
         text   TYPE string,
       END OF ms_error.
 
-    METHODS get_text REDEFINITION.
+    METHODS IF_MESSAGE~GET_TEXT REDEFINITION.
 
     METHODS constructor
       IMPORTING
@@ -44,7 +44,7 @@ CLASS z2ui5_cl_fw_error IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD get_text.
+  METHOD IF_MESSAGE~get_text.
       DATA error LIKE abap_true.
     DATA temp1 TYPE string.
 
