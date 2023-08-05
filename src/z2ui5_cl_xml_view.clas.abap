@@ -1239,6 +1239,20 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS info_label
+      IMPORTING
+        !id               TYPE clike OPTIONAL
+        !text             TYPE clike OPTIONAL
+        !renderMode       TYPE clike OPTIONAL
+        !colorscheme      TYPE clike OPTIONAL
+        !icon             TYPE clike OPTIONAL
+        !displayonly      TYPE clike OPTIONAL
+        !textdirection    TYPE clike OPTIONAL
+        !width            TYPE clike OPTIONAL
+          PREFERRED PARAMETER text
+      RETURNING
+        VALUE(result)     TYPE REF TO z2ui5_cl_xml_view .
+
     METHODS rows
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
@@ -2315,6 +2329,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp34 INTO TABLE temp33.
     temp34-n = `xmlns:shapes`.
     temp34-v = `sap.gantt.simple.shapes`.
+    INSERT temp34 INTO TABLE temp33.
+    temp34-n = `xmlns:tnt `.
+    temp34-v = `sap.tnt`.
     INSERT temp34 INTO TABLE temp33.
     mt_prop = temp33.
 
@@ -5731,6 +5748,42 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     result = _generic( name   = `sideContent`
                        ns     = 'layout'
                        t_prop = temp249 ).
+
+  ENDMETHOD.
+
+
+    METHOD info_label.
+    DATA temp251 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp252 LIKE LINE OF temp251.
+    CLEAR temp251.
+    
+    temp252-n = `id`.
+    temp252-v = id.
+    INSERT temp252 INTO TABLE temp251.
+    temp252-n = `text`.
+    temp252-v = text.
+    INSERT temp252 INTO TABLE temp251.
+    temp252-n = `renderMode `.
+    temp252-v = rendermode.
+    INSERT temp252 INTO TABLE temp251.
+    temp252-n = `colorScheme`.
+    temp252-v = colorscheme.
+    INSERT temp252 INTO TABLE temp251.
+    temp252-n = `displayOnly`.
+    temp252-v = displayonly.
+    INSERT temp252 INTO TABLE temp251.
+    temp252-n = `icon`.
+    temp252-v = icon.
+    INSERT temp252 INTO TABLE temp251.
+    temp252-n = `textDirection`.
+    temp252-v = textDirection.
+    INSERT temp252 INTO TABLE temp251.
+    temp252-n = `width`.
+    temp252-v = width.
+    INSERT temp252 INTO TABLE temp251.
+    result = _generic( name   = `InfoLabel`
+                       ns     = 'tnt'
+                       t_prop = temp251 ).
 
   ENDMETHOD.
 ENDCLASS.
