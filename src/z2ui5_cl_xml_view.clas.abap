@@ -1148,6 +1148,24 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING
         VALUE(result)  TYPE REF TO z2ui5_cl_xml_view .
 
+    METHODS dynamic_side_content
+      IMPORTING
+        !id                        TYPE clike OPTIONAL
+        !class                     TYPE clike OPTIONAL
+        !sideContentVisibility     TYPE clike OPTIONAL
+        !showSideContent           TYPE clike OPTIONAL
+        !containerQuery            TYPE clike OPTIONAL
+          PREFERRED PARAMETER id
+      RETURNING
+        VALUE(result)              TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS side_content
+      IMPORTING
+        !width                     TYPE clike OPTIONAL
+          PREFERRED PARAMETER width
+      RETURNING
+        VALUE(result)              TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS planning_calendar
       IMPORTING
         !rows                      TYPE clike OPTIONAL
@@ -1180,7 +1198,31 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !appointmentresize             TYPE clike OPTIONAL
           PREFERRED PARAMETER appointments
       RETURNING
-        VALUE(result)    TYPE REF TO z2ui5_cl_xml_view .
+        VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS planning_calendar_legend
+      IMPORTING
+        !items            TYPE clike OPTIONAL
+        !id               TYPE clike OPTIONAL
+        !appointmentItems TYPE clike OPTIONAL
+        !standardItems    TYPE clike OPTIONAL
+          PREFERRED PARAMETER items
+      RETURNING
+        VALUE(result)     TYPE REF TO z2ui5_cl_xml_view .
+
+    METHODS calendar_legend_item
+      IMPORTING
+        !text         TYPE clike OPTIONAL
+        !type         TYPE clike OPTIONAL
+        !tooltip      TYPE clike OPTIONAL
+        !color        TYPE clike OPTIONAL
+          PREFERRED PARAMETER text
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS appointment_items
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS rows
       RETURNING
@@ -5534,6 +5576,99 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
     mo_root->mo_previous = result2.
     result = result2.
+
+  ENDMETHOD.
+
+
+  METHOD appointment_items.
+    result = _generic( name   = `appointmentItems` ).
+  ENDMETHOD.
+
+
+   METHOD calendar_legend_item.
+    DATA temp243 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp244 LIKE LINE OF temp243.
+    CLEAR temp243.
+    
+    temp244-n = `text`.
+    temp244-v = text.
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `type`.
+    temp244-v = type.
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `tooltip`.
+    temp244-v = tooltip.
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `color`.
+    temp244-v = color.
+    INSERT temp244 INTO TABLE temp243.
+    result = _generic( name   = `CalendarLegendItem`
+                       t_prop = temp243 ).
+
+  ENDMETHOD.
+
+
+  METHOD dynamic_side_content.
+    DATA temp245 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp246 LIKE LINE OF temp245.
+    CLEAR temp245.
+    
+    temp246-n = `id`.
+    temp246-v = id.
+    INSERT temp246 INTO TABLE temp245.
+    temp246-n = `class`.
+    temp246-v = class.
+    INSERT temp246 INTO TABLE temp245.
+    temp246-n = `sideContentVisibility`.
+    temp246-v = sideContentVisibility.
+    INSERT temp246 INTO TABLE temp245.
+    temp246-n = `showSideContent`.
+    temp246-v = showSideContent.
+    INSERT temp246 INTO TABLE temp245.
+    temp246-n = `containerQuery`.
+    temp246-v = containerQuery.
+    INSERT temp246 INTO TABLE temp245.
+    result = _generic( name   = `DynamicSideContent`
+                       ns     = 'layout'
+                       t_prop = temp245 ).
+
+  ENDMETHOD.
+
+
+   METHOD planning_calendar_legend.
+    DATA temp247 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp248 LIKE LINE OF temp247.
+    CLEAR temp247.
+    
+    temp248-n = `id`.
+    temp248-v = id.
+    INSERT temp248 INTO TABLE temp247.
+    temp248-n = `items`.
+    temp248-v = items.
+    INSERT temp248 INTO TABLE temp247.
+    temp248-n = `appointmentItems`.
+    temp248-v = appointmentItems.
+    INSERT temp248 INTO TABLE temp247.
+    temp248-n = `standardItems`.
+    temp248-v = standardItems.
+    INSERT temp248 INTO TABLE temp247.
+    result = _generic( name   = `PlanningCalendarLegend`
+                       t_prop = temp247 ).
+
+  ENDMETHOD.
+
+
+  METHOD side_Content.
+    DATA temp249 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp250 LIKE LINE OF temp249.
+    CLEAR temp249.
+    
+    temp250-n = `width`.
+    temp250-v = width.
+    INSERT temp250 INTO TABLE temp249.
+    result = _generic( name   = `sideContent`
+                       ns     = 'layout'
+                       t_prop = temp249 ).
 
   ENDMETHOD.
 ENDCLASS.
