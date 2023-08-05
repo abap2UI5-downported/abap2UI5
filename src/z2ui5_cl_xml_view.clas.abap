@@ -369,6 +369,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !showsuggestion               TYPE clike OPTIONAL
         !showvaluehelp                TYPE clike OPTIONAL
         !valuehelprequest             TYPE clike OPTIONAL
+        !required                     TYPE clike OPTIONAL
         !suggest                      TYPE clike OPTIONAL
         !class                        TYPE clike OPTIONAL
         !visible                      TYPE clike OPTIONAL
@@ -629,6 +630,10 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !justifycontent TYPE clike OPTIONAL
         !class          TYPE clike OPTIONAL
         !rendertype     TYPE clike OPTIONAL
+        !alignContent     TYPE clike OPTIONAL
+        !alignItems     TYPE clike OPTIONAL
+        !width     TYPE clike OPTIONAL
+        !wrap     TYPE clike OPTIONAL
           PREFERRED PARAMETER class
       RETURNING
         VALUE(result)   TYPE REF TO z2ui5_cl_xml_view .
@@ -636,6 +641,11 @@ CLASS z2ui5_cl_xml_view DEFINITION
       IMPORTING
         !class          TYPE clike OPTIONAL
         !justifycontent TYPE clike OPTIONAL
+        !alignContent TYPE clike OPTIONAL
+        !alignItems TYPE clike OPTIONAL
+        !width TYPE clike OPTIONAL
+        !height         TYPE clike OPTIONAL
+        !wrap         TYPE clike OPTIONAL
       RETURNING
         VALUE(result)   TYPE REF TO z2ui5_cl_xml_view .
     METHODS scroll_container
@@ -750,8 +760,13 @@ CLASS z2ui5_cl_xml_view DEFINITION
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
     METHODS date_picker
       IMPORTING
-        !value        TYPE clike OPTIONAL
-        !placeholder  TYPE clike OPTIONAL
+        !value            TYPE clike OPTIONAL
+        !placeholder      TYPE clike OPTIONAL
+        !displayFormat    TYPE clike OPTIONAL
+        !valueFormat      TYPE clike OPTIONAL
+        !required         TYPE clike OPTIONAL
+        !valueState       TYPE clike OPTIONAL
+        !valueStateText   TYPE clike OPTIONAL
           PREFERRED PARAMETER value
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
@@ -2419,6 +2434,21 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp40-n = `value`.
     temp40-v = value.
     INSERT temp40 INTO TABLE temp39.
+    temp40-n = `displayFormat`.
+    temp40-v = displayFormat.
+    INSERT temp40 INTO TABLE temp39.
+    temp40-n = `valueFormat`.
+    temp40-v = valueFormat.
+    INSERT temp40 INTO TABLE temp39.
+    temp40-n = `required`.
+    temp40-v = z2ui5_cl_fw_utility=>get_json_boolean( required ).
+    INSERT temp40 INTO TABLE temp39.
+    temp40-n = `valueState`.
+    temp40-v = valueState.
+    INSERT temp40 INTO TABLE temp39.
+    temp40-n = `valueStateText`.
+    temp40-v = valueStateText.
+    INSERT temp40 INTO TABLE temp39.
     temp40-n = `placeholder`.
     temp40-v = placeholder.
     INSERT temp40 INTO TABLE temp39.
@@ -2932,11 +2962,27 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp78-n = `class`.
     temp78-v = class.
     INSERT temp78 INTO TABLE temp77.
+    temp78-n = `alignContent`.
+    temp78-v = alignContent.
+    INSERT temp78 INTO TABLE temp77.
+    temp78-n = `alignItems`.
+    temp78-v = alignItems.
+    INSERT temp78 INTO TABLE temp77.
+    temp78-n = `width`.
+    temp78-v = width.
+    INSERT temp78 INTO TABLE temp77.
+    temp78-n = `height`.
+    temp78-v = height.
+    INSERT temp78 INTO TABLE temp77.
+    temp78-n = `wrap`.
+    temp78-v = wrap.
+    INSERT temp78 INTO TABLE temp77.
     temp78-n = `justifyContent`.
     temp78-v = justifycontent.
     INSERT temp78 INTO TABLE temp77.
     result = _generic( name   = `HBox`
                        t_prop = temp77 ).
+
   ENDMETHOD.
 
 
@@ -3217,6 +3263,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp93 INTO TABLE temp92.
     temp93-n = `value`.
     temp93-v = value.
+    INSERT temp93 INTO TABLE temp92.
+    temp93-n = `required`.
+    temp93-v = z2ui5_cl_fw_utility=>get_json_boolean( required ).
     INSERT temp93 INTO TABLE temp92.
     temp93-n = `suggest`.
     temp93-v = suggest.
@@ -5431,13 +5480,26 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp232-v = justifycontent.
     INSERT temp232 INTO TABLE temp231.
     temp232-n = `renderType`.
-    temp232-v = rendertype.
+    temp232-v = renderType.
+    INSERT temp232 INTO TABLE temp231.
+    temp232-n = `alignContent`.
+    temp232-v = alignContent.
+    INSERT temp232 INTO TABLE temp231.
+    temp232-n = `alignItems`.
+    temp232-v = alignItems.
+    INSERT temp232 INTO TABLE temp231.
+    temp232-n = `width`.
+    temp232-v = width.
+    INSERT temp232 INTO TABLE temp231.
+    temp232-n = `wrap`.
+    temp232-v = wrap.
     INSERT temp232 INTO TABLE temp231.
     temp232-n = `class`.
     temp232-v = class.
     INSERT temp232 INTO TABLE temp231.
     result = _generic( name   = `VBox`
                        t_prop = temp231 ).
+
   ENDMETHOD.
 
 
