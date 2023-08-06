@@ -9,8 +9,8 @@ CLASS z2ui5_cl_fw_utility_json DEFINITION
     DATA mo_parent       TYPE REF TO z2ui5_cl_fw_utility_json.
     DATA mv_name         TYPE string.
     DATA mv_value        TYPE string.
-    TYPES ty_temp1 TYPE STANDARD TABLE OF REF TO z2ui5_cl_fw_utility_json WITH DEFAULT KEY.
-DATA mt_values       TYPE ty_temp1.
+    TYPES temp1_610cae68cf TYPE STANDARD TABLE OF REF TO z2ui5_cl_fw_utility_json WITH DEFAULT KEY.
+DATA mt_values       TYPE temp1_610cae68cf.
     DATA mr_actual       TYPE REF TO data.
     DATA mv_apost_active TYPE abap_bool.
 

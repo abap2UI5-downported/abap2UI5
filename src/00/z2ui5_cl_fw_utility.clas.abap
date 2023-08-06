@@ -670,8 +670,8 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
     DATA lv_search TYPE string.
     DATA lv_search2 TYPE string.
     DATA temp18 TYPE string.
-    TYPES ty_temp1 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-DATA lt_param TYPE ty_temp1.
+    TYPES temp1 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lt_param TYPE temp1.
     DATA temp19 LIKE LINE OF lt_param.
     DATA lr_param LIKE REF TO temp19.
       DATA lv_name TYPE string.
