@@ -17,31 +17,9 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
     DATA lv_body TYPE string.
     DATA lo_handler TYPE REF TO z2ui5_cl_fw_handler.
-    DATA temp16 TYPE REF TO z2ui5_cl_fw_app.
-    DATA lo_app_fw LIKE temp16.
-    lv_body = `{"OLOCATION":{"ORIGIN":"https:/url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100","VERSION":"com.sap.ui5.dist:sapui5-sdk-dist:1.115.0:war"}}`.
-
-    
-    lo_handler = z2ui5_cl_fw_handler=>request_begin( lv_body ).
-
-    cl_abap_unit_assert=>assert_bound( lo_handler->ms_db-app ).
-
-    
-    temp16 ?= lo_handler->ms_db-app.
-    
-    lo_app_fw = temp16.
-
-
-  ENDMETHOD.
-
-  METHOD test_req_begin_app_start.
-
-    DATA lv_body TYPE string.
-    DATA lo_handler TYPE REF TO z2ui5_cl_fw_handler.
-    DATA temp17 TYPE REF TO z2ui5_cl_app_hello_world.
+    DATA temp17 TYPE REF TO z2ui5_cl_fw_app.
     DATA lo_app_fw LIKE temp17.
-    lv_body = `{"OLOCATION":{"ORIGIN":"https://url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100&app_start=z2ui5_cl_app_hello_world","VERSION":"c` &&
-      `om.sap.ui5.dist:sapui5-sdk-dist:1.115.0:war"}}`.
+    lv_body = `{"OLOCATION":{"ORIGIN":"https:/url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100","VERSION":"com.sap.ui5.dist:sapui5-sdk-dist:1.115.0:war"}}`.
 
     
     lo_handler = z2ui5_cl_fw_handler=>request_begin( lv_body ).
@@ -53,13 +31,35 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     
     lo_app_fw = temp17.
 
+
+  ENDMETHOD.
+
+  METHOD test_req_begin_app_start.
+
+    DATA lv_body TYPE string.
+    DATA lo_handler TYPE REF TO z2ui5_cl_fw_handler.
+    DATA temp18 TYPE REF TO z2ui5_cl_app_hello_world.
+    DATA lo_app_fw LIKE temp18.
+    lv_body = `{"OLOCATION":{"ORIGIN":"https://url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100&app_start=z2ui5_cl_app_hello_world","VERSION":"c` &&
+      `om.sap.ui5.dist:sapui5-sdk-dist:1.115.0:war"}}`.
+
+    
+    lo_handler = z2ui5_cl_fw_handler=>request_begin( lv_body ).
+
+    cl_abap_unit_assert=>assert_bound( lo_handler->ms_db-app ).
+
+    
+    temp18 ?= lo_handler->ms_db-app.
+    
+    lo_app_fw = temp18.
+
   ENDMETHOD.
 
   METHOD test_model_set_frontend.
 
     DATA lv_body TYPE string.
     DATA lo_handler TYPE REF TO z2ui5_cl_fw_handler.
-    DATA temp18 TYPE REF TO z2ui5_if_app.
+    DATA temp19 TYPE REF TO z2ui5_if_app.
     DATA temp1 TYPE REF TO z2ui5_cl_fw_client.
     DATA lv_frontend TYPE string.
     lv_body = `{"OLOCATION":{"ORIGIN":"https://url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100&app_start=z2ui5_cl_app_hello_world","VERSION":"c` &&
@@ -69,10 +69,10 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     lo_handler = z2ui5_cl_fw_handler=>request_begin( lv_body ).
 
     
-    temp18 ?= lo_handler->ms_db-app.
+    temp19 ?= lo_handler->ms_db-app.
     
     CREATE OBJECT temp1 TYPE z2ui5_cl_fw_client EXPORTING HANDLER = lo_handler.
-    temp18->main( temp1 ).
+    temp19->main( temp1 ).
 
     
     lv_frontend = z2ui5_cl_fw_handler=>model_set_frontend(
@@ -90,7 +90,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
     DATA lv_body TYPE string.
     DATA lo_handler TYPE REF TO z2ui5_cl_fw_handler.
-    DATA temp19 TYPE REF TO z2ui5_if_app.
+    DATA temp20 TYPE REF TO z2ui5_if_app.
     DATA temp2 TYPE REF TO z2ui5_cl_fw_client.
     DATA lv_resp TYPE string.
     lv_body = `{"OLOCATION":{"ORIGIN":"https://url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100&app_start=z2ui5_cl_app_hello_world","VERSION":"c` &&
@@ -100,10 +100,10 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     lo_handler = z2ui5_cl_fw_handler=>request_begin( lv_body ).
 
     
-    temp19 ?= lo_handler->ms_db-app.
+    temp20 ?= lo_handler->ms_db-app.
     
     CREATE OBJECT temp2 TYPE z2ui5_cl_fw_client EXPORTING HANDLER = lo_handler.
-    temp19->main( temp2 ).
+    temp20->main( temp2 ).
 
 
     

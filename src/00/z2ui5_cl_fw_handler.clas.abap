@@ -143,11 +143,13 @@ CLASS z2ui5_cl_fw_handler DEFINITION
       RETURNING
         VALUE(r_result) TYPE REF TO z2ui5_cl_fw_handler.
 
+protected section.
+private section.
 ENDCLASS.
 
 
 
-CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
+CLASS Z2UI5_CL_FW_HANDLER IMPLEMENTATION.
 
 
   METHOD app_set_next.
@@ -365,6 +367,7 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
         DATA temp14 TYPE xsdboolean.
         FIELD-SYMBOLS <arg_row> TYPE any.
             FIELD-SYMBOLS <val> TYPE any.
+            DATA temp10 TYPE string.
         DATA lo_scroll TYPE REF TO z2ui5_cl_fw_utility_json.
         DATA lo_cursor TYPE REF TO z2ui5_cl_fw_utility_json.
 
@@ -426,7 +429,9 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
             IF sy-subrc <> 0.
               CONTINUE.
             ENDIF.
-            INSERT <val> INTO TABLE result->ms_actual-t_event_arg.
+            
+            temp10 = <val>.
+            INSERT temp10 INTO TABLE result->ms_actual-t_event_arg.
           ENDIF.
 
         ENDLOOP.
@@ -462,18 +467,18 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
   METHOD request_end.
 
     DATA lo_resp TYPE REF TO z2ui5_cl_fw_utility_json.
-    DATA temp10 TYPE z2ui5_cl_fw_handler=>ty_s_next2-_viewmodel.
-    DATA lv_viewmodel LIKE temp10.
+    DATA temp11 TYPE z2ui5_cl_fw_handler=>ty_s_next2-_viewmodel.
+    DATA lv_viewmodel LIKE temp11.
     lo_resp = z2ui5_cl_fw_utility_json=>factory( ).
 
     
     IF ms_next-s_set-_viewmodel IS NOT INITIAL.
-      temp10 = ms_next-s_set-_viewmodel.
+      temp11 = ms_next-s_set-_viewmodel.
     ELSE.
-      temp10 = model_set_frontend( app = ms_db-app t_attri = ms_db-t_attri ).
+      temp11 = model_set_frontend( app = ms_db-app t_attri = ms_db-t_attri ).
     ENDIF.
     
-    lv_viewmodel = temp10.
+    lv_viewmodel = temp11.
 
     lo_resp->add_attribute( n           = `OVIEWMODEL`
                             v           = lv_viewmodel
@@ -615,23 +620,23 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
 
   METHOD _create_binding.
 
-    DATA temp11 TYPE REF TO object.
-    DATA lo_app LIKE temp11.
+    DATA temp12 TYPE REF TO object.
+    DATA lo_app LIKE temp12.
     DATA lr_in TYPE REF TO data.
-    DATA temp12 LIKE LINE OF ms_db-t_attri.
-    DATA lr_attri LIKE REF TO temp12.
+    DATA temp13 LIKE LINE OF ms_db-t_attri.
+    DATA lr_attri LIKE REF TO temp13.
       FIELD-SYMBOLS <attribute> TYPE any.
       DATA lv_name TYPE string.
-      DATA temp16 TYPE xsdboolean.
+      DATA temp17 TYPE xsdboolean.
       DATA lr_ref TYPE REF TO data.
         FIELD-SYMBOLS <field> TYPE any.
-        DATA temp13 TYPE REF TO data.
-        DATA temp14 TYPE string.
+        DATA temp14 TYPE REF TO data.
+        DATA temp15 TYPE string.
     DATA lv_id TYPE string.
-    DATA temp15 TYPE z2ui5_cl_fw_utility=>ty_attri.
-    temp11 ?= ms_db-app.
+    DATA temp16 TYPE z2ui5_cl_fw_utility=>ty_attri.
+    temp12 ?= ms_db-app.
     
-    lo_app = temp11.
+    lo_app = temp12.
 
     
     GET REFERENCE OF value INTO lr_in.
@@ -646,8 +651,8 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
       lv_name = `LO_APP->` && to_upper( lr_attri->name ).
       ASSIGN (lv_name) TO <attribute>.
       
-      temp16 = boolc( sy-subrc <> 0 ).
-      z2ui5_cl_fw_utility=>raise( when = temp16
+      temp17 = boolc( sy-subrc <> 0 ).
+      z2ui5_cl_fw_utility=>raise( when = temp17
                                   v    = `Attribute in App with name ` && lv_name && ` not found` ).
       
       GET REFERENCE OF <attribute> INTO lr_ref.
@@ -656,8 +661,8 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
         
         ASSIGN lr_ref->* TO <field>.
         
-        temp13 ?= <field>.
-        lr_ref = temp13.
+        temp14 ?= <field>.
+        lr_ref = temp14.
       ENDIF.
 
       IF lr_in = lr_ref.
@@ -672,11 +677,11 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
         lr_attri->bind_type = type.
         
         IF type = cs_bind_type-two_way.
-          temp14 = `/` && ss_config-view_model_edit_name && `/`.
+          temp15 = `/` && ss_config-view_model_edit_name && `/`.
         ELSE.
-          temp14 = `/`.
+          temp15 = `/`.
         ENDIF.
-        result = temp14 && lr_attri->name.
+        result = temp15 && lr_attri->name.
         RETURN.
       ENDIF.
 
@@ -689,11 +694,11 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
     
     lv_id = z2ui5_cl_fw_utility=>get_uuid( ).
     
-    CLEAR temp15.
-    temp15-name = lv_id.
-    temp15-data_stringify = z2ui5_cl_fw_utility=>trans_any_2_json( value ).
-    temp15-bind_type = cs_bind_type-one_time.
-    INSERT temp15
+    CLEAR temp16.
+    temp16-name = lv_id.
+    temp16-data_stringify = z2ui5_cl_fw_utility=>trans_any_2_json( value ).
+    temp16-bind_type = cs_bind_type-one_time.
+    INSERT temp16
            INTO TABLE ms_db-t_attri.
     result = |/{ lv_id }|.
 
