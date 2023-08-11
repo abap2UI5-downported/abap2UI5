@@ -45,6 +45,7 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
     result-check_launchpad_active = mo_handler->ms_actual-check_launchpad_active.
     result-t_event_arg = mo_handler->ms_actual-t_event_arg.
     result-t_scroll_pos = mo_handler->ms_actual-t_scroll_pos.
+    result-t_message_manager = mo_handler->ms_actual-t_message_manager.
     MOVE-CORRESPONDING mo_handler->ms_db TO result-s_draft.
     result-check_on_navigated = mo_handler->ms_actual-check_on_navigated.
     result-s_config = z2ui5_cl_fw_handler=>ss_config.

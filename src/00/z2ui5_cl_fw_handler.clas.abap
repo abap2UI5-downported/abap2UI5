@@ -368,6 +368,7 @@ CLASS Z2UI5_CL_FW_HANDLER IMPLEMENTATION.
         FIELD-SYMBOLS <arg_row> TYPE any.
             FIELD-SYMBOLS <val> TYPE any.
             DATA temp10 TYPE string.
+        DATA lo_message TYPE REF TO z2ui5_cl_fw_utility_json.
         DATA lo_scroll TYPE REF TO z2ui5_cl_fw_utility_json.
         DATA lo_cursor TYPE REF TO z2ui5_cl_fw_utility_json.
 
@@ -435,6 +436,17 @@ CLASS Z2UI5_CL_FW_HANDLER IMPLEMENTATION.
           ENDIF.
 
         ENDLOOP.
+      CATCH cx_root.
+    ENDTRY.
+
+    TRY.
+        
+        lo_message = so_body->get_attribute( `OMESSAGEMANAGER` ).
+        z2ui5_cl_fw_utility=>trans_ref_tab_2_tab(
+            EXPORTING
+                ir_tab_from = lo_message->mr_actual
+            IMPORTING
+                t_result    = result->ms_actual-t_message_manager ).
       CATCH cx_root.
     ENDTRY.
 
