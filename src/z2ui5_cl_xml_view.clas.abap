@@ -845,6 +845,18 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !items         TYPE clike OPTIONAL
       RETURNING
         VALUE(result)  TYPE REF TO z2ui5_cl_xml_view .
+    METHODS multi_combobox
+      IMPORTING
+        !selectionChange     TYPE clike OPTIONAL
+        !selectionFinish     TYPE clike OPTIONAL
+        !width               TYPE clike OPTIONAL
+        !showClearIcon       TYPE clike OPTIONAL
+        !showSecondaryValues TYPE clike OPTIONAL
+        !showSelectAll       TYPE clike OPTIONAL
+        !selectedKeys        TYPE clike OPTIONAL
+        !items               TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result)  TYPE REF TO z2ui5_cl_xml_view .
     METHODS grid
       IMPORTING
         !class        TYPE clike OPTIONAL
@@ -1201,6 +1213,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !intervalheaders               TYPE clike OPTIONAL
         !icon                          TYPE clike OPTIONAL
         !title                         TYPE clike OPTIONAL
+        !key                           TYPE clike OPTIONAL
         !text                          TYPE clike OPTIONAL
         !enableappointmentscreate      TYPE clike OPTIONAL
         !enableappointmentsdraganddrop TYPE clike OPTIONAL
@@ -4233,6 +4246,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp163-n = `title`.
     temp163-v = title.
     INSERT temp163 INTO TABLE temp162.
+    temp163-n = `key`.
+    temp163-v = key.
+    INSERT temp163 INTO TABLE temp162.
     temp163-n = `enableAppointmentsCreate`.
     temp163-v = enableAppointmentsCreate.
     INSERT temp163 INTO TABLE temp162.
@@ -5785,5 +5801,39 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
                        ns     = 'tnt'
                        t_prop = temp251 ).
 
+  ENDMETHOD.
+
+
+ METHOD multi_combobox.
+    DATA temp253 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp254 LIKE LINE OF temp253.
+    CLEAR temp253.
+    
+    temp254-n = `selectionChange`.
+    temp254-v = selectionChange.
+    INSERT temp254 INTO TABLE temp253.
+    temp254-n = `selectedKeys`.
+    temp254-v = selectedkeys.
+    INSERT temp254 INTO TABLE temp253.
+    temp254-n = `items`.
+    temp254-v = items.
+    INSERT temp254 INTO TABLE temp253.
+    temp254-n = `selectionFinish`.
+    temp254-v = selectionFinish.
+    INSERT temp254 INTO TABLE temp253.
+    temp254-n = `width`.
+    temp254-v = width.
+    INSERT temp254 INTO TABLE temp253.
+    temp254-n = `showClearIcon`.
+    temp254-v = showClearIcon.
+    INSERT temp254 INTO TABLE temp253.
+    temp254-n = `showSecondaryValues`.
+    temp254-v = showSecondaryValues.
+    INSERT temp254 INTO TABLE temp253.
+    temp254-n = `showSelectAll`.
+    temp254-v = showSelectAll.
+    INSERT temp254 INTO TABLE temp253.
+    result = _generic( name   = `ComboBox`
+                       t_prop = temp253 ).
   ENDMETHOD.
 ENDCLASS.
