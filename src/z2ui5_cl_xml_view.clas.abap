@@ -158,8 +158,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
       IMPORTING
         !show_header         TYPE clike OPTIONAL
         !text                TYPE clike OPTIONAL
-*        !enableformattedtext TYPE clike OPTIONAL
-*        !description         TYPE clike OPTIONAL
+        !enableformattedtext TYPE clike OPTIONAL
+        !description         TYPE clike OPTIONAL
         !icon                TYPE clike OPTIONAL
       RETURNING
         VALUE(result)        TYPE REF TO z2ui5_cl_xml_view.
@@ -3701,11 +3701,17 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp123-n = `showHeader`.
     temp123-v = z2ui5_cl_fw_utility=>get_json_boolean( show_header ).
     INSERT temp123 INTO TABLE temp122.
+    temp123-n = `description`.
+    temp123-v = description.
+    INSERT temp123 INTO TABLE temp122.
     temp123-n = `icon`.
     temp123-v = icon.
     INSERT temp123 INTO TABLE temp122.
     temp123-n = `text`.
     temp123-v = text.
+    INSERT temp123 INTO TABLE temp122.
+    temp123-n = `enableFormattedText`.
+    temp123-v = z2ui5_cl_fw_utility=>get_json_boolean( enableformattedtext ).
     INSERT temp123 INTO TABLE temp122.
     result = _generic( name   = `MessagePage`
                        t_prop = temp122 ).
