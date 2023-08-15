@@ -630,10 +630,10 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !justifycontent TYPE clike OPTIONAL
         !class          TYPE clike OPTIONAL
         !rendertype     TYPE clike OPTIONAL
-        !alignContent     TYPE clike OPTIONAL
+        !alignContent   TYPE clike OPTIONAL
         !alignItems     TYPE clike OPTIONAL
-        !width     TYPE clike OPTIONAL
-        !wrap     TYPE clike OPTIONAL
+        !width          TYPE clike OPTIONAL
+        !wrap           TYPE clike OPTIONAL
           PREFERRED PARAMETER class
       RETURNING
         VALUE(result)   TYPE REF TO z2ui5_cl_xml_view .
@@ -641,11 +641,11 @@ CLASS z2ui5_cl_xml_view DEFINITION
       IMPORTING
         !class          TYPE clike OPTIONAL
         !justifycontent TYPE clike OPTIONAL
-        !alignContent TYPE clike OPTIONAL
-        !alignItems TYPE clike OPTIONAL
-        !width TYPE clike OPTIONAL
+        !alignContent   TYPE clike OPTIONAL
+        !alignItems     TYPE clike OPTIONAL
+        !width          TYPE clike OPTIONAL
         !height         TYPE clike OPTIONAL
-        !wrap         TYPE clike OPTIONAL
+        !wrap           TYPE clike OPTIONAL
       RETURNING
         VALUE(result)   TYPE REF TO z2ui5_cl_xml_view .
     METHODS scroll_container
@@ -760,16 +760,16 @@ CLASS z2ui5_cl_xml_view DEFINITION
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
     METHODS date_picker
       IMPORTING
-        !value            TYPE clike OPTIONAL
-        !placeholder      TYPE clike OPTIONAL
-        !displayFormat    TYPE clike OPTIONAL
-        !valueFormat      TYPE clike OPTIONAL
-        !required         TYPE clike OPTIONAL
-        !valueState       TYPE clike OPTIONAL
-        !valueStateText   TYPE clike OPTIONAL
+        !value          TYPE clike OPTIONAL
+        !placeholder    TYPE clike OPTIONAL
+        !displayFormat  TYPE clike OPTIONAL
+        !valueFormat    TYPE clike OPTIONAL
+        !required       TYPE clike OPTIONAL
+        !valueState     TYPE clike OPTIONAL
+        !valueStateText TYPE clike OPTIONAL
           PREFERRED PARAMETER value
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+        VALUE(result)   TYPE REF TO z2ui5_cl_xml_view .
     METHODS time_picker
       IMPORTING
         !value        TYPE clike OPTIONAL
@@ -843,6 +843,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !showclearicon TYPE clike OPTIONAL
         !label         TYPE clike OPTIONAL
         !items         TYPE clike OPTIONAL
+        !change        TYPE clike OPTIONAL
       RETURNING
         VALUE(result)  TYPE REF TO z2ui5_cl_xml_view .
     METHODS multi_combobox
@@ -856,7 +857,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !selectedKeys        TYPE clike OPTIONAL
         !items               TYPE clike OPTIONAL
       RETURNING
-        VALUE(result)  TYPE REF TO z2ui5_cl_xml_view .
+        VALUE(result)        TYPE REF TO z2ui5_cl_xml_view .
     METHODS grid
       IMPORTING
         !class        TYPE clike OPTIONAL
@@ -1179,21 +1180,21 @@ CLASS z2ui5_cl_xml_view DEFINITION
 
     METHODS dynamic_side_content
       IMPORTING
-        !id                        TYPE clike OPTIONAL
-        !class                     TYPE clike OPTIONAL
-        !sideContentVisibility     TYPE clike OPTIONAL
-        !showSideContent           TYPE clike OPTIONAL
-        !containerQuery            TYPE clike OPTIONAL
+        !id                    TYPE clike OPTIONAL
+        !class                 TYPE clike OPTIONAL
+        !sideContentVisibility TYPE clike OPTIONAL
+        !showSideContent       TYPE clike OPTIONAL
+        !containerQuery        TYPE clike OPTIONAL
           PREFERRED PARAMETER id
       RETURNING
-        VALUE(result)              TYPE REF TO z2ui5_cl_xml_view.
+        VALUE(result)          TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS side_content
       IMPORTING
-        !width                     TYPE clike OPTIONAL
+        !width        TYPE clike OPTIONAL
           PREFERRED PARAMETER width
       RETURNING
-        VALUE(result)              TYPE REF TO z2ui5_cl_xml_view.
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS planning_calendar
       IMPORTING
@@ -1228,7 +1229,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !appointmentresize             TYPE clike OPTIONAL
           PREFERRED PARAMETER appointments
       RETURNING
-        VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
+        VALUE(result)                  TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS planning_calendar_legend
       IMPORTING
@@ -1256,17 +1257,17 @@ CLASS z2ui5_cl_xml_view DEFINITION
 
     METHODS info_label
       IMPORTING
-        !id               TYPE clike OPTIONAL
-        !text             TYPE clike OPTIONAL
-        !renderMode       TYPE clike OPTIONAL
-        !colorscheme      TYPE clike OPTIONAL
-        !icon             TYPE clike OPTIONAL
-        !displayonly      TYPE clike OPTIONAL
-        !textdirection    TYPE clike OPTIONAL
-        !width            TYPE clike OPTIONAL
+        !id            TYPE clike OPTIONAL
+        !text          TYPE clike OPTIONAL
+        !renderMode    TYPE clike OPTIONAL
+        !colorscheme   TYPE clike OPTIONAL
+        !icon          TYPE clike OPTIONAL
+        !displayonly   TYPE clike OPTIONAL
+        !textdirection TYPE clike OPTIONAL
+        !width         TYPE clike OPTIONAL
           PREFERRED PARAMETER text
       RETURNING
-        VALUE(result)     TYPE REF TO z2ui5_cl_xml_view .
+        VALUE(result)  TYPE REF TO z2ui5_cl_xml_view .
 
     METHODS rows
       RETURNING
@@ -1545,6 +1546,62 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING
         VALUE(result)            TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS toolpage
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+    METHODS toolheader
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+    METHODS subheader
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS icontabheader
+      IMPORTING
+        !selectedKey  TYPE clike OPTIONAL
+        !items        TYPE clike OPTIONAL
+        !select       TYPE clike OPTIONAL
+        !mode         TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS icontabfilters
+      IMPORTING
+        !items        TYPE clike OPTIONAL
+        !text         TYPE clike OPTIONAL
+        !key          TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS icontabfilter
+      IMPORTING
+        !text         TYPE clike OPTIONAL
+        !key          TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+     METHODS NavContainer
+      IMPORTING
+        !initialPage         TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS pages
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS ScrollContainer
+      IMPORTING
+        !id         TYPE clike OPTIONAL
+        !horizontal TYPE clike OPTIONAL
+        !vertical   TYPE clike OPTIONAL
+        !height     TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS mainContents
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
   PROTECTED SECTION.
 
     DATA mv_name  TYPE string.
@@ -1559,11 +1616,17 @@ CLASS z2ui5_cl_xml_view DEFINITION
     DATA mi_client TYPE REF TO z2ui5_if_client.
 
   PRIVATE SECTION.
+
+
+
+
+
+
 ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
+CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD actions.
@@ -1716,8 +1779,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp6-n = `highlightable`.
     temp6-v = z2ui5_cl_fw_utility=>get_json_boolean( highlightable ).
     INSERT temp6 INTO TABLE temp5.
-    result = _generic( name   = `BaseRectangle` ns = 'gantt'
-              t_prop = temp5 ).
+    result = _generic( name   = `BaseRectangle`
+                       ns     = 'gantt'
+                       t_prop = temp5 ).
   ENDMETHOD.
 
 
@@ -1913,9 +1977,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp20-n = `type`.
     temp20-v = type.
     INSERT temp20 INTO TABLE temp19.
-    _generic( name            = `ExportSpreadsheet`
-                       ns     = `z2ui5`
-                       t_prop = temp19 ).
+    _generic( name   = `ExportSpreadsheet`
+              ns     = `z2ui5`
+              t_prop = temp19 ).
 
   ENDMETHOD.
 
@@ -2270,6 +2334,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp32 INTO TABLE temp31.
     temp32-n = `label`.
     temp32-v = label.
+    INSERT temp32 INTO TABLE temp31.
+    temp32-n = `change`.
+    temp32-v = change.
     INSERT temp32 INTO TABLE temp31.
     result = _generic( name   = `ComboBox`
                        t_prop = temp31 ).
@@ -2825,9 +2892,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp64-n = `shapeSelectionMode`.
     temp64-v = shapeselectionmode.
     INSERT temp64 INTO TABLE temp63.
-    result = _generic( name = `GanttChartWithTable`
-                   ns       = `gantt`
-                   t_prop   = temp63 ).
+    result = _generic( name   = `GanttChartWithTable`
+                       ns     = `gantt`
+                       t_prop = temp63 ).
   ENDMETHOD.
 
 
@@ -2845,9 +2912,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp66-n = `shapes2`.
     temp66-v = shapes2.
     INSERT temp66 INTO TABLE temp65.
-    result = _generic( name = `GanttRowSettings`
-               ns           = `gantt`
-               t_prop       = temp65 ).
+    result = _generic( name   = `GanttRowSettings`
+                       ns     = `gantt`
+                       t_prop = temp65 ).
   ENDMETHOD.
 
 
@@ -3092,8 +3159,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   METHOD hlp_get_url_param.
 
     result = z2ui5_cl_fw_utility=>url_param_get(
-        val = val
-        url = mi_client->get( )-s_config-search ).
+      val = val
+      url = mi_client->get( )-s_config-search ).
 
   ENDMETHOD.
 
@@ -3102,9 +3169,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
     DATA result TYPE string.
     result = z2ui5_cl_fw_utility=>url_param_set(
-               url   = mi_client->get( )-s_config-search
-               name  = n
-               value = v ).
+      url   = mi_client->get( )-s_config-search
+      name  = n
+      value = v ).
 
     mi_client->url_param_set( result ).
 
@@ -3152,8 +3219,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp83-n = `selectedKey`.
     temp83-v = selectedkey.
     INSERT temp83 INTO TABLE temp82.
-    result = _generic( name = `IconTabBar`
-                   t_prop   = temp82 ).
+    result = _generic( name   = `IconTabBar`
+                       t_prop = temp82 ).
   ENDMETHOD.
 
 
@@ -3181,8 +3248,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp85-n = `key`.
     temp85-v = key.
     INSERT temp85 INTO TABLE temp84.
-    result = _generic( name = `IconTabFilter`
-                   t_prop   = temp84 ).
+    result = _generic( name   = `IconTabFilter`
+                       t_prop = temp84 ).
   ENDMETHOD.
 
 
@@ -3246,8 +3313,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp91-n = `src`.
     temp91-v = src.
     INSERT temp91 INTO TABLE temp90.
-    result = _generic( name = `ImageContent`
-                   t_prop   = temp90 ).
+    result = _generic( name   = `ImageContent`
+                       t_prop = temp90 ).
 
 
   ENDMETHOD.
@@ -5678,11 +5745,11 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD appointment_items.
-    result = _generic( name   = `appointmentItems` ).
+    result = _generic( name = `appointmentItems` ).
   ENDMETHOD.
 
 
-   METHOD calendar_legend_item.
+  METHOD calendar_legend_item.
     DATA temp243 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp244 LIKE LINE OF temp243.
     CLEAR temp243.
@@ -5731,8 +5798,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-   METHOD planning_calendar_legend.
+  METHOD planning_calendar_legend.
     DATA temp247 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp248 LIKE LINE OF temp247.
     CLEAR temp247.
@@ -5754,7 +5820,6 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD side_Content.
     DATA temp249 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp250 LIKE LINE OF temp249.
@@ -5769,8 +5834,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-    METHOD info_label.
+  METHOD info_label.
     DATA temp251 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp252 LIKE LINE OF temp251.
     CLEAR temp251.
@@ -5805,8 +5869,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
   ENDMETHOD.
 
-
- METHOD multi_combobox.
+  METHOD multi_combobox.
     DATA temp253 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp254 LIKE LINE OF temp253.
     CLEAR temp253.
@@ -5838,4 +5901,123 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     result = _generic( name   = `ComboBox`
                        t_prop = temp253 ).
   ENDMETHOD.
+
+  METHOD ToolPage.
+    result = _generic( name = `ToolPage`
+                       ns   = `tnt` ).
+  ENDMETHOD.
+
+  METHOD toolheader.
+    result = _generic( name = `ToolHeader`
+                       ns   = `tnt` ).
+  ENDMETHOD.
+
+  METHOD subHeader.
+    result = _generic( name = `subHeader`
+                       ns   = `tnt` ).
+  ENDMETHOD.
+
+  METHOD icontabheader.
+    DATA temp255 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp256 LIKE LINE OF temp255.
+    CLEAR temp255.
+    
+    temp256-n = `selectedKey`.
+    temp256-v = selectedKey.
+    INSERT temp256 INTO TABLE temp255.
+    temp256-n = `items`.
+    temp256-v = items.
+    INSERT temp256 INTO TABLE temp255.
+    temp256-n = `select`.
+    temp256-v = select.
+    INSERT temp256 INTO TABLE temp255.
+    temp256-n = `mode`.
+    temp256-v = mode.
+    INSERT temp256 INTO TABLE temp255.
+    result = _generic( name   = `IconTabHeader`
+                       t_prop = temp255 ).
+
+  ENDMETHOD.
+
+  METHOD icontabfilters.
+    DATA temp257 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp258 LIKE LINE OF temp257.
+    CLEAR temp257.
+    
+    temp258-n = `items`.
+    temp258-v = items.
+    INSERT temp258 INTO TABLE temp257.
+    temp258-n = `text`.
+    temp258-v = text.
+    INSERT temp258 INTO TABLE temp257.
+    temp258-n = `key`.
+    temp258-v = key.
+    INSERT temp258 INTO TABLE temp257.
+    result = _generic( name   = `IconTabFilter`
+                       t_prop = temp257 ).
+
+  ENDMETHOD.
+
+  METHOD icontabfilter.
+    DATA temp259 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp260 LIKE LINE OF temp259.
+    CLEAR temp259.
+    
+    temp260-n = `text`.
+    temp260-v = text.
+    INSERT temp260 INTO TABLE temp259.
+    temp260-n = `key`.
+    temp260-v = key.
+    INSERT temp260 INTO TABLE temp259.
+    result = _generic( name   = `IconTabFilter`
+                       t_prop = temp259 ).
+
+  ENDMETHOD.
+
+  METHOD mainContents.
+    result = _generic( name   = `mainContents`
+                       ns     = `tnt` ).
+
+  ENDMETHOD.
+
+  METHOD NavContainer.
+    DATA temp261 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp262 LIKE LINE OF temp261.
+    CLEAR temp261.
+    
+    temp262-n = `initialPage`.
+    temp262-v = initialPage.
+    INSERT temp262 INTO TABLE temp261.
+    result = _generic( name   = `NavContainer`
+                       t_prop = temp261  ).
+
+  ENDMETHOD.
+
+  METHOD pages.
+    result = _generic( name   = `pages`  ).
+
+  ENDMETHOD.
+
+  METHOD ScrollContainer.
+    DATA temp263 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp264 LIKE LINE OF temp263.
+    CLEAR temp263.
+    
+    temp264-n = `id        `.
+    temp264-v = id.
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `horizontal`.
+    temp264-v = horizontal.
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `vertical  `.
+    temp264-v = vertical.
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `height    `.
+    temp264-v = height.
+    INSERT temp264 INTO TABLE temp263.
+    result = _generic( name   = `ScrollContainer`
+                       t_prop = temp263 ).
+
+  ENDMETHOD.
+
 ENDCLASS.
