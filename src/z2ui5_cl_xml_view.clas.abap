@@ -753,10 +753,13 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !design       TYPE clike OPTIONAL
           PREFERRED PARAMETER text
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS image
       IMPORTING
         !src          TYPE clike OPTIONAL
+        !class          TYPE clike OPTIONAL
+        !height          TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
     METHODS date_picker
@@ -1569,7 +1572,9 @@ CLASS z2ui5_cl_xml_view DEFINITION
 
      METHODS Nav_Container
       IMPORTING
-        !initialPage         TYPE clike OPTIONAL
+        !initialPage           TYPE clike OPTIONAL
+        !id                    TYPE clike OPTIONAL
+        !defaultTransitionName TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1578,7 +1583,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
 
-    METHODS mainContents
+    METHODS main_contents
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -3387,6 +3392,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp95-n = `src`.
     temp95-v = src.
     INSERT temp95 INTO TABLE temp94.
+    temp95-n = class.
+    temp95-v = class.
+    INSERT temp95 INTO TABLE temp94.
+    temp95-n = `height`.
+    temp95-v = height.
+    INSERT temp95 INTO TABLE temp94.
     _generic( name   = `Image`
               t_prop = temp94 ).
   ENDMETHOD.
@@ -3840,7 +3851,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD mainContents.
+  METHOD main_contents.
     result = _generic( name   = `mainContents`
                        ns     = `tnt` ).
 
@@ -4081,6 +4092,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     
     temp145-n = `initialPage`.
     temp145-v = initialPage.
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `id`.
+    temp145-v = id.
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `defaultTransitionName`.
+    temp145-v = defaultTransitionName.
     INSERT temp145 INTO TABLE temp144.
     result = _generic( name   = `NavContainer`
                        t_prop = temp144  ).
