@@ -254,25 +254,32 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_event_client.
       DATA temp3 LIKE LINE OF t_arg.
       DATA lr_arg LIKE REF TO temp3.
+        DATA lv_new TYPE string.
 
-    result = `onEventFrontend( { 'EVENT' : '` && action && `'`.
+    result = `onEventFrontend( { 'EVENT' : '` && val && `' }`.
 
     IF t_arg IS NOT INITIAL.
-      result = result && `, 'T_ARG' : [`.
+*      result = result && `, 'T_ARG' : [`.
+*      result = result && `,`.
 
       
       
       LOOP AT t_arg REFERENCE INTO lr_arg.
-        IF sy-tabix <> 1.
-          result = result && `,`.
+        
+        lv_new = lr_arg->*.
+        IF lv_new IS INITIAL.
+          CONTINUE.
         ENDIF.
-        result = result && `'`  && lr_arg->* && `'`.
+        IF lv_new(1) <> `$` AND lv_new(1) <> `{`.
+          lv_new = `"` && lv_new && `"`.
+        ENDIF.
+        result = result && `, ` && lv_new.
       ENDLOOP.
 
-      result = result && `]`.
+*      result = result && `]`.
     ENDIF.
 
-    result = result && `})`.
+    result = result && `)`.
 
   ENDMETHOD.
 ENDCLASS.
