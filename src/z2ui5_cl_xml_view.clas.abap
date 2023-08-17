@@ -410,14 +410,20 @@ CLASS z2ui5_cl_xml_view DEFINITION
     METHODS get_parent
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+
     METHODS get
+      IMPORTING
+        name          TYPE string OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+
     METHODS get_child
       IMPORTING
         !index        TYPE i DEFAULT 1
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+
+
     METHODS columns
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
@@ -758,8 +764,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
     METHODS image
       IMPORTING
         !src          TYPE clike OPTIONAL
-        !class          TYPE clike OPTIONAL
-        !height          TYPE clike OPTIONAL
+        !class        TYPE clike OPTIONAL
+        !height       TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
     METHODS date_picker
@@ -991,14 +997,22 @@ CLASS z2ui5_cl_xml_view DEFINITION
       IMPORTING
         !htmltext     TYPE clike OPTIONAL
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS _generic
       IMPORTING
         !name         TYPE clike
         !ns           TYPE clike OPTIONAL
         !t_prop       TYPE z2ui5_if_client=>ty_t_name_value OPTIONAL
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS _generic_property
+      IMPORTING
+        !val          TYPE z2ui5_if_client=>ty_s_name_value OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS cc_file_uploader
       IMPORTING
         !value        TYPE clike OPTIONAL
@@ -1388,7 +1402,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
 
     METHODS icon_tab_filter
       IMPORTING
-       !items         TYPE clike OPTIONAL
+        !items        TYPE clike OPTIONAL
         !showall      TYPE abap_bool OPTIONAL
         !icon         TYPE clike OPTIONAL
         !iconcolor    TYPE clike OPTIONAL
@@ -1570,13 +1584,13 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
-     METHODS Nav_Container
+    METHODS Nav_Container
       IMPORTING
         !initialPage           TYPE clike OPTIONAL
         !id                    TYPE clike OPTIONAL
         !defaultTransitionName TYPE clike OPTIONAL
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+        VALUE(result)          TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS pages
       RETURNING
@@ -1611,7 +1625,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !confirm            TYPE clike OPTIONAL
         !selectionChange    TYPE clike OPTIONAL
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+        VALUE(result)       TYPE REF TO z2ui5_cl_xml_view.
 
 
   PROTECTED SECTION.
@@ -1638,7 +1652,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
+CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD actions.
@@ -1879,6 +1893,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   METHOD button.
     DATA temp13 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp14 LIKE LINE OF temp13.
+
     result = me.
     
     CLEAR temp13.
@@ -3059,7 +3074,18 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD get.
-    result = mo_root->mo_previous.
+
+    IF name IS INITIAL.
+      result = mo_root->mo_previous.
+      RETURN.
+    ENDIF.
+
+    IF mo_parent->mv_name = name.
+      result = mo_parent.
+    ELSE.
+      result = mo_parent->get( name ).
+    ENDIF.
+
   ENDMETHOD.
 
 
@@ -5270,75 +5296,75 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
   METHOD Table_Select_Dialog.
 
-   DATA temp216 TYPE z2ui5_if_client=>ty_t_name_value.
-   DATA temp217 LIKE LINE OF temp216.
-   CLEAR temp216.
-   
-   temp217-n = `confirmButtonText`.
-   temp217-v = confirmButtonText.
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `contentHeight`.
-   temp217-v = contentHeight.
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `contentWidth`.
-   temp217-v = contentWidth.
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `draggable`.
-   temp217-v = z2ui5_cl_fw_utility=>get_json_boolean( draggable ).
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `growing`.
-   temp217-v = z2ui5_cl_fw_utility=>get_json_boolean( growing ).
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `growingThreshold`.
-   temp217-v = growingThreshold.
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `multiSelect`.
-   temp217-v = z2ui5_cl_fw_utility=>get_json_boolean( multiSelect ).
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `noDataText`.
-   temp217-v = noDataText.
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `rememberSelections`.
-   temp217-v = z2ui5_cl_fw_utility=>get_json_boolean( rememberSelections ).
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `resizable`.
-   temp217-v = z2ui5_cl_fw_utility=>get_json_boolean( resizable ).
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `searchPlaceholder`.
-   temp217-v = searchPlaceholder.
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `showClearButton`.
-   temp217-v = z2ui5_cl_fw_utility=>get_json_boolean( showClearButton ).
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `title`.
-   temp217-v = title.
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `titleAlignment`.
-   temp217-v = titleAlignment.
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `items`.
-   temp217-v = items.
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `search`.
-   temp217-v = search.
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `confirm`.
-   temp217-v = confirm.
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `cancel`.
-   temp217-v = cancel.
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `liveChange`.
-   temp217-v = liveChange.
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `selectionChange`.
-   temp217-v = selectionChange.
-   INSERT temp217 INTO TABLE temp216.
-   temp217-n = `visible`.
-   temp217-v = z2ui5_cl_fw_utility=>get_json_boolean( visible ).
-   INSERT temp217 INTO TABLE temp216.
-   result = _generic( name   = `TableSelectDialog`
-              t_prop = temp216 ).
+    DATA temp216 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp217 LIKE LINE OF temp216.
+    CLEAR temp216.
+    
+    temp217-n = `confirmButtonText`.
+    temp217-v = confirmButtonText.
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `contentHeight`.
+    temp217-v = contentHeight.
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `contentWidth`.
+    temp217-v = contentWidth.
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `draggable`.
+    temp217-v = z2ui5_cl_fw_utility=>get_json_boolean( draggable ).
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `growing`.
+    temp217-v = z2ui5_cl_fw_utility=>get_json_boolean( growing ).
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `growingThreshold`.
+    temp217-v = growingThreshold.
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `multiSelect`.
+    temp217-v = z2ui5_cl_fw_utility=>get_json_boolean( multiSelect ).
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `noDataText`.
+    temp217-v = noDataText.
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `rememberSelections`.
+    temp217-v = z2ui5_cl_fw_utility=>get_json_boolean( rememberSelections ).
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `resizable`.
+    temp217-v = z2ui5_cl_fw_utility=>get_json_boolean( resizable ).
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `searchPlaceholder`.
+    temp217-v = searchPlaceholder.
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `showClearButton`.
+    temp217-v = z2ui5_cl_fw_utility=>get_json_boolean( showClearButton ).
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `title`.
+    temp217-v = title.
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `titleAlignment`.
+    temp217-v = titleAlignment.
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `items`.
+    temp217-v = items.
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `search`.
+    temp217-v = search.
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `confirm`.
+    temp217-v = confirm.
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `cancel`.
+    temp217-v = cancel.
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `liveChange`.
+    temp217-v = liveChange.
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `selectionChange`.
+    temp217-v = selectionChange.
+    INSERT temp217 INTO TABLE temp216.
+    temp217-n = `visible`.
+    temp217-v = z2ui5_cl_fw_utility=>get_json_boolean( visible ).
+    INSERT temp217 INTO TABLE temp216.
+    result = _generic( name   = `TableSelectDialog`
+               t_prop = temp216 ).
   ENDMETHOD.
 
 
@@ -6077,4 +6103,13 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     result = result2.
 
   ENDMETHOD.
+
+  METHOD _generic_property.
+
+    INSERT val INTO TABLE mt_prop.
+    result = me.
+
+  ENDMETHOD.
+
+
 ENDCLASS.

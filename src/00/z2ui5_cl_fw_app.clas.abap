@@ -112,7 +112,8 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
     DATA content TYPE REF TO z2ui5_cl_xml_view.
     DATA temp1 TYPE xsdboolean.
     DATA form TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp2 TYPE xsdboolean.
+    DATA cont TYPE REF TO z2ui5_cl_xml_view.
+      DATA temp2 TYPE xsdboolean.
     lv_url = z2ui5_cl_xml_view=>factory( client )->hlp_get_app_url( ms_home-classname ).
 
     
@@ -187,12 +188,15 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
     ENDIF.
 
     
-    temp2 = boolc( mv_check_demo = abap_true ).
-    form->content( `form` )->label( )->button(
+    cont = form->content( `form` ).
+        cont->label( ).
+      
+      temp2 = boolc( mv_check_demo = abap_true ).
+      cont->button(
          text    = 'Continue...'
          press   = client->_event( val = `DEMOS` check_view_destroy = abap_true )
-         enabled = temp2
-         )->button( visible = abap_false )->link( text   = 'More on GitHub...'
+         enabled = temp2 )->get( ).
+       cont->button( visible = abap_false )->link( text   = 'More on GitHub...'
                                                   target = '_blank'
                                                   href   = 'https://github.com/abap2UI5/abap2UI5-documentation/blob/main/docs/links.md' ).
 
