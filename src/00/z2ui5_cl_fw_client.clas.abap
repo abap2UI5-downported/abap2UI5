@@ -12,6 +12,13 @@ CLASS z2ui5_cl_fw_client DEFINITION
     METHODS constructor
       IMPORTING
         handler TYPE REF TO z2ui5_cl_fw_handler.
+  PROTECTED SECTION.
+
+    METHODS set_arg_string
+      IMPORTING
+        val           TYPE string_table
+      RETURNING
+        VALUE(result) TYPE string.
 
 ENDCLASS.
 
@@ -225,46 +232,29 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
 
 
   METHOD z2ui5_if_client~_event.
-    DATA temp2 LIKE LINE OF t_arg.
-    DATA lr_arg LIKE REF TO temp2.
-      DATA lv_new TYPE string.
 
     result = `onEvent( { 'EVENT' : '` && val && `', 'METHOD' : 'UPDATE' , 'CHECK_VIEW_DESTROY' : ` && z2ui5_cl_fw_utility=>get_json_boolean( check_view_destroy ) && ` }`.
-
-    
-    
-    LOOP AT t_arg REFERENCE INTO lr_arg.
-      
-      lv_new = lr_arg->*.
-      IF lv_new IS INITIAL.
-        CONTINUE.
-      ENDIF.
-      IF lv_new(1) <> `$` AND lv_new(1) <> `{`.
-        lv_new = `"` && lv_new && `"`.
-      ENDIF.
-
-      result = result && `, ` && lv_new.
-    ENDLOOP.
-
-    result = result && ` )`.
+    result = result && set_arg_string( t_arg ).
 
   ENDMETHOD.
 
 
   METHOD z2ui5_if_client~_event_client.
-      DATA temp3 LIKE LINE OF t_arg.
-      DATA lr_arg LIKE REF TO temp3.
+
+    result = `onEventFrontend( { 'EVENT' : '` && val && `' }` && set_arg_string( t_arg ).
+
+  ENDMETHOD.
+
+  METHOD set_arg_string.
+      DATA temp2 LIKE LINE OF val.
+      DATA lr_arg LIKE REF TO temp2.
         DATA lv_new TYPE string.
 
-    result = `onEventFrontend( { 'EVENT' : '` && val && `' }`.
-
-    IF t_arg IS NOT INITIAL.
-*      result = result && `, 'T_ARG' : [`.
-*      result = result && `,`.
+    IF val IS NOT INITIAL.
 
       
       
-      LOOP AT t_arg REFERENCE INTO lr_arg.
+      LOOP AT val REFERENCE INTO lr_arg.
         
         lv_new = lr_arg->*.
         IF lv_new IS INITIAL.
@@ -276,10 +266,10 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
         result = result && `, ` && lv_new.
       ENDLOOP.
 
-*      result = result && `]`.
     ENDIF.
 
     result = result && `)`.
 
   ENDMETHOD.
+
 ENDCLASS.
