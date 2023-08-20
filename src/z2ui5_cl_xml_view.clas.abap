@@ -770,20 +770,26 @@ CLASS z2ui5_cl_xml_view DEFINITION
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
     METHODS date_picker
       IMPORTING
-        !value          TYPE clike OPTIONAL
-        !placeholder    TYPE clike OPTIONAL
-        !displayFormat  TYPE clike OPTIONAL
-        !valueFormat    TYPE clike OPTIONAL
-        !required       TYPE clike OPTIONAL
-        !valueState     TYPE clike OPTIONAL
-        !valueStateText TYPE clike OPTIONAL
+        !value                 TYPE clike OPTIONAL
+        !placeholder           TYPE clike OPTIONAL
+        !displayFormat         TYPE clike OPTIONAL
+        !valueFormat           TYPE clike OPTIONAL
+        !required              TYPE clike OPTIONAL
+        !valueState            TYPE clike OPTIONAL
+        !valueStateText        TYPE clike OPTIONAL
+        !enabled               TYPE clike OPTIONAL
+        !showCurrentDateButton TYPE clike OPTIONAL
           PREFERRED PARAMETER value
       RETURNING
         VALUE(result)   TYPE REF TO z2ui5_cl_xml_view .
     METHODS time_picker
       IMPORTING
-        !value        TYPE clike OPTIONAL
-        !placeholder  TYPE clike OPTIONAL
+        !value         TYPE clike OPTIONAL
+        !placeholder   TYPE clike OPTIONAL
+        !enabled       TYPE clike OPTIONAL
+        !valueState    TYPE clike OPTIONAL
+        !displayFormat TYPE clike OPTIONAL
+        !valueFormat   TYPE clike OPTIONAL
           PREFERRED PARAMETER value
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
@@ -791,6 +797,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
       IMPORTING
         !value        TYPE clike OPTIONAL
         !placeholder  TYPE clike OPTIONAL
+        !enabled      TYPE clike OPTIONAL
+        !valueState   TYPE clike OPTIONAL
           PREFERRED PARAMETER value
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
@@ -953,6 +961,9 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !min          TYPE clike
         !max          TYPE clike
         !step         TYPE clike
+        !valueState   TYPE clike OPTIONAL
+        !enabled      TYPE clike OPTIONAL
+        !description  TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
     METHODS progress_indicator
@@ -2606,6 +2617,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp42-n = `placeholder`.
     temp42-v = placeholder.
     INSERT temp42 INTO TABLE temp41.
+    temp42-n = `enabled`.
+    temp42-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    INSERT temp42 INTO TABLE temp41.
+    temp42-n = `showCurrentDateButton`.
+    temp42-v = z2ui5_cl_fw_utility=>get_json_boolean( showCurrentDateButton ).
+    INSERT temp42 INTO TABLE temp41.
     _generic( name   = `DatePicker`
               t_prop = temp41 ).
   ENDMETHOD.
@@ -2623,6 +2640,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp44 INTO TABLE temp43.
     temp44-n = `placeholder`.
     temp44-v = placeholder.
+    INSERT temp44 INTO TABLE temp43.
+    temp44-n = `enabled`.
+    temp44-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    INSERT temp44 INTO TABLE temp43.
+    temp44-n = `valueState`.
+    temp44-v = valueState.
     INSERT temp44 INTO TABLE temp43.
     _generic( name   = `DateTimePicker`
               t_prop = temp43 ).
@@ -5150,6 +5173,15 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp209-n = `value`.
     temp209-v = value.
     INSERT temp209 INTO TABLE temp208.
+    temp209-n = `valueState`.
+    temp209-v = valueState.
+    INSERT temp209 INTO TABLE temp208.
+    temp209-n = `enabled`.
+    temp209-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    INSERT temp209 INTO TABLE temp208.
+    temp209-n = `description`.
+    temp209-v = description.
+    INSERT temp209 INTO TABLE temp208.
     _generic( name   = `StepInput`
               t_prop = temp208 ).
   ENDMETHOD.
@@ -5509,6 +5541,18 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp229 INTO TABLE temp228.
     temp229-n = `placeholder`.
     temp229-v = placeholder.
+    INSERT temp229 INTO TABLE temp228.
+    temp229-n = `enabled`.
+    temp229-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    INSERT temp229 INTO TABLE temp228.
+    temp229-n = `valueState`.
+    temp229-v = valueState.
+    INSERT temp229 INTO TABLE temp228.
+    temp229-n = `displayFormat`.
+    temp229-v = displayFormat.
+    INSERT temp229 INTO TABLE temp228.
+    temp229-n = `valueFormat`.
+    temp229-v = valueFormat.
     INSERT temp229 INTO TABLE temp228.
     _generic( name   = `TimePicker`
               t_prop = temp228 ).
