@@ -577,6 +577,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !class        TYPE clike OPTIONAL
         !id           TYPE clike OPTIONAL
         !ns           TYPE clike OPTIONAL
+        !tooltip      TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
     METHODS search_field
@@ -1708,6 +1709,9 @@ CLASS z2ui5_cl_xml_view DEFINITION
           !selectedGroupItem         TYPE clike OPTIONAL
           !selectedPresetFilterItem  TYPE clike OPTIONAL
           !selectedSortItem          TYPE clike OPTIONAL
+          !filterItems               TYPE clike OPTIONAL
+          !sortItems                 TYPE clike OPTIONAL
+          !groupItems                TYPE clike OPTIONAL
         RETURNING
           VALUE(result)        TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1746,20 +1750,57 @@ CLASS z2ui5_cl_xml_view DEFINITION
 
     METHODS variant_management
       IMPORTING
-            !editable              TYPE clike OPTIONAL
-            !headerLevel           TYPE clike OPTIONAL
-            !inErrorState          TYPE clike OPTIONAL
-            !maxWidth              TYPE clike OPTIONAL
-            !modelName             TYPE clike OPTIONAL
-            !resetOnContextChange  TYPE clike OPTIONAL
-            !showSetAsDefault      TYPE clike OPTIONAL
-            !titleStyle            TYPE clike OPTIONAL
-            !for                  TYPE clike OPTIONAL
-            !cancel                TYPE clike OPTIONAL
-            !initialized           TYPE clike OPTIONAL
-            !manage                TYPE clike OPTIONAL
-            !save                  TYPE clike OPTIONAL
-            !select                TYPE clike OPTIONAL
+        !defaultVariantKey      TYPE clike OPTIONAL
+        !enabled                TYPE clike OPTIONAL
+        !inErrorState           TYPE clike OPTIONAL
+        !initialSelectionKey    TYPE clike OPTIONAL
+        !lifecycleSupport       TYPE clike OPTIONAL
+        !selectionKey           TYPE clike OPTIONAL
+        !showCreateTile         TYPE clike OPTIONAL
+        !showExecuteOnSelection TYPE clike OPTIONAL
+        !showSetAsDefault       TYPE clike OPTIONAL
+        !showShare              TYPE clike OPTIONAL
+        !standardItemAuthor     TYPE clike OPTIONAL
+        !standardItemText       TYPE clike OPTIONAL
+        !useFavorites           TYPE clike OPTIONAL
+        !visible                TYPE clike OPTIONAL
+        !variantItems           TYPE clike OPTIONAL
+        !manage                 TYPE clike OPTIONAL
+        !save                   TYPE clike OPTIONAL
+        !select                 TYPE clike OPTIONAL
+        !uservarcreate          TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result)        TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS variant_items
+      RETURNING
+        VALUE(result)   TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS variant_item
+      IMPORTING
+        !executeOnSelection      TYPE clike OPTIONAL
+        !global                  TYPE clike OPTIONAL
+        !labelReadOnly           TYPE clike OPTIONAL
+        !lifecyclePackage        TYPE clike OPTIONAL
+        !lifecycleTransportId    TYPE clike OPTIONAL
+        !namespace               TYPE clike OPTIONAL
+        !readOnly                TYPE clike OPTIONAL
+        !executeOnSelect         TYPE clike OPTIONAL
+        !author                  TYPE clike OPTIONAL
+        !changeable              TYPE clike OPTIONAL
+        !enabled                 TYPE clike OPTIONAL
+        !favorite                TYPE clike OPTIONAL
+        !key                     TYPE clike OPTIONAL
+        !text                    TYPE clike OPTIONAL
+        !title                   TYPE clike OPTIONAL
+        !textDirection           TYPE clike OPTIONAL
+        !originalTitle           TYPE clike OPTIONAL
+        !originalExecuteOnSelect TYPE clike OPTIONAL
+        !remove                  TYPE clike OPTIONAL
+        !rename                  TYPE clike OPTIONAL
+        !originalFavorite        TYPE clike OPTIONAL
+        !sharing                 TYPE clike OPTIONAL
+        !change                  TYPE clike OPTIONAL
       RETURNING
         VALUE(result)        TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1781,6 +1822,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
             !showIcon         TYPE clike OPTIONAL
             !value            TYPE clike OPTIONAL
             !post             TYPE clike OPTIONAL
+            !class            TYPE clike OPTIONAL
       RETURNING
         VALUE(result)        TYPE REF TO z2ui5_cl_xml_view.
 
@@ -2127,6 +2169,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp14 INTO TABLE temp13.
     temp14-n = `id`.
     temp14-v = id.
+    INSERT temp14 INTO TABLE temp13.
+    temp14-n = `tooltip`.
+    temp14-v = tooltip.
     INSERT temp14 INTO TABLE temp13.
     temp14-n = `class`.
     temp14-v = class.
@@ -2680,7 +2725,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp36-v = `sap.suite.ui.commons`.
     INSERT temp36 INTO TABLE temp35.
     temp36-n = `xmlns:vm`.
-    temp36-v = `sap.ui.fl.variants`.
+    temp36-v = `sap.ui.comp.variants`.
     INSERT temp36 INTO TABLE temp35.
     temp36-n = `xmlns:tnt `.
     temp36-v = `sap.tnt`.
@@ -3075,6 +3120,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp56 INTO TABLE temp55.
     temp56-n = `value`.
     temp56-v = value.
+    INSERT temp56 INTO TABLE temp55.
+    temp56-n = `class`.
+    temp56-v = class.
     INSERT temp56 INTO TABLE temp55.
     temp56-n = `post`.
     temp56-v = post.
@@ -6550,195 +6598,284 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD variant_management.
+  METHOD variant_item.
 
-      DATA temp263 TYPE z2ui5_if_client=>ty_t_name_value.
-      DATA temp264 LIKE LINE OF temp263.
-      CLEAR temp263.
-      
-      temp264-n = `editable`.
-      temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( editable ).
-      INSERT temp264 INTO TABLE temp263.
-      temp264-n = `headerLevel`.
-      temp264-v = headerLevel.
-      INSERT temp264 INTO TABLE temp263.
-      temp264-n = `inErrorState`.
-      temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( inErrorState ).
-      INSERT temp264 INTO TABLE temp263.
-      temp264-n = `maxWidth`.
-      temp264-v = maxWidth.
-      INSERT temp264 INTO TABLE temp263.
-      temp264-n = `modelName`.
-      temp264-v = modelName.
-      INSERT temp264 INTO TABLE temp263.
-      temp264-n = `resetOnContextChange`.
-      temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( resetOnContextChange ).
-      INSERT temp264 INTO TABLE temp263.
-      temp264-n = `showSetAsDefault`.
-      temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( showSetAsDefault ).
-      INSERT temp264 INTO TABLE temp263.
-      temp264-n = `titleStyle`.
-      temp264-v = titleStyle.
-      INSERT temp264 INTO TABLE temp263.
-      temp264-n = `for`.
-      temp264-v = for.
-      INSERT temp264 INTO TABLE temp263.
-      temp264-n = `cancel`.
-      temp264-v = cancel.
-      INSERT temp264 INTO TABLE temp263.
-      temp264-n = `initialized`.
-      temp264-v = initialized.
-      INSERT temp264 INTO TABLE temp263.
-      temp264-n = `manage`.
-      temp264-v = manage.
-      INSERT temp264 INTO TABLE temp263.
-      temp264-n = `save`.
-      temp264-v = save.
-      INSERT temp264 INTO TABLE temp263.
-      temp264-n = `select`.
-      temp264-v = select.
-      INSERT temp264 INTO TABLE temp263.
-      result = _generic( name   = `VariantManagement`
+    DATA temp263 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp264 LIKE LINE OF temp263.
+    CLEAR temp263.
+    
+    temp264-n = `executeOnSelection`.
+    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( executeOnSelection ).
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `global`.
+    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( global ).
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `labelReadOnly`.
+    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( labelReadOnly ).
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `lifecyclePackage`.
+    temp264-v = lifecyclePackage.
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `lifecycleTransportId`.
+    temp264-v = lifecycleTransportId.
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `namespace`.
+    temp264-v = namespace.
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `readOnly`.
+    temp264-v = readOnly.
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `executeOnSelect`.
+    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( executeOnSelect ).
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `author`.
+    temp264-v = author.
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `changeable`.
+    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( changeable ).
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `enabled`.
+    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `favorite`.
+    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( favorite ).
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `key`.
+    temp264-v = key.
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `text`.
+    temp264-v = text.
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `title`.
+    temp264-v = title.
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `textDirection`.
+    temp264-v = textDirection.
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `originalTitle`.
+    temp264-v = originalTitle.
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `originalExecuteOnSelect`.
+    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( originalExecuteOnSelect ).
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `remove`.
+    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( remove ).
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `rename`.
+    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( rename ).
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `originalFavorite`.
+    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( originalFavorite ).
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `sharing`.
+    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( sharing ).
+    INSERT temp264 INTO TABLE temp263.
+    temp264-n = `change`.
+    temp264-v = change.
+    INSERT temp264 INTO TABLE temp263.
+    result = _generic( name   = `VariantItem`
                          ns     = `vm`
                          t_prop = temp263 ).
 
   ENDMETHOD.
 
 
+  METHOD variant_items.
+
+    result = _generic( name   = `variantItems`
+                         ns     = `vm` ).
+
+  ENDMETHOD.
+
+
+  METHOD variant_management.
+
+      DATA temp265 TYPE z2ui5_if_client=>ty_t_name_value.
+      DATA temp266 LIKE LINE OF temp265.
+      CLEAR temp265.
+      
+      temp266-n = `defaultVariantKey`.
+      temp266-v = defaultVariantKey.
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `enabled`.
+      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `inErrorState`.
+      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( inErrorState ).
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `initialSelectionKey`.
+      temp266-v = initialSelectionKey.
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `lifecycleSupport`.
+      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( lifecycleSupport ).
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `selectionKey`.
+      temp266-v = selectionKey.
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `showCreateTile`.
+      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( showCreateTile ).
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `showExecuteOnSelection`.
+      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( showExecuteOnSelection ).
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `showSetAsDefault`.
+      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( showSetAsDefault ).
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `showShare`.
+      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( showShare ).
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `standardItemAuthor`.
+      temp266-v = standardItemAuthor.
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `standardItemText`.
+      temp266-v = standardItemText.
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `useFavorites`.
+      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( useFavorites ).
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `variantItems`.
+      temp266-v = variantItems.
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `manage`.
+      temp266-v = manage.
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `save`.
+      temp266-v = save.
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `select`.
+      temp266-v = select.
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `variantCreationByUserAllowed`.
+      temp266-v = uservarcreate.
+      INSERT temp266 INTO TABLE temp265.
+      temp266-n = `visible`.
+      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( visible ).
+      INSERT temp266 INTO TABLE temp265.
+      result = _generic( name   = `VariantManagement`
+                         ns     = `vm`
+                         t_prop = temp265 ).
+
+  ENDMETHOD.
+
+
   METHOD vbox.
 
-    DATA temp265 TYPE z2ui5_if_client=>ty_t_name_value.
-    DATA temp266 LIKE LINE OF temp265.
-    CLEAR temp265.
+    DATA temp267 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp268 LIKE LINE OF temp267.
+    CLEAR temp267.
     
-    temp266-n = `height`.
-    temp266-v = height.
-    INSERT temp266 INTO TABLE temp265.
-    temp266-n = `justifyContent`.
-    temp266-v = justifycontent.
-    INSERT temp266 INTO TABLE temp265.
-    temp266-n = `renderType`.
-    temp266-v = rendertype.
-    INSERT temp266 INTO TABLE temp265.
-    temp266-n = `alignContent`.
-    temp266-v = aligncontent.
-    INSERT temp266 INTO TABLE temp265.
-    temp266-n = `alignItems`.
-    temp266-v = alignitems.
-    INSERT temp266 INTO TABLE temp265.
-    temp266-n = `width`.
-    temp266-v = width.
-    INSERT temp266 INTO TABLE temp265.
-    temp266-n = `wrap`.
-    temp266-v = wrap.
-    INSERT temp266 INTO TABLE temp265.
-    temp266-n = `class`.
-    temp266-v = class.
-    INSERT temp266 INTO TABLE temp265.
+    temp268-n = `height`.
+    temp268-v = height.
+    INSERT temp268 INTO TABLE temp267.
+    temp268-n = `justifyContent`.
+    temp268-v = justifycontent.
+    INSERT temp268 INTO TABLE temp267.
+    temp268-n = `renderType`.
+    temp268-v = rendertype.
+    INSERT temp268 INTO TABLE temp267.
+    temp268-n = `alignContent`.
+    temp268-v = aligncontent.
+    INSERT temp268 INTO TABLE temp267.
+    temp268-n = `alignItems`.
+    temp268-v = alignitems.
+    INSERT temp268 INTO TABLE temp267.
+    temp268-n = `width`.
+    temp268-v = width.
+    INSERT temp268 INTO TABLE temp267.
+    temp268-n = `wrap`.
+    temp268-v = wrap.
+    INSERT temp268 INTO TABLE temp267.
+    temp268-n = `class`.
+    temp268-v = class.
+    INSERT temp268 INTO TABLE temp267.
     result = _generic( name   = `VBox`
-                       t_prop = temp265 ).
+                       t_prop = temp267 ).
 
   ENDMETHOD.
 
 
   METHOD vertical_layout.
 
-    DATA temp267 TYPE z2ui5_if_client=>ty_t_name_value.
-    DATA temp268 LIKE LINE OF temp267.
-    CLEAR temp267.
+    DATA temp269 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp270 LIKE LINE OF temp269.
+    CLEAR temp269.
     
-    temp268-n = `class`.
-    temp268-v = class.
-    INSERT temp268 INTO TABLE temp267.
-    temp268-n = `width`.
-    temp268-v = width.
-    INSERT temp268 INTO TABLE temp267.
+    temp270-n = `class`.
+    temp270-v = class.
+    INSERT temp270 INTO TABLE temp269.
+    temp270-n = `width`.
+    temp270-v = width.
+    INSERT temp270 INTO TABLE temp269.
     result = _generic( name   = `VerticalLayout`
                        ns     = `layout`
-                       t_prop = temp267 ).
+                       t_prop = temp269 ).
   ENDMETHOD.
 
 
   METHOD view_settings_dialog.
 
-    DATA temp269 TYPE z2ui5_if_client=>ty_t_name_value.
-    DATA temp270 LIKE LINE OF temp269.
-    CLEAR temp269.
+    DATA temp271 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp272 LIKE LINE OF temp271.
+    CLEAR temp271.
     
-    temp270-n = `confirm`.
-    temp270-v = confirm.
-    INSERT temp270 INTO TABLE temp269.
-    temp270-n = `cancel`.
-    temp270-v = cancel.
-    INSERT temp270 INTO TABLE temp269.
-    temp270-n = `filterDetailPageOpened`.
-    temp270-v = filterDetailPageOpened.
-    INSERT temp270 INTO TABLE temp269.
-    temp270-n = `reset`.
-    temp270-v = reset.
-    INSERT temp270 INTO TABLE temp269.
-    temp270-n = `resetFilters`.
-    temp270-v = resetFilters.
-    INSERT temp270 INTO TABLE temp269.
-    temp270-n = `filterSearchOperator`.
-    temp270-v = filterSearchOperator.
-    INSERT temp270 INTO TABLE temp269.
-    temp270-n = `groupDescending`.
-    temp270-v = z2ui5_cl_fw_utility=>get_json_boolean( groupDescending ).
-    INSERT temp270 INTO TABLE temp269.
-    temp270-n = `sortDescending`.
-    temp270-v = z2ui5_cl_fw_utility=>get_json_boolean( sortDescending ).
-    INSERT temp270 INTO TABLE temp269.
-    temp270-n = `title`.
-    temp270-v = title.
-    INSERT temp270 INTO TABLE temp269.
-    temp270-n = `selectedGroupItem`.
-    temp270-v = selectedGroupItem.
-    INSERT temp270 INTO TABLE temp269.
-    temp270-n = `selectedPresetFilterItem`.
-    temp270-v = selectedPresetFilterItem.
-    INSERT temp270 INTO TABLE temp269.
-    temp270-n = `selectedSortItem`.
-    temp270-v = selectedSortItem.
-    INSERT temp270 INTO TABLE temp269.
-    temp270-n = `titleAlignment`.
-    temp270-v = titleAlignment.
-    INSERT temp270 INTO TABLE temp269.
+    temp272-n = `confirm`.
+    temp272-v = confirm.
+    INSERT temp272 INTO TABLE temp271.
+    temp272-n = `cancel`.
+    temp272-v = cancel.
+    INSERT temp272 INTO TABLE temp271.
+    temp272-n = `filterDetailPageOpened`.
+    temp272-v = filterDetailPageOpened.
+    INSERT temp272 INTO TABLE temp271.
+    temp272-n = `reset`.
+    temp272-v = reset.
+    INSERT temp272 INTO TABLE temp271.
+    temp272-n = `resetFilters`.
+    temp272-v = resetFilters.
+    INSERT temp272 INTO TABLE temp271.
+    temp272-n = `filterSearchOperator`.
+    temp272-v = filterSearchOperator.
+    INSERT temp272 INTO TABLE temp271.
+    temp272-n = `groupDescending`.
+    temp272-v = z2ui5_cl_fw_utility=>get_json_boolean( groupDescending ).
+    INSERT temp272 INTO TABLE temp271.
+    temp272-n = `sortDescending`.
+    temp272-v = z2ui5_cl_fw_utility=>get_json_boolean( sortDescending ).
+    INSERT temp272 INTO TABLE temp271.
+    temp272-n = `title`.
+    temp272-v = title.
+    INSERT temp272 INTO TABLE temp271.
+    temp272-n = `selectedGroupItem`.
+    temp272-v = selectedGroupItem.
+    INSERT temp272 INTO TABLE temp271.
+    temp272-n = `selectedPresetFilterItem`.
+    temp272-v = selectedPresetFilterItem.
+    INSERT temp272 INTO TABLE temp271.
+    temp272-n = `selectedSortItem`.
+    temp272-v = selectedSortItem.
+    INSERT temp272 INTO TABLE temp271.
+    temp272-n = `selectedSortItem`.
+    temp272-v = selectedSortItem.
+    INSERT temp272 INTO TABLE temp271.
+    temp272-n = `filterItems`.
+    temp272-v = filterItems.
+    INSERT temp272 INTO TABLE temp271.
+    temp272-n = `sortItems`.
+    temp272-v = sortItems.
+    INSERT temp272 INTO TABLE temp271.
+    temp272-n = `groupItems`.
+    temp272-v = groupItems.
+    INSERT temp272 INTO TABLE temp271.
+    temp272-n = `titleAlignment`.
+    temp272-v = titleAlignment.
+    INSERT temp272 INTO TABLE temp271.
     result = _generic( name   = `ViewSettingsDialog`
-              t_prop = temp269 ).
+              t_prop = temp271 ).
 
   ENDMETHOD.
 
 
   METHOD view_settings_filter_item.
-    DATA temp271 TYPE z2ui5_if_client=>ty_t_name_value.
-    DATA temp272 LIKE LINE OF temp271.
-    CLEAR temp271.
-    
-    temp272-n = `enabled`.
-    temp272-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
-    INSERT temp272 INTO TABLE temp271.
-    temp272-n = `key`.
-    temp272-v = key.
-    INSERT temp272 INTO TABLE temp271.
-    temp272-n = `selected`.
-    temp272-v = z2ui5_cl_fw_utility=>get_json_boolean( selected ).
-    INSERT temp272 INTO TABLE temp271.
-    temp272-n = `text`.
-    temp272-v = text.
-    INSERT temp272 INTO TABLE temp271.
-    temp272-n = `textDirection`.
-    temp272-v = textDirection.
-    INSERT temp272 INTO TABLE temp271.
-    temp272-n = `multiSelect`.
-    temp272-v = z2ui5_cl_fw_utility=>get_json_boolean( multiSelect ).
-    INSERT temp272 INTO TABLE temp271.
-    result = _generic( name   = `ViewSettingsFilterItem`
-                  t_prop = temp271 ).
-  ENDMETHOD.
-
-
-  METHOD view_settings_item.
     DATA temp273 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp274 LIKE LINE OF temp273.
     CLEAR temp273.
@@ -6758,8 +6895,36 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp274-n = `textDirection`.
     temp274-v = textDirection.
     INSERT temp274 INTO TABLE temp273.
-    result = _generic( name   = `ViewSettingsItem`
+    temp274-n = `multiSelect`.
+    temp274-v = z2ui5_cl_fw_utility=>get_json_boolean( multiSelect ).
+    INSERT temp274 INTO TABLE temp273.
+    result = _generic( name   = `ViewSettingsFilterItem`
                   t_prop = temp273 ).
+  ENDMETHOD.
+
+
+  METHOD view_settings_item.
+    DATA temp275 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp276 LIKE LINE OF temp275.
+    CLEAR temp275.
+    
+    temp276-n = `enabled`.
+    temp276-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    INSERT temp276 INTO TABLE temp275.
+    temp276-n = `key`.
+    temp276-v = key.
+    INSERT temp276 INTO TABLE temp275.
+    temp276-n = `selected`.
+    temp276-v = z2ui5_cl_fw_utility=>get_json_boolean( selected ).
+    INSERT temp276 INTO TABLE temp275.
+    temp276-n = `text`.
+    temp276-v = text.
+    INSERT temp276 INTO TABLE temp275.
+    temp276-n = `textDirection`.
+    temp276-v = textDirection.
+    INSERT temp276 INTO TABLE temp275.
+    result = _generic( name   = `ViewSettingsItem`
+                  t_prop = temp275 ).
 
   ENDMETHOD.
 
@@ -6771,42 +6936,42 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD xml_get.
-        DATA temp275 LIKE LINE OF mt_prop.
-        DATA temp276 LIKE sy-tabix.
-    DATA temp277 TYPE string.
-    DATA lv_tmp2 LIKE temp277.
-    DATA temp278 TYPE string.
+        DATA temp277 LIKE LINE OF mt_prop.
+        DATA temp278 LIKE sy-tabix.
+    DATA temp279 TYPE string.
+    DATA lv_tmp2 LIKE temp279.
+    DATA temp280 TYPE string.
     DATA val TYPE string.
     DATA row LIKE LINE OF mt_prop.
       DATA temp2 TYPE string.
-    DATA lv_tmp3 LIKE temp278.
+    DATA lv_tmp3 LIKE temp280.
     DATA lr_child LIKE LINE OF mt_child.
-      DATA temp279 TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp280 TYPE string.
-    DATA lv_ns LIKE temp280.
+      DATA temp281 TYPE REF TO z2ui5_cl_xml_view.
+    DATA temp282 TYPE string.
+    DATA lv_ns LIKE temp282.
 
     CASE mv_name.
       WHEN `ZZPLAIN`.
         
         
-        temp276 = sy-tabix.
-        READ TABLE mt_prop WITH KEY n = `VALUE` INTO temp275.
-        sy-tabix = temp276.
+        temp278 = sy-tabix.
+        READ TABLE mt_prop WITH KEY n = `VALUE` INTO temp277.
+        sy-tabix = temp278.
         IF sy-subrc <> 0.
           RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
         ENDIF.
-        result = temp275-v.
+        result = temp277-v.
         RETURN.
     ENDCASE.
 
     
     IF mv_ns <> ``.
-      temp277 = |{ mv_ns }:|.
+      temp279 = |{ mv_ns }:|.
     ELSE.
-      CLEAR temp277.
+      CLEAR temp279.
     ENDIF.
     
-    lv_tmp2 = temp277.
+    lv_tmp2 = temp279.
     
     
     val = ``.
@@ -6820,9 +6985,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
       ENDIF.
       val = |{ val } { row-n }="{ escape( val = temp2 format = cl_abap_format=>e_xml_attr ) }" \n |.
     ENDLOOP.
-    temp278 = val.
+    temp280 = val.
     
-    lv_tmp3 = temp278.
+    lv_tmp3 = temp280.
 
     result = |{ result } <{ lv_tmp2 }{ mv_name } \n { lv_tmp3 }|.
 
@@ -6836,35 +7001,35 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     
     LOOP AT mt_child INTO lr_child.
       
-      temp279 ?= lr_child.
-      result = result && temp279->xml_get( ).
+      temp281 ?= lr_child.
+      result = result && temp281->xml_get( ).
     ENDLOOP.
 
     
     IF mv_ns <> ||.
-      temp280 = |{ mv_ns }:|.
+      temp282 = |{ mv_ns }:|.
     ELSE.
-      CLEAR temp280.
+      CLEAR temp282.
     ENDIF.
     
-    lv_ns = temp280.
+    lv_ns = temp282.
     result = |{ result }</{ lv_ns }{ mv_name }>|.
 
   ENDMETHOD.
 
 
   METHOD zz_plain.
-    DATA temp281 TYPE z2ui5_if_client=>ty_t_name_value.
-    DATA temp282 LIKE LINE OF temp281.
+    DATA temp283 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp284 LIKE LINE OF temp283.
     result = me.
     
-    CLEAR temp281.
+    CLEAR temp283.
     
-    temp282-n = `VALUE`.
-    temp282-v = val.
-    INSERT temp282 INTO TABLE temp281.
+    temp284-n = `VALUE`.
+    temp284-v = val.
+    INSERT temp284 INTO TABLE temp283.
     _generic( name   = `ZZPLAIN`
-              t_prop = temp281 ).
+              t_prop = temp283 ).
   ENDMETHOD.
 
 
