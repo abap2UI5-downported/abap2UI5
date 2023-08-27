@@ -896,6 +896,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !rows            TYPE clike OPTIONAL
         !height          TYPE clike OPTIONAL
         !width           TYPE clike OPTIONAL
+        valueLiveUpdate  TYPE clike OPTIONAL
         !editable        TYPE clike OPTIONAL
         !enabled         TYPE clike OPTIONAL
         !growing         TYPE clike OPTIONAL
@@ -6096,6 +6097,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp237 INTO TABLE temp236.
     temp237-n = `width`.
     temp237-v = width.
+    INSERT temp237 INTO TABLE temp236.
+    temp237-n = `valueLiveUpdate`.
+    temp237-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( valueLiveUpdate ).
     INSERT temp237 INTO TABLE temp236.
     temp237-n = `editable`.
     temp237-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( editable ).
