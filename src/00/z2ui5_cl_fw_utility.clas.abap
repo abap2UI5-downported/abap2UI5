@@ -3,18 +3,6 @@ CLASS z2ui5_cl_fw_utility DEFINITION PUBLIC
 
   PUBLIC SECTION.
 
-    TYPES:
-      BEGIN OF ty_attri,
-        name           TYPE string,
-        type_kind      TYPE string,
-        type           TYPE string,
-        bind_type      TYPE string,
-        data_stringify TYPE string,
-        data_rtti      TYPE string,
-        check_ref_data TYPE abap_bool,
-      END OF ty_attri.
-    TYPES ty_t_attri TYPE STANDARD TABLE OF ty_attri WITH DEFAULT KEY.
-
     CLASS-METHODS url_param_get
       IMPORTING
         val           TYPE string
@@ -36,69 +24,77 @@ CLASS z2ui5_cl_fw_utility DEFINITION PUBLIC
       RETURNING
         VALUE(result) TYPE string.
 
-    CLASS-METHODS get_classname_by_ref
+    CLASS-METHODS rtti_get_classname_by_ref
       IMPORTING
         in            TYPE REF TO object
       RETURNING
         VALUE(result) TYPE string.
 
-    CLASS-METHODS raise
+    CLASS-METHODS x_check_raise
       IMPORTING
         v    TYPE clike     DEFAULT `CX_SY_SUBRC`
-        when TYPE abap_bool DEFAULT abap_true
+        when TYPE abap_bool.
+
+    CLASS-METHODS x_raise
+      IMPORTING
+        v TYPE clike     DEFAULT `CX_SY_SUBRC`
           PREFERRED PARAMETER v.
 
-    CLASS-METHODS get_uuid
+    CLASS-METHODS func_get_uuid_32
       RETURNING
         VALUE(result) TYPE string.
 
-    CLASS-METHODS get_user_tech
+    CLASS-METHODS func_get_uuid_22
       RETURNING
         VALUE(result) TYPE string.
 
-    CLASS-METHODS trans_any_2_json
+    CLASS-METHODS func_get_user_tech
+      RETURNING
+        VALUE(result) TYPE string.
+
+    CLASS-METHODS trans_json_any_2
       IMPORTING
         any           TYPE any
       RETURNING
         VALUE(result) TYPE string.
 
-    CLASS-METHODS trans_xml_2_object
+    CLASS-METHODS trans_xml_2_any
       IMPORTING
-        xml  TYPE clike
+        xml TYPE clike
       EXPORTING
-        data TYPE data.
+        any TYPE any.
 
-    CLASS-METHODS get_t_attri_by_ref
+    CLASS-METHODS trans_xml_any_2
       IMPORTING
-        io_app        TYPE REF TO object
-      RETURNING
-        VALUE(result) TYPE ty_t_attri ##NEEDED.
-
-    CLASS-METHODS trans_object_2_xml
-      IMPORTING
-        object        TYPE data
+        any           TYPE any
       RETURNING
         VALUE(result) TYPE string
       RAISING
         cx_xslt_serialization_error.
 
-    CLASS-METHODS get_abap_2_json
-      IMPORTING
-        val           TYPE any
-      RETURNING
-        VALUE(result) TYPE string.
-
-    CLASS-METHODS check_is_boolean
+    CLASS-METHODS boolean_check
       IMPORTING
         val           TYPE any
       RETURNING
         VALUE(result) TYPE abap_bool.
 
-    CLASS-METHODS get_json_boolean
+    CLASS-METHODS boolean_abap_2_json
       IMPORTING
         val           TYPE any
       RETURNING
         VALUE(result) TYPE string.
+
+    CLASS-METHODS c_replace_assign_struc
+      IMPORTING
+        iv_attri        TYPE clike
+      RETURNING
+        VALUE(rv_attri) TYPE string.
+
+    CLASS-METHODS trans_json_2_any
+      IMPORTING
+        val  TYPE any
+      CHANGING
+        data TYPE any.
 
     CLASS-METHODS trans_ref_tab_2_tab
       IMPORTING
@@ -106,64 +102,84 @@ CLASS z2ui5_cl_fw_utility DEFINITION PUBLIC
       EXPORTING
         t_result    TYPE STANDARD TABLE.
 
-    CLASS-METHODS get_trim_upper
+    CLASS-METHODS c_trim_upper
       IMPORTING
-        val           TYPE any
+        val           TYPE clike
       RETURNING
         VALUE(result) TYPE string.
 
-    CLASS-METHODS rtti_get
+    CLASS-METHODS rtti_xml_get_by_data
       IMPORTING
         data          TYPE any
       RETURNING
         VALUE(result) TYPE string.
 
-    CLASS-METHODS rtti_set
+    CLASS-METHODS rtti_xml_set_to_data
       IMPORTING
-        rtti_data TYPE string
+        rtti_data TYPE clike
       EXPORTING
         e_data    TYPE REF TO data.
 
-    CLASS-METHODS get_timestampl
+    CLASS-METHODS time_get_timestampl
       RETURNING
         VALUE(result) TYPE timestampl.
 
-    CLASS-METHODS get_replace
+    CLASS-METHODS time_substract_seconds
       IMPORTING
-        iv_val        TYPE clike
-        iv_begin      TYPE clike
-        iv_end        TYPE clike
-        iv_replace    TYPE clike DEFAULT ''
+        time          TYPE timestampl
+        seconds       TYPE i
+      RETURNING
+        VALUE(result) TYPE timestampl.
+
+    CLASS-METHODS c_trim
+      IMPORTING
+        val           TYPE clike
       RETURNING
         VALUE(result) TYPE string.
 
-    CLASS-METHODS get_trim
+    CLASS-METHODS c_trim_lower
       IMPORTING
-        val           TYPE any
-      RETURNING
-        VALUE(result) TYPE string.
-
-    CLASS-METHODS get_trim_lower
-      IMPORTING
-        val           TYPE any
+        val           TYPE clike
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS url_param_get_tab
       IMPORTING
-        i_val            TYPE string
+        i_val            TYPE clike
       RETURNING
         VALUE(rt_params) TYPE z2ui5_if_client=>ty_t_name_value.
 
-  PROTECTED SECTION.
-
-    CLASS-METHODS _get_t_attri_by_struc
+    CLASS-METHODS rtti_get_t_attri_by_object
       IMPORTING
-        io_app        TYPE REF TO object
-        iv_attri      TYPE csequence
+        val           TYPE REF TO object
       RETURNING
         VALUE(result) TYPE abap_attrdescr_tab.
 
+    CLASS-METHODS rtti_get_t_comp_by_struc
+      IMPORTING
+        val           TYPE any
+      RETURNING
+        VALUE(result) TYPE cl_abap_structdescr=>component_table.
+
+    CLASS-METHODS rtti_get_type_name
+      IMPORTING
+        val           TYPE any
+      RETURNING
+        VALUE(result) TYPE string.
+
+    CLASS-METHODS rtti_check_type_kind_dref
+      IMPORTING
+        val           TYPE any
+      RETURNING
+        VALUE(result) TYPE abap_bool.
+
+    CLASS-METHODS rtti_get_type_kind
+      IMPORTING
+        val           TYPE any
+      RETURNING
+        VALUE(result) TYPE string.
+
+  PROTECTED SECTION.
   PRIVATE SECTION.
 
 ENDCLASS.
@@ -173,16 +189,31 @@ ENDCLASS.
 CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
 
 
-  METHOD check_is_boolean.
-        DATA temp1 TYPE REF TO cl_abap_elemdescr.
-        DATA lo_ele LIKE temp1.
+  METHOD boolean_abap_2_json.
+      DATA temp1 TYPE string.
+
+    IF boolean_check( val ) IS NOT INITIAL.
+      
+      IF val = abap_true.
+        temp1 = `true`.
+      ELSE.
+        temp1 = `false`.
+      ENDIF.
+      result = temp1.
+    ELSE.
+      result = val.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD boolean_check.
+        DATA lv_type_name TYPE string.
 
     TRY.
         
-        temp1 ?= cl_abap_elemdescr=>describe_by_data( val ).
-        
-        lo_ele = temp1.
-        CASE lo_ele->get_relative_name( ).
+        lv_type_name = rtti_get_type_name( val ).
+        CASE lv_type_name.
           WHEN `ABAP_BOOL` OR `XSDBOOLEAN`.
             result = abap_true.
         ENDCASE.
@@ -192,188 +223,54 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD get_abap_2_json.
-      DATA temp2 TYPE string.
+  METHOD c_trim.
 
-    IF check_is_boolean( val ) IS NOT INITIAL.
-      
-      IF val = abap_true.
-        temp2 = `true`.
-      ELSE.
-        temp2 = `false`.
-      ENDIF.
-      result = temp2.
-    ELSE.
-      result = |"{ escape( val    = val
-                           format = cl_abap_format=>e_json_string ) }"|.
-    ENDIF.
-
-  ENDMETHOD.
-
-
-  METHOD get_classname_by_ref.
-
-    DATA lv_classname TYPE abap_abstypename.
-    lv_classname = cl_abap_classdescr=>get_class_name( in ).
-    result = substring_after( val = lv_classname
-                              sub = `\CLASS=` ).
-
-  ENDMETHOD.
-
-
-  METHOD get_json_boolean.
-      DATA temp3 TYPE string.
-
-    IF check_is_boolean( val ) IS NOT INITIAL.
-      
-      IF val = abap_true.
-        temp3 = `true`.
-      ELSE.
-        temp3 = `false`.
-      ENDIF.
-      result = temp3.
-    ELSE.
-      result = val.
-    ENDIF.
-
-  ENDMETHOD.
-
-
-  METHOD get_replace.
-    DATA lv_1 TYPE string.
-    DATA lv_2 TYPE string.
-    DATA temp4 TYPE string.
-
-    result = iv_val.
-
-    
-    lv_1 = substring_before( val = result
-                                   sub = iv_begin ).
-    
-    lv_2 = substring_after( val = result
-                                  sub = iv_end ).
-    
-    IF lv_2 IS NOT INITIAL.
-      temp4 = lv_1 && iv_replace && lv_2.
-    ELSE.
-      CLEAR temp4.
-    ENDIF.
-    result = temp4.
-
-  ENDMETHOD.
-
-
-  METHOD get_timestampl.
-    GET TIME STAMP FIELD result.
-  ENDMETHOD.
-
-
-  METHOD get_trim.
-
-    DATA temp5 TYPE string.
-    DATA temp6 TYPE string.
-    temp5 = val.
-    result = shift_left( shift_right( temp5 ) ).
+    DATA temp2 TYPE string.
+    DATA temp3 TYPE string.
+    temp2 = val.
+    result = shift_left( shift_right( temp2 ) ).
     result = shift_right( val = result sub = cl_abap_char_utilities=>horizontal_tab ).
     result = shift_left( val = result sub = cl_abap_char_utilities=>horizontal_tab ).
     
-    temp6 = val.
-    result = shift_left( shift_right( temp6 ) ).
+    temp3 = val.
+    result = shift_left( shift_right( temp3 ) ).
 
   ENDMETHOD.
 
 
-  METHOD get_trim_lower.
+  METHOD c_trim_lower.
 
-    DATA temp7 TYPE string.
-    temp7 = val.
-    result = to_lower( get_trim( temp7 ) ).
-
-  ENDMETHOD.
-
-
-  METHOD get_trim_upper.
-
-    DATA temp8 TYPE string.
-    temp8 = val.
-    result = to_upper( get_trim( temp8 ) ).
+    DATA temp4 TYPE string.
+    temp4 = val.
+    result = to_lower( c_trim( temp4 ) ).
 
   ENDMETHOD.
 
 
-  METHOD get_t_attri_by_ref.
+  METHOD c_trim_upper.
 
-    DATA temp9 TYPE REF TO cl_abap_classdescr.
-    DATA lt_attri LIKE temp9->attributes.
-    DATA ls_attri LIKE LINE OF lt_attri.
-      DATA temp10 TYPE ty_attri.
-      DATA ls_attri2 LIKE temp10.
-      FIELD-SYMBOLS <any> TYPE any.
-      DATA lv_assign TYPE string.
-      DATA lo_descr TYPE REF TO cl_abap_typedescr.
-          DATA temp11 TYPE REF TO cl_abap_refdescr.
-          DATA lo_refdescr LIKE temp11.
-          DATA temp12 TYPE REF TO cl_abap_datadescr.
-          DATA lo_reftype LIKE temp12.
-    temp9 ?= cl_abap_objectdescr=>describe_by_object_ref( io_app ).
-    
-    lt_attri = temp9->attributes.
-    DELETE lt_attri WHERE visibility <> cl_abap_classdescr=>public.
-
-    
-    LOOP AT lt_attri INTO ls_attri
-         WHERE type_kind = cl_abap_classdescr=>typekind_struct2
-            OR type_kind = cl_abap_classdescr=>typekind_struct1.
-
-      DELETE lt_attri INDEX sy-tabix.
-
-      INSERT LINES OF _get_t_attri_by_struc( io_app   = io_app
-                                             iv_attri = ls_attri-name ) INTO TABLE lt_attri.
-
-    ENDLOOP.
-
-    LOOP AT lt_attri INTO ls_attri.
-
-      
-      CLEAR temp10.
-      
-      ls_attri2 = temp10.
-      MOVE-CORRESPONDING ls_attri TO ls_attri2.
-
-      
-      UNASSIGN <any>.
-      
-      lv_assign = `IO_APP->` && ls_attri-name.
-      ASSIGN (lv_assign) TO <any>.
-
-      
-      lo_descr = cl_abap_datadescr=>describe_by_data( <any> ).
-      TRY.
-          
-          temp11 ?= lo_descr.
-          
-          lo_refdescr = temp11.
-          
-          temp12 ?= lo_refdescr->get_referenced_type( ).
-          
-          lo_reftype = temp12.
-          ls_attri2-check_ref_data = abap_true.
-        CATCH cx_root.
-      ENDTRY.
-
-
-      APPEND ls_attri2 TO result.
-    ENDLOOP.
+    DATA temp5 TYPE string.
+    temp5 = val.
+    result = to_upper( c_trim( temp5 ) ).
 
   ENDMETHOD.
 
 
-  METHOD get_user_tech.
+  METHOD time_get_timestampl.
+    GET TIME STAMP FIELD result.
+  ENDMETHOD.
+
+  METHOD time_substract_seconds.
+    result = cl_abap_tstmp=>subtractsecs( tstmp = time secs  = seconds ).
+  ENDMETHOD.
+
+
+  METHOD func_get_user_tech.
     result = sy-uname.
   ENDMETHOD.
 
 
-  METHOD get_uuid.
+  METHOD func_get_uuid_32.
         DATA uuid TYPE c LENGTH 32.
             DATA lv_fm TYPE string.
 
@@ -403,16 +300,107 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD raise.
 
-    IF when = abap_true.
-      RAISE EXCEPTION TYPE z2ui5_cl_fw_error EXPORTING val = v.
-    ENDIF.
+  METHOD func_get_uuid_22.
+        DATA uuid TYPE c LENGTH 22.
+            DATA lv_fm TYPE string.
+
+    TRY.
+        
+
+        TRY.
+            CALL METHOD (`CL_SYSTEM_UUID`)=>if_system_uuid_static~create_uuid_c22
+              RECEIVING
+                uuid = uuid.
+
+          CATCH cx_sy_dyn_call_illegal_class.
+
+            
+            lv_fm = `GUID_CREATE`.
+            CALL FUNCTION lv_fm
+              IMPORTING
+                ev_guid_22 = uuid.
+
+        ENDTRY.
+
+        result = uuid.
+
+      CATCH cx_root.
+        ASSERT 1 = 0.
+    ENDTRY.
 
   ENDMETHOD.
 
 
-  METHOD rtti_get.
+  METHOD rtti_get_classname_by_ref.
+
+    DATA lv_classname TYPE abap_abstypename.
+    lv_classname = cl_abap_classdescr=>get_class_name( in ).
+    result = substring_after( val = lv_classname
+                              sub = `\CLASS=` ).
+
+  ENDMETHOD.
+
+  METHOD rtti_get_type_kind.
+
+    result = cl_abap_datadescr=>get_data_type_kind( val ).
+
+  ENDMETHOD.
+
+  METHOD rtti_check_type_kind_dref.
+
+    DATA lv_type_kind TYPE abap_typekind.
+    DATA temp1 TYPE xsdboolean.
+    lv_type_kind = cl_abap_datadescr=>get_data_type_kind( val ).
+    
+    temp1 = boolc( lv_type_kind = cl_abap_typedescr=>typekind_dref ).
+    result = temp1.
+
+  ENDMETHOD.
+
+  METHOD rtti_get_type_name.
+
+    DATA lo_descr TYPE REF TO cl_abap_typedescr.
+    DATA temp6 TYPE REF TO cl_abap_elemdescr.
+    DATA lo_ele LIKE temp6.
+    lo_descr = cl_abap_elemdescr=>describe_by_data( val ).
+    
+    temp6 ?= lo_descr.
+    
+    lo_ele = temp6.
+    result  = lo_ele->get_relative_name( ).
+
+  ENDMETHOD.
+
+
+  METHOD rtti_get_t_attri_by_object.
+
+    DATA lo_obj_ref TYPE REF TO cl_abap_typedescr.
+    DATA temp7 TYPE REF TO cl_abap_classdescr.
+    lo_obj_ref = cl_abap_objectdescr=>describe_by_object_ref( val ).
+    
+    temp7 ?= lo_obj_ref.
+    result   = temp7->attributes.
+
+  ENDMETHOD.
+
+
+  METHOD rtti_get_t_comp_by_struc.
+
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+    DATA temp8 TYPE REF TO cl_abap_structdescr.
+    DATA lo_struct LIKE temp8.
+    lo_type = cl_abap_structdescr=>describe_by_data( val ).
+    
+    temp8 ?= lo_type.
+    
+    lo_struct = temp8.
+    result   = lo_struct->get_components( ).
+
+  ENDMETHOD.
+
+
+  METHOD rtti_xml_get_by_data.
         DATA srtti TYPE REF TO object.
         DATA lv_link TYPE string.
         DATA lv_text TYPE string.
@@ -436,7 +424,7 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
         lv_text = `<p>Please install the open-source project S-RTTI by sandraros and try again: <a href="` &&
                          lv_link && `" style="color:blue; font-weight:600;">(link)</a></p>`.
 
-        RAISE EXCEPTION TYPE z2ui5_cl_fw_error
+        RAISE EXCEPTION TYPE z2ui5_cx_fw_error
           EXPORTING
             val = lv_text.
 
@@ -445,7 +433,7 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD rtti_set.
+  METHOD rtti_xml_set_to_data.
         DATA srtti TYPE REF TO object.
         DATA rtti_type TYPE REF TO cl_abap_typedescr.
         DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
@@ -477,7 +465,7 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
         
         lv_text = `<p>Please install the open-source project S-RTTI by sandraros and try again: <a href="` && lv_link && `" style="color:blue; font-weight:600;">(link)</a></p>`.
 
-        RAISE EXCEPTION TYPE z2ui5_cl_fw_error
+        RAISE EXCEPTION TYPE z2ui5_cx_fw_error
           EXPORTING
             val = lv_text.
 
@@ -486,26 +474,54 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD trans_any_2_json.
+  METHOD trans_json_any_2.
 
     result = /ui2/cl_json=>serialize( any ).
 
   ENDMETHOD.
 
 
-  METHOD trans_object_2_xml.
-
-    FIELD-SYMBOLS <object> TYPE any.
-    DATA temp1 TYPE xsdboolean.
-    ASSIGN object->* TO <object>.
-    
-    temp1 = boolc( sy-subrc <> 0 ).
-    raise( when = temp1 ).
+  METHOD trans_xml_any_2.
 
     CALL TRANSFORMATION id
-         SOURCE data = <object>
+         SOURCE data = any
          RESULT XML result
          OPTIONS data_refs = `heap-or-create`.
+
+  ENDMETHOD.
+
+
+  METHOD c_replace_assign_struc.
+    DATA lv_length TYPE i.
+    DATA lv_attri_end TYPE string.
+
+    rv_attri  = iv_attri.
+    
+    lv_length = strlen( rv_attri ) - 2.
+    
+    lv_attri_end = rv_attri+lv_length.
+
+    IF lv_attri_end = `>*`.
+      lv_attri_end = `>`.
+      lv_length = lv_length.
+    ELSE.
+      lv_attri_end = `-`.
+      lv_length = lv_length + 2.
+    ENDIF.
+    rv_attri = rv_attri(lv_length) && lv_attri_end.
+
+  ENDMETHOD.
+
+  METHOD trans_json_2_any.
+
+    DATA temp9 TYPE string.
+    temp9 = val.
+    /ui2/cl_json=>deserialize(
+        EXPORTING
+            json         = temp9
+            assoc_arrays = abap_true
+        CHANGING
+            data = data ).
 
   ENDMETHOD.
 
@@ -514,38 +530,38 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
     TYPES ty_t_ref TYPE STANDARD TABLE OF REF TO data.
     FIELD-SYMBOLS <lt_from> TYPE ty_t_ref.
     DATA temp2 TYPE xsdboolean.
-    DATA temp13 TYPE REF TO cl_abap_tabledescr.
-    DATA lo_tab LIKE temp13.
-    DATA temp14 TYPE REF TO cl_abap_structdescr.
-    DATA lo_struc LIKE temp14.
+    DATA temp10 TYPE REF TO cl_abap_tabledescr.
+    DATA lo_tab LIKE temp10.
+    DATA temp11 TYPE REF TO cl_abap_structdescr.
+    DATA lo_struc LIKE temp11.
     DATA lt_components TYPE abap_component_tab.
     DATA lr_from LIKE LINE OF <lt_from>.
       DATA lr_row TYPE REF TO data.
       FIELD-SYMBOLS <row> TYPE any.
       FIELD-SYMBOLS <row_ui5> TYPE any.
       DATA temp3 TYPE xsdboolean.
-      DATA lt_components_Dissolved LIKE lt_components.
+      DATA lt_components_dissolved LIKE lt_components.
       DATA ls_comp LIKE LINE OF lt_components.
-          DATA temp15 TYPE REF TO cl_abap_structdescr.
-          DATA struct LIKE temp15.
-        FIELD-SYMBOLS <comp> TYPE data.
-        FIELD-SYMBOLS <comp_ui5> TYPE data.
-        FIELD-SYMBOLS <ls_data_ui5> TYPE any.
+          DATA temp12 TYPE REF TO cl_abap_structdescr.
+          DATA struct LIKE temp12.
+            FIELD-SYMBOLS <comp> TYPE data.
+            FIELD-SYMBOLS <comp_ui5> TYPE data.
+            FIELD-SYMBOLS <ls_data_ui5> TYPE any.
 
     ASSIGN ir_tab_from->* TO <lt_from>.
     
     temp2 = boolc( sy-subrc <> 0 ).
-    raise( when = temp2 ).
+    x_check_raise( temp2 ).
     CLEAR t_result.
 
     
-    temp13 ?= cl_abap_datadescr=>describe_by_data( t_result ).
+    temp10 ?= cl_abap_datadescr=>describe_by_data( t_result ).
     
-    lo_tab = temp13.
+    lo_tab = temp10.
     
-    temp14 ?= lo_tab->get_table_line_type( ).
+    temp11 ?= lo_tab->get_table_line_type( ).
     
-    lo_struc = temp14.
+    lo_struc = temp11.
     
     lt_components = lo_struc->get_components( ).
 
@@ -565,55 +581,59 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
       ASSIGN lr_from->* TO <row_ui5>.
       
       temp3 = boolc( sy-subrc <> 0 ).
-      raise( when = temp3 ).
+      x_check_raise( when = temp3 ).
 
       
-      lt_components_Dissolved = lt_components.
+      lt_components_dissolved = lt_components.
       CLEAR lt_components_dissolved.
 
       
       LOOP AT lt_components INTO ls_comp.
 
         IF ls_comp-as_include = abap_false.
-          APPEND ls_comp TO lt_components_Dissolved.
+          APPEND ls_comp TO lt_components_dissolved.
         ELSE.
           
-          temp15 ?= ls_comp-type.
+          temp12 ?= ls_comp-type.
           
-          struct = temp15.
+          struct = temp12.
           APPEND LINES OF struct->get_components( ) TO lt_components_dissolved.
 
         ENDIF.
       ENDLOOP.
 
-      LOOP AT lt_components_Dissolved INTO ls_comp.
+      LOOP AT lt_components_dissolved INTO ls_comp.
+        TRY.
 
-        
-        ASSIGN COMPONENT ls_comp-name OF STRUCTURE <row> TO <comp>.
+            
+            ASSIGN COMPONENT ls_comp-name OF STRUCTURE <row> TO <comp>.
 
-        IF sy-subrc <> 0.
-          CONTINUE.
-        ENDIF.
+            IF sy-subrc <> 0.
+              CONTINUE.
+            ENDIF.
 
-        
-        ASSIGN COMPONENT ls_comp-name OF STRUCTURE <row_ui5> TO <comp_ui5>.
+            
+            ASSIGN COMPONENT ls_comp-name OF STRUCTURE <row_ui5> TO <comp_ui5>.
 
-        IF sy-subrc <> 0.
-          CONTINUE.
-        ENDIF.
+            IF sy-subrc <> 0.
+              CONTINUE.
+            ENDIF.
 
-        
-        ASSIGN <comp_ui5>->* TO <ls_data_ui5>.
+            
+            ASSIGN <comp_ui5>->* TO <ls_data_ui5>.
 
-        IF sy-subrc = 0.
-          CASE ls_comp-type->kind.
-            WHEN cl_abap_typedescr=>kind_table.
-              trans_ref_tab_2_tab( EXPORTING ir_tab_from = <comp_ui5>
-                                   IMPORTING t_result    = <comp> ).
-            WHEN OTHERS.
-              <comp> = <ls_data_ui5>.
-          ENDCASE.
-        ENDIF.
+            IF sy-subrc = 0.
+              CASE ls_comp-type->kind.
+                WHEN cl_abap_typedescr=>kind_table.
+                  trans_ref_tab_2_tab( EXPORTING ir_tab_from = <comp_ui5>
+                                       IMPORTING t_result    = <comp> ).
+                WHEN OTHERS.
+                  <comp> = <ls_data_ui5>.
+              ENDCASE.
+            ENDIF.
+
+          CATCH cx_root.
+        ENDTRY.
       ENDLOOP.
 
       INSERT <row> INTO TABLE t_result.
@@ -623,11 +643,11 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD trans_xml_2_object.
+  METHOD trans_xml_2_any.
 
     CALL TRANSFORMATION id
         SOURCE XML xml
-        RESULT data = data.
+        RESULT data = any.
 
   ENDMETHOD.
 
@@ -638,8 +658,7 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
     LOOP AT t_params INTO ls_param.
       result = result && ls_param-n && `=` && ls_param-v && `&`.
     ENDLOOP.
-    result = shift_right( val = result
-                          sub = `&` ).
+    result = shift_right( val = result  sub = `&` ).
 
   ENDMETHOD.
 
@@ -648,19 +667,19 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
 
     DATA lt_params TYPE z2ui5_if_client=>ty_t_name_value.
     DATA lv_val TYPE string.
-    DATA temp16 TYPE string.
-    DATA temp17 TYPE z2ui5_if_client=>ty_s_name_value.
+    DATA temp13 TYPE string.
+    DATA temp14 TYPE z2ui5_if_client=>ty_s_name_value.
     lt_params = url_param_get_tab( url ).
     
-    lv_val = get_trim_lower( val ).
+    lv_val = c_trim_lower( val ).
     
-    CLEAR temp16.
+    CLEAR temp13.
     
-    READ TABLE lt_params INTO temp17 WITH KEY n = lv_val.
+    READ TABLE lt_params INTO temp14 WITH KEY n = lv_val.
     IF sy-subrc = 0.
-      temp16 = temp17-v.
+      temp13 = temp14-v.
     ENDIF.
-    result = temp16.
+    result = temp13.
 
   ENDMETHOD.
 
@@ -669,30 +688,30 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
 
     DATA lv_search TYPE string.
     DATA lv_search2 TYPE string.
-    DATA temp18 TYPE string.
+    DATA temp15 TYPE string.
     TYPES temp1 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA lt_param TYPE temp1.
-    DATA temp19 LIKE LINE OF lt_param.
-    DATA lr_param LIKE REF TO temp19.
+    DATA temp16 LIKE LINE OF lt_param.
+    DATA lr_param LIKE REF TO temp16.
       DATA lv_name TYPE string.
       DATA lv_value TYPE string.
-      DATA temp20 TYPE z2ui5_if_client=>ty_s_name_value.
+      DATA temp17 TYPE z2ui5_if_client=>ty_s_name_value.
     lv_search = replace( val  = i_val sub  = `%3D` with = '=' occ  = 0 ).
     lv_search = shift_left( val = lv_search sub = `?` ).
-    lv_search = get_trim_lower( lv_search ).
+    lv_search = c_trim_lower( lv_search ).
 
     
     lv_search2 = substring_after( val = lv_search
                                         sub = `&sap-startup-params=` ).
     
     IF lv_search2 IS NOT INITIAL.
-      temp18 = lv_search2.
+      temp15 = lv_search2.
     ELSE.
-      temp18 = lv_search.
+      temp15 = lv_search.
     ENDIF.
-    lv_search = temp18.
+    lv_search = temp15.
 
-    lv_search2 = substring_after( val = get_trim_lower( lv_search ) sub = `?` ).
+    lv_search2 = substring_after( val = c_trim_lower( lv_search ) sub = `?` ).
     IF lv_search2 IS NOT INITIAL.
       lv_search = lv_search2.
     ENDIF.
@@ -708,10 +727,10 @@ DATA lt_param TYPE temp1.
       
       SPLIT lr_param->* AT `=` INTO lv_name lv_value.
       
-      CLEAR temp20.
-      temp20-n = get_trim_lower( lv_name ).
-      temp20-v = get_trim_lower( lv_value ).
-      INSERT temp20 INTO TABLE rt_params.
+      CLEAR temp17.
+      temp17-n = c_trim_lower( lv_name ).
+      temp17-v = c_trim_lower( lv_value ).
+      INSERT temp17 INTO TABLE rt_params.
     ENDLOOP.
 
   ENDMETHOD.
@@ -721,26 +740,25 @@ DATA lt_param TYPE temp1.
 
     DATA lt_params TYPE z2ui5_if_client=>ty_t_name_value.
     DATA lv_n TYPE string.
-    DATA temp21 LIKE LINE OF lt_params.
-    DATA lr_params LIKE REF TO temp21.
-      DATA temp22 TYPE z2ui5_if_client=>ty_s_name_value.
+    DATA temp18 LIKE LINE OF lt_params.
+    DATA lr_params LIKE REF TO temp18.
+      DATA temp19 TYPE z2ui5_if_client=>ty_s_name_value.
     lt_params = url_param_get_tab( url ).
-
     
-    lv_n = get_trim_lower( name ).
+    lv_n = c_trim_lower( name ).
 
     
     
     LOOP AT lt_params REFERENCE INTO lr_params
         WHERE n = lv_n.
-      lr_params->v = get_trim_lower( value ).
+      lr_params->v = c_trim_lower( value ).
     ENDLOOP.
     IF sy-subrc <> 0.
       
-      CLEAR temp22.
-      temp22-n = lv_n.
-      temp22-v = get_trim_lower( value ).
-      INSERT temp22 INTO TABLE lt_params.
+      CLEAR temp19.
+      temp19-n = lv_n.
+      temp19-v = c_trim_lower( value ).
+      INSERT temp19 INTO TABLE lt_params.
     ENDIF.
 
     result = url_param_create_url( lt_params ).
@@ -748,54 +766,18 @@ DATA lt_param TYPE temp1.
   ENDMETHOD.
 
 
-  METHOD _get_t_attri_by_struc.
+  METHOD x_check_raise.
 
-    FIELD-SYMBOLS <attribute> TYPE any.
+    IF when = abap_true.
+      RAISE EXCEPTION TYPE z2ui5_cx_fw_error EXPORTING val = v.
+    ENDIF.
 
-    DATA lv_name TYPE string.
-    DATA temp4 TYPE xsdboolean.
-    DATA lo_type TYPE REF TO cl_abap_typedescr.
-    DATA temp23 TYPE REF TO cl_abap_structdescr.
-    DATA lo_struct LIKE temp23.
-    DATA temp24 TYPE abap_component_tab.
-    DATA temp1 LIKE LINE OF temp24.
-    DATA lr_comp LIKE REF TO temp1.
-      DATA lv_element TYPE string.
-        DATA temp25 TYPE abap_attrdescr.
-    lv_name = `IO_APP->` && to_upper( iv_attri ).
-    ASSIGN (lv_name) TO <attribute>.
-    
-    temp4 = boolc( sy-subrc <> 0 ).
-    raise( when = temp4 ).
+  ENDMETHOD.
 
-    
-    lo_type = cl_abap_structdescr=>describe_by_data( <attribute> ).
-    
-    temp23 ?= lo_type.
-    
-    lo_struct = temp23.
 
-    
-    temp24 = lo_struct->get_components( ).
-    
-    
-    LOOP AT temp24 REFERENCE INTO lr_comp.
+  METHOD x_raise.
 
-      
-      lv_element = iv_attri && `-` && lr_comp->name.
+    RAISE EXCEPTION TYPE z2ui5_cx_fw_error EXPORTING val = v.
 
-      IF lr_comp->as_include = abap_true.
-        INSERT LINES OF _get_t_attri_by_struc( io_app   = io_app
-                                               iv_attri = lv_element ) INTO TABLE result.
-
-      ELSE.
-        
-        CLEAR temp25.
-        temp25-name = lv_element.
-        temp25-type_kind = lr_comp->type->type_kind.
-        INSERT temp25 INTO TABLE result.
-      ENDIF.
-
-    ENDLOOP.
   ENDMETHOD.
 ENDCLASS.

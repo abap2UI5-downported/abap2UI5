@@ -157,19 +157,16 @@ CLASS Z2UI5_CL_FW_UTILITY_JSON IMPLEMENTATION.
 
 
   METHOD factory.
-    DATA temp4 TYPE string.
 
     CREATE OBJECT result.
     result->mo_root = result.
 
-    
-    temp4 = iv_json.
-    /ui2/cl_json=>deserialize(
-        EXPORTING
-            json         = temp4
-            assoc_arrays = abap_true
-        CHANGING
-            data         = result->mr_actual ).
+    z2ui5_cl_fw_utility=>trans_json_2_any(
+      EXPORTING
+        val  = iv_json
+      CHANGING
+        data = result->mr_actual
+    ).
 
   ENDMETHOD.
 
@@ -181,7 +178,7 @@ CLASS Z2UI5_CL_FW_UTILITY_JSON IMPLEMENTATION.
     FIELD-SYMBOLS <attribute> TYPE any.
     DATA temp2 TYPE xsdboolean.
     temp1 = boolc( mr_actual IS INITIAL ).
-    z2ui5_cl_fw_utility=>raise( when = temp1 ).
+    z2ui5_cl_fw_utility=>x_check_raise( temp1 ).
 
     result = new( io_root = mo_root
                   iv_name = name ).
@@ -196,7 +193,7 @@ CLASS Z2UI5_CL_FW_UTILITY_JSON IMPLEMENTATION.
     ASSIGN (lv_name) TO <attribute>.
     
     temp2 = boolc( sy-subrc <> 0 ).
-    z2ui5_cl_fw_utility=>raise( when = temp2 ).
+    z2ui5_cl_fw_utility=>x_check_raise( temp2 ).
 
     result->mr_actual = <attribute>.
     result->mo_parent = me.
@@ -212,8 +209,8 @@ CLASS Z2UI5_CL_FW_UTILITY_JSON IMPLEMENTATION.
     ASSIGN mr_actual->* TO <attribute>.
     
     temp3 = boolc( sy-subrc <> 0 ).
-    z2ui5_cl_fw_utility=>raise( when = temp3
-                                v    = `value of attribute in JSON not found` ).
+    z2ui5_cl_fw_utility=>x_check_raise( when = temp3
+                                v  = `value of attribute in JSON not found` ).
     result = <attribute>.
 
   ENDMETHOD.
@@ -227,13 +224,13 @@ CLASS Z2UI5_CL_FW_UTILITY_JSON IMPLEMENTATION.
 
 
   METHOD new.
-    DATA temp5 TYPE string.
+    DATA temp4 TYPE string.
 
     CREATE OBJECT result.
     result->mo_root = io_root.
     
-    temp5 = iv_name.
-    result->mv_name = temp5.
+    temp4 = iv_name.
+    result->mv_name = temp4.
 
   ENDMETHOD.
 

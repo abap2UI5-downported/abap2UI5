@@ -1,6 +1,6 @@
 CLASS ltcl_integration_test DEFINITION FINAL FOR TESTING
-  DURATION LONG
-  RISK LEVEL HARMLESS.
+  DURATION long
+  RISK LEVEL dangerous.
 
   PUBLIC SECTION.
 
@@ -118,7 +118,7 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     lv_assign = `OVIEWMODEL->QUANTITY->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> <> `500`.
-      cl_abap_unit_assert=>fail( msg  = 'data binding - initial set oUpdate wrong'
+      cl_abap_unit_assert=>fail( msg  = 'data binding - initial set EDIT wrong'
                                  quit = 5 ).
     ENDIF.
   ENDMETHOD.
@@ -141,10 +141,10 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     
     UNASSIGN <val>.
     
-    lv_assign = `OVIEWMODEL->OUPDATE->QUANTITY->*`.
+    lv_assign = `OVIEWMODEL->EDIT->QUANTITY->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> <> `500`.
-      cl_abap_unit_assert=>fail( msg  = 'data binding - initial set oUpdate wrong'
+      cl_abap_unit_assert=>fail( msg  = 'data binding - initial set EDIT wrong'
                                  quit = 5 ).
     ENDIF.
   ENDMETHOD.
@@ -378,7 +378,7 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     lv_id = temp3.
 
     
-    lv_request = `{"oUpdate":{"QUANTITY":"600"},"ID": "` && lv_id && `" ,"ARGUMENTS":[{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}]}`.
+    lv_request = `{"EDIT":{"QUANTITY":"600"},"ID": "` && lv_id && `" ,"ARGUMENTS":[{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}]}`.
     lv_response = z2ui5_cl_http_handler=>http_post( lv_request ).
 
     CLEAR lo_data.
@@ -389,7 +389,7 @@ CLASS ltcl_integration_test IMPLEMENTATION.
         data             = lo_data ).
 
     UNASSIGN <val>.
-    lv_assign = `OVIEWMODEL->OUPDATE->QUANTITY->*`.
+    lv_assign = `OVIEWMODEL->EDIT->QUANTITY->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     IF <val> <> `600`.
       cl_abap_unit_assert=>fail( msg = 'data binding - frontend updated value wrong after roundtrip' quit = 5 ).
@@ -432,7 +432,7 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     
     lv_id = temp4.
     
-    lv_request = `{"oUpdate":{"QUANTITY":"700"},"ID": "` && lv_id && `" ,"ARGUMENTS": [{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}]}`.
+    lv_request = `{"EDIT":{"QUANTITY":"700"},"ID": "` && lv_id && `" ,"ARGUMENTS": [{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}]}`.
     lv_response = z2ui5_cl_http_handler=>http_post( lv_request ).
 
     CLEAR lo_data.

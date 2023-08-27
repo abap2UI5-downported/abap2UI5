@@ -1,7 +1,7 @@
 CLASS z2ui5_cl_fw_db DEFINITION
   PUBLIC
   FINAL
-  CREATE PUBLIC.
+  CREATE PUBLIC .
 
   PUBLIC SECTION.
 
@@ -11,45 +11,56 @@ CLASS z2ui5_cl_fw_db DEFINITION
         id_prev           TYPE string,
         id_prev_app       TYPE string,
         id_prev_app_stack TYPE string,
-        t_attri           TYPE z2ui5_cl_fw_utility=>ty_t_attri,
+        t_attri           TYPE z2ui5_cl_fw_binding=>ty_t_attri,
         app               TYPE REF TO z2ui5_if_app,
-      END OF ty_s_db.
+      END OF ty_s_db .
 
     CLASS-METHODS create
       IMPORTING
-        id TYPE string
-        db TYPE ty_s_db.
-
+        !id TYPE string
+        !db TYPE ty_s_db .
     CLASS-METHODS load_app
       IMPORTING
-        id            TYPE clike
+        !id           TYPE clike
       RETURNING
-        VALUE(result) TYPE ty_s_db.
+        VALUE(result) TYPE ty_s_db .
 
     CLASS-METHODS read
       IMPORTING
-        id             TYPE clike
-        check_load_app TYPE abap_bool DEFAULT abap_true
+        !id             TYPE clike
+        !check_load_app TYPE abap_bool DEFAULT abap_true
       RETURNING
-        VALUE(result)  TYPE z2ui5_t_draft.
+        VALUE(result)   TYPE z2ui5_t_draft .
 
     CLASS-METHODS cleanup.
 
+    CLASS-METHODS trans_any_2_xml
+      IMPORTING
+        !db           TYPE ty_s_db
+      RETURNING
+        VALUE(result) TYPE string.
+
+  PROTECTED SECTION.
+  PRIVATE SECTION.
 ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
+CLASS z2ui5_cl_fw_db IMPLEMENTATION.
 
 
   METHOD cleanup.
 
     DATA lv_time TYPE timestampl.
-    DATA lv_four_hours_ago TYPE tzntstmpl.
-    lv_time = z2ui5_cl_fw_utility=>get_timestampl( ).
+    DATA lv_four_hours_ago TYPE timestampl.
+    lv_time = z2ui5_cl_fw_utility=>time_get_timestampl( ).
+
+
     
-    lv_four_hours_ago = cl_abap_tstmp=>subtractsecs( tstmp = lv_time
-                                                           secs  = 60 * 60 * 4 ).
+    lv_four_hours_ago = z2ui5_cl_fw_utility=>time_substract_seconds(
+                                time    = lv_time
+                                seconds = 60 * 60 * 4
+                              ).
 
     DELETE FROM z2ui5_t_draft WHERE timestampl < lv_four_hours_ago.
     COMMIT WORK.
@@ -58,99 +69,30 @@ CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
 
 
   METHOD create.
-        DATA temp1 LIKE REF TO db.
-DATA lv_xml TYPE string.
-        DATA x TYPE REF TO cx_xslt_serialization_error.
-            DATA ls_db LIKE db.
-            DATA temp2 TYPE REF TO object.
-            DATA lo_app LIKE temp2.
-            DATA temp3 LIKE sy-subrc.
-            DATA temp4 TYPE REF TO object.
-            DATA temp5 LIKE LINE OF ls_db-t_attri.
-            DATA lr_attri LIKE REF TO temp5.
-              DATA lv_assign TYPE string.
-              FIELD-SYMBOLS <attri> TYPE any.
-              FIELD-SYMBOLS <deref_attri> TYPE any.
-            DATA temp6 LIKE REF TO ls_db.
-            DATA x2 TYPE REF TO cx_root.
-    DATA temp7 TYPE z2ui5_t_draft.
-    DATA ls_draft LIKE temp7.
-    DATA temp8 TYPE xsdboolean.
 
-    TRY.
-        
-        GET REFERENCE OF db INTO temp1.
-
-lv_xml = z2ui5_cl_fw_utility=>trans_object_2_xml( temp1 ).
-
-        
-      CATCH cx_xslt_serialization_error INTO x.
-        TRY.
-
-            
-            ls_db = db.
-            
-            temp2 ?= ls_db-app.
-            
-            lo_app = temp2.
-
-            
-            READ TABLE ls_db-t_attri WITH KEY check_ref_data = abap_true TRANSPORTING NO FIELDS.
-            temp3 = sy-subrc.
-            IF NOT temp3 = 0.
-              RAISE EXCEPTION x.
-            ENDIF.
-
-            
-            temp4 ?= ls_db-app.
-            lo_app = temp4.
-            
-            
-            LOOP AT ls_db-t_attri REFERENCE INTO lr_attri WHERE check_ref_data = abap_true.
-
-              
-              lv_assign = 'LO_APP->' && lr_attri->name.
-              
-              
-              ASSIGN (lv_assign) TO <attri>.
-              ASSIGN <attri>->* TO <deref_attri>.
-
-              lr_attri->data_rtti = z2ui5_cl_fw_utility=>rtti_get( <deref_attri> ).
-              CLEAR <deref_attri>.
-              CLEAR <attri>.
-
-            ENDLOOP.
-
-            
-            GET REFERENCE OF ls_db INTO temp6.
-lv_xml = z2ui5_cl_fw_utility=>trans_object_2_xml( temp6 ).
-
-            
-          CATCH cx_root INTO x2.
-
-            RAISE EXCEPTION TYPE z2ui5_cl_fw_error
-              EXPORTING
-                val = x->get_text( ) && `<p>` && x->previous->get_text( ) && `<p>` && x2->get_text( ).
-
-        ENDTRY.
-    ENDTRY.
+    DATA lv_xml TYPE string.
+    DATA temp1 TYPE z2ui5_t_draft.
+    DATA ls_draft LIKE temp1.
+    lv_xml = trans_any_2_xml( db ).
 
     
-    CLEAR temp7.
-    temp7-uuid = id.
-    temp7-uuid_prev = db-id_prev.
-    temp7-uuid_prev_app = db-id_prev_app.
-    temp7-uuid_prev_app_stack = db-id_prev_app_stack.
-    temp7-uname = z2ui5_cl_fw_utility=>get_user_tech( ).
-    temp7-timestampl = z2ui5_cl_fw_utility=>get_timestampl( ).
-    temp7-data = lv_xml.
+    CLEAR temp1.
+    temp1-uuid = id.
+    temp1-uuid_prev = db-id_prev.
+    temp1-uuid_prev_app = db-id_prev_app.
+    temp1-uuid_prev_app_stack = db-id_prev_app_stack.
+    temp1-uname = z2ui5_cl_fw_utility=>func_get_user_tech( ).
+    temp1-timestampl = z2ui5_cl_fw_utility=>time_get_timestampl( ).
+    temp1-data = lv_xml.
     
-    ls_draft = temp7.
+    ls_draft = temp1.
 
     MODIFY z2ui5_t_draft FROM ls_draft.
-    
-    temp8 = boolc( sy-subrc <> 0 ).
-    z2ui5_cl_fw_utility=>raise( when = temp8 ).
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE z2ui5_cx_fw_error
+        EXPORTING
+          val = `CREATE_OF_DRAFT_ENTRY_ON_DATABASE_FAILED`.
+    ENDIF.
     COMMIT WORK AND WAIT.
 
   ENDMETHOD.
@@ -159,43 +101,43 @@ lv_xml = z2ui5_cl_fw_utility=>trans_object_2_xml( temp6 ).
   METHOD load_app.
 
     DATA ls_db TYPE z2ui5_t_draft.
-      DATA lv_check_rtti LIKE abap_true.
-    DATA temp8 TYPE REF TO object.
-    DATA lo_app LIKE temp8.
-    DATA temp9 LIKE LINE OF result-t_attri.
-    DATA lr_attri LIKE REF TO temp9.
+    DATA temp2 TYPE REF TO object.
+    DATA lo_app LIKE temp2.
+    DATA temp3 LIKE LINE OF result-t_attri.
+    DATA lr_attri LIKE REF TO temp3.
       FIELD-SYMBOLS <ref> TYPE any.
       DATA lv_assign TYPE string.
     ls_db = read( id ).
 
-    z2ui5_cl_fw_utility=>trans_xml_2_object(
+    z2ui5_cl_fw_utility=>trans_xml_2_any(
         EXPORTING
             xml  = ls_db-data
         IMPORTING
-            data = result ).
+            any = result ).
 
-    LOOP AT result-t_attri TRANSPORTING NO FIELDS WHERE data_rtti <> ``.
-      
-      lv_check_rtti = abap_true.
-    ENDLOOP.
-    IF lv_check_rtti = abap_false.
-      RETURN.
-    ENDIF.
+*    LOOP AT result-t_attri TRANSPORTING NO FIELDS WHERE data_rtti <> ``.
+*      DATA(lv_check_rtti) = abap_true.
+*    ENDLOOP.
+*    IF lv_check_rtti = abap_false.
+*      RETURN.
+*    ENDIF.
 
     
-    temp8 ?= result-app.
+    temp2 ?= result-app.
     
-    lo_app = temp8.
+    lo_app = temp2.
     
     
-    LOOP AT result-t_attri REFERENCE INTO lr_attri WHERE check_ref_data = abap_true.
+    LOOP AT result-t_attri REFERENCE INTO lr_attri
+        WHERE data_rtti IS NOT INITIAL
+          AND type_kind = cl_abap_classdescr=>typekind_dref.
 
       
       
       lv_assign = 'LO_APP->' && lr_attri->name.
       ASSIGN (lv_assign) TO <ref>.
 
-      z2ui5_cl_fw_utility=>rtti_set(
+      z2ui5_cl_fw_utility=>rtti_xml_set_to_data(
         EXPORTING
           rtti_data = lr_attri->data_rtti
          IMPORTING
@@ -208,7 +150,6 @@ lv_xml = z2ui5_cl_fw_utility=>trans_object_2_xml( temp6 ).
 
 
   METHOD read.
-    DATA temp9 TYPE xsdboolean.
 
     IF check_load_app = abap_true.
 
@@ -226,9 +167,86 @@ lv_xml = z2ui5_cl_fw_utility=>trans_object_2_xml( temp6 ).
 
     ENDIF.
 
-    
-    temp9 = boolc( sy-subrc <> 0 ).
-    z2ui5_cl_fw_utility=>raise( when = temp9 ).
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE z2ui5_cx_fw_error
+        EXPORTING
+          val = `NO_DRAFT_ENTRY_OF_PREVIOUS_REQUEST_FOUND`.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD trans_any_2_xml.
+        DATA x TYPE REF TO cx_xslt_serialization_error.
+            DATA ls_db LIKE db.
+            DATA temp4 TYPE REF TO object.
+            DATA lo_app LIKE temp4.
+            DATA temp5 LIKE sy-subrc.
+            DATA temp6 TYPE REF TO object.
+            DATA temp7 LIKE LINE OF ls_db-t_attri.
+            DATA lr_attri LIKE REF TO temp7.
+              DATA lv_assign TYPE string.
+              FIELD-SYMBOLS <attri> TYPE any.
+              FIELD-SYMBOLS <deref_attri> TYPE any.
+            DATA x2 TYPE REF TO cx_root.
+
+    TRY.
+        result = z2ui5_cl_fw_utility=>trans_xml_any_2( db ).
+
+        
+      CATCH cx_xslt_serialization_error INTO x.
+        TRY.
+
+            
+            ls_db = db.
+            
+            temp4 ?= ls_db-app.
+            
+            lo_app = temp4.
+
+            
+            READ TABLE ls_db-t_attri WITH KEY type_kind = cl_abap_classdescr=>typekind_dref TRANSPORTING NO FIELDS.
+            temp5 = sy-subrc.
+            IF NOT temp5 = 0.
+
+              ls_db-t_attri = z2ui5_cl_fw_binding=>update_attri(
+                  t_attri = ls_db-t_attri
+                  app     = ls_db-app
+              ).
+
+            ENDIF.
+
+            
+            temp6 ?= ls_db-app.
+            lo_app = temp6.
+            
+            
+            LOOP AT ls_db-t_attri REFERENCE INTO lr_attri WHERE type_kind = cl_abap_classdescr=>typekind_dref.
+
+              
+              lv_assign = 'LO_APP->' && lr_attri->name.
+              
+              
+              ASSIGN (lv_assign) TO <attri>.
+              ASSIGN <attri>->* TO <deref_attri>.
+
+              lr_attri->data_rtti = z2ui5_cl_fw_utility=>rtti_xml_get_by_data( <deref_attri> ).
+              CLEAR <deref_attri>.
+              CLEAR <attri>.
+
+            ENDLOOP.
+
+            result = z2ui5_cl_fw_utility=>trans_xml_any_2( ls_db ).
+
+            
+          CATCH cx_root INTO x2.
+
+            RAISE EXCEPTION TYPE z2ui5_cx_fw_error
+              EXPORTING
+                val = x->get_text( ) && `<p>` && x->previous->get_text( ) && `<p>` && x2->get_text( ).
+
+        ENDTRY.
+    ENDTRY.
 
   ENDMETHOD.
 ENDCLASS.

@@ -1,6 +1,6 @@
 CLASS ltcl_unit_01_json DEFINITION FINAL FOR TESTING
-  DURATION MEDIUM
-  RISK LEVEL HARMLESS.
+  DURATION long
+  RISK LEVEL harmless.
 
   PRIVATE SECTION.
     METHODS test_json_attri     FOR TESTING RAISING cx_static_check.
@@ -51,19 +51,19 @@ TYPES BEGIN OF ty_s_test.
 TYPES comp1 TYPE string.
 TYPES comp2 TYPE string.
 TYPES END OF ty_s_test.
-    DATA temp6 TYPE ty_s_test.
-    DATA ls_test LIKE temp6.
+    DATA temp5 TYPE ty_s_test.
+    DATA ls_test LIKE temp5.
     DATA lv_result TYPE string.
     CREATE OBJECT lo_tree TYPE z2ui5_cl_fw_utility_json.
 
     
 
     
-    CLEAR temp6.
-    temp6-comp1 = `AAA`.
-    temp6-comp2 = `BBB`.
+    CLEAR temp5.
+    temp5-comp1 = `AAA`.
+    temp5-comp2 = `BBB`.
     
-    ls_test = temp6.
+    ls_test = temp5.
     lo_tree->add_attribute_object( `CCC` )->add_attribute_struc( ls_test ).
 
     

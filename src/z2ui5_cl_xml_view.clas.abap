@@ -1968,7 +1968,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp4-v = value.
     INSERT temp4 INTO TABLE temp3.
     temp4-n = `visible`.
-    temp4-v = z2ui5_cl_fw_utility=>get_json_boolean( visible ).
+    temp4-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( visible ).
     INSERT temp4 INTO TABLE temp3.
     _generic( name   = `BadgeCustomData`
               t_prop = temp3 ).
@@ -1999,7 +1999,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp6-v = endtime.
     INSERT temp6 INTO TABLE temp5.
     temp6-n = `selectable`.
-    temp6-v = z2ui5_cl_fw_utility=>get_json_boolean( selectable ).
+    temp6-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( selectable ).
     INSERT temp6 INTO TABLE temp5.
     temp6-n = `selectedFill`.
     temp6-v = selectedfill.
@@ -2026,7 +2026,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp6-v = fontsize.
     INSERT temp6 INTO TABLE temp5.
     temp6-n = `connectable`.
-    temp6-v = z2ui5_cl_fw_utility=>get_json_boolean( connectable ).
+    temp6-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( connectable ).
     INSERT temp6 INTO TABLE temp5.
     temp6-n = `fontFamily`.
     temp6-v = fontfamily.
@@ -2038,28 +2038,28 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp6-v = transform.
     INSERT temp6 INTO TABLE temp5.
     temp6-n = `countInBirdEye`.
-    temp6-v = z2ui5_cl_fw_utility=>get_json_boolean( countinbirdeye ).
+    temp6-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( countinbirdeye ).
     INSERT temp6 INTO TABLE temp5.
     temp6-n = `fontWeight`.
     temp6-v = fontweight.
     INSERT temp6 INTO TABLE temp5.
     temp6-n = `showTitle`.
-    temp6-v = z2ui5_cl_fw_utility=>get_json_boolean( showtitle ).
+    temp6-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showtitle ).
     INSERT temp6 INTO TABLE temp5.
     temp6-n = `selected`.
-    temp6-v = z2ui5_cl_fw_utility=>get_json_boolean( selected ).
+    temp6-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( selected ).
     INSERT temp6 INTO TABLE temp5.
     temp6-n = `resizable`.
-    temp6-v = z2ui5_cl_fw_utility=>get_json_boolean( resizable ).
+    temp6-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( resizable ).
     INSERT temp6 INTO TABLE temp5.
     temp6-n = `horizontalTextAlignment`.
     temp6-v = horizontaltextalignment.
     INSERT temp6 INTO TABLE temp5.
     temp6-n = `highlighted`.
-    temp6-v = z2ui5_cl_fw_utility=>get_json_boolean( highlighted ).
+    temp6-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( highlighted ).
     INSERT temp6 INTO TABLE temp5.
     temp6-n = `highlightable`.
-    temp6-v = z2ui5_cl_fw_utility=>get_json_boolean( highlightable ).
+    temp6-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( highlightable ).
     INSERT temp6 INTO TABLE temp5.
     result = _generic( name   = `BaseRectangle`
                        ns     = 'gantt'
@@ -2156,10 +2156,10 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp14-v = text.
     INSERT temp14 INTO TABLE temp13.
     temp14-n = `enabled`.
-    temp14-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp14-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp14 INTO TABLE temp13.
     temp14-n = `visible`.
-    temp14-v = z2ui5_cl_fw_utility=>get_json_boolean( visible ).
+    temp14-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( visible ).
     INSERT temp14 INTO TABLE temp13.
     temp14-n = `icon`.
     temp14-v = icon.
@@ -2252,7 +2252,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     CLEAR temp19.
     
     temp20-n = `loop`.
-    temp20-v = z2ui5_cl_fw_utility=>get_json_boolean( loop ).
+    temp20-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( loop ).
     INSERT temp20 INTO TABLE temp19.
     temp20-n = `class`.
     temp20-v = class.
@@ -2540,7 +2540,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp26-v = selected.
     INSERT temp26 INTO TABLE temp25.
     temp26-n = `enabled`.
-    temp26-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp26-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp26 INTO TABLE temp25.
     temp26-n = `select`.
     temp26-v = select.
@@ -2564,7 +2564,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp28-v = type.
     INSERT temp28 INTO TABLE temp27.
     temp28-n = `editable`.
-    temp28-v = z2ui5_cl_fw_utility=>get_json_boolean( editable ).
+    temp28-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( editable ).
     INSERT temp28 INTO TABLE temp27.
     temp28-n = `height`.
     temp28-v = height.
@@ -2593,7 +2593,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp30-v = halign.
     INSERT temp30 INTO TABLE temp29.
     temp30-n = `demandPopin`.
-    temp30-v = z2ui5_cl_fw_utility=>get_json_boolean( demandpopin ).
+    temp30-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( demandpopin ).
     INSERT temp30 INTO TABLE temp29.
     result = _generic( name   = `Column`
                        t_prop = temp29 ).
@@ -2633,7 +2633,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     CLEAR temp33.
     
     temp34-n = `showClearIcon`.
-    temp34-v = z2ui5_cl_fw_utility=>get_json_boolean( showclearicon ).
+    temp34-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showclearicon ).
     INSERT temp34 INTO TABLE temp33.
     temp34-n = `selectedKey`.
     temp34-v = selectedkey.
@@ -2744,7 +2744,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp38-v = showsearchbutton.
     INSERT temp38 INTO TABLE temp37.
     temp38-n = `alignCustomContentToRight`.
-    temp38-v = z2ui5_cl_fw_utility=>get_json_boolean( aligncustomcontenttoright ).
+    temp38-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( aligncustomcontenttoright ).
     INSERT temp38 INTO TABLE temp37.
     temp38-n = `findMode`.
     temp38-v = findmode.
@@ -2753,19 +2753,19 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp38-v = infoofselectitems.
     INSERT temp38 INTO TABLE temp37.
     temp38-n = `showBirdEyeButton`.
-    temp38-v = z2ui5_cl_fw_utility=>get_json_boolean( showbirdeyebutton ).
+    temp38-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showbirdeyebutton ).
     INSERT temp38 INTO TABLE temp37.
     temp38-n = `showDisplayTypeButton`.
-    temp38-v = z2ui5_cl_fw_utility=>get_json_boolean( showdisplaytypebutton ).
+    temp38-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showdisplaytypebutton ).
     INSERT temp38 INTO TABLE temp37.
     temp38-n = `showLegendButton`.
-    temp38-v = z2ui5_cl_fw_utility=>get_json_boolean( showlegendbutton ).
+    temp38-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showlegendbutton ).
     INSERT temp38 INTO TABLE temp37.
     temp38-n = `showSettingButton`.
-    temp38-v = z2ui5_cl_fw_utility=>get_json_boolean( showsettingbutton ).
+    temp38-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showsettingbutton ).
     INSERT temp38 INTO TABLE temp37.
     temp38-n = `showTimeZoomControl`.
-    temp38-v = z2ui5_cl_fw_utility=>get_json_boolean( showtimezoomcontrol ).
+    temp38-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showtimezoomcontrol ).
     INSERT temp38 INTO TABLE temp37.
     temp38-n = `stepCountOfSlider`.
     temp38-v = stepcountofslider.
@@ -2855,7 +2855,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp42-v = valueformat.
     INSERT temp42 INTO TABLE temp41.
     temp42-n = `required`.
-    temp42-v = z2ui5_cl_fw_utility=>get_json_boolean( required ).
+    temp42-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( required ).
     INSERT temp42 INTO TABLE temp41.
     temp42-n = `valueState`.
     temp42-v = valuestate.
@@ -2867,10 +2867,10 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp42-v = placeholder.
     INSERT temp42 INTO TABLE temp41.
     temp42-n = `enabled`.
-    temp42-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp42-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp42 INTO TABLE temp41.
     temp42-n = `showCurrentDateButton`.
-    temp42-v = z2ui5_cl_fw_utility=>get_json_boolean( showcurrentdatebutton ).
+    temp42-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showcurrentdatebutton ).
     INSERT temp42 INTO TABLE temp41.
     _generic( name   = `DatePicker`
               t_prop = temp41 ).
@@ -2891,7 +2891,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp44-v = placeholder.
     INSERT temp44 INTO TABLE temp43.
     temp44-n = `enabled`.
-    temp44-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp44-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp44 INTO TABLE temp43.
     temp44-n = `valueState`.
     temp44-v = valuestate.
@@ -2926,7 +2926,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp46-v = contentheight.
     INSERT temp46 INTO TABLE temp45.
     temp46-n = `resizable`.
-    temp46-v = z2ui5_cl_fw_utility=>get_json_boolean( resizable ).
+    temp46-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( resizable ).
     INSERT temp46 INTO TABLE temp45.
     result = _generic( name   = `Dialog`
                        t_prop = temp45 ).
@@ -2940,13 +2940,13 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     CLEAR temp47.
     
     temp48-n = `headerExpanded`.
-    temp48-v = z2ui5_cl_fw_utility=>get_json_boolean( headerexpanded ).
+    temp48-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( headerexpanded ).
     INSERT temp48 INTO TABLE temp47.
     temp48-n = `headerPinned`.
-    temp48-v = z2ui5_cl_fw_utility=>get_json_boolean( headerpinned ).
+    temp48-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( headerpinned ).
     INSERT temp48 INTO TABLE temp47.
     temp48-n = `showFooter`.
-    temp48-v = z2ui5_cl_fw_utility=>get_json_boolean( showfooter ).
+    temp48-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showfooter ).
     INSERT temp48 INTO TABLE temp47.
     temp48-n = `toggleHeaderOnTitleClick`.
     temp48-v = toggleheaderontitleclick.
@@ -2963,7 +2963,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     CLEAR temp49.
     
     temp50-n = `pinnable`.
-    temp50-v = z2ui5_cl_fw_utility=>get_json_boolean( pinnable ).
+    temp50-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( pinnable ).
     INSERT temp50 INTO TABLE temp49.
     result = _generic(
                  name   = `DynamicPageHeader`
@@ -3080,10 +3080,10 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp56-v = buttonTooltip.
     INSERT temp56 INTO TABLE temp55.
     temp56-n = `enabled`.
-    temp56-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp56-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp56 INTO TABLE temp55.
     temp56-n = `growing`.
-    temp56-v = z2ui5_cl_fw_utility=>get_json_boolean( growing ).
+    temp56-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( growing ).
     INSERT temp56 INTO TABLE temp55.
     temp56-n = `growingMaxLines`.
     temp56-v = growingMaxLines.
@@ -3092,7 +3092,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp56-v = icon.
     INSERT temp56 INTO TABLE temp55.
     temp56-n = `iconDensityAware`.
-    temp56-v = z2ui5_cl_fw_utility=>get_json_boolean( iconDensityAware ).
+    temp56-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( iconDensityAware ).
     INSERT temp56 INTO TABLE temp55.
     temp56-n = `iconDisplayShape`.
     temp56-v = iconDisplayShape.
@@ -3113,10 +3113,10 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp56-v = rows.
     INSERT temp56 INTO TABLE temp55.
     temp56-n = `showExceededText`.
-    temp56-v = z2ui5_cl_fw_utility=>get_json_boolean( showExceededText ).
+    temp56-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showExceededText ).
     INSERT temp56 INTO TABLE temp55.
     temp56-n = `showIcon`.
-    temp56-v = z2ui5_cl_fw_utility=>get_json_boolean( showIcon ).
+    temp56-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showIcon ).
     INSERT temp56 INTO TABLE temp55.
     temp56-n = `value`.
     temp56-v = value.
@@ -3148,13 +3148,13 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp58-v = convertLinksToAnchorTags.
     INSERT temp58 INTO TABLE temp57.
     temp58-n = `iconActive`.
-    temp58-v = z2ui5_cl_fw_utility=>get_json_boolean( iconActive ).
+    temp58-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( iconActive ).
     INSERT temp58 INTO TABLE temp57.
     temp58-n = `icon`.
     temp58-v = icon.
     INSERT temp58 INTO TABLE temp57.
     temp58-n = `iconDensityAware`.
-    temp58-v = z2ui5_cl_fw_utility=>get_json_boolean( iconDensityAware ).
+    temp58-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( iconDensityAware ).
     INSERT temp58 INTO TABLE temp57.
     temp58-n = `iconDisplayShape`.
     temp58-v = iconDisplayShape.
@@ -3181,10 +3181,10 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp58-v = sender.
     INSERT temp58 INTO TABLE temp57.
     temp58-n = `senderActive`.
-    temp58-v = z2ui5_cl_fw_utility=>get_json_boolean( senderActive ).
+    temp58-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( senderActive ).
     INSERT temp58 INTO TABLE temp57.
     temp58-n = `showIcon`.
-    temp58-v = z2ui5_cl_fw_utility=>get_json_boolean( showIcon ).
+    temp58-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showIcon ).
     INSERT temp58 INTO TABLE temp57.
     temp58-n = `text`.
     temp58-v = text.
@@ -3209,7 +3209,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     CLEAR temp59.
     
     temp60-n = `enabled`.
-    temp60-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp60-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp60 INTO TABLE temp59.
     temp60-n = `icon`.
     temp60-v = icon.
@@ -3224,7 +3224,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp60-v = press.
     INSERT temp60 INTO TABLE temp59.
     temp60-n = `visible`.
-    temp60-v = z2ui5_cl_fw_utility=>get_json_boolean( visible ).
+    temp60-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( visible ).
     INSERT temp60 INTO TABLE temp59.
     result =  _generic( name   = `FeedListItemAction`
                         t_prop = temp59 ).
@@ -3332,7 +3332,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp68-v = alignitems.
     INSERT temp68 INTO TABLE temp67.
     temp68-n = `fitContainer`.
-    temp68-v = z2ui5_cl_fw_utility=>get_json_boolean( fitcontainer ).
+    temp68-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( fitcontainer ).
     INSERT temp68 INTO TABLE temp67.
     temp68-n = `justifyContent`.
     temp68-v = justifycontent.
@@ -3658,7 +3658,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     DATA temp89 TYPE z2ui5_if_client=>ty_s_name_value.
 
     IF classname IS NOT SUPPLIED.
-      classname = z2ui5_cl_fw_utility=>get_classname_by_ref( mi_client->get( )-s_draft-app ).
+      classname = z2ui5_cl_fw_utility=>rtti_get_classname_by_ref( mi_client->get( )-s_draft-app ).
     ENDIF.
 
     
@@ -3686,7 +3686,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     ls_config = mo_root->mi_client->get( )-s_config.
 
     result = ls_config-origin && `/sap/bc/adt/oo/classes/`
-       && z2ui5_cl_fw_utility=>get_classname_by_ref( ls_draft-app ) && `/source/main`.
+       && z2ui5_cl_fw_utility=>rtti_get_classname_by_ref( ls_draft-app ) && `/source/main`.
 
   ENDMETHOD.
 
@@ -3835,7 +3835,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp99-v = illustrationtype.
     INSERT temp99 INTO TABLE temp98.
     temp99-n = `enableFormattedText`.
-    temp99-v = z2ui5_cl_fw_utility=>get_json_boolean( enableformattedtext ).
+    temp99-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enableformattedtext ).
     INSERT temp99 INTO TABLE temp98.
     temp99-n = `illustrationSize`.
     temp99-v = illustrationsize.
@@ -3941,22 +3941,22 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp107-v = type.
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `showClearIcon`.
-    temp107-v = z2ui5_cl_fw_utility=>get_json_boolean( showclearicon ).
+    temp107-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showclearicon ).
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `description`.
     temp107-v = description.
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `editable`.
-    temp107-v = z2ui5_cl_fw_utility=>get_json_boolean( editable ).
+    temp107-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( editable ).
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `enabled`.
-    temp107-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp107-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `visible`.
-    temp107-v = z2ui5_cl_fw_utility=>get_json_boolean( visible ).
+    temp107-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( visible ).
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `showTableSuggestionValueHelp`.
-    temp107-v = z2ui5_cl_fw_utility=>get_json_boolean( showtablesuggestionvaluehelp ).
+    temp107-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showtablesuggestionvaluehelp ).
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `valueState`.
     temp107-v = valuestate.
@@ -3968,7 +3968,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp107-v = value.
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `required`.
-    temp107-v = z2ui5_cl_fw_utility=>get_json_boolean( required ).
+    temp107-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( required ).
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `suggest`.
     temp107-v = suggest.
@@ -3980,25 +3980,25 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp107-v = suggestionrows.
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `showSuggestion`.
-    temp107-v = z2ui5_cl_fw_utility=>get_json_boolean( showsuggestion ).
+    temp107-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showsuggestion ).
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `valueHelpRequest`.
     temp107-v = valuehelprequest.
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `autocomplete`.
-    temp107-v = z2ui5_cl_fw_utility=>get_json_boolean( autocomplete ).
+    temp107-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( autocomplete ).
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `valueLiveUpdate`.
-    temp107-v = z2ui5_cl_fw_utility=>get_json_boolean( valueliveupdate ).
+    temp107-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( valueliveupdate ).
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `submit`.
-    temp107-v = z2ui5_cl_fw_utility=>get_json_boolean( submit ).
+    temp107-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( submit ).
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `showValueHelp`.
-    temp107-v = z2ui5_cl_fw_utility=>get_json_boolean( showvaluehelp ).
+    temp107-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showvaluehelp ).
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `valueHelpOnly`.
-    temp107-v = z2ui5_cl_fw_utility=>get_json_boolean( valuehelponly ).
+    temp107-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( valuehelponly ).
     INSERT temp107 INTO TABLE temp106.
     temp107-n = `class`.
     temp107-v = class.
@@ -4088,7 +4088,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp115-v = selectionchanged.
     INSERT temp115 INTO TABLE temp114.
     temp115-n = `showError`.
-    temp115-v = z2ui5_cl_fw_utility=>get_json_boolean( showerror ).
+    temp115-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showerror ).
     INSERT temp115 INTO TABLE temp114.
     temp115-n = `errorMessageTitle`.
     temp115-v = errormessagetitle.
@@ -4140,7 +4140,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp119-v = selectionchanged.
     INSERT temp119 INTO TABLE temp118.
     temp119-n = `showError`.
-    temp119-v = z2ui5_cl_fw_utility=>get_json_boolean( showerror ).
+    temp119-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showerror ).
     INSERT temp119 INTO TABLE temp118.
     temp119-n = `press`.
     temp119-v = press.
@@ -4181,7 +4181,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp121-v = displayedvalue.
     INSERT temp121 INTO TABLE temp120.
     temp121-n = `selected`.
-    temp121-v = z2ui5_cl_fw_utility=>get_json_boolean( selected ).
+    temp121-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( selected ).
     INSERT temp121 INTO TABLE temp120.
     result = _generic( name   = `InteractiveLineChartPoint`
                        ns     = `mchart`
@@ -4274,7 +4274,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp127-v = id.
     INSERT temp127 INTO TABLE temp126.
     temp127-n = `enabled`.
-    temp127-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp127-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp127 INTO TABLE temp126.
     _generic( name   = `Link`
               ns     = ns
@@ -4371,16 +4371,16 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp133-v = placeholderSymbol.
     INSERT temp133 INTO TABLE temp132.
     temp133-n = `required`.
-    temp133-v = z2ui5_cl_fw_utility=>get_json_boolean( required ).
+    temp133-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( required ).
     INSERT temp133 INTO TABLE temp132.
     temp133-n = `showClearIcon`.
-    temp133-v = z2ui5_cl_fw_utility=>get_json_boolean( showClearIcon ).
+    temp133-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showClearIcon ).
     INSERT temp133 INTO TABLE temp132.
     temp133-n = `showValueStateMessage`.
-    temp133-v = z2ui5_cl_fw_utility=>get_json_boolean( showValueStateMessage ).
+    temp133-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showValueStateMessage ).
     INSERT temp133 INTO TABLE temp132.
     temp133-n = `visible`.
-    temp133-v = z2ui5_cl_fw_utility=>get_json_boolean( visible ).
+    temp133-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( visible ).
     INSERT temp133 INTO TABLE temp132.
     temp133-n = `fieldWidth`.
     temp133-v = fieldwidth.
@@ -4432,7 +4432,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp137-v = groupname.
     INSERT temp137 INTO TABLE temp136.
     temp137-n = `markupDescription`.
-    temp137-v = z2ui5_cl_fw_utility=>get_json_boolean( markupdescription ).
+    temp137-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( markupdescription ).
     INSERT temp137 INTO TABLE temp136.
     result = _generic( name   = `MessageItem`
                        t_prop = temp136 ).
@@ -4445,7 +4445,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     CLEAR temp138.
     
     temp139-n = `showHeader`.
-    temp139-v = z2ui5_cl_fw_utility=>get_json_boolean( show_header ).
+    temp139-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( show_header ).
     INSERT temp139 INTO TABLE temp138.
     temp139-n = `description`.
     temp139-v = description.
@@ -4457,7 +4457,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp139-v = text.
     INSERT temp139 INTO TABLE temp138.
     temp139-n = `enableFormattedText`.
-    temp139-v = z2ui5_cl_fw_utility=>get_json_boolean( enableformattedtext ).
+    temp139-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enableformattedtext ).
     INSERT temp139 INTO TABLE temp138.
     result = _generic( name   = `MessagePage`
                        t_prop = temp138 ).
@@ -4473,7 +4473,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp141-v = items.
     INSERT temp141 INTO TABLE temp140.
     temp141-n = `groupItems`.
-    temp141-v = z2ui5_cl_fw_utility=>get_json_boolean( groupitems ).
+    temp141-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( groupitems ).
     INSERT temp141 INTO TABLE temp140.
     result = _generic( name   = `MessagePopover`
                        t_prop = temp140 ).
@@ -4494,7 +4494,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp143-v = type.
     INSERT temp143 INTO TABLE temp142.
     temp143-n = `showIcon`.
-    temp143-v = z2ui5_cl_fw_utility=>get_json_boolean( showicon ).
+    temp143-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showicon ).
     INSERT temp143 INTO TABLE temp142.
     temp143-n = `class`.
     temp143-v = class.
@@ -4514,7 +4514,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp145-v = items.
     INSERT temp145 INTO TABLE temp144.
     temp145-n = `groupItems`.
-    temp145-v = z2ui5_cl_fw_utility=>get_json_boolean( groupitems ).
+    temp145-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( groupitems ).
     INSERT temp145 INTO TABLE temp144.
     result = _generic( name   = `MessageView`
                        t_prop = temp144 ).
@@ -4580,13 +4580,13 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp151-v = tokens.
     INSERT temp151 INTO TABLE temp150.
     temp151-n = `showClearIcon`.
-    temp151-v = z2ui5_cl_fw_utility=>get_json_boolean( showclearicon ).
+    temp151-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showclearicon ).
     INSERT temp151 INTO TABLE temp150.
     temp151-n = `showValueHelp`.
-    temp151-v = z2ui5_cl_fw_utility=>get_json_boolean( showvaluehelp ).
+    temp151-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showvaluehelp ).
     INSERT temp151 INTO TABLE temp150.
     temp151-n = `enabled`.
-    temp151-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp151-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp151 INTO TABLE temp150.
     temp151-n = `suggestionItems`.
     temp151-v = suggestionitems.
@@ -4662,7 +4662,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp155-v = icon.
     INSERT temp155 INTO TABLE temp154.
     temp155-n = `withMargin`.
-    temp155-v = z2ui5_cl_fw_utility=>get_json_boolean( withmargin ).
+    temp155-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( withmargin ).
     INSERT temp155 INTO TABLE temp154.
     result = _generic( name   = `NumericContent`
                        t_prop = temp154 ).
@@ -4728,7 +4728,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     CLEAR temp160.
     
     temp161-n = `emphasized`.
-    temp161-v = z2ui5_cl_fw_utility=>get_json_boolean( emphasized ).
+    temp161-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( emphasized ).
     INSERT temp161 INTO TABLE temp160.
     temp161-n = `number`.
     temp161-v = number.
@@ -4756,10 +4756,10 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     CLEAR temp162.
     
     temp163-n = `showTitleInHeaderContent`.
-    temp163-v = z2ui5_cl_fw_utility=>get_json_boolean( showtitleinheadercontent ).
+    temp163-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showtitleinheadercontent ).
     INSERT temp163 INTO TABLE temp162.
     temp163-n = `showEditHeaderButton`.
-    temp163-v = z2ui5_cl_fw_utility=>get_json_boolean( showeditheaderbutton ).
+    temp163-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showeditheaderbutton ).
     INSERT temp163 INTO TABLE temp162.
     temp163-n = `editHeaderButtonPress`.
     temp163-v = editheaderbuttonpress.
@@ -4780,7 +4780,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     CLEAR temp164.
     
     temp165-n = `titleUppercase`.
-    temp165-v = z2ui5_cl_fw_utility=>get_json_boolean( titleuppercase ).
+    temp165-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( titleuppercase ).
     INSERT temp165 INTO TABLE temp164.
     temp165-n = `title`.
     temp165-v = title.
@@ -4876,7 +4876,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp171-v = text.
     INSERT temp171 INTO TABLE temp170.
     temp171-n = `enabled`.
-    temp171-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp171-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp171 INTO TABLE temp170.
     temp171-n = `icon`.
     temp171-v = icon.
@@ -4907,7 +4907,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp173-v = text.
     INSERT temp173 INTO TABLE temp172.
     temp173-n = `enabled`.
-    temp173-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp173-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp173 INTO TABLE temp172.
     temp173-n = `icon`.
     temp173-v = icon.
@@ -4937,7 +4937,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp175-v = text.
     INSERT temp175 INTO TABLE temp174.
     temp175-n = `enabled`.
-    temp175-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp175-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp175 INTO TABLE temp174.
     temp175-n = `icon`.
     temp175-v = icon.
@@ -4962,13 +4962,13 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp177-v = title.
     INSERT temp177 INTO TABLE temp176.
     temp177-n = `showNavButton`.
-    temp177-v = z2ui5_cl_fw_utility=>get_json_boolean( shownavbutton ).
+    temp177-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( shownavbutton ).
     INSERT temp177 INTO TABLE temp176.
     temp177-n = `navButtonPress`.
     temp177-v = navbuttonpress.
     INSERT temp177 INTO TABLE temp176.
     temp177-n = `showHeader`.
-    temp177-v = z2ui5_cl_fw_utility=>get_json_boolean( showheader ).
+    temp177-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showheader ).
     INSERT temp177 INTO TABLE temp176.
     temp177-n = `class`.
     temp177-v = class.
@@ -5163,19 +5163,19 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp189-v = id.
     INSERT temp189 INTO TABLE temp188.
     temp189-n = `foldedCorners`.
-    temp189-v = z2ui5_cl_fw_utility=>get_json_boolean( foldedcorners ).
+    temp189-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( foldedcorners ).
     INSERT temp189 INTO TABLE temp188.
     temp189-n = `scrollable`.
-    temp189-v = z2ui5_cl_fw_utility=>get_json_boolean( scrollable ).
+    temp189-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( scrollable ).
     INSERT temp189 INTO TABLE temp188.
     temp189-n = `showLabels`.
-    temp189-v = z2ui5_cl_fw_utility=>get_json_boolean( showlabels ).
+    temp189-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showlabels ).
     INSERT temp189 INTO TABLE temp188.
     temp189-n = `visible`.
-    temp189-v = z2ui5_cl_fw_utility=>get_json_boolean( visible ).
+    temp189-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( visible ).
     INSERT temp189 INTO TABLE temp188.
     temp189-n = `wheelZoomable`.
-    temp189-v = z2ui5_cl_fw_utility=>get_json_boolean( wheelzoomable ).
+    temp189-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( wheelzoomable ).
     INSERT temp189 INTO TABLE temp188.
     temp189-n = `headerPress`.
     temp189-v = headerpress.
@@ -5261,13 +5261,13 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp193-v = texts.
     INSERT temp193 INTO TABLE temp192.
     temp193-n = `highlighted`.
-    temp193-v = z2ui5_cl_fw_utility=>get_json_boolean( highlighted ).
+    temp193-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( highlighted ).
     INSERT temp193 INTO TABLE temp192.
     temp193-n = `focused`.
-    temp193-v = z2ui5_cl_fw_utility=>get_json_boolean( focused ).
+    temp193-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( focused ).
     INSERT temp193 INTO TABLE temp192.
     temp193-n = `selected`.
-    temp193-v = z2ui5_cl_fw_utility=>get_json_boolean( selected ).
+    temp193-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( selected ).
     INSERT temp193 INTO TABLE temp192.
     temp193-n = `tag`.
     temp193-v = tag.
@@ -5301,7 +5301,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp195-v = displayvalue.
     INSERT temp195 INTO TABLE temp194.
     temp195-n = `showValue`.
-    temp195-v = z2ui5_cl_fw_utility=>get_json_boolean( showvalue ).
+    temp195-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showvalue ).
     INSERT temp195 INTO TABLE temp194.
     temp195-n = `state`.
     temp195-v = state.
@@ -5348,19 +5348,19 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     CLEAR temp198.
     
     temp199-n = `activeHandling`.
-    temp199-v = z2ui5_cl_fw_utility=>get_json_boolean( activehandling ).
+    temp199-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( activehandling ).
     INSERT temp199 INTO TABLE temp198.
     temp199-n = `editable`.
-    temp199-v = z2ui5_cl_fw_utility=>get_json_boolean( editable ).
+    temp199-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( editable ).
     INSERT temp199 INTO TABLE temp198.
     temp199-n = `enabled`.
-    temp199-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp199-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp199 INTO TABLE temp198.
     temp199-n = `selected`.
-    temp199-v = z2ui5_cl_fw_utility=>get_json_boolean( selected ).
+    temp199-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( selected ).
     INSERT temp199 INTO TABLE temp198.
     temp199-n = `useEntireWidth`.
-    temp199-v = z2ui5_cl_fw_utility=>get_json_boolean( useentirewidth ).
+    temp199-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( useentirewidth ).
     INSERT temp199 INTO TABLE temp198.
     temp199-n = `text`.
     temp199-v = text.
@@ -5397,10 +5397,10 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp201-v = columns.
     INSERT temp201 INTO TABLE temp200.
     temp201-n = `editable`.
-    temp201-v = z2ui5_cl_fw_utility=>get_json_boolean( editable ).
+    temp201-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( editable ).
     INSERT temp201 INTO TABLE temp200.
     temp201-n = `enabled`.
-    temp201-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp201-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp201 INTO TABLE temp200.
     temp201-n = `selectedIndex`.
     temp201-v = selectedindex.
@@ -5445,7 +5445,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp203-v = min.
     INSERT temp203 INTO TABLE temp202.
     temp203-n = `showTickmarks`.
-    temp203-v = z2ui5_cl_fw_utility=>get_json_boolean( showtickmarks ).
+    temp203-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showtickmarks ).
     INSERT temp203 INTO TABLE temp202.
     temp203-n = `startValue`.
     temp203-v = startvalue.
@@ -5527,13 +5527,13 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp207-v = width.
     INSERT temp207 INTO TABLE temp206.
     temp207-n = `vertical`.
-    temp207-v = z2ui5_cl_fw_utility=>get_json_boolean( vertical ).
+    temp207-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( vertical ).
     INSERT temp207 INTO TABLE temp206.
     temp207-n = `horizontal`.
-    temp207-v = z2ui5_cl_fw_utility=>get_json_boolean( horizontal ).
+    temp207-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( horizontal ).
     INSERT temp207 INTO TABLE temp206.
     temp207-n = `focusable`.
-    temp207-v = z2ui5_cl_fw_utility=>get_json_boolean( focusable ).
+    temp207-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( focusable ).
     INSERT temp207 INTO TABLE temp206.
     result = _generic( name   = `ScrollContainer`
                        t_prop = temp206 ).
@@ -5563,7 +5563,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp209-v = change.
     INSERT temp209 INTO TABLE temp208.
     temp209-n = `autocomplete`.
-    temp209-v = z2ui5_cl_fw_utility=>get_json_boolean( autocomplete ).
+    temp209-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( autocomplete ).
     INSERT temp209 INTO TABLE temp208.
     temp209-n = `liveChange`.
     temp209-v = livechange.
@@ -5676,7 +5676,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp217-v = columnsm.
     INSERT temp217 INTO TABLE temp216.
     temp217-n = `editable`.
-    temp217-v = z2ui5_cl_fw_utility=>get_json_boolean( editable ).
+    temp217-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( editable ).
     INSERT temp217 INTO TABLE temp216.
     result = _generic( name   = `SimpleForm`
                        ns     = `form`
@@ -5801,7 +5801,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp223-v = valuestate.
     INSERT temp223 INTO TABLE temp222.
     temp223-n = `enabled`.
-    temp223-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp223-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp223 INTO TABLE temp222.
     temp223-n = `description`.
     temp223-v = description.
@@ -5862,7 +5862,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp225-v = type.
     INSERT temp225 INTO TABLE temp224.
     temp225-n = `enabled`.
-    temp225-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp225-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp225 INTO TABLE temp224.
     temp225-n = `state`.
     temp225-v = state.
@@ -5940,10 +5940,10 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp229-v = selectionchange.
     INSERT temp229 INTO TABLE temp228.
     temp229-n = `alternateRowColors`.
-    temp229-v = z2ui5_cl_fw_utility=>get_json_boolean( alternaterowcolors ).
+    temp229-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( alternaterowcolors ).
     INSERT temp229 INTO TABLE temp228.
     temp229-n = `autoPopinMode`.
-    temp229-v = z2ui5_cl_fw_utility=>get_json_boolean( autopopinmode ).
+    temp229-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( autopopinmode ).
     INSERT temp229 INTO TABLE temp228.
     result = _generic( name   = `Table`
                        t_prop = temp228 ).
@@ -5966,31 +5966,31 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp231-v = contentwidth.
     INSERT temp231 INTO TABLE temp230.
     temp231-n = `draggable`.
-    temp231-v = z2ui5_cl_fw_utility=>get_json_boolean( draggable ).
+    temp231-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( draggable ).
     INSERT temp231 INTO TABLE temp230.
     temp231-n = `growing`.
-    temp231-v = z2ui5_cl_fw_utility=>get_json_boolean( growing ).
+    temp231-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( growing ).
     INSERT temp231 INTO TABLE temp230.
     temp231-n = `growingThreshold`.
     temp231-v = growingthreshold.
     INSERT temp231 INTO TABLE temp230.
     temp231-n = `multiSelect`.
-    temp231-v = z2ui5_cl_fw_utility=>get_json_boolean( multiselect ).
+    temp231-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( multiselect ).
     INSERT temp231 INTO TABLE temp230.
     temp231-n = `noDataText`.
     temp231-v = nodatatext.
     INSERT temp231 INTO TABLE temp230.
     temp231-n = `rememberSelections`.
-    temp231-v = z2ui5_cl_fw_utility=>get_json_boolean( rememberselections ).
+    temp231-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( rememberselections ).
     INSERT temp231 INTO TABLE temp230.
     temp231-n = `resizable`.
-    temp231-v = z2ui5_cl_fw_utility=>get_json_boolean( resizable ).
+    temp231-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( resizable ).
     INSERT temp231 INTO TABLE temp230.
     temp231-n = `searchPlaceholder`.
     temp231-v = searchplaceholder.
     INSERT temp231 INTO TABLE temp230.
     temp231-n = `showClearButton`.
-    temp231-v = z2ui5_cl_fw_utility=>get_json_boolean( showclearbutton ).
+    temp231-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showclearbutton ).
     INSERT temp231 INTO TABLE temp230.
     temp231-n = `title`.
     temp231-v = title.
@@ -6017,7 +6017,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp231-v = selectionchange.
     INSERT temp231 INTO TABLE temp230.
     temp231-n = `visible`.
-    temp231-v = z2ui5_cl_fw_utility=>get_json_boolean( visible ).
+    temp231-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( visible ).
     INSERT temp231 INTO TABLE temp230.
     result = _generic( name   = `TableSelectDialog`
                t_prop = temp230 ).
@@ -6048,7 +6048,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp233-v = title.
     INSERT temp233 INTO TABLE temp232.
     temp233-n = `showTitle`.
-    temp233-v = z2ui5_cl_fw_utility=>get_json_boolean( showtitle ).
+    temp233-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showtitle ).
     INSERT temp233 INTO TABLE temp232.
     temp233-n = `color`.
     temp233-v = color.
@@ -6098,16 +6098,16 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp237-v = width.
     INSERT temp237 INTO TABLE temp236.
     temp237-n = `editable`.
-    temp237-v = z2ui5_cl_fw_utility=>get_json_boolean( editable ).
+    temp237-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( editable ).
     INSERT temp237 INTO TABLE temp236.
     temp237-n = `enabled`.
-    temp237-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp237-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp237 INTO TABLE temp236.
     temp237-n = `id`.
     temp237-v = id.
     INSERT temp237 INTO TABLE temp236.
     temp237-n = `growing`.
-    temp237-v = z2ui5_cl_fw_utility=>get_json_boolean( growing ).
+    temp237-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( growing ).
     INSERT temp237 INTO TABLE temp236.
     temp237-n = `growingMaxLines`.
     temp237-v = growingmaxlines.
@@ -6167,7 +6167,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp243-v = placeholder.
     INSERT temp243 INTO TABLE temp242.
     temp243-n = `enabled`.
-    temp243-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp243-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp243 INTO TABLE temp242.
     temp243-n = `valueState`.
     temp243-v = valuestate.
@@ -6203,7 +6203,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp246-v = text.
     INSERT temp246 INTO TABLE temp245.
     temp246-n = `wrapping`.
-    temp246-v = z2ui5_cl_fw_utility=>get_json_boolean( wrapping ).
+    temp246-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( wrapping ).
     INSERT temp246 INTO TABLE temp245.
     temp246-n = `level`.
     temp246-v = level.
@@ -6229,7 +6229,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp248-v = text.
     INSERT temp248 INTO TABLE temp247.
     temp248-n = `enabled`.
-    temp248-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp248-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp248 INTO TABLE temp247.
     temp248-n = `icon`.
     temp248-v = icon.
@@ -6335,10 +6335,10 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp252-v = width.
     INSERT temp252 INTO TABLE temp251.
     temp252-n = `includeItemInSelection`.
-    temp252-v = z2ui5_cl_fw_utility=>get_json_boolean( includeiteminselection ).
+    temp252-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( includeiteminselection ).
     INSERT temp252 INTO TABLE temp251.
     temp252-n = `inset`.
-    temp252-v = z2ui5_cl_fw_utility=>get_json_boolean( inset ).
+    temp252-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( inset ).
     INSERT temp252 INTO TABLE temp251.
     result = _generic( name   = `Tree`
                        t_prop = temp251 ).
@@ -6503,22 +6503,22 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp262-v = rows.
     INSERT temp262 INTO TABLE temp261.
     temp262-n = `alternateRowColors`.
-    temp262-v = z2ui5_cl_fw_utility=>get_json_boolean( alternaterowcolors ).
+    temp262-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( alternaterowcolors ).
     INSERT temp262 INTO TABLE temp261.
     temp262-n = `columnHeaderVisible`.
     temp262-v = columnheadervisible.
     INSERT temp262 INTO TABLE temp261.
     temp262-n = `editable`.
-    temp262-v = z2ui5_cl_fw_utility=>get_json_boolean( editable ).
+    temp262-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( editable ).
     INSERT temp262 INTO TABLE temp261.
     temp262-n = `enableCellFilter`.
-    temp262-v = z2ui5_cl_fw_utility=>get_json_boolean( enablecellfilter ).
+    temp262-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enablecellfilter ).
     INSERT temp262 INTO TABLE temp261.
     temp262-n = `enableGrouping`.
-    temp262-v = z2ui5_cl_fw_utility=>get_json_boolean( enablegrouping ).
+    temp262-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enablegrouping ).
     INSERT temp262 INTO TABLE temp261.
     temp262-n = `senableSelectAll`.
-    temp262-v = z2ui5_cl_fw_utility=>get_json_boolean( enableselectall ).
+    temp262-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enableselectall ).
     INSERT temp262 INTO TABLE temp261.
     temp262-n = `firstVisibleRow`.
     temp262-v = firstvisiblerow.
@@ -6551,10 +6551,10 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp262-v = selectionmode.
     INSERT temp262 INTO TABLE temp261.
     temp262-n = `showColumnVisibilityMenu`.
-    temp262-v = z2ui5_cl_fw_utility=>get_json_boolean( showcolumnvisibilitymenu ).
+    temp262-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showcolumnvisibilitymenu ).
     INSERT temp262 INTO TABLE temp261.
     temp262-n = `showNoData`.
-    temp262-v = z2ui5_cl_fw_utility=>get_json_boolean( shownodata ).
+    temp262-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( shownodata ).
     INSERT temp262 INTO TABLE temp261.
     temp262-n = `threshold`.
     temp262-v = threshold.
@@ -6605,13 +6605,13 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     CLEAR temp263.
     
     temp264-n = `executeOnSelection`.
-    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( executeOnSelection ).
+    temp264-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( executeOnSelection ).
     INSERT temp264 INTO TABLE temp263.
     temp264-n = `global`.
-    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( global ).
+    temp264-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( global ).
     INSERT temp264 INTO TABLE temp263.
     temp264-n = `labelReadOnly`.
-    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( labelReadOnly ).
+    temp264-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( labelReadOnly ).
     INSERT temp264 INTO TABLE temp263.
     temp264-n = `lifecyclePackage`.
     temp264-v = lifecyclePackage.
@@ -6626,19 +6626,19 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp264-v = readOnly.
     INSERT temp264 INTO TABLE temp263.
     temp264-n = `executeOnSelect`.
-    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( executeOnSelect ).
+    temp264-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( executeOnSelect ).
     INSERT temp264 INTO TABLE temp263.
     temp264-n = `author`.
     temp264-v = author.
     INSERT temp264 INTO TABLE temp263.
     temp264-n = `changeable`.
-    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( changeable ).
+    temp264-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( changeable ).
     INSERT temp264 INTO TABLE temp263.
     temp264-n = `enabled`.
-    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp264-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp264 INTO TABLE temp263.
     temp264-n = `favorite`.
-    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( favorite ).
+    temp264-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( favorite ).
     INSERT temp264 INTO TABLE temp263.
     temp264-n = `key`.
     temp264-v = key.
@@ -6656,19 +6656,19 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp264-v = originalTitle.
     INSERT temp264 INTO TABLE temp263.
     temp264-n = `originalExecuteOnSelect`.
-    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( originalExecuteOnSelect ).
+    temp264-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( originalExecuteOnSelect ).
     INSERT temp264 INTO TABLE temp263.
     temp264-n = `remove`.
-    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( remove ).
+    temp264-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( remove ).
     INSERT temp264 INTO TABLE temp263.
     temp264-n = `rename`.
-    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( rename ).
+    temp264-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( rename ).
     INSERT temp264 INTO TABLE temp263.
     temp264-n = `originalFavorite`.
-    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( originalFavorite ).
+    temp264-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( originalFavorite ).
     INSERT temp264 INTO TABLE temp263.
     temp264-n = `sharing`.
-    temp264-v = z2ui5_cl_fw_utility=>get_json_boolean( sharing ).
+    temp264-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( sharing ).
     INSERT temp264 INTO TABLE temp263.
     temp264-n = `change`.
     temp264-v = change.
@@ -6698,31 +6698,31 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
       temp266-v = defaultVariantKey.
       INSERT temp266 INTO TABLE temp265.
       temp266-n = `enabled`.
-      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+      temp266-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
       INSERT temp266 INTO TABLE temp265.
       temp266-n = `inErrorState`.
-      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( inErrorState ).
+      temp266-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( inErrorState ).
       INSERT temp266 INTO TABLE temp265.
       temp266-n = `initialSelectionKey`.
       temp266-v = initialSelectionKey.
       INSERT temp266 INTO TABLE temp265.
       temp266-n = `lifecycleSupport`.
-      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( lifecycleSupport ).
+      temp266-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( lifecycleSupport ).
       INSERT temp266 INTO TABLE temp265.
       temp266-n = `selectionKey`.
       temp266-v = selectionKey.
       INSERT temp266 INTO TABLE temp265.
       temp266-n = `showCreateTile`.
-      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( showCreateTile ).
+      temp266-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showCreateTile ).
       INSERT temp266 INTO TABLE temp265.
       temp266-n = `showExecuteOnSelection`.
-      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( showExecuteOnSelection ).
+      temp266-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showExecuteOnSelection ).
       INSERT temp266 INTO TABLE temp265.
       temp266-n = `showSetAsDefault`.
-      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( showSetAsDefault ).
+      temp266-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showSetAsDefault ).
       INSERT temp266 INTO TABLE temp265.
       temp266-n = `showShare`.
-      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( showShare ).
+      temp266-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showShare ).
       INSERT temp266 INTO TABLE temp265.
       temp266-n = `standardItemAuthor`.
       temp266-v = standardItemAuthor.
@@ -6731,7 +6731,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
       temp266-v = standardItemText.
       INSERT temp266 INTO TABLE temp265.
       temp266-n = `useFavorites`.
-      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( useFavorites ).
+      temp266-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( useFavorites ).
       INSERT temp266 INTO TABLE temp265.
       temp266-n = `variantItems`.
       temp266-v = variantItems.
@@ -6749,7 +6749,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
       temp266-v = uservarcreate.
       INSERT temp266 INTO TABLE temp265.
       temp266-n = `visible`.
-      temp266-v = z2ui5_cl_fw_utility=>get_json_boolean( visible ).
+      temp266-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( visible ).
       INSERT temp266 INTO TABLE temp265.
       result = _generic( name   = `VariantManagement`
                          ns     = `vm`
@@ -6837,10 +6837,10 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp272-v = filterSearchOperator.
     INSERT temp272 INTO TABLE temp271.
     temp272-n = `groupDescending`.
-    temp272-v = z2ui5_cl_fw_utility=>get_json_boolean( groupDescending ).
+    temp272-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( groupDescending ).
     INSERT temp272 INTO TABLE temp271.
     temp272-n = `sortDescending`.
-    temp272-v = z2ui5_cl_fw_utility=>get_json_boolean( sortDescending ).
+    temp272-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( sortDescending ).
     INSERT temp272 INTO TABLE temp271.
     temp272-n = `title`.
     temp272-v = title.
@@ -6881,13 +6881,13 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     CLEAR temp273.
     
     temp274-n = `enabled`.
-    temp274-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp274-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp274 INTO TABLE temp273.
     temp274-n = `key`.
     temp274-v = key.
     INSERT temp274 INTO TABLE temp273.
     temp274-n = `selected`.
-    temp274-v = z2ui5_cl_fw_utility=>get_json_boolean( selected ).
+    temp274-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( selected ).
     INSERT temp274 INTO TABLE temp273.
     temp274-n = `text`.
     temp274-v = text.
@@ -6896,7 +6896,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp274-v = textDirection.
     INSERT temp274 INTO TABLE temp273.
     temp274-n = `multiSelect`.
-    temp274-v = z2ui5_cl_fw_utility=>get_json_boolean( multiSelect ).
+    temp274-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( multiSelect ).
     INSERT temp274 INTO TABLE temp273.
     result = _generic( name   = `ViewSettingsFilterItem`
                   t_prop = temp273 ).
@@ -6909,13 +6909,13 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     CLEAR temp275.
     
     temp276-n = `enabled`.
-    temp276-v = z2ui5_cl_fw_utility=>get_json_boolean( enabled ).
+    temp276-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
     INSERT temp276 INTO TABLE temp275.
     temp276-n = `key`.
     temp276-v = key.
     INSERT temp276 INTO TABLE temp275.
     temp276-n = `selected`.
-    temp276-v = z2ui5_cl_fw_utility=>get_json_boolean( selected ).
+    temp276-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( selected ).
     INSERT temp276 INTO TABLE temp275.
     temp276-n = `text`.
     temp276-v = text.
