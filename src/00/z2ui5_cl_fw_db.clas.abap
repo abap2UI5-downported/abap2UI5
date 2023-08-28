@@ -187,7 +187,6 @@ CLASS z2ui5_cl_fw_db IMPLEMENTATION.
             DATA lr_attri LIKE REF TO temp7.
               DATA lv_assign TYPE string.
               FIELD-SYMBOLS <attri> TYPE any.
-              FIELD-SYMBOLS <deref_attri> TYPE any.
             DATA x2 TYPE REF TO cx_root.
 
     TRY.
@@ -224,16 +223,15 @@ CLASS z2ui5_cl_fw_db IMPLEMENTATION.
             LOOP AT ls_db-t_attri REFERENCE INTO lr_attri WHERE type_kind = cl_abap_classdescr=>typekind_dref.
 
               
-              lv_assign = 'LO_APP->' && lr_attri->name.
-              
+              lv_assign = 'LO_APP->' && lr_attri->name && `->*`.
               
               ASSIGN (lv_assign) TO <attri>.
-              ASSIGN <attri>->* TO <deref_attri>.
+              IF sy-subrc <> 0.
+                CONTINUE.
+              ENDIF.
 
-              lr_attri->data_rtti = z2ui5_cl_fw_utility=>rtti_xml_get_by_data( <deref_attri> ).
-              CLEAR <deref_attri>.
+              lr_attri->data_rtti = z2ui5_cl_fw_utility=>rtti_xml_get_by_data( <attri> ).
               CLEAR <attri>.
-
             ENDLOOP.
 
             result = z2ui5_cl_fw_utility=>trans_xml_any_2( ls_db ).
