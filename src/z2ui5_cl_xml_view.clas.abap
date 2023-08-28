@@ -821,6 +821,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !mode            TYPE clike OPTIONAL
         !selectionchange TYPE clike OPTIONAL
         !nodata          TYPE clike OPTIONAL
+        !showSeparators  TYPE clike OPTIONAL
       RETURNING
         VALUE(result)    TYPE REF TO z2ui5_cl_xml_view .
     METHODS custom_list_item
@@ -4299,6 +4300,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp129 INTO TABLE temp128.
     temp129-n = `selectionChange`.
     temp129-v = selectionchange.
+    INSERT temp129 INTO TABLE temp128.
+    temp129-n = `showSeparators `.
+    temp129-v = showSeparators.
     INSERT temp129 INTO TABLE temp128.
     temp129-n = `noData`.
     temp129-v = nodata.
