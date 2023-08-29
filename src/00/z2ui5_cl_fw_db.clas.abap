@@ -115,13 +115,6 @@ CLASS z2ui5_cl_fw_db IMPLEMENTATION.
         IMPORTING
             any = result ).
 
-*    LOOP AT result-t_attri TRANSPORTING NO FIELDS WHERE data_rtti <> ``.
-*      DATA(lv_check_rtti) = abap_true.
-*    ENDLOOP.
-*    IF lv_check_rtti = abap_false.
-*      RETURN.
-*    ENDIF.
-
     
     temp2 ?= result-app.
     
@@ -187,6 +180,7 @@ CLASS z2ui5_cl_fw_db IMPLEMENTATION.
             DATA lr_attri LIKE REF TO temp7.
               DATA lv_assign TYPE string.
               FIELD-SYMBOLS <attri> TYPE any.
+              FIELD-SYMBOLS <deref_attri> TYPE any.
             DATA x2 TYPE REF TO cx_root.
 
     TRY.
@@ -210,8 +204,7 @@ CLASS z2ui5_cl_fw_db IMPLEMENTATION.
 
               ls_db-t_attri = z2ui5_cl_fw_binding=>update_attri(
                   t_attri = ls_db-t_attri
-                  app     = ls_db-app
-              ).
+                  app     = ls_db-app ).
 
             ENDIF.
 
@@ -223,14 +216,17 @@ CLASS z2ui5_cl_fw_db IMPLEMENTATION.
             LOOP AT ls_db-t_attri REFERENCE INTO lr_attri WHERE type_kind = cl_abap_classdescr=>typekind_dref.
 
               
-              lv_assign = 'LO_APP->' && lr_attri->name && `->*`.
+              lv_assign = 'LO_APP->' && lr_attri->name.
+              
               
               ASSIGN (lv_assign) TO <attri>.
-              IF sy-subrc <> 0.
+              ASSIGN <attri>->* TO <deref_attri>.
+              IF sy-subrc <> 0 OR <deref_attri> IS INITIAL.
                 CONTINUE.
               ENDIF.
 
-              lr_attri->data_rtti = z2ui5_cl_fw_utility=>rtti_xml_get_by_data( <attri> ).
+              lr_attri->data_rtti = z2ui5_cl_fw_utility=>rtti_xml_get_by_data( <deref_attri> ).
+              CLEAR <deref_attri>.
               CLEAR <attri>.
             ENDLOOP.
 

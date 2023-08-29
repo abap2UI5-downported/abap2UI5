@@ -44,10 +44,8 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
     DATA lr_attri LIKE REF TO temp1.
           DATA lv_name_back TYPE string.
           FIELD-SYMBOLS <backend> TYPE any.
-          DATA temp2 TYPE xsdboolean.
           DATA lv_name_front TYPE string.
           FIELD-SYMBOLS <frontend> TYPE any.
-          DATA temp3 TYPE xsdboolean.
     LOOP AT mt_attri REFERENCE INTO lr_attri
         WHERE bind_type = z2ui5_cl_fw_binding=>cs_bind_type-two_way.
       TRY.
@@ -56,18 +54,24 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
           lv_name_back = `MO_APP->` && lr_attri->name.
 
           
+          UNASSIGN <backend>.
           ASSIGN (lv_name_back) TO <backend>.
-          
-          temp2 = boolc( sy-subrc <> 0 ).
-          z2ui5_cl_fw_utility=>x_check_raise( temp2 ).
+          IF sy-subrc <> 0.
+            RAISE EXCEPTION TYPE z2ui5_cx_fw_error
+              EXPORTING
+                val = `NO_BACKEND_VALUE_FOUND_WITH_NAME__` && lv_name_back.
+          ENDIF.
 
           
           lv_name_front = `MODEL->` && lr_attri->name_front.
           
+          UNASSIGN <frontend>.
           ASSIGN (lv_name_front) TO <frontend>.
-          
-          temp3 = boolc( sy-subrc <> 0 ).
-          z2ui5_cl_fw_utility=>x_check_raise( temp3 ).
+          IF sy-subrc <> 0.
+            RAISE EXCEPTION TYPE z2ui5_cx_fw_error
+              EXPORTING
+                val = `NO_FRONTEND_VALUE_FOUND_WITH_NAME__` && lv_name_front.
+          ENDIF.
 
           CASE lr_attri->type_kind.
 
@@ -99,20 +103,6 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
       ENDTRY.
     ENDLOOP.
 
-    LOOP AT mt_attri REFERENCE INTO lr_attri.
-
-      IF lr_attri->check_temp = abap_true.
-        DELETE mt_attri.
-        continue.
-      ENDIF.
-
-      CASE lr_attri->type_kind.
-        WHEN cl_abap_classdescr=>typekind_oref OR cl_abap_classdescr=>typekind_dref.
-          lr_attri->check_dissolved = abap_false.
-      ENDCASE.
-
-    ENDLOOP.
-
   ENDMETHOD.
 
 
@@ -126,7 +116,7 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
       DATA lo_actual LIKE temp3.
       DATA lv_name_back TYPE string.
       FIELD-SYMBOLS <attribute> TYPE any.
-      DATA temp5 TYPE xsdboolean.
+      DATA temp1 TYPE xsdboolean.
               DATA temp4 TYPE string.
     lr_view_model = z2ui5_cl_fw_utility_json=>factory( ).
     
@@ -157,8 +147,8 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
       
       ASSIGN (lv_name_back) TO <attribute>.
       
-      temp5 = boolc( sy-subrc <> 0 ).
-      z2ui5_cl_fw_utility=>x_check_raise( when = temp5 ).
+      temp1 = boolc( sy-subrc <> 0 ).
+      z2ui5_cl_fw_utility=>x_check_raise( when = temp1 ).
 
       CASE lr_attri->type_kind.
 
