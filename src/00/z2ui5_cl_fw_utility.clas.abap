@@ -48,10 +48,6 @@ CLASS z2ui5_cl_fw_utility DEFINITION PUBLIC
       RETURNING
         VALUE(result) TYPE string.
 
-    CLASS-METHODS func_get_uuid_session
-      RETURNING
-        VALUE(result) TYPE string.
-
     CLASS-METHODS func_get_user_tech
       RETURNING
         VALUE(result) TYPE string.
@@ -183,8 +179,6 @@ CLASS z2ui5_cl_fw_utility DEFINITION PUBLIC
       RETURNING
         VALUE(result) TYPE string.
 
-    CLASS-DATA sv_uuid TYPE i.
-
   PROTECTED SECTION.
   PRIVATE SECTION.
 
@@ -275,16 +269,6 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
     result = sy-uname.
   ENDMETHOD.
 
-  METHOD func_get_uuid_session.
-    DATA temp6 TYPE string.
-
-    sv_uuid = sv_uuid + 1.
-    
-    temp6 = sv_uuid.
-    result = c_trim( temp6 ).
-
-  ENDMETHOD.
-
   METHOD func_get_uuid_32.
         DATA uuid TYPE c LENGTH 32.
             DATA lv_fm TYPE string.
@@ -344,10 +328,10 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
         ASSERT 1 = 0.
     ENDTRY.
 
-    result = replace( val = result sub = `}` with = `$` occ = 0 ).
-    result = replace( val = result sub = `{` with = `$` occ = 0 ).
-    result = replace( val = result sub = `"` with = `$` occ = 0 ).
-    result = replace( val = result sub = `'` with = `$` occ = 0 ).
+    result = replace( val = result sub = `}` with = `0` occ = 0 ).
+    result = replace( val = result sub = `{` with = `0` occ = 0 ).
+    result = replace( val = result sub = `"` with = `0` occ = 0 ).
+    result = replace( val = result sub = `'` with = `0` occ = 0 ).
 
   ENDMETHOD.
 
@@ -381,13 +365,13 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
   METHOD rtti_get_type_name.
 
     DATA lo_descr TYPE REF TO cl_abap_typedescr.
-    DATA temp7 TYPE REF TO cl_abap_elemdescr.
-    DATA lo_ele LIKE temp7.
+    DATA temp6 TYPE REF TO cl_abap_elemdescr.
+    DATA lo_ele LIKE temp6.
     lo_descr = cl_abap_elemdescr=>describe_by_data( val ).
     
-    temp7 ?= lo_descr.
+    temp6 ?= lo_descr.
     
-    lo_ele = temp7.
+    lo_ele = temp6.
     result  = lo_ele->get_relative_name( ).
 
   ENDMETHOD.
@@ -396,11 +380,11 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
   METHOD rtti_get_t_attri_by_object.
 
     DATA lo_obj_ref TYPE REF TO cl_abap_typedescr.
-    DATA temp8 TYPE REF TO cl_abap_classdescr.
+    DATA temp7 TYPE REF TO cl_abap_classdescr.
     lo_obj_ref = cl_abap_objectdescr=>describe_by_object_ref( val ).
     
-    temp8 ?= lo_obj_ref.
-    result   = temp8->attributes.
+    temp7 ?= lo_obj_ref.
+    result   = temp7->attributes.
 
   ENDMETHOD.
 
@@ -408,13 +392,13 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
   METHOD rtti_get_t_comp_by_struc.
 
     DATA lo_type TYPE REF TO cl_abap_typedescr.
-    DATA temp9 TYPE REF TO cl_abap_structdescr.
-    DATA lo_struct LIKE temp9.
+    DATA temp8 TYPE REF TO cl_abap_structdescr.
+    DATA lo_struct LIKE temp8.
     lo_type = cl_abap_structdescr=>describe_by_data( val ).
     
-    temp9 ?= lo_type.
+    temp8 ?= lo_type.
     
-    lo_struct = temp9.
+    lo_struct = temp8.
     result   = lo_struct->get_components( ).
 
   ENDMETHOD.
@@ -534,11 +518,11 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
 
   METHOD trans_json_2_any.
 
-    DATA temp10 TYPE string.
-    temp10 = val.
+    DATA temp9 TYPE string.
+    temp9 = val.
     /ui2/cl_json=>deserialize(
         EXPORTING
-            json         = temp10
+            json         = temp9
             assoc_arrays = abap_true
         CHANGING
             data = data ).
@@ -550,10 +534,10 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
     TYPES ty_t_ref TYPE STANDARD TABLE OF REF TO data.
     FIELD-SYMBOLS <lt_from> TYPE ty_t_ref.
     DATA temp2 TYPE xsdboolean.
-    DATA temp11 TYPE REF TO cl_abap_tabledescr.
-    DATA lo_tab LIKE temp11.
-    DATA temp12 TYPE REF TO cl_abap_structdescr.
-    DATA lo_struc LIKE temp12.
+    DATA temp10 TYPE REF TO cl_abap_tabledescr.
+    DATA lo_tab LIKE temp10.
+    DATA temp11 TYPE REF TO cl_abap_structdescr.
+    DATA lo_struc LIKE temp11.
     DATA lt_components TYPE abap_component_tab.
     DATA lr_from LIKE LINE OF <lt_from>.
       DATA lr_row TYPE REF TO data.
@@ -562,8 +546,8 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
       DATA temp3 TYPE xsdboolean.
       DATA lt_components_dissolved LIKE lt_components.
       DATA ls_comp LIKE LINE OF lt_components.
-          DATA temp13 TYPE REF TO cl_abap_structdescr.
-          DATA struct LIKE temp13.
+          DATA temp12 TYPE REF TO cl_abap_structdescr.
+          DATA struct LIKE temp12.
             FIELD-SYMBOLS <comp> TYPE data.
             FIELD-SYMBOLS <comp_ui5> TYPE data.
             FIELD-SYMBOLS <ls_data_ui5> TYPE any.
@@ -575,13 +559,13 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
     CLEAR t_result.
 
     
-    temp11 ?= cl_abap_datadescr=>describe_by_data( t_result ).
+    temp10 ?= cl_abap_datadescr=>describe_by_data( t_result ).
     
-    lo_tab = temp11.
+    lo_tab = temp10.
     
-    temp12 ?= lo_tab->get_table_line_type( ).
+    temp11 ?= lo_tab->get_table_line_type( ).
     
-    lo_struc = temp12.
+    lo_struc = temp11.
     
     lt_components = lo_struc->get_components( ).
 
@@ -614,9 +598,9 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
           APPEND ls_comp TO lt_components_dissolved.
         ELSE.
           
-          temp13 ?= ls_comp-type.
+          temp12 ?= ls_comp-type.
           
-          struct = temp13.
+          struct = temp12.
           APPEND LINES OF struct->get_components( ) TO lt_components_dissolved.
 
         ENDIF.
@@ -687,19 +671,19 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
 
     DATA lt_params TYPE z2ui5_if_client=>ty_t_name_value.
     DATA lv_val TYPE string.
-    DATA temp14 TYPE string.
-    DATA temp15 TYPE z2ui5_if_client=>ty_s_name_value.
+    DATA temp13 TYPE string.
+    DATA temp14 TYPE z2ui5_if_client=>ty_s_name_value.
     lt_params = url_param_get_tab( url ).
     
     lv_val = c_trim_lower( val ).
     
-    CLEAR temp14.
+    CLEAR temp13.
     
-    READ TABLE lt_params INTO temp15 WITH KEY n = lv_val.
+    READ TABLE lt_params INTO temp14 WITH KEY n = lv_val.
     IF sy-subrc = 0.
-      temp14 = temp15-v.
+      temp13 = temp14-v.
     ENDIF.
-    result = temp14.
+    result = temp13.
 
   ENDMETHOD.
 
@@ -708,14 +692,14 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
 
     DATA lv_search TYPE string.
     DATA lv_search2 TYPE string.
-    DATA temp16 TYPE string.
+    DATA temp15 TYPE string.
     TYPES temp1 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA lt_param TYPE temp1.
-    DATA temp17 LIKE LINE OF lt_param.
-    DATA lr_param LIKE REF TO temp17.
+    DATA temp16 LIKE LINE OF lt_param.
+    DATA lr_param LIKE REF TO temp16.
       DATA lv_name TYPE string.
       DATA lv_value TYPE string.
-      DATA temp18 TYPE z2ui5_if_client=>ty_s_name_value.
+      DATA temp17 TYPE z2ui5_if_client=>ty_s_name_value.
     lv_search = replace( val  = i_val sub  = `%3D` with = '=' occ  = 0 ).
     lv_search = shift_left( val = lv_search sub = `?` ).
     lv_search = c_trim_lower( lv_search ).
@@ -725,11 +709,11 @@ DATA lt_param TYPE temp1.
                                         sub = `&sap-startup-params=` ).
     
     IF lv_search2 IS NOT INITIAL.
-      temp16 = lv_search2.
+      temp15 = lv_search2.
     ELSE.
-      temp16 = lv_search.
+      temp15 = lv_search.
     ENDIF.
-    lv_search = temp16.
+    lv_search = temp15.
 
     lv_search2 = substring_after( val = c_trim_lower( lv_search ) sub = `?` ).
     IF lv_search2 IS NOT INITIAL.
@@ -747,10 +731,10 @@ DATA lt_param TYPE temp1.
       
       SPLIT lr_param->* AT `=` INTO lv_name lv_value.
       
-      CLEAR temp18.
-      temp18-n = c_trim_lower( lv_name ).
-      temp18-v = c_trim_lower( lv_value ).
-      INSERT temp18 INTO TABLE rt_params.
+      CLEAR temp17.
+      temp17-n = c_trim_lower( lv_name ).
+      temp17-v = c_trim_lower( lv_value ).
+      INSERT temp17 INTO TABLE rt_params.
     ENDLOOP.
 
   ENDMETHOD.
@@ -760,9 +744,9 @@ DATA lt_param TYPE temp1.
 
     DATA lt_params TYPE z2ui5_if_client=>ty_t_name_value.
     DATA lv_n TYPE string.
-    DATA temp19 LIKE LINE OF lt_params.
-    DATA lr_params LIKE REF TO temp19.
-      DATA temp20 TYPE z2ui5_if_client=>ty_s_name_value.
+    DATA temp18 LIKE LINE OF lt_params.
+    DATA lr_params LIKE REF TO temp18.
+      DATA temp19 TYPE z2ui5_if_client=>ty_s_name_value.
     lt_params = url_param_get_tab( url ).
     
     lv_n = c_trim_lower( name ).
@@ -775,10 +759,10 @@ DATA lt_param TYPE temp1.
     ENDLOOP.
     IF sy-subrc <> 0.
       
-      CLEAR temp20.
-      temp20-n = lv_n.
-      temp20-v = c_trim_lower( value ).
-      INSERT temp20 INTO TABLE lt_params.
+      CLEAR temp19.
+      temp19-n = lv_n.
+      temp19-v = c_trim_lower( value ).
+      INSERT temp19 INTO TABLE lt_params.
     ENDIF.
 
     result = url_param_create_url( lt_params ).

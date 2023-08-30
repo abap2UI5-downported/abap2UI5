@@ -17,15 +17,15 @@ CLASS z2ui5_cl_fw_binding DEFINITION
     TYPES:
       BEGIN OF ty_s_attri,
         name            TYPE string,
+        name_front      TYPE string,
         type_kind       TYPE string,
         type            TYPE string,
         bind_type       TYPE string,
         data_stringify  TYPE string,
         data_rtti       TYPE string,
-        check_tested    TYPE abap_bool,
         check_ready     TYPE abap_bool,
         check_dissolved TYPE abap_bool,
-        name_front      TYPE string,
+        check_temp      TYPE abap_bool,
       END OF ty_s_attri.
     TYPES ty_t_attri TYPE SORTED TABLE OF ty_s_attri WITH UNIQUE KEY name.
 
@@ -35,6 +35,7 @@ CLASS z2ui5_cl_fw_binding DEFINITION
         attri           TYPE ty_t_attri OPTIONAL
         type            TYPE string OPTIONAL
         data            TYPE data OPTIONAL
+        check_attri     TYPE data OPTIONAL
       RETURNING
         VALUE(r_result) TYPE REF TO z2ui5_cl_fw_binding.
 
@@ -46,6 +47,7 @@ CLASS z2ui5_cl_fw_binding DEFINITION
     DATA mt_attri TYPE ty_t_attri.
     DATA mv_type  TYPE string.
     DATA mr_data TYPE REF TO data.
+    DATA mv_check_attri TYPE abap_bool.
 
     CLASS-METHODS update_attri
       IMPORTING
@@ -115,7 +117,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_FW_BINDING IMPLEMENTATION.
+CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
 
 
   METHOD bind.
@@ -128,7 +130,8 @@ CLASS Z2UI5_CL_FW_BINDING IMPLEMENTATION.
     lv_name = `MO_APP->` && bind->name.
     ASSIGN (lv_name) TO <attri>.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE z2ui5_cx_fw_error.
+      RAISE EXCEPTION TYPE z2ui5_cx_fw_error
+        exporting val = `BINDING_ERROR_ATTRIBUTE_NOT_FOUND_WITH_NAME__` && bind->name.
     ENDIF.
 
     
@@ -196,7 +199,6 @@ CLASS Z2UI5_CL_FW_BINDING IMPLEMENTATION.
     DATA temp5 LIKE LINE OF mt_attri.
     DATA lr_bind LIKE REF TO temp5.
       DATA lt_attri TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-    DATA temp6 LIKE REF TO lt_dissolve.
     CLEAR temp4.
     
     lt_dissolve = temp4.
@@ -216,35 +218,17 @@ CLASS Z2UI5_CL_FW_BINDING IMPLEMENTATION.
       INSERT LINES OF lt_attri INTO TABLE lt_dissolve.
     ENDLOOP.
 
-    IF lt_dissolve IS INITIAL.
-      RETURN.
-    ENDIF.
-    
-    GET REFERENCE OF lt_dissolve INTO temp6.
-set_attri_ready( temp6 ).
+
+*    set_attri_ready( REF #( lt_dissolve ) ).
     INSERT LINES OF lt_dissolve INTO TABLE mt_attri.
 
   ENDMETHOD.
 
 
   METHOD dissolve_init.
-      DATA temp7 LIKE REF TO mt_attri.
-      DATA temp8 LIKE LINE OF mt_attri.
-      DATA lr_attri LIKE REF TO temp8.
 
     IF mt_attri IS INITIAL.
-
       mt_attri  = get_t_attri_by_oref( ).
-      
-      GET REFERENCE OF mt_attri INTO temp7.
-set_attri_ready( temp7 ).
-
-    ELSE.
-      
-      
-      LOOP AT mt_attri REFERENCE INTO lr_attri.
-        lr_attri->check_tested = abap_false.
-      ENDLOOP.
     ENDIF.
 
   ENDMETHOD.
@@ -252,15 +236,14 @@ set_attri_ready( temp7 ).
 
   METHOD dissolve_oref.
 
-    DATA temp9 TYPE ty_t_attri.
-    DATA lt_dissolve LIKE temp9.
-    DATA temp10 LIKE LINE OF mt_attri.
-    DATA lr_bind LIKE REF TO temp10.
+    DATA temp6 TYPE ty_t_attri.
+    DATA lt_dissolve LIKE temp6.
+    DATA temp7 LIKE LINE OF mt_attri.
+    DATA lr_bind LIKE REF TO temp7.
       DATA lt_attri TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-    DATA temp11 LIKE REF TO lt_dissolve.
-    CLEAR temp9.
+    CLEAR temp6.
     
-    lt_dissolve = temp9.
+    lt_dissolve = temp6.
 
     
     
@@ -277,12 +260,8 @@ set_attri_ready( temp7 ).
       INSERT LINES OF lt_attri INTO TABLE lt_dissolve.
     ENDLOOP.
 
-    IF lt_dissolve IS INITIAL.
-      RETURN.
-    ENDIF.
-    
-    GET REFERENCE OF lt_dissolve INTO temp11.
-set_attri_ready( temp11 ).
+
+*    set_attri_ready( REF #( lt_dissolve ) ).
     INSERT LINES OF lt_dissolve INTO TABLE mt_attri.
 
   ENDMETHOD.
@@ -290,15 +269,14 @@ set_attri_ready( temp11 ).
 
   METHOD dissolve_struc.
 
-    DATA temp12 TYPE ty_t_attri.
-    DATA lt_dissolve LIKE temp12.
-    DATA temp13 LIKE LINE OF mt_attri.
-    DATA lr_attri LIKE REF TO temp13.
+    DATA temp8 TYPE ty_t_attri.
+    DATA lt_dissolve LIKE temp8.
+    DATA temp9 LIKE LINE OF mt_attri.
+    DATA lr_attri LIKE REF TO temp9.
       DATA lt_attri TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-    DATA temp14 LIKE REF TO lt_dissolve.
-    CLEAR temp12.
+    CLEAR temp8.
     
-    lt_dissolve = temp12.
+    lt_dissolve = temp8.
 
     
     
@@ -313,9 +291,7 @@ set_attri_ready( temp11 ).
       INSERT LINES OF lt_attri INTO TABLE lt_dissolve.
     ENDLOOP.
 
-    
-    GET REFERENCE OF lt_dissolve INTO temp14.
-set_attri_ready( temp14 ).
+*    set_attri_ready( REF #( lt_dissolve ) ).
     INSERT LINES OF lt_dissolve INTO TABLE mt_attri.
 
   ENDMETHOD.
@@ -327,6 +303,7 @@ set_attri_ready( temp14 ).
     r_result->mo_app = app.
     r_result->mt_attri = attri.
     r_result->mv_type = type.
+    r_result->mv_check_attri = check_attri.
 
     IF z2ui5_cl_fw_utility=>rtti_check_type_kind_dref( data ) IS NOT INITIAL.
       RAISE EXCEPTION TYPE z2ui5_cx_fw_error
@@ -343,8 +320,8 @@ set_attri_ready( temp14 ).
     DATA lv_name TYPE string.
     FIELD-SYMBOLS <data> TYPE any.
     DATA lo_descr TYPE REF TO cl_abap_typedescr.
-    DATA temp15 TYPE ty_s_attri.
-    DATA ls_new_bind LIKE temp15.
+    DATA temp10 TYPE ty_s_attri.
+    DATA ls_new_bind LIKE temp10.
     lv_name = `MO_APP->` && val && `->*`.
     
     ASSIGN (lv_name) TO <data>.
@@ -356,13 +333,14 @@ set_attri_ready( temp14 ).
     lo_descr = cl_abap_datadescr=>describe_by_data( <data> ).
 
     
-    CLEAR temp15.
-    temp15-name = val && `->*`.
-    temp15-type_kind = lo_descr->type_kind.
-    temp15-type = lo_descr->get_relative_name( ).
-    temp15-check_ready = abap_true.
+    CLEAR temp10.
+    temp10-name = val && `->*`.
+    temp10-type_kind = lo_descr->type_kind.
+    temp10-type = lo_descr->get_relative_name( ).
+    temp10-check_ready = abap_true.
+    temp10-check_temp = abap_true.
     
-    ls_new_bind = temp15.
+    ls_new_bind = temp10.
 
     INSERT ls_new_bind INTO TABLE result.
 
@@ -371,20 +349,20 @@ set_attri_ready( temp14 ).
 
   METHOD get_t_attri_by_oref.
 
-    DATA temp16 TYPE string.
-    DATA lv_name LIKE temp16.
+    DATA temp11 TYPE string.
+    DATA lv_name LIKE temp11.
     FIELD-SYMBOLS <obj> TYPE any.
     DATA lt_attri2 TYPE abap_attrdescr_tab.
     DATA ls_attri2 LIKE LINE OF lt_attri2.
-      DATA temp17 TYPE ty_s_attri.
-      DATA ls_attri LIKE temp17.
+      DATA temp12 TYPE ty_s_attri.
+      DATA ls_attri LIKE temp12.
     IF val IS NOT INITIAL.
-      temp16 = `MO_APP` && `->` && val.
+      temp11 = `MO_APP` && `->` && val.
     ELSE.
-      temp16 = `MO_APP`.
+      temp11 = `MO_APP`.
     ENDIF.
     
-    lv_name = temp16.
+    lv_name = temp11.
     
     ASSIGN (lv_name) TO <obj>.
     IF sy-subrc <> 0 OR <obj> IS NOT BOUND.
@@ -399,12 +377,13 @@ set_attri_ready( temp14 ).
         WHERE visibility = cl_abap_classdescr=>public
            AND is_interface = abap_false.
       
-      CLEAR temp17.
-      MOVE-CORRESPONDING ls_attri2 TO temp17.
+      CLEAR temp12.
+      MOVE-CORRESPONDING ls_attri2 TO temp12.
       
-      ls_attri = temp17.
+      ls_attri = temp12.
       IF val IS NOT INITIAL.
         ls_attri-name = val && `->` && ls_attri-name.
+        ls_attri-check_temp = abap_true.
       ENDIF.
       INSERT ls_attri INTO TABLE result.
     ENDLOOP.
@@ -419,12 +398,12 @@ set_attri_ready( temp14 ).
     DATA temp1 TYPE xsdboolean.
     DATA lt_comp TYPE abap_component_tab.
     DATA lv_attri TYPE string.
-    DATA temp18 LIKE LINE OF lt_comp.
-    DATA lr_comp LIKE REF TO temp18.
+    DATA temp13 LIKE LINE OF lt_comp.
+    DATA lr_comp LIKE REF TO temp13.
       DATA lv_element TYPE string.
         DATA lt_attri TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-        DATA temp19 TYPE ty_s_attri.
-        DATA ls_attri LIKE temp19.
+        DATA temp14 TYPE ty_s_attri.
+        DATA ls_attri LIKE temp14.
     lv_name = `MO_APP->` && val.
     
     ASSIGN (lv_name) TO <attribute>.
@@ -453,11 +432,11 @@ set_attri_ready( temp14 ).
 
       ELSE.
         
-        CLEAR temp19.
-        temp19-name = lv_element.
-        temp19-type_kind = lr_comp->type->type_kind.
+        CLEAR temp14.
+        temp14-name = lv_element.
+        temp14-type_kind = lr_comp->type->type_kind.
         
-        ls_attri = temp19.
+        ls_attri = temp14.
         INSERT ls_attri INTO TABLE result.
 
       ENDIF.
@@ -468,13 +447,13 @@ set_attri_ready( temp14 ).
 
   METHOD main.
 
+    "step 0 / MO_APP->MV_VAL
+    dissolve_init( ).
+
     IF mv_type = cs_bind_type-one_time.
       result = bind_local(  ).
       RETURN.
     ENDIF.
-
-    "step 0 / MO_APP->MV_VAL
-    dissolve_init( ).
 
     result = search_binding(  ).
     IF result IS NOT INITIAL.
@@ -519,14 +498,18 @@ set_attri_ready( temp14 ).
 
   METHOD search_binding.
 
-    DATA temp20 LIKE LINE OF mt_attri.
-    DATA lr_bind LIKE REF TO temp20.
-    LOOP AT mt_attri REFERENCE INTO lr_bind
-        WHERE ( bind_type = `` OR bind_type = mv_type )
-        AND   check_ready = abap_true
-        AND   check_tested = abap_false.
+    DATA temp15 LIKE REF TO mt_attri.
+    DATA temp16 LIKE LINE OF mt_attri.
+    DATA lr_bind LIKE REF TO temp16.
+    GET REFERENCE OF mt_attri INTO temp15.
+set_attri_ready( temp15 ).
 
-      lr_bind->check_tested = abap_true.
+    
+    
+    LOOP AT mt_attri REFERENCE INTO lr_bind
+*        WHERE ( bind_type = `` OR bind_type = mv_type )
+        where check_ready = abap_true.
+
       result = bind( lr_bind ).
       IF result IS NOT INITIAL.
         RETURN.
@@ -539,7 +522,8 @@ set_attri_ready( temp14 ).
   METHOD set_attri_ready.
 
     LOOP AT t_attri->*  REFERENCE INTO  result
-      WHERE check_ready = abap_false.
+      WHERE check_ready = abap_false and
+            bind_type <> cs_bind_type-one_time.
 
       CASE result->type_kind.
         WHEN cl_abap_classdescr=>typekind_iref
