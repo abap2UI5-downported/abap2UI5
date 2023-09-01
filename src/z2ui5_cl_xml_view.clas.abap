@@ -677,7 +677,8 @@
           PREFERRED PARAMETER title
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
-    METHODS zz_plain
+
+    METHODS zcc_plain_xml
       IMPORTING
         !val          TYPE clike OPTIONAL
       RETURNING
@@ -1027,7 +1028,7 @@
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
-    METHODS cc_file_uploader
+    METHODS zcc_file_uploader
       IMPORTING
         !value        TYPE clike OPTIONAL
         !path         TYPE clike OPTIONAL
@@ -1036,7 +1037,7 @@
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
-    METHODS cc_file_uploader_get_js
+    METHODS zcc_file_uploader_js
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
@@ -1431,13 +1432,13 @@
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
 
-    METHODS cc_export_spreadsheet_get_js
+    METHODS zcc_export_spreadsheet_js
       IMPORTING
         !columnconfig TYPE clike
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
-    METHODS cc_export_spreadsheet
+    METHODS zcc_export_spreadsheet
       IMPORTING
         !tableid      TYPE clike
         !type         TYPE clike OPTIONAL
@@ -1915,7 +1916,7 @@
       VALUE(result)       TYPE REF TO z2ui5_cl_xml_view.
 
 
-  METHODS generate_ddic_shlp
+  METHODS zfc_ddic_search_help
     IMPORTING
       !irparent            TYPE REF TO Z2UI5_CL_XML_VIEW
       !resultitabname      TYPE clike OPTIONAL
@@ -2312,7 +2313,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD cc_export_spreadsheet.
+  METHOD zcc_export_spreadsheet.
     DATA temp21 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp22 LIKE LINE OF temp21.
 
@@ -2339,7 +2340,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD cc_export_spreadsheet_get_js.
+  METHOD zcc_export_spreadsheet_js.
 
     DATA js TYPE string.
     js = ` debugger; jQuery.sap.declare("z2ui5.ExportSpreadsheet");` && |\n| &&
@@ -2418,12 +2419,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
                           `            });` && |\n| &&
                           `        });`.
 
-    result = zz_plain( `<html:script>` && js && `</html:script>` ).
+    result = zcc_plain_xml( `<html:script>` && js && `</html:script>` ).
 
   ENDMETHOD.
 
 
-  METHOD cc_file_uploader.
+  METHOD zcc_file_uploader.
     DATA temp23 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp24 LIKE LINE OF temp23.
 
@@ -2450,7 +2451,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD cc_file_uploader_get_js.
+  METHOD zcc_file_uploader_js.
 
     DATA js TYPE string.
     js = ` debugger; jQuery.sap.declare("z2ui5.FileUploader");` && |\n| &&
@@ -2561,7 +2562,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
                           `            });` && |\n| &&
                           `        });`.
 
-    result = zz_plain( `<html:script>` && js && `</html:script>` ).
+    result = zcc_plain_xml( `<html:script>` && js && `</html:script>` ).
 
   ENDMETHOD.
 
@@ -3495,7 +3496,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   ENDMETHOD.
 
 
-   METHOD generate_ddic_shlp.
+   METHOD zfc_ddic_search_help.
 
      TYPES:
       BEGIN OF ty_ddshfprop,
@@ -3562,7 +3563,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     END OF ty_ddfields.
 
      DATA: lv_grid_form_no     TYPE i,
-           lt_arg              TYPE STANDARD TABLE OF string WITH DEFAULT KEY,
+           lt_arg              TYPE string_table,
            lv_arg_fieldname    TYPE string,
            lv_cell_fieldname   TYPE string,
            lv_path_result_itab TYPE string,
@@ -3777,7 +3778,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     
     lr_item = lr_table->items(
         )->column_list_item( type = 'Navigation'  press = irclient->_event( val    = resultitabevent
-                                                                             t_arg  = lt_arg ) ).
+                                                                            t_arg  = lt_arg ) ).
 
 * ---------- Set cell content ---------------------------------------------------------------------
     LOOP AT lt_fieldprop_lis ASSIGNING <ls_fieldprop_lis>.
@@ -7445,7 +7446,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD zz_plain.
+  METHOD zcc_plain_xml.
     DATA temp291 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp292 LIKE LINE OF temp291.
     result = me.
