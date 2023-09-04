@@ -115,6 +115,10 @@
       IMPORTING
         !text           TYPE clike OPTIONAL
         !additionaltext TYPE clike OPTIONAL
+        !key            TYPE clike OPTIONAL
+        !icon           TYPE clike OPTIONAL
+        !enabled        TYPE clike OPTIONAL
+        !textDirection  TYPE clike OPTIONAL
       RETURNING
         VALUE(result)   TYPE REF TO z2ui5_cl_xml_view.
 
@@ -379,6 +383,7 @@
         !maxsuggestionwidth           TYPE clike OPTIONAL
         !fieldwidth                   TYPE clike OPTIONAL
         !valuehelponly                TYPE clike OPTIONAL
+        !width                        TYPE clike OPTIONAL
           PREFERRED PARAMETER value
       RETURNING
         VALUE(result)                 TYPE REF TO z2ui5_cl_xml_view .
@@ -506,10 +511,13 @@
         VALUE(result)   TYPE REF TO z2ui5_cl_xml_view .
     METHODS radial_micro_chart
       IMPORTING
-        !sice         TYPE clike OPTIONAL
+        !size         TYPE clike OPTIONAL
         !percentage   TYPE clike OPTIONAL
         !press        TYPE clike OPTIONAL
         !valuecolor   TYPE clike OPTIONAL
+        !height       TYPE clike OPTIONAL
+        !alignContent TYPE clike OPTIONAL
+        !hideOnNoData TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
     METHODS column_list_item
@@ -791,6 +799,14 @@
         !valuestatetext        TYPE clike OPTIONAL
         !enabled               TYPE clike OPTIONAL
         !showcurrentdatebutton TYPE clike OPTIONAL
+        !change                TYPE clike OPTIONAL
+        !hideInput             TYPE clike OPTIONAL
+        !showFooter            TYPE clike OPTIONAL
+        !visible               TYPE clike OPTIONAL
+        !showValueStateMessage TYPE clike OPTIONAL
+        !minDate               TYPE clike OPTIONAL
+        !maxDate               TYPE clike OPTIONAL
+        !editable              TYPE clike OPTIONAL
           PREFERRED PARAMETER value
       RETURNING
         VALUE(result)          TYPE REF TO z2ui5_cl_xml_view .
@@ -872,21 +888,53 @@
       IMPORTING
         !selectedkey   TYPE clike OPTIONAL
         !showclearicon TYPE clike OPTIONAL
-        !label         TYPE clike OPTIONAL
+        !selectionchange TYPE clike OPTIONAL
+        !selectedItem TYPE clike OPTIONAL
         !items         TYPE clike OPTIONAL
         !change        TYPE clike OPTIONAL
+        !width TYPE clike OPTIONAL
+        !showSecondaryValues TYPE clike OPTIONAL
+        !placeholder TYPE clike OPTIONAL
+        !selectedItemId TYPE clike OPTIONAL
+        !name TYPE clike OPTIONAL
+        !value TYPE clike OPTIONAL
+        !valueState TYPE clike OPTIONAL
+        !valueStateText TYPE clike OPTIONAL
+        !textAlign TYPE clike OPTIONAL
+        !visible TYPE clike OPTIONAL
+        !showValueStateMessage TYPE clike OPTIONAL
+        !showButton TYPE clike OPTIONAL
+        !required TYPE clike OPTIONAL
+        !editable TYPE clike OPTIONAL
+        !enabled TYPE clike OPTIONAL
+        !filterSecondaryValues TYPE clike OPTIONAL
       RETURNING
         VALUE(result)  TYPE REF TO z2ui5_cl_xml_view .
     METHODS multi_combobox
       IMPORTING
-        !selectionchange     TYPE clike OPTIONAL
-        !selectionfinish     TYPE clike OPTIONAL
-        !width               TYPE clike OPTIONAL
-        !showclearicon       TYPE clike OPTIONAL
-        !showsecondaryvalues TYPE clike OPTIONAL
-        !showselectall       TYPE clike OPTIONAL
-        !selectedkeys        TYPE clike OPTIONAL
-        !items               TYPE clike OPTIONAL
+        !selectionChange TYPE clike OPTIONAL
+        !selectedKeys TYPE clike OPTIONAL
+        !items TYPE clike OPTIONAL
+        !selectionFinish TYPE clike OPTIONAL
+        !width TYPE clike OPTIONAL
+        !showClearIcon TYPE clike OPTIONAL
+        !showSecondaryValues TYPE clike OPTIONAL
+        !placeholder TYPE clike OPTIONAL
+        !selectedItemId TYPE clike OPTIONAL
+        !selectedKey TYPE clike OPTIONAL
+        !name TYPE clike OPTIONAL
+        !value TYPE clike OPTIONAL
+        !valueState TYPE clike OPTIONAL
+        !valueStateText TYPE clike OPTIONAL
+        !textAlign TYPE clike OPTIONAL
+        !visible TYPE clike OPTIONAL
+        !showValueStateMessage TYPE clike OPTIONAL
+        !showButton TYPE clike OPTIONAL
+        !required TYPE clike OPTIONAL
+        !editable TYPE clike OPTIONAL
+        !enabled TYPE clike OPTIONAL
+        !filterSecondaryValues TYPE clike OPTIONAL
+        !showSelectAll TYPE clike OPTIONAL
       RETURNING
         VALUE(result)        TYPE REF TO z2ui5_cl_xml_view .
     METHODS grid
@@ -1205,6 +1253,7 @@
         !useentirewidth TYPE clike OPTIONAL
         !valuestate     TYPE clike OPTIONAL
         !width          TYPE clike OPTIONAL
+        !select         TYPE clike OPTIONAL
       RETURNING
         VALUE(result)   TYPE REF TO z2ui5_cl_xml_view .
 
@@ -1218,6 +1267,7 @@
         !textdirection TYPE clike OPTIONAL
         !valuestate    TYPE clike OPTIONAL
         !width         TYPE clike OPTIONAL
+        !select        TYPE clike OPTIONAL
       RETURNING
         VALUE(result)  TYPE REF TO z2ui5_cl_xml_view .
 
@@ -2446,14 +2496,66 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp30-n = `items`.
     temp30-v = items.
     INSERT temp30 INTO TABLE temp29.
-    temp30-n = `label`.
-    temp30-v = label.
+    temp30-n = `selectionchange`.
+    temp30-v = selectionchange.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `selectedItem`.
+    temp30-v = selectedItem.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `selectedItemId`.
+    temp30-v = selectedItemId.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `name`.
+    temp30-v = name.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `value`.
+    temp30-v = value.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `valueState`.
+    temp30-v = valueState.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `valueStateText`.
+    temp30-v = valueStateText.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `textAlign`.
+    temp30-v = textAlign.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `showSecondaryValues`.
+    temp30-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showSecondaryValues ).
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `visible`.
+    temp30-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( visible ).
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `showValueStateMessage`.
+    temp30-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showValueStateMessage ).
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `showButton`.
+    temp30-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showButton ).
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `required`.
+    temp30-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( required ).
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `editable`.
+    temp30-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( editable ).
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `enabled`.
+    temp30-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `filterSecondaryValues`.
+    temp30-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( filterSecondaryValues ).
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `width`.
+    temp30-v = width.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `placeholder`.
+    temp30-v = placeholder.
     INSERT temp30 INTO TABLE temp29.
     temp30-n = `change`.
     temp30-v = change.
     INSERT temp30 INTO TABLE temp29.
     result = _generic( name   = `ComboBox`
                        t_prop = temp29 ).
+
   ENDMETHOD.
 
 
@@ -2671,8 +2773,32 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp38-n = `placeholder`.
     temp38-v = placeholder.
     INSERT temp38 INTO TABLE temp37.
+    temp38-n = `change`.
+    temp38-v = change.
+    INSERT temp38 INTO TABLE temp37.
+    temp38-n = `maxDate`.
+    temp38-v = maxDate.
+    INSERT temp38 INTO TABLE temp37.
+    temp38-n = `minDate`.
+    temp38-v = minDate.
+    INSERT temp38 INTO TABLE temp37.
     temp38-n = `enabled`.
     temp38-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
+    INSERT temp38 INTO TABLE temp37.
+    temp38-n = `visible`.
+    temp38-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( visible ).
+    INSERT temp38 INTO TABLE temp37.
+    temp38-n = `editable`.
+    temp38-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( editable ).
+    INSERT temp38 INTO TABLE temp37.
+    temp38-n = `hideInput`.
+    temp38-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( hideInput ).
+    INSERT temp38 INTO TABLE temp37.
+    temp38-n = `showFooter`.
+    temp38-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showFooter ).
+    INSERT temp38 INTO TABLE temp37.
+    temp38-n = `showValueStateMessage`.
+    temp38-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showValueStateMessage ).
     INSERT temp38 INTO TABLE temp37.
     temp38-n = `showCurrentDateButton`.
     temp38-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showcurrentdatebutton ).
@@ -3811,6 +3937,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp103-n = `maxSuggestionWidth`.
     temp103-v = maxsuggestionwidth.
     INSERT temp103 INTO TABLE temp102.
+    temp103-n = `width`.
+    temp103-v = width.
+    INSERT temp103 INTO TABLE temp102.
     temp103-n = `fieldWidth`.
     temp103-v = fieldwidth.
     INSERT temp103 INTO TABLE temp102.
@@ -4125,6 +4254,18 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp127-n = `text`.
     temp127-v = text.
     INSERT temp127 INTO TABLE temp126.
+    temp127-n = `icon`.
+    temp127-v = icon.
+    INSERT temp127 INTO TABLE temp126.
+    temp127-n = `key`.
+    temp127-v = key.
+    INSERT temp127 INTO TABLE temp126.
+    temp127-n = `textDirection`.
+    temp127-v = textDirection.
+    INSERT temp127 INTO TABLE temp126.
+    temp127-n = `enabled`.
+    temp127-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
+    INSERT temp127 INTO TABLE temp126.
     temp127-n = `additionalText`.
     temp127-v = additionaltext.
     INSERT temp127 INTO TABLE temp126.
@@ -4395,11 +4536,56 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp145-n = `width`.
     temp145-v = width.
     INSERT temp145 INTO TABLE temp144.
-    temp145-n = `showClearIcon`.
-    temp145-v = showclearicon.
-    INSERT temp145 INTO TABLE temp144.
     temp145-n = `showSecondaryValues`.
-    temp145-v = showsecondaryvalues.
+    temp145-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showsecondaryvalues ).
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `placeholder`.
+    temp145-v = placeholder.
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `selectedItemId`.
+    temp145-v = selectedItemId.
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `selectedKey`.
+    temp145-v = selectedKey.
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `name`.
+    temp145-v = name.
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `value`.
+    temp145-v = value.
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `valueState`.
+    temp145-v = valueState.
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `valueStateText`.
+    temp145-v = valueStateText.
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `textAlign`.
+    temp145-v = textAlign.
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `visible`.
+    temp145-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( visible ).
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `showValueStateMessage`.
+    temp145-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showValueStateMessage ).
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `showClearIcon`.
+    temp145-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showClearIcon ).
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `showButton`.
+    temp145-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showButton ).
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `required`.
+    temp145-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( required ).
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `editable`.
+    temp145-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( editable ).
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `enabled`.
+    temp145-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
+    INSERT temp145 INTO TABLE temp144.
+    temp145-n = `filterSecondaryValues`.
+    temp145-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( filterSecondaryValues ).
     INSERT temp145 INTO TABLE temp144.
     temp145-n = `showSelectAll`.
     temp145-v = showselectall.
@@ -5184,8 +5370,17 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp195-n = `press`.
     temp195-v = press.
     INSERT temp195 INTO TABLE temp194.
-    temp195-n = `sice`.
-    temp195-v = sice.
+    temp195-n = `size`.
+    temp195-v = size.
+    INSERT temp195 INTO TABLE temp194.
+    temp195-n = `height`.
+    temp195-v = height.
+    INSERT temp195 INTO TABLE temp194.
+    temp195-n = `alignContent`.
+    temp195-v = alignContent.
+    INSERT temp195 INTO TABLE temp194.
+    temp195-n = `hideOnNoData`.
+    temp195-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( hideOnNoData ).
     INSERT temp195 INTO TABLE temp194.
     temp195-n = `valueColor`.
     temp195-v = valuecolor.
@@ -5234,6 +5429,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp197-n = `width`.
     temp197-v = width.
     INSERT temp197 INTO TABLE temp196.
+    temp197-n = `select`.
+    temp197-v = select.
+    INSERT temp197 INTO TABLE temp196.
     result = _generic( name = `RadioButton`
                    t_prop   = temp196 ).
   ENDMETHOD.
@@ -5264,6 +5462,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp199 INTO TABLE temp198.
     temp199-n = `valueState`.
     temp199-v = valuestate.
+    INSERT temp199 INTO TABLE temp198.
+    temp199-n = `select`.
+    temp199-v = select.
     INSERT temp199 INTO TABLE temp198.
     temp199-n = `width`.
     temp199-v = width.
