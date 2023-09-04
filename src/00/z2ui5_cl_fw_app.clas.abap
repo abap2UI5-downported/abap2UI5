@@ -267,7 +267,7 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
 
         
         TRY.
-            CREATE OBJECT li_app TYPE (`Z2UI5_CL_APP_DEMO_00`).
+            CREATE OBJECT li_app TYPE (`Z2UI5_CL_DEMO_APP_000`).
             mv_check_demo = abap_true.
             client->nav_app_call( li_app ).
           CATCH cx_root.
