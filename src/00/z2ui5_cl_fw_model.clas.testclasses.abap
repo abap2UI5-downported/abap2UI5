@@ -37,6 +37,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
     
     lo_model = z2ui5_cl_fw_model=>factory(
+        viewname = ``
         app      = lo_app
         attri    = lt_attri ).
 
@@ -86,6 +87,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
     
     lo_model = z2ui5_cl_fw_model=>factory(
+    viewname = ``
     app      = lo_app
     attri    = lt_attri ).
 

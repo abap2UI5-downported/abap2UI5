@@ -53,6 +53,10 @@ CLASS z2ui5_cl_fw_handler DEFINITION
         BEGIN OF s_msg_toast,
           text TYPE string,
         END OF s_msg_toast,
+        BEGIN OF s_message_manager,
+          t_message   TYPE z2ui5_if_client=>ty_t_message_manager,
+          check_clear TYPE string,
+        END OF s_message_manager,
         _viewmodel TYPE string,
       END OF ty_s_next2.
 
@@ -175,6 +179,7 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
     ENDTRY.
     ss_config-view_model_edit_name = z2ui5_cl_fw_binding=>cv_model_edit_name.
 
+
     TRY.
         
         lv_id_prev = so_body->get_attribute( `ID` )->get_val( ).
@@ -279,6 +284,7 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
 
     
     lo_binder = z2ui5_cl_fw_model=>factory(
+        viewname = ms_actual-viewname
         app      = ms_db-app
         attri    = ms_db-t_attri ).
 
@@ -333,9 +339,15 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
     result->ms_db-id      = z2ui5_cl_fw_utility=>func_get_uuid_32( ).
     result->ms_db-id_prev = id_prev.
 
+       TRY.
+        result->ms_actual-viewname = so_body->get_attribute( `VIEWNAME` )->get_val( ).
+      CATCH cx_root.
+    ENDTRY.
+
     TRY.
         
         lo_model = z2ui5_cl_fw_model=>factory(
+        viewname = result->ms_actual-viewname
         app      = result->ms_db-app
         attri    = result->ms_db-t_attri ).
 
