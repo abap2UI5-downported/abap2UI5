@@ -120,7 +120,6 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
       DATA lo_actual LIKE temp3.
       DATA lv_name_back TYPE string.
       FIELD-SYMBOLS <attribute> TYPE any.
-      DATA temp1 TYPE xsdboolean.
               DATA temp4 TYPE string.
     lr_view_model = z2ui5_cl_fw_utility_json=>factory( ).
     
@@ -152,9 +151,11 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
       lv_name_back = `MO_APP->` && lr_attri->name.
       
       ASSIGN (lv_name_back) TO <attribute>.
-      
-      temp1 = boolc( sy-subrc <> 0 ).
-      z2ui5_cl_fw_utility=>x_check_raise( when = temp1 ).
+      IF sy-subrc <> 0.
+        RAISE EXCEPTION TYPE z2ui5_cx_fw_error
+          EXPORTING
+            val = `BINDING_ERROR - No attribute found with name: ` && lr_attri->name.
+      ENDIF.
 
       CASE lr_attri->type_kind.
 
