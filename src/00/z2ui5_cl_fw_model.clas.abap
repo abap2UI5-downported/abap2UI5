@@ -125,8 +125,6 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
     
     lo_update = lr_view_model->add_attribute_object( z2ui5_cl_fw_binding=>cv_model_edit_name ).
 
-*    DATA(lt_binds) = VALUE z2ui5_if_client=>ty_t_name_value( ).
-
     
     
     LOOP AT mt_attri REFERENCE INTO lr_attri WHERE bind_type <> ``.
@@ -154,7 +152,7 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
       IF sy-subrc <> 0.
         RAISE EXCEPTION TYPE z2ui5_cx_fw_error
           EXPORTING
-            val = `BINDING_ERROR - No attribute found with name: ` && lr_attri->name.
+            val = `Error while creating the response, seems that some app data is not available anymore. <p>BINDING_ERROR - No attribute found with name: ` && lr_attri->name && `</p>`.
       ENDIF.
 
       CASE lr_attri->type_kind.
