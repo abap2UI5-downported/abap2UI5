@@ -341,6 +341,7 @@
         !valuehelprequest TYPE clike OPTIONAL
         !enabled          TYPE clike OPTIONAL
         !class            TYPE clike OPTIONAL
+        !change            TYPE clike OPTIONAL
       RETURNING
         VALUE(result)     TYPE REF TO z2ui5_cl_xml_view .
     METHODS tokens
@@ -4926,6 +4927,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp149 INTO TABLE temp148.
     temp149-n = `id`.
     temp149-v = id.
+    INSERT temp149 INTO TABLE temp148.
+    temp149-n = `change`.
+    temp149-v = change.
     INSERT temp149 INTO TABLE temp148.
     temp149-n = `valueHelpRequest`.
     temp149-v = valuehelprequest.
