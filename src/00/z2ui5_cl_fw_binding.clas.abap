@@ -27,6 +27,7 @@ CLASS z2ui5_cl_fw_binding DEFINITION
         check_dissolved TYPE abap_bool,
         check_temp      TYPE abap_bool,
         viewname        TYPE string,
+        pretty_name     type string,
       END OF ty_s_attri.
     TYPES ty_t_attri TYPE SORTED TABLE OF ty_s_attri WITH UNIQUE KEY name.
 
@@ -38,6 +39,7 @@ CLASS z2ui5_cl_fw_binding DEFINITION
         data            TYPE data OPTIONAL
         check_attri     TYPE data OPTIONAL
         view            TYPE string OPTIONAL
+        pretty_name     type clike optional
       RETURNING
         VALUE(r_result) TYPE REF TO z2ui5_cl_fw_binding.
 
@@ -51,6 +53,7 @@ CLASS z2ui5_cl_fw_binding DEFINITION
     DATA mr_data TYPE REF TO data.
     DATA mv_check_attri TYPE abap_bool.
     DATA mv_view TYPE string.
+    DATA mv_pretty_name TYPE string.
 
     CLASS-METHODS update_attri
       IMPORTING
@@ -120,7 +123,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
+CLASS Z2UI5_CL_FW_BINDING IMPLEMENTATION.
 
 
   METHOD bind.
@@ -151,9 +154,10 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
           val = `<p>Binding Error - Two different binding types for same attribute used (` && bind->name && `).`.
     ENDIF.
 
-    bind->bind_type  = mv_type.
-    bind->name_front = name_front_create( bind->name ).
-    bind->viewname   = mv_view.
+    bind->bind_type   = mv_type.
+    bind->pretty_name = mv_pretty_name.
+    bind->name_front  = name_front_create( bind->name ).
+    bind->viewname    = mv_view.
 
     
     IF mv_type = cs_bind_type-two_way.
@@ -276,6 +280,8 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     r_result->mv_type = type.
     r_result->mv_check_attri = check_attri.
     r_result->mv_view = view.
+    r_result->mv_pretty_name = pretty_name.
+
 
     IF z2ui5_cl_fw_utility=>rtti_check_type_kind_dref( data ) IS NOT INITIAL.
       RAISE EXCEPTION TYPE z2ui5_cx_fw_error
@@ -479,7 +485,6 @@ set_attri_ready( temp12 ).
     
     
     LOOP AT mt_attri REFERENCE INTO lr_bind
-*        WHERE ( bind_type = `` OR bind_type = mv_type )
         WHERE check_ready = abap_true.
 
       result = bind( lr_bind ).
