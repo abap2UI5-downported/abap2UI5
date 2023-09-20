@@ -1136,10 +1136,15 @@
 
     METHODS zcc_file_uploader
       IMPORTING
-        !value        TYPE clike OPTIONAL
-        !path         TYPE clike OPTIONAL
-        !placeholder  TYPE clike OPTIONAL
-        !upload       TYPE clike OPTIONAL
+        !value             TYPE clike OPTIONAL
+        !path              TYPE clike OPTIONAL
+        !placeholder       TYPE clike OPTIONAL
+        !upload            TYPE clike OPTIONAL
+        !icononly          TYPE clike OPTIONAL
+        !buttononly        TYPE clike OPTIONAL
+        !buttontext        TYPE clike OPTIONAL
+        !uploadbuttontext  TYPE clike OPTIONAL
+        !checkdirectupload TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
@@ -8644,6 +8649,21 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp320-n = `value`.
     temp320-v = value.
     INSERT temp320 INTO TABLE temp319.
+    temp320-n = `iconOnly`.
+    temp320-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( icononly ).
+    INSERT temp320 INTO TABLE temp319.
+    temp320-n = `buttonOnly`.
+    temp320-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( buttononly ).
+    INSERT temp320 INTO TABLE temp319.
+    temp320-n = `buttonText`.
+    temp320-v = buttontext.
+    INSERT temp320 INTO TABLE temp319.
+    temp320-n = `uploadButtonText`.
+    temp320-v = uploadbuttontext.
+    INSERT temp320 INTO TABLE temp319.
+    temp320-n = `checkDirectUpload`.
+    temp320-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( checkdirectupload ).
+    INSERT temp320 INTO TABLE temp319.
     _generic( name   = `FileUploader`
               ns     = `z2ui5`
               t_prop = temp319 ).
@@ -8651,7 +8671,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD zcc_file_uploader_js.
+   METHOD zcc_file_uploader_js.
 
     DATA js TYPE string.
     js = ` debugger; jQuery.sap.declare("z2ui5.FileUploader");` && |\n| &&
@@ -8689,13 +8709,29 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
                           `                        },` && |\n| &&
                           `                        buttonText: {` && |\n| &&
                           `                            type: "string",` && |\n| &&
+                          `                            defaultValue: ""` && |\n| &&
+                          `                        },` && |\n| &&
+                          `                        uploadButtonText: {` && |\n| &&
+                          `                            type: "string",` && |\n| &&
                           `                            defaultValue: "Upload"` && |\n| &&
                           `                        },` && |\n| &&
                           `                        enabled: {` && |\n| &&
                           `                            type: "boolean",` && |\n| &&
                           `                            defaultValue: true` && |\n| &&
                           `                        },` && |\n| &&
+                          `                        iconOnly: {` && |\n| &&
+                          `                            type: "boolean",` && |\n| &&
+                          `                            defaultValue: false` && |\n| &&
+                          `                        },` && |\n| &&
+                          `                        buttonOnly: {` && |\n| &&
+                          `                            type: "boolean",` && |\n| &&
+                          `                            defaultValue: false` && |\n| &&
+                          `                        },` && |\n| &&
                           `                        multiple: {` && |\n| &&
+                          `                            type: "boolean",` && |\n| &&
+                          `                            defaultValue: false` && |\n| &&
+                          `                        },` && |\n| &&
+                          `                        checkDirectUpload: {` && |\n| &&
                           `                            type: "boolean",` && |\n| &&
                           `                            defaultValue: false` && |\n| &&
                           `                        }` && |\n| &&
@@ -8715,8 +8751,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
                           |\n| &&
                           `                renderer: function (oRm, oControl) {` && |\n| &&
                           |\n| &&
-                          `                    oControl.oUploadButton = new Button({` && |\n| &&
-                          `                        text: oControl.getProperty("buttonText"),` && |\n| &&
+                          `                    if (!oControl.getProperty("checkDirectUpload")) {` && |\n| &&
+                          `                     oControl.oUploadButton = new Button({` && |\n| &&
+                          `                        text: oControl.getProperty("uploadButtonText"),` && |\n| &&
                           `                        enabled: oControl.getProperty("path") !== "",` && |\n| &&
                           `                        press: function (oEvent) { ` && |\n| &&
                           |\n| &&
@@ -8734,14 +8771,22 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
                           |\n| &&
                           `                            reader.readAsDataURL(file);` && |\n| &&
                           `                        }.bind(oControl)` && |\n| &&
-                          `                    });` && |\n| &&
+                          `                     });` && |\n| &&
+                          `                    }` && |\n| &&
                           |\n| &&
                           `                    oControl.oFileUploader = new FileUploader({` && |\n| &&
                           `                        icon: "sap-icon://browse-folder",` && |\n| &&
-                          `                        iconOnly: true,` && |\n| &&
+                          `                        iconOnly: oControl.getProperty("iconOnly"),` && |\n| &&
+                          `                        buttonOnly: oControl.getProperty("buttonOnly"),` && |\n| &&
+                          `                        buttonText: oControl.getProperty("buttonText"),` && |\n| &&
+                          `                        uploadOnChange: true,` && |\n| &&
                           `                        value: oControl.getProperty("path"),` && |\n| &&
                           `                        placeholder: oControl.getProperty("placeholder"),` && |\n| &&
                           `                        change: function (oEvent) {` && |\n| &&
+                          `                           if (oControl.getProperty("checkDirectUpload")) {` && |\n| &&
+                          `                             return; ` && |\n| &&
+                          `                           }` && |\n| &&
+                          |\n| &&
                           `                            var value = oEvent.getSource().getProperty("value");` && |\n| &&
                           `                            this.setProperty("path", value);` && |\n| &&
                           `                            if (value) {` && |\n| &&
@@ -8751,6 +8796,25 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
                           `                            }` && |\n| &&
                           `                            this.oUploadButton.rerender();` && |\n| &&
                           `                            sap.z2ui5.oUpload = oEvent.oSource;` && |\n| &&
+                          `                        }.bind(oControl),` && |\n| &&
+                          `                        uploadComplete: function (oEvent) {` && |\n| &&
+                          `                           if (!oControl.getProperty("checkDirectUpload")) {` && |\n| &&
+                          `                             return; ` && |\n| &&
+                          `                           }` && |\n| &&
+                          |\n| &&
+                          `                            var value = oEvent.getSource().getProperty("value");` && |\n| &&
+                          `                            this.setProperty("path", value);` && |\n| &&
+                          |\n| &&
+                          `                            var file = oEvent.oSource.oFileUpload.files[0];` && |\n| &&
+                          `                            var reader = new FileReader();` && |\n| &&
+                          |\n| &&
+                          `                            reader.onload = function (evt) {` && |\n| &&
+                          `                                var vContent = evt.currentTarget.result;` && |\n| &&
+                          `                                this.setProperty("value", vContent);` && |\n| &&
+                          `                                this.fireUpload();` && |\n| &&
+                          `                            }.bind(this)` && |\n| &&
+                          |\n| &&
+                          `                            reader.readAsDataURL(file);` && |\n| &&
                           `                        }.bind(oControl)` && |\n| &&
                           `                    });` && |\n| &&
                           |\n| &&
