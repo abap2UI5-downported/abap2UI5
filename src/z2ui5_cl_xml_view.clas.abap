@@ -2357,6 +2357,8 @@
       !items              TYPE clike OPTIONAL
       !mode               TYPE clike OPTIONAL
       !selectionChanged   TYPE clike OPTIONAL
+      !uploadCompleted    TYPE clike OPTIONAL
+      !afterItemAdded     TYPE clike OPTIONAL
       !sameFilenameAllowed   TYPE clike OPTIONAL
       !fileRenamed  TYPE clike OPTIONAL
       !uploadButtonInvisible  TYPE clike OPTIONAL
@@ -8051,6 +8053,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp294 INTO TABLE temp293.
     temp294-n = `fileRenamed`.
     temp294-v = fileRenamed.
+    INSERT temp294 INTO TABLE temp293.
+    temp294-n = `uploadCompleted`.
+    temp294-v = uploadCompleted.
+    INSERT temp294 INTO TABLE temp293.
+    temp294-n = `afterItemAdded`.
+    temp294-v = afterItemAdded.
     INSERT temp294 INTO TABLE temp293.
     temp294-n = `sameFilenameAllowed`.
     temp294-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( sameFilenameAllowed ).
