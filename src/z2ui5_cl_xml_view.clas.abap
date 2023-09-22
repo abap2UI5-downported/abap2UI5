@@ -2444,6 +2444,9 @@
   METHODS side_panel_item
     IMPORTING
       !icon TYPE clike OPTIONAL
+      !text TYPE clike OPTIONAL
+      !key TYPE clike OPTIONAL
+      !enabled TYPE clike OPTIONAL
     RETURNING
       VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -7137,6 +7140,15 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     
     temp245-n = `icon`.
     temp245-v = icon.
+    INSERT temp245 INTO TABLE temp244.
+    temp245-n = `enabled`.
+    temp245-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
+    INSERT temp245 INTO TABLE temp244.
+    temp245-n = `key`.
+    temp245-v = key.
+    INSERT temp245 INTO TABLE temp244.
+    temp245-n = `text`.
+    temp245-v = text.
     INSERT temp245 INTO TABLE temp244.
     result = _generic( name   = `SidePanelItem`
                        ns     = `f`
