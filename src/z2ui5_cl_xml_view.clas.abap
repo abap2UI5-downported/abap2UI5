@@ -5642,7 +5642,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp163-n = `showSelectAll`.
     temp163-v = showselectall.
     INSERT temp163 INTO TABLE temp162.
-    result = _generic( name   = `ComboBox`
+    result = _generic( name   = `MultiComboBox`
                        t_prop = temp162 ).
   ENDMETHOD.
 
