@@ -254,9 +254,23 @@
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
     METHODS avatar
       IMPORTING
-        !src          TYPE clike OPTIONAL
-        !class        TYPE clike OPTIONAL
-        !displaysize  TYPE clike OPTIONAL
+        !src               TYPE clike OPTIONAL
+        !class             TYPE clike OPTIONAL
+        !displaysize       TYPE clike OPTIONAL
+        !ariaHasPopup      TYPE clike OPTIONAL
+        !backgroundColor   TYPE clike OPTIONAL
+        !badgeIcon         TYPE clike OPTIONAL
+        !badgeTooltip      TYPE clike OPTIONAL
+        !badgeValueState   TYPE clike OPTIONAL
+        !customDisplaySize TYPE clike OPTIONAL
+        !customFontSize    TYPE clike OPTIONAL
+        !displayShape      TYPE clike OPTIONAL
+        !fallbackIcon      TYPE clike OPTIONAL
+        !imageFitType      TYPE clike OPTIONAL
+        !initials          TYPE clike OPTIONAL
+        !showBorder        TYPE clike OPTIONAL
+        !decorative        TYPE clike OPTIONAL
+        !enabled           TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
     METHODS header_title
@@ -589,6 +603,12 @@
         !id           TYPE clike OPTIONAL
         !ns           TYPE clike OPTIONAL
         !tooltip      TYPE clike OPTIONAL
+        !width        TYPE clike OPTIONAL
+        !iconFirst        TYPE clike OPTIONAL
+        !iconDensityAware        TYPE clike OPTIONAL
+        !ariaHasPopup        TYPE clike OPTIONAL
+        !activeIcon        TYPE clike OPTIONAL
+        !accessibleRole        TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
     METHODS search_field
@@ -883,6 +903,7 @@
         !showunread                 TYPE clike OPTIONAL
         !visible                    TYPE clike OPTIONAL
         !nodata                     TYPE clike OPTIONAL
+        !id                         TYPE clike OPTIONAL
       RETURNING
         VALUE(result)    TYPE REF TO z2ui5_cl_xml_view .
     METHODS custom_list_item
@@ -2645,6 +2666,48 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp4-n = `class`.
     temp4-v = class.
     INSERT temp4 INTO TABLE temp3.
+    temp4-n = `ariaHasPopup`.
+    temp4-v = ariaHasPopup.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `backgroundColor`.
+    temp4-v = backgroundColor.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `badgeIcon`.
+    temp4-v = badgeIcon.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `badgeTooltip`.
+    temp4-v = badgeTooltip.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `badgeValueState`.
+    temp4-v = badgeValueState.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `customDisplaySize`.
+    temp4-v = customDisplaySize.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `customFontSize`.
+    temp4-v = customFontSize.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `displayShape`.
+    temp4-v = displayShape.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `fallbackIcon`.
+    temp4-v = fallbackIcon.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `imageFitType`.
+    temp4-v = imageFitType.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `initials`.
+    temp4-v = initials.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `showBorder`.
+    temp4-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showBorder ).
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `decorative`.
+    temp4-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( decorative ).
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `enabled`.
+    temp4-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
+    INSERT temp4 INTO TABLE temp3.
     temp4-n = `displaysize`.
     temp4-v = displaysize.
     INSERT temp4 INTO TABLE temp3.
@@ -2945,6 +3008,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp18-n = `visible`.
     temp18-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( visible ).
     INSERT temp18 INTO TABLE temp17.
+    temp18-n = `iconDensityAware`.
+    temp18-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( iconDensityAware ).
+    INSERT temp18 INTO TABLE temp17.
+    temp18-n = `iconFirst`.
+    temp18-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( iconFirst ).
+    INSERT temp18 INTO TABLE temp17.
     temp18-n = `icon`.
     temp18-v = icon.
     INSERT temp18 INTO TABLE temp17.
@@ -2954,8 +3023,20 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp18-n = `id`.
     temp18-v = id.
     INSERT temp18 INTO TABLE temp17.
+    temp18-n = `width`.
+    temp18-v = width.
+    INSERT temp18 INTO TABLE temp17.
     temp18-n = `tooltip`.
     temp18-v = tooltip.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-n = `accessibleRole`.
+    temp18-v = accessibleRole.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-n = `activeIcon`.
+    temp18-v = activeIcon.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-n = `ariaHasPopup`.
+    temp18-v = ariaHasPopup.
     INSERT temp18 INTO TABLE temp17.
     temp18-n = `class`.
     temp18-v = class.
@@ -5323,6 +5404,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp143 INTO TABLE temp142.
     temp143-n = `noDataText`.
     temp143-v = noDataText.
+    INSERT temp143 INTO TABLE temp142.
+    temp143-n = `id`.
+    temp143-v = id.
     INSERT temp143 INTO TABLE temp142.
     temp143-n = `sticky`.
     temp143-v = sticky.
