@@ -404,14 +404,16 @@
         VALUE(result)                 TYPE REF TO z2ui5_cl_xml_view .
     METHODS dialog
       IMPORTING
-        !title         TYPE clike OPTIONAL
-        !icon          TYPE clike OPTIONAL
-        !showheader    TYPE clike OPTIONAL
-        !stretch       TYPE clike OPTIONAL
-        !contentheight TYPE clike OPTIONAL
-        !contentwidth  TYPE clike OPTIONAL
-        !resizable     TYPE clike OPTIONAL
-          PREFERRED PARAMETER title
+        !title               TYPE clike OPTIONAL
+        !icon                TYPE clike OPTIONAL
+        !showheader          TYPE clike OPTIONAL
+        !stretch             TYPE clike OPTIONAL
+        !contentheight       TYPE clike OPTIONAL
+        !contentwidth        TYPE clike OPTIONAL
+        !resizable           TYPE clike OPTIONAL
+        !HORIZONTALSCROLLING type CLIKE optional
+        !VERTICALSCROLLING   type CLIKE optional
+      PREFERRED PARAMETER title
       RETURNING
         VALUE(result)  TYPE REF TO z2ui5_cl_xml_view .
     METHODS carousel
@@ -3793,6 +3795,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp54 INTO TABLE temp53.
     temp54-n = `resizable`.
     temp54-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( resizable ).
+    INSERT temp54 INTO TABLE temp53.
+    temp54-n = `horizontalScrolling`.
+    temp54-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( horizontalscrolling ).
+    INSERT temp54 INTO TABLE temp53.
+    temp54-n = `verticalScrolling`.
+    temp54-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( verticalscrolling ).
     INSERT temp54 INTO TABLE temp53.
     result = _generic( name   = `Dialog`
                        t_prop = temp53 ).
