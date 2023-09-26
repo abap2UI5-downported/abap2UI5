@@ -1,4 +1,4 @@
- CLASS z2ui5_cl_xml_view DEFINITION
+CLASS z2ui5_cl_xml_view DEFINITION
   PUBLIC
   FINAL
   CREATE PROTECTED.
@@ -174,6 +174,7 @@
         !showeditheaderbutton     TYPE clike OPTIONAL
         !editheaderbuttonpress    TYPE clike OPTIONAL
         !uppercaseanchorbar       TYPE clike OPTIONAL
+        !showfooter               TYPE clike OPTIONAL
       RETURNING
         VALUE(result)             TYPE REF TO z2ui5_cl_xml_view.
 
@@ -6398,6 +6399,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp185 INTO TABLE temp184.
     temp185-n = `upperCaseAnchorBar`.
     temp185-v = uppercaseanchorbar.
+    INSERT temp185 INTO TABLE temp184.
+    temp185-n = `showFooter`.
+    temp185-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showfooter ).
     INSERT temp185 INTO TABLE temp184.
     result = _generic(
                  name   = `ObjectPageLayout`
