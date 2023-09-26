@@ -138,6 +138,11 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !autopopinmode       TYPE clike OPTIONAL
         !inset               TYPE clike OPTIONAL
         !showseparators      TYPE clike OPTIONAL
+        !showOverlay      TYPE clike OPTIONAL
+        !hiddenInPopin      TYPE clike OPTIONAL
+        !popinLayout      TYPE clike OPTIONAL
+        !fixedLayout      TYPE clike OPTIONAL
+        !backgroundDesign      TYPE clike OPTIONAL
           PREFERRED PARAMETER items
       RETURNING
         VALUE(result)        TYPE REF TO z2ui5_cl_xml_view.
@@ -401,6 +406,13 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !valuehelponly                TYPE clike OPTIONAL
         !width                        TYPE clike OPTIONAL
         !change                       TYPE clike OPTIONAL
+        !valueHelpIconSrc             TYPE clike OPTIONAL
+        !textFormatter                TYPE clike OPTIONAL
+        !textFormatMode               TYPE clike OPTIONAL
+        !maxLength               TYPE clike OPTIONAL
+        !startSuggestion               TYPE clike OPTIONAL
+        !enableSuggestionsHighlighting TYPE clike OPTIONAL
+        !enableTableAutoPopinMode TYPE clike OPTIONAL
           PREFERRED PARAMETER value
       RETURNING
         VALUE(result)                 TYPE REF TO z2ui5_cl_xml_view .
@@ -457,6 +469,15 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !minscreenwidth TYPE clike OPTIONAL
         !demandpopin    TYPE clike OPTIONAL
         !halign         TYPE clike OPTIONAL
+        !visible         TYPE clike OPTIONAL
+        !vAlign         TYPE clike OPTIONAL
+        !styleClass         TYPE clike OPTIONAL
+        !sortIndicator         TYPE clike OPTIONAL
+        !popinDisplay         TYPE clike OPTIONAL
+        !mergeFunctionName         TYPE clike OPTIONAL
+        !mergeDuplicates         TYPE clike OPTIONAL
+        !importance         TYPE clike OPTIONAL
+        !autoPopinWidth         TYPE clike OPTIONAL
           PREFERRED PARAMETER width
       RETURNING
         VALUE(result)   TYPE REF TO z2ui5_cl_xml_view .
@@ -935,6 +956,13 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !type         TYPE clike OPTIONAL
         !selected     TYPE clike OPTIONAL
         !counter      TYPE clike OPTIONAL
+        !wrapping      TYPE clike OPTIONAL
+        !wrapCharLimit      TYPE clike OPTIONAL
+        !infoStateInverted      TYPE clike OPTIONAL
+        !infoState      TYPE clike OPTIONAL
+        !iconInset      TYPE clike OPTIONAL
+        !adaptTitleSize      TYPE clike OPTIONAL
+        !activeIcon      TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
     METHODS item
@@ -3255,6 +3283,33 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp30-n = `halign`.
     temp30-v = halign.
     INSERT temp30 INTO TABLE temp29.
+    temp30-n = `autoPopinWidth`.
+    temp30-v = autoPopinWidth.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `vAlign`.
+    temp30-v = vAlign.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `importance`.
+    temp30-v = importance.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `mergeFunctionName`.
+    temp30-v = mergeFunctionName.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `popinDisplay`.
+    temp30-v = popinDisplay.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `sortIndicator`.
+    temp30-v = sortIndicator.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `styleClass`.
+    temp30-v = styleClass.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `mergeDuplicates`.
+    temp30-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( mergeDuplicates ).
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `visible`.
+    temp30-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( visible ).
+    INSERT temp30 INTO TABLE temp29.
     temp30-n = `demandPopin`.
     temp30-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( demandpopin ).
     INSERT temp30 INTO TABLE temp29.
@@ -5073,6 +5128,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp117-n = `type`.
     temp117-v = type.
     INSERT temp117 INTO TABLE temp116.
+    temp117-n = `maxLength`.
+    temp117-v = maxLength.
+    INSERT temp117 INTO TABLE temp116.
     temp117-n = `showClearIcon`.
     temp117-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showclearicon ).
     INSERT temp117 INTO TABLE temp116.
@@ -5087,6 +5145,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp117 INTO TABLE temp116.
     temp117-n = `visible`.
     temp117-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( visible ).
+    INSERT temp117 INTO TABLE temp116.
+    temp117-n = `enableTableAutoPopinMode`.
+    temp117-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enableTableAutoPopinMode ).
+    INSERT temp117 INTO TABLE temp116.
+    temp117-n = `enableSuggestionsHighlighting`.
+    temp117-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enableSuggestionsHighlighting ).
     INSERT temp117 INTO TABLE temp116.
     temp117-n = `showTableSuggestionValueHelp`.
     temp117-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showtablesuggestionvaluehelp ).
@@ -5144,6 +5208,18 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp117 INTO TABLE temp116.
     temp117-n = `width`.
     temp117-v = width.
+    INSERT temp117 INTO TABLE temp116.
+    temp117-n = `textFormatter`.
+    temp117-v = textFormatter.
+    INSERT temp117 INTO TABLE temp116.
+    temp117-n = `startSuggestion`.
+    temp117-v = startSuggestion.
+    INSERT temp117 INTO TABLE temp116.
+    temp117-n = `valueHelpIconSrc`.
+    temp117-v = valueHelpIconSrc.
+    INSERT temp117 INTO TABLE temp116.
+    temp117-n = `textFormatMode`.
+    temp117-v = textFormatMode.
     INSERT temp117 INTO TABLE temp116.
     temp117-n = `fieldWidth`.
     temp117-v = fieldwidth.
@@ -7806,6 +7882,27 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp267-n = `counter`.
     temp267-v = counter.
     INSERT temp267 INTO TABLE temp266.
+    temp267-n = `activeIcon`.
+    temp267-v = activeIcon.
+    INSERT temp267 INTO TABLE temp266.
+    temp267-n = `adaptTitleSize`.
+    temp267-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( adaptTitleSize ).
+    INSERT temp267 INTO TABLE temp266.
+    temp267-n = `iconInset`.
+    temp267-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( iconInset ).
+    INSERT temp267 INTO TABLE temp266.
+    temp267-n = `infoStateInverted`.
+    temp267-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( infoStateInverted ).
+    INSERT temp267 INTO TABLE temp266.
+    temp267-n = `wrapping`.
+    temp267-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( wrapping ).
+    INSERT temp267 INTO TABLE temp266.
+    temp267-n = `infoState`.
+    temp267-v = infoState.
+    INSERT temp267 INTO TABLE temp266.
+    temp267-n = `wrapCharLimit`.
+    temp267-v = wrapCharLimit.
+    INSERT temp267 INTO TABLE temp266.
     temp267-n = `selected`.
     temp267-v = selected.
     INSERT temp267 INTO TABLE temp266.
@@ -8011,11 +8108,26 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp277-n = `id`.
     temp277-v = id.
     INSERT temp277 INTO TABLE temp276.
+    temp277-n = `hiddenInPopin`.
+    temp277-v = hiddenInPopin.
+    INSERT temp277 INTO TABLE temp276.
+    temp277-n = `popinLayout`.
+    temp277-v = popinLayout.
+    INSERT temp277 INTO TABLE temp276.
     temp277-n = `selectionChange`.
     temp277-v = selectionchange.
     INSERT temp277 INTO TABLE temp276.
+    temp277-n = `backgroundDesign`.
+    temp277-v = backgroundDesign.
+    INSERT temp277 INTO TABLE temp276.
     temp277-n = `alternateRowColors`.
     temp277-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( alternaterowcolors ).
+    INSERT temp277 INTO TABLE temp276.
+    temp277-n = `fixedLayout`.
+    temp277-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( fixedLayout ).
+    INSERT temp277 INTO TABLE temp276.
+    temp277-n = `showOverlay`.
+    temp277-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showOverlay ).
     INSERT temp277 INTO TABLE temp276.
     temp277-n = `autoPopinMode`.
     temp277-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( autopopinmode ).
