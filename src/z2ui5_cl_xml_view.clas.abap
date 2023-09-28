@@ -108,6 +108,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !initialfocus  TYPE clike OPTIONAL
         !contentwidth  TYPE clike OPTIONAL
         !contentheight TYPE clike OPTIONAL
+        !showheader    type clike OPTIONAL
       RETURNING
         VALUE(result)  TYPE REF TO z2ui5_cl_xml_view.
 
@@ -6879,6 +6880,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp211 INTO TABLE temp210.
     temp211-n = `contentWidth`.
     temp211-v = contentwidth.
+    INSERT temp211 INTO TABLE temp210.
+    temp211-n = `showHeader`.
+    temp211-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showHeader ).
     INSERT temp211 INTO TABLE temp210.
     result = _generic( name   = `Popover`
                        t_prop = temp210 ).
