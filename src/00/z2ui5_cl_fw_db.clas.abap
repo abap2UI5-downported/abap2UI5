@@ -70,10 +70,12 @@ CLASS z2ui5_cl_fw_db IMPLEMENTATION.
 
 
   METHOD create.
-
     DATA lv_xml TYPE string.
     DATA temp1 TYPE z2ui5_t_draft.
     DATA ls_draft LIKE temp1.
+
+    db-app->id = id.
+    
     lv_xml = trans_any_2_xml( db ).
 
     

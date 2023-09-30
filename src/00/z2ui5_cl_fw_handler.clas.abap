@@ -139,6 +139,7 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
   METHOD app_set_next.
 
     DATA temp1 TYPE string.
+        DATA ls_db_next TYPE z2ui5_cl_fw_db=>ty_s_db.
     IF app->id IS INITIAL.
       temp1 = z2ui5_cl_fw_utility=>func_get_uuid_32( ).
     ELSE.
@@ -154,6 +155,13 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
     r_result->ms_actual-check_launchpad_active = ms_actual-check_launchpad_active.
     r_result->ms_actual-check_on_navigated = abap_true.
     r_result->ms_next-s_set     = ms_next-s_set.
+
+    TRY.
+        
+        ls_db_next = z2ui5_cl_fw_db=>load_app( id = app->id ).
+        r_result->ms_db-t_attri = ls_db_next-t_attri.
+      CATCH cx_root.
+    ENDTRY.
 
   ENDMETHOD.
 
@@ -347,7 +355,7 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
     result->ms_db-id      = z2ui5_cl_fw_utility=>func_get_uuid_32( ).
     result->ms_db-id_prev = id_prev.
 
-       TRY.
+    TRY.
         result->ms_actual-viewname = so_body->get_attribute( `VIEWNAME` )->get_val( ).
       CATCH cx_root.
     ENDTRY.
@@ -386,7 +394,7 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
       z2ui5_cl_fw_db=>create( id = ms_db-id db = ms_db ).
     ENDIF.
 
-    CLEAR result->ms_db-t_attri.
+*    CLEAR result->ms_db-t_attri.
 
   ENDMETHOD.
 
