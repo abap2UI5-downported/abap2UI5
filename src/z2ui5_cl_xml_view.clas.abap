@@ -2678,6 +2678,36 @@ CLASS z2ui5_cl_xml_view DEFINITION
     RETURNING
       VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
+methods TIMELINE
+    importing
+      !ID type CLIKE optional
+      !ENABLEDOUBLESIDED type CLIKE optional
+      !GROUPBY type CLIKE optional
+      !GROWINGTHRESHOLD type CLIKE optional
+      !FILTERTITLE type CLIKE optional
+      !SORTOLDESTFIRST type CLIKE optional
+      !ALIGNMENT type CLIKE optional
+      !AXISORIENTATION type CLIKE optional
+      !CONTENT type CLIKE optional
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+
+  methods TIMELINEITEM
+    importing
+      !ID type CLIKE optional
+      !DATETIME type CLIKE optional
+      !TITLE type CLIKE optional
+      !USERNAMECLICKABLE type CLIKE optional
+      !USERNAMECLICKED type CLIKE optional
+      !SELECT type CLIKE optional
+      !USERPICTURE type CLIKE optional
+      !TEXT type CLIKE optional
+      !USERNAME type CLIKE optional
+      !FILTERVALUE type CLIKE optional
+      !ICON type CLIKE optional
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+
   PROTECTED SECTION.
 
     DATA mv_name  TYPE string.
@@ -10399,5 +10429,88 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT val INTO TABLE mt_prop.
     result = me.
 
+  ENDMETHOD.
+
+METHOD timeline.
+
+    DATA temp345 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp346 LIKE LINE OF temp345.
+    CLEAR temp345.
+    
+    temp346-n = 'id'.
+    temp346-v = id.
+    INSERT temp346 INTO TABLE temp345.
+    temp346-n = 'enableDoubleSided'.
+    temp346-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabledoublesided ).
+    INSERT temp346 INTO TABLE temp345.
+    temp346-n = 'groupBy'.
+    temp346-v = groupby.
+    INSERT temp346 INTO TABLE temp345.
+    temp346-n = 'growingThreshold'.
+    temp346-v = growingthreshold.
+    INSERT temp346 INTO TABLE temp345.
+    temp346-n = 'filterTitle'.
+    temp346-v = filtertitle.
+    INSERT temp346 INTO TABLE temp345.
+    temp346-n = 'sortOldestFirst'.
+    temp346-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( sortoldestfirst ).
+    INSERT temp346 INTO TABLE temp345.
+    temp346-n = 'alignment'.
+    temp346-v = ALIGNMENT.
+    INSERT temp346 INTO TABLE temp345.
+    temp346-n = 'axisOrientation'.
+    temp346-v = axisOrientation.
+    INSERT temp346 INTO TABLE temp345.
+    temp346-n = 'content'.
+    temp346-v = content.
+    INSERT temp346 INTO TABLE temp345.
+    result = _generic( name   = `Timeline`
+                       ns     = 'commons'
+                       t_prop = temp345 ).
+  ENDMETHOD.
+
+
+  METHOD timelineitem.
+
+    DATA temp347 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp348 LIKE LINE OF temp347.
+    CLEAR temp347.
+    
+    temp348-n = 'id'.
+    temp348-v = id.
+    INSERT temp348 INTO TABLE temp347.
+    temp348-n = 'dateTime'.
+    temp348-v = datetime.
+    INSERT temp348 INTO TABLE temp347.
+    temp348-n = 'title'.
+    temp348-v = title.
+    INSERT temp348 INTO TABLE temp347.
+    temp348-n = 'userNameClickable'.
+    temp348-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( usernameclickable ).
+    INSERT temp348 INTO TABLE temp347.
+    temp348-n = 'userNameClicked'.
+    temp348-v = usernameclicked.
+    INSERT temp348 INTO TABLE temp347.
+    temp348-n = 'select'.
+    temp348-v = select.
+    INSERT temp348 INTO TABLE temp347.
+    temp348-n = 'userPicture'.
+    temp348-v = userpicture.
+    INSERT temp348 INTO TABLE temp347.
+    temp348-n = 'text'.
+    temp348-v = text.
+    INSERT temp348 INTO TABLE temp347.
+    temp348-n = 'userName'.
+    temp348-v = username.
+    INSERT temp348 INTO TABLE temp347.
+    temp348-n = 'filterValue'.
+    temp348-v = filtervalue.
+    INSERT temp348 INTO TABLE temp347.
+    temp348-n = 'icon'.
+    temp348-v = icon.
+    INSERT temp348 INTO TABLE temp347.
+    result = _generic( name   = `TimelineItem`
+                       ns     = 'commons'
+                       t_prop = temp347 ).
   ENDMETHOD.
 ENDCLASS.
