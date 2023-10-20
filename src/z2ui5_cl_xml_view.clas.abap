@@ -1080,6 +1080,9 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !growing         TYPE clike OPTIONAL
         !growingmaxlines TYPE clike OPTIONAL
         !id              TYPE clike OPTIONAL
+        !REQUIRED        type CLIKE optional
+        !VALUESTATE      type CLIKE optional
+        !VALUESTATETEXT  type CLIKE optional
           PREFERRED PARAMETER value
       RETURNING
         VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
@@ -8676,6 +8679,15 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp289 INTO TABLE temp288.
     temp289-n = `growingMaxLines`.
     temp289-v = growingmaxlines.
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `required`.
+    temp289-v = required.
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `valueState`.
+    temp289-v = valuestate.
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `valueStateText`.
+    temp289-v = valuestatetext.
     INSERT temp289 INTO TABLE temp288.
     _generic( name   = `TextArea`
               t_prop = temp288 ).
