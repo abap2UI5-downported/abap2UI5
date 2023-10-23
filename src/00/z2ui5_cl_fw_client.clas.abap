@@ -276,7 +276,29 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~_bind_clear.
 
-    CLEAR mo_handler->ms_db-t_attri.
+    DATA temp2 LIKE LINE OF mo_handler->ms_db-t_attri.
+    DATA lr_bind LIKE REF TO temp2.
+      FIELD-SYMBOLS <attri> TYPE any.
+      DATA lv_name TYPE string.
+        DATA lr_ref TYPE REF TO data.
+    LOOP AT mo_handler->ms_db-t_attri REFERENCE INTO lr_bind
+          WHERE check_ready = abap_true.
+
+      
+      
+      lv_name = `MO_HANDLER->MS_DB-APP` && lr_bind->name.
+      ASSIGN (lv_name) TO <attri>.
+
+      IF sy-subrc = 0.
+        
+        GET REFERENCE OF <attri> INTO lr_ref.
+        IF val <> lr_ref.
+          DELETE mo_handler->ms_db-t_attri.
+          RETURN.
+        ENDIF.
+      ENDIF.
+
+    ENDLOOP.
 
   ENDMETHOD.
 
@@ -321,8 +343,8 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
 
 
   METHOD set_arg_string.
-      DATA temp2 LIKE LINE OF val.
-      DATA lr_arg LIKE REF TO temp2.
+      DATA temp3 LIKE LINE OF val.
+      DATA lr_arg LIKE REF TO temp3.
         DATA lv_new TYPE string.
 
     IF val IS NOT INITIAL.
