@@ -276,29 +276,51 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~_bind_clear.
 
-    DATA temp2 LIKE LINE OF mo_handler->ms_db-t_attri.
-    DATA lr_bind LIKE REF TO temp2.
-      FIELD-SYMBOLS <attri> TYPE any.
-      DATA lv_name TYPE string.
-        DATA lr_ref TYPE REF TO data.
-    LOOP AT mo_handler->ms_db-t_attri REFERENCE INTO lr_bind
-          WHERE check_ready = abap_true.
+    FIELD-SYMBOLS <temp2> LIKE LINE OF mo_handler->ms_db-t_attri.
+    DATA temp3 LIKE sy-tabix.
+    DATA temp4 LIKE LINE OF mo_handler->ms_db-t_attri.
+    DATA lr_bind2 LIKE REF TO temp4.
+    temp3 = sy-tabix.
+    READ TABLE mo_handler->ms_db-t_attri WITH KEY name = val ASSIGNING <temp2>.
+    sy-tabix = temp3.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+    <temp2>-check_dissolved = abap_false.
 
-      
-      
-      lv_name = `MO_HANDLER->MS_DB-APP` && lr_bind->name.
-      ASSIGN (lv_name) TO <attri>.
-
-      IF sy-subrc = 0.
-        
-        GET REFERENCE OF <attri> INTO lr_ref.
-        IF val <> lr_ref.
-          DELETE mo_handler->ms_db-t_attri.
-          RETURN.
-        ENDIF.
+    
+    
+    LOOP AT mo_handler->ms_db-t_attri REFERENCE INTO lr_bind2.
+      IF lr_bind2->name CS val && `-`.
+        DELETE mo_handler->ms_db-t_attri.
       ENDIF.
-
     ENDLOOP.
+    return.
+
+*    DATA(lr_in) = REF #( val ).
+*
+*    FIELD-SYMBOLS <app> TYPE any.
+*    DATA object TYPE REF TO object.
+*    ASSIGN ('MO_HANDLER->MS_DB-APP') TO <app>.
+*    object = CAST #( <app> ).
+*
+*    LOOP AT mo_handler->ms_db-t_attri REFERENCE INTO DATA(lr_bind).
+**          WHERE check_ready = abap_true.
+*
+*      FIELD-SYMBOLS <attri> TYPE any.
+*      DATA(lv_name) = `OBJECT->` && lr_bind->name.
+*      ASSIGN (lv_name) TO <attri>.
+*
+*      IF sy-subrc = 0.
+*        DATA lr_ref TYPE REF TO data.
+*        GET REFERENCE OF <attri> INTO lr_ref.
+*        IF lr_in = lr_ref.
+*          DELETE mo_handler->ms_db-t_attri.
+*          RETURN.
+*        ENDIF.
+*      ENDIF.
+*
+*    ENDLOOP.
 
   ENDMETHOD.
 
@@ -343,8 +365,8 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
 
 
   METHOD set_arg_string.
-      DATA temp3 LIKE LINE OF val.
-      DATA lr_arg LIKE REF TO temp3.
+      DATA temp5 LIKE LINE OF val.
+      DATA lr_arg LIKE REF TO temp5.
         DATA lv_new TYPE string.
 
     IF val IS NOT INITIAL.
