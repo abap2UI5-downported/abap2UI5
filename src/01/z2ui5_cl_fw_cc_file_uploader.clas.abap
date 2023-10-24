@@ -80,9 +80,9 @@ CLASS Z2UI5_CL_FW_CC_FILE_UPLOADER IMPLEMENTATION.
   METHOD load_cc.
 
     DATA js TYPE string.
-    js = ` debugger; jQuery.sap.declare("z2ui5.FileUploader");` && |\n| &&
+    js = `jQuery.sap.declare("z2ui5.FileUploader");` && |\n| &&
                           |\n| &&
-                          `        sap.ui.define([` && |\n| &&
+                          `        sap.ui.require([` && |\n| &&
                           `            "sap/ui/core/Control",` && |\n| &&
                           `            "sap/m/Button",` && |\n| &&
                           `            "sap/ui/unified/FileUploader"` && |\n| &&
