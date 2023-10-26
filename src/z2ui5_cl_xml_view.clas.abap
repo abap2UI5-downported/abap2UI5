@@ -731,6 +731,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !class          TYPE clike OPTIONAL
         !rendertype     TYPE clike OPTIONAL
         !aligncontent   TYPE clike OPTIONAL
+        !direction   TYPE clike OPTIONAL
         !alignitems     TYPE clike OPTIONAL
         !width          TYPE clike OPTIONAL
         !wrap           TYPE clike OPTIONAL
@@ -745,6 +746,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !alignitems     TYPE clike OPTIONAL
         !width          TYPE clike OPTIONAL
         !height         TYPE clike OPTIONAL
+        !renderType         TYPE clike OPTIONAL
         !wrap           TYPE clike OPTIONAL
       RETURNING
         VALUE(result)   TYPE REF TO z2ui5_cl_xml_view .
@@ -1073,11 +1075,14 @@ CLASS z2ui5_cl_xml_view DEFINITION
           PREFERRED PARAMETER span
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+
     METHODS text_area
       IMPORTING
         !value           TYPE clike OPTIONAL
         !rows            TYPE clike OPTIONAL
+        !cols            TYPE clike OPTIONAL
         !height          TYPE clike OPTIONAL
+        class          TYPE clike OPTIONAL
         !width           TYPE clike OPTIONAL
         valueliveupdate  TYPE clike OPTIONAL
         !editable        TYPE clike OPTIONAL
@@ -1086,6 +1091,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !growingmaxlines TYPE clike OPTIONAL
         !id              TYPE clike OPTIONAL
         !required        TYPE clike OPTIONAL
+        placeholder      type clike optional
         !valuestate      TYPE clike OPTIONAL
         !valuestatetext  TYPE clike OPTIONAL
           PREFERRED PARAMETER value
@@ -4850,6 +4856,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp98 INTO TABLE temp97.
     temp98-n = `width`.
     temp98-v = width.
+    INSERT temp98 INTO TABLE temp97.
+    temp98-n = `renderType`.
+    temp98-v = renderType.
     INSERT temp98 INTO TABLE temp97.
     temp98-n = `height`.
     temp98-v = height.
@@ -8623,6 +8632,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp289-n = `rows`.
     temp289-v = rows.
     INSERT temp289 INTO TABLE temp288.
+    temp289-n = `cols`.
+    temp289-v = cols.
+    INSERT temp289 INTO TABLE temp288.
     temp289-n = `height`.
     temp289-v = height.
     INSERT temp289 INTO TABLE temp288.
@@ -8634,6 +8646,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp289 INTO TABLE temp288.
     temp289-n = `editable`.
     temp289-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( editable ).
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `class`.
+    temp289-v = class.
     INSERT temp289 INTO TABLE temp288.
     temp289-n = `enabled`.
     temp289-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
@@ -8652,6 +8667,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp289 INTO TABLE temp288.
     temp289-n = `valueState`.
     temp289-v = valuestate.
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `placeholder`.
+    temp289-v = placeholder.
     INSERT temp289 INTO TABLE temp288.
     temp289-n = `valueStateText`.
     temp289-v = valuestatetext.
@@ -9666,6 +9684,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp330 INTO TABLE temp329.
     temp330-n = `alignItems`.
     temp330-v = alignitems.
+    INSERT temp330 INTO TABLE temp329.
+    temp330-n = `direction`.
+    temp330-v = direction.
     INSERT temp330 INTO TABLE temp329.
     temp330-n = `width`.
     temp330-v = width.
