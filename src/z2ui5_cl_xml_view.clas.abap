@@ -71,6 +71,12 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS html
+      IMPORTING
+        !content     TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS illustrated_message
       IMPORTING
         !enableverticalresponsiveness TYPE clike OPTIONAL
@@ -9968,8 +9974,23 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD _cc.
 
-    CREATE OBJECT result.
-    result->mo_view = me.
+    CREATE OBJECT result EXPORTING I_VIEW = me.
+
+  ENDMETHOD.
+
+  METHOD html.
+
+  DATA temp347 TYPE z2ui5_if_client=>ty_t_name_value.
+  DATA temp348 LIKE LINE OF temp347.
+  CLEAR temp347.
+  
+  temp348-n = 'content'.
+  temp348-v = content.
+  INSERT temp348 INTO TABLE temp347.
+  result = _generic( name = `HTML`
+                     ns   = `core`
+                     t_prop = temp347
+                      ).
 
   ENDMETHOD.
 
