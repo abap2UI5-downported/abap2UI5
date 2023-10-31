@@ -187,7 +187,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
+CLASS Z2UI5_CL_FW_UTILITY IMPLEMENTATION.
 
 
   METHOD boolean_abap_2_json.
@@ -220,6 +220,28 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
         ENDCASE.
       CATCH cx_root.
     ENDTRY.
+
+  ENDMETHOD.
+
+
+  METHOD c_replace_assign_struc.
+    DATA lv_length TYPE i.
+    DATA lv_attri_end TYPE string.
+
+    rv_attri  = iv_attri.
+    
+    lv_length = strlen( rv_attri ) - 2.
+    
+    lv_attri_end = rv_attri+lv_length.
+
+    IF lv_attri_end = `>*`.
+      lv_attri_end = `>`.
+      lv_length = lv_length.
+    ELSE.
+      lv_attri_end = `-`.
+      lv_length = lv_length + 2.
+    ENDIF.
+    rv_attri = rv_attri(lv_length) && lv_attri_end.
 
   ENDMETHOD.
 
@@ -257,47 +279,8 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD time_get_timestampl.
-    GET TIME STAMP FIELD result.
-  ENDMETHOD.
-
-  METHOD time_substract_seconds.
-    result = cl_abap_tstmp=>subtractsecs( tstmp = time secs  = seconds ).
-  ENDMETHOD.
-
-
   METHOD func_get_user_tech.
     result = sy-uname.
-  ENDMETHOD.
-
-  METHOD func_get_uuid_32.
-        DATA uuid TYPE c LENGTH 32.
-            DATA lv_fm TYPE string.
-
-    TRY.
-        
-
-        TRY.
-            CALL METHOD (`CL_SYSTEM_UUID`)=>if_system_uuid_static~create_uuid_c32
-              RECEIVING
-                uuid = uuid.
-
-          CATCH cx_sy_dyn_call_illegal_class.
-
-            
-            lv_fm = `GUID_CREATE`.
-            CALL FUNCTION lv_fm
-              IMPORTING
-                ev_guid_32 = uuid.
-
-        ENDTRY.
-
-        result = uuid.
-
-      CATCH cx_root.
-        ASSERT 1 = 0.
-    ENDTRY.
-
   ENDMETHOD.
 
 
@@ -337,20 +320,36 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD rtti_get_classname_by_ref.
+  METHOD func_get_uuid_32.
+        DATA uuid TYPE c LENGTH 32.
+            DATA lv_fm TYPE string.
 
-    DATA lv_classname TYPE abap_abstypename.
-    lv_classname = cl_abap_classdescr=>get_class_name( in ).
-    result = substring_after( val = lv_classname
-                              sub = `\CLASS=` ).
+    TRY.
+        
+
+        TRY.
+            CALL METHOD (`CL_SYSTEM_UUID`)=>if_system_uuid_static~create_uuid_c32
+              RECEIVING
+                uuid = uuid.
+
+          CATCH cx_sy_dyn_call_illegal_class.
+
+            
+            lv_fm = `GUID_CREATE`.
+            CALL FUNCTION lv_fm
+              IMPORTING
+                ev_guid_32 = uuid.
+
+        ENDTRY.
+
+        result = uuid.
+
+      CATCH cx_root.
+        ASSERT 1 = 0.
+    ENDTRY.
 
   ENDMETHOD.
 
-  METHOD rtti_get_type_kind.
-
-    result = cl_abap_datadescr=>get_data_type_kind( val ).
-
-  ENDMETHOD.
 
   METHOD rtti_check_type_kind_dref.
 
@@ -362,6 +361,24 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
     result = temp1.
 
   ENDMETHOD.
+
+
+  METHOD rtti_get_classname_by_ref.
+
+    DATA lv_classname TYPE abap_abstypename.
+    lv_classname = cl_abap_classdescr=>get_class_name( in ).
+    result = substring_after( val = lv_classname
+                              sub = `\CLASS=` ).
+
+  ENDMETHOD.
+
+
+  METHOD rtti_get_type_kind.
+
+    result = cl_abap_datadescr=>get_data_type_kind( val ).
+
+  ENDMETHOD.
+
 
   METHOD rtti_get_type_name.
 
@@ -479,58 +496,38 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD trans_json_any_2.
-
-    DATA temp9 TYPE /ui2/cl_json=>pretty_name_mode.
-    temp9 = pretty_name.
-    result = /ui2/cl_json=>serialize( data = any pretty_name = temp9 ).
-
+  METHOD time_get_timestampl.
+    GET TIME STAMP FIELD result.
   ENDMETHOD.
 
 
-  METHOD trans_xml_any_2.
-
-    CALL TRANSFORMATION id
-         SOURCE data = any
-         RESULT XML result
-         OPTIONS data_refs = `heap-or-create`.
-
+  METHOD time_substract_seconds.
+    result = cl_abap_tstmp=>subtractsecs( tstmp = time secs  = seconds ).
   ENDMETHOD.
 
-
-  METHOD c_replace_assign_struc.
-    DATA lv_length TYPE i.
-    DATA lv_attri_end TYPE string.
-
-    rv_attri  = iv_attri.
-    
-    lv_length = strlen( rv_attri ) - 2.
-    
-    lv_attri_end = rv_attri+lv_length.
-
-    IF lv_attri_end = `>*`.
-      lv_attri_end = `>`.
-      lv_length = lv_length.
-    ELSE.
-      lv_attri_end = `-`.
-      lv_length = lv_length + 2.
-    ENDIF.
-    rv_attri = rv_attri(lv_length) && lv_attri_end.
-
-  ENDMETHOD.
 
   METHOD trans_json_2_any.
 
-    DATA temp10 TYPE string.
-    temp10 = val.
+    DATA temp9 TYPE string.
+    temp9 = val.
     /ui2/cl_json=>deserialize(
         EXPORTING
-            json         = temp10
+            json         = temp9
             assoc_arrays = abap_true
         CHANGING
             data = data ).
 
   ENDMETHOD.
+
+
+  METHOD trans_json_any_2.
+
+    DATA temp10 TYPE /ui2/cl_json=>pretty_name_mode.
+    temp10 = pretty_name.
+    result = /ui2/cl_json=>serialize( data = any pretty_name = temp10 ).
+
+  ENDMETHOD.
+
 
   METHOD trans_ref_tab_2_tab.
 
@@ -655,6 +652,16 @@ CLASS z2ui5_cl_fw_utility IMPLEMENTATION.
     CALL TRANSFORMATION id
         SOURCE XML xml
         RESULT data = any.
+
+  ENDMETHOD.
+
+
+  METHOD trans_xml_any_2.
+
+    CALL TRANSFORMATION id
+         SOURCE data = any
+         RESULT XML result
+         OPTIONS data_refs = `heap-or-create`.
 
   ENDMETHOD.
 
