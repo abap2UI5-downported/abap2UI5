@@ -39,9 +39,17 @@ CLASS Z2UI5_CL_CC_FONT_AWESOME_ICONS IMPLEMENTATION.
 
   METHOD LOAD_ANIMATION_JS.
 
-    result = mo_view->_cc_plain_xml( `<html:script src="` && faw_js_url && `" ></html:script>` ).
+*    result = mo_view->_cc_plain_xml( `<html:script src="` && faw_js_url && `" ></html:script>` ).
+    DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp2 LIKE LINE OF temp1.
+    CLEAR temp1.
+    
+    temp2-n = `src`.
+    temp2-v = faw_js_url.
+    INSERT temp2 INTO TABLE temp1.
+    result = mo_view->_generic( ns = `html` name = `script` t_prop = temp1 ).
 
-  ENDMETHOD.
+    enDMETHOD.
 
 
   METHOD LOAD_ICONS.
