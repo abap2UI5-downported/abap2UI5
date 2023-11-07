@@ -146,11 +146,11 @@
     PROTECTED SECTION.
     PRIVATE SECTION.
 
-ENDCLASS.
+  ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_CC_DRIVER_JS IMPLEMENTATION.
+  CLASS z2ui5_cl_cc_driver_js IMPLEMENTATION.
 
 
     METHOD constructor.
@@ -329,6 +329,8 @@ CLASS Z2UI5_CL_CC_DRIVER_JS IMPLEMENTATION.
 
       DATA js TYPE string.
       DATA css TYPE string.
+        DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
+        DATA temp2 LIKE LINE OF temp1.
       DATA final TYPE string.
       js = ``.
       
@@ -337,23 +339,37 @@ CLASS Z2UI5_CL_CC_DRIVER_JS IMPLEMENTATION.
       IF css_url IS INITIAL.
         IF local_css = abap_true.
           css = css && `<html:style>` && get_css_local( ) && `</html:style>` && |\n|.
+          css = css && get_css_local( ) && |\n|.
         ENDIF.
       ELSE.
-        css = css && `<html:style>` && css_url && `</html:style>` && |\n|.
+*        css = css && `<html:style>` && css_url && `</html:style>` && |\n|.
+        css = css &&  css_url &&  |\n|.
       ENDIF.
 
       IF js_url IS INITIAL.
         IF local_js = abap_true.
-          js = js && `<html:script>` && get_js_local( ) && `</html:script>` && |\n|.
+*          js = js && `<html:script>` && get_js_local( ) && `</html:script>` && |\n|.
+          result = mo_view->_generic( ns = `html` name = `script` )->_cc_plain_xml( get_js_local( ) )->get_parent( ).
         ENDIF.
       ELSE.
         js = js && `<html:script src="` && js_url && `" ></html:script>` && |\n|.
+        
+        CLEAR temp1.
+        
+        temp2-n = `src`.
+        temp2-v = js_url.
+        INSERT temp2 INTO TABLE temp1.
+        result = mo_view->_generic( ns = `html` name = `script` t_prop = temp1 )->get_parent( ).
       ENDIF.
 
       
       final = js && |\n| && css ##NEEDED.
 
-      result = mo_view->_cc_plain_xml( js )->get_parent( )->_cc_plain_xml( css ).
+*      result = mo_view->_cc_plain_xml( js )->get_parent( )->_cc_plain_xml( css ).
+
+
+      result = mo_view->_generic( ns = `html` name = `style` )->_cc_plain_xml( css ).
+      "->get_parent( ).
 
     ENDMETHOD.
 
@@ -513,8 +529,8 @@ CLASS Z2UI5_CL_CC_DRIVER_JS IMPLEMENTATION.
 
       ENDIF.
 
-      result = mo_view->_cc_plain_xml( `<html:script>` && drive_js && `</html:script>` ).
-
+*      result = mo_view->_cc_plain_xml( `<html:script>` && drive_js && `</html:script>` ).
+      result = mo_view->_generic( ns = `html` name = `script` )->_cc_plain_xml( drive_js ).
 
     ENDMETHOD.
-ENDCLASS.
+  ENDCLASS.
