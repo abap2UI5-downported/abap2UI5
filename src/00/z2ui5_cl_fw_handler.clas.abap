@@ -136,6 +136,7 @@ ENDCLASS.
 
 CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
 
+
   METHOD app_set_next.
 
     DATA temp1 TYPE string.
@@ -165,18 +166,27 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
 
   ENDMETHOD.
 
+
   METHOD request_begin.
         DATA location TYPE REF TO z2ui5_cl_fw_utility_json.
+            FIELD-SYMBOLS <struc> TYPE any.
+            DATA ls_params TYPE REF TO any.
+            DATA lt_comp TYPE abap_component_tab.
+            DATA ls_comp LIKE LINE OF lt_comp.
+              FIELD-SYMBOLS <val_ref> TYPE REF TO data.
+              FIELD-SYMBOLS <tab> TYPE table.
+              FIELD-SYMBOLS <val2> TYPE data.
+              DATA temp2 TYPE z2ui5_if_client=>ty_s_name_value.
         DATA lv_id_prev TYPE string.
         FIELD-SYMBOLS <any> TYPE any.
         DATA temp1 TYPE xsdboolean.
-        DATA temp3 TYPE xsdboolean.
         DATA temp4 TYPE xsdboolean.
-        FIELD-SYMBOLS <arg> TYPE STANDARD TABLE.
         DATA temp5 TYPE xsdboolean.
+        FIELD-SYMBOLS <arg> TYPE STANDARD TABLE.
+        DATA temp6 TYPE xsdboolean.
         FIELD-SYMBOLS <arg_row> TYPE any.
             FIELD-SYMBOLS <val> TYPE any.
-            DATA temp2 TYPE string.
+            DATA temp3 TYPE string.
         DATA lo_message TYPE REF TO z2ui5_cl_fw_utility_json.
         DATA lo_scroll TYPE REF TO z2ui5_cl_fw_utility_json.
         DATA lo_cursor TYPE REF TO z2ui5_cl_fw_utility_json.
@@ -187,10 +197,62 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
         
         location     = so_body->get_attribute( `OLOCATION` ).
         ss_config-body     = body.
-        ss_config-search   = location->get_attribute( `SEARCH` )->get_val( ).
-        ss_config-origin   = location->get_attribute( `ORIGIN` )->get_val( ).
-        ss_config-pathname = location->get_attribute( `PATHNAME` )->get_val( ).
-        ss_config-version  = location->get_attribute( `VERSION` )->get_val( ).
+
+        TRY.
+            ss_config-search   = location->get_attribute( `SEARCH` )->get_val( ).
+          CATCH cx_root.
+        ENDTRY.
+
+        TRY.
+            ss_config-origin   = location->get_attribute( `ORIGIN` )->get_val( ).
+          CATCH cx_root.
+        ENDTRY.
+
+        TRY.
+            ss_config-pathname = location->get_attribute( `PATHNAME` )->get_val( ).
+          CATCH cx_root.
+        ENDTRY.
+
+        TRY.
+            ss_config-version  = location->get_attribute( `VERSION` )->get_val( ).
+          CATCH cx_root.
+        ENDTRY.
+
+        TRY.
+            ss_config-check_launchpad_active  = location->get_attribute( `CHECK_LAUNCHPAD_ACTIVE` )->get_val( ).
+          CATCH cx_root.
+        ENDTRY.
+
+        TRY.
+            
+            
+            ls_params  = location->get_attribute( `STARTUP_PARAMETERS` )->get_val_ref( ).
+            ASSIGN ls_params->* TO <struc>.
+
+            
+            lt_comp = z2ui5_cl_fw_utility=>rtti_get_t_comp_by_struc( <struc> ).
+
+            
+            LOOP AT lt_comp INTO ls_comp.
+
+              
+              
+              
+              ASSIGN COMPONENT ls_comp-name OF STRUCTURE <struc> TO <val_ref>.
+              ASSIGN <val_ref>->* TO <tab>.
+              READ TABLE <tab> INDEX 1 ASSIGNING <val_ref>.
+              ASSIGN <val_ref>->* TO <val2>.
+
+              
+              CLEAR temp2.
+              temp2-n = ls_comp-name.
+              temp2-v = <val2>.
+              INSERT temp2 INTO TABLE ss_config-t_startup_params.
+
+            ENDLOOP.
+          CATCH cx_root.
+        ENDTRY.
+
       CATCH cx_root.
     ENDTRY.
     ss_config-view_model_edit_name = z2ui5_cl_fw_binding=>cv_model_edit_name.
@@ -220,18 +282,18 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
         z2ui5_cl_fw_utility=>x_check_raise( temp1 ).
         ASSIGN (`<ANY>->ARGUMENTS`) TO <any>.
         
-        temp3 = boolc( sy-subrc <> 0 ).
-        z2ui5_cl_fw_utility=>x_check_raise( temp3 ).
-        ASSIGN (`<ANY>->*`) TO <any>.
-        
         temp4 = boolc( sy-subrc <> 0 ).
         z2ui5_cl_fw_utility=>x_check_raise( temp4 ).
+        ASSIGN (`<ANY>->*`) TO <any>.
+        
+        temp5 = boolc( sy-subrc <> 0 ).
+        z2ui5_cl_fw_utility=>x_check_raise( temp5 ).
 
         
         ASSIGN <any> TO <arg>.
         
-        temp5 = boolc( sy-subrc <> 0 ).
-        z2ui5_cl_fw_utility=>x_check_raise( temp5 ).
+        temp6 = boolc( sy-subrc <> 0 ).
+        z2ui5_cl_fw_utility=>x_check_raise( temp6 ).
 
         
         LOOP AT <arg> ASSIGNING <arg_row>.
@@ -246,8 +308,8 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
               CONTINUE.
             ENDIF.
             
-            temp2 = <val>.
-            INSERT temp2 INTO TABLE result->ms_actual-t_event_arg.
+            temp3 = <val>.
+            INSERT temp3 INTO TABLE result->ms_actual-t_event_arg.
           ENDIF.
 
         ENDLOOP.
@@ -455,6 +517,4 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
     result->ms_db-app->id = result->ms_db-id.
 
   ENDMETHOD.
-
-
 ENDCLASS.
