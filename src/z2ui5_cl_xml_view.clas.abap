@@ -480,6 +480,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !height       TYPE clike OPTIONAL
         !class        TYPE clike OPTIONAL
         !loop         TYPE clike OPTIONAL
+        !id         TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
@@ -828,6 +829,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !width        TYPE clike OPTIONAL
         !vertical     TYPE clike OPTIONAL
         !horizontal   TYPE clike OPTIONAL
+        !id   TYPE clike OPTIONAL
         !focusable    TYPE clike OPTIONAL
           PREFERRED PARAMETER height
       RETURNING
@@ -935,6 +937,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !width         TYPE clike OPTIONAL
         !wrapping      TYPE clike OPTIONAL
         !wrappingtype  TYPE clike OPTIONAL
+        !id            TYPE clike OPTIONAL
+        !class         TYPE clike OPTIONAL
           PREFERRED PARAMETER text
       RETURNING
         VALUE(result)  TYPE REF TO z2ui5_cl_xml_view.
@@ -980,6 +984,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !mindate               TYPE clike OPTIONAL
         !maxdate               TYPE clike OPTIONAL
         !editable              TYPE clike OPTIONAL
+        !width              TYPE clike OPTIONAL
+        !id              TYPE clike OPTIONAL
           PREFERRED PARAMETER value
       RETURNING
         VALUE(result)          TYPE REF TO z2ui5_cl_xml_view .
@@ -991,6 +997,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !valuestate    TYPE clike OPTIONAL
         !displayformat TYPE clike OPTIONAL
         !valueformat   TYPE clike OPTIONAL
+        !required   TYPE clike OPTIONAL
+        !width   TYPE clike OPTIONAL
           PREFERRED PARAMETER value
       RETURNING
         VALUE(result)  TYPE REF TO z2ui5_cl_xml_view .
@@ -1051,6 +1059,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !visible                TYPE clike OPTIONAL
         !nodata                 TYPE clike OPTIONAL
         !id                     TYPE clike OPTIONAL
+        !itemPress                     TYPE clike OPTIONAL
+        !select                     TYPE clike OPTIONAL
       RETURNING
         VALUE(result)           TYPE REF TO z2ui5_cl_xml_view .
     METHODS custom_list_item
@@ -1078,6 +1088,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !iconinset         TYPE clike OPTIONAL
         !adapttitlesize    TYPE clike OPTIONAL
         !activeicon        TYPE clike OPTIONAL
+        !unread            TYPE clike OPTIONAL
+        !highlight         TYPE clike OPTIONAL
       RETURNING
         VALUE(result)      TYPE REF TO z2ui5_cl_xml_view .
     METHODS item
@@ -1303,6 +1315,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !width              TYPE clike OPTIONAL
         !wrapping           TYPE clike OPTIONAL
         !wrappingtype       TYPE clike OPTIONAL
+        !id                 TYPE clike OPTIONAL
           PREFERRED PARAMETER text
       RETURNING
         VALUE(result)       TYPE REF TO z2ui5_cl_xml_view .
@@ -1653,12 +1666,14 @@ CLASS z2ui5_cl_xml_view DEFINITION
     METHODS block_layout
       IMPORTING
         !background   TYPE clike OPTIONAL
+        !id   TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
     METHODS block_layout_row
       IMPORTING
         !rowcolorset  TYPE clike OPTIONAL
+        !id  TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
@@ -1671,6 +1686,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !titlelevel           TYPE clike OPTIONAL
         !width                TYPE clike OPTIONAL
         !class                TYPE clike OPTIONAL
+        !id                   TYPE clike OPTIONAL
       RETURNING
         VALUE(result)         TYPE REF TO z2ui5_cl_xml_view .
 
@@ -2918,7 +2934,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_xml_view IMPLEMENTATION.
+CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD actions.
@@ -3295,6 +3311,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp16-n = `background`.
     temp16-v = background.
     INSERT temp16 INTO TABLE temp15.
+    temp16-n = `id`.
+    temp16-v = id.
+    INSERT temp16 INTO TABLE temp15.
     result = _generic( name   = `BlockLayout`
                        ns     = `layout`
                        t_prop = temp15 ).
@@ -3324,6 +3343,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp18-n = `class`.
     temp18-v = class.
     INSERT temp18 INTO TABLE temp17.
+    temp18-n = `id`.
+    temp18-v = id.
+    INSERT temp18 INTO TABLE temp17.
     temp18-n = `titleLevel`.
     temp18-v = titlelevel.
     INSERT temp18 INTO TABLE temp17.
@@ -3340,6 +3362,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     
     temp20-n = `rowColorSet`.
     temp20-v = rowcolorset.
+    INSERT temp20 INTO TABLE temp19.
+    temp20-n = `id`.
+    temp20-v = id.
     INSERT temp20 INTO TABLE temp19.
     result = _generic( name   = `BlockLayoutRow`
                        ns     = `layout`
@@ -3565,6 +3590,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp30 INTO TABLE temp29.
     temp30-n = `height`.
     temp30-v = height.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `id`.
+    temp30-v = id.
     INSERT temp30 INTO TABLE temp29.
     result = _generic( name   = `Carousel`
                        t_prop = temp29 ).
@@ -4096,6 +4124,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp54 INTO TABLE temp53.
     temp54-n = `minDate`.
     temp54-v = mindate.
+    INSERT temp54 INTO TABLE temp53.
+    temp54-n = `width`.
+    temp54-v = width.
+    INSERT temp54 INTO TABLE temp53.
+    temp54-n = `id`.
+    temp54-v = id.
     INSERT temp54 INTO TABLE temp53.
     temp54-n = `enabled`.
     temp54-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
@@ -6031,6 +6065,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp154-n = `design`.
     temp154-v = design.
     INSERT temp154 INTO TABLE temp153.
+    temp154-n = `id`.
+    temp154-v = id.
+    INSERT temp154 INTO TABLE temp153.
+    temp154-n = `class`.
+    temp154-v = class.
+    INSERT temp154 INTO TABLE temp153.
     temp154-n = `labelFor`.
     temp154-v = labelfor.
     INSERT temp154 INTO TABLE temp153.
@@ -6231,6 +6271,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp162 INTO TABLE temp161.
     temp162-n = `mode`.
     temp162-v = mode.
+    INSERT temp162 INTO TABLE temp161.
+    temp162-n = `itemPress`.
+    temp162-v = itemPress.
+    INSERT temp162 INTO TABLE temp161.
+    temp162-n = `select`.
+    temp162-v = select.
     INSERT temp162 INTO TABLE temp161.
     temp162-n = `selectionChange`.
     temp162-v = selectionchange.
@@ -8197,6 +8243,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp266-n = `width`.
     temp266-v = width.
     INSERT temp266 INTO TABLE temp265.
+    temp266-n = `id`.
+    temp266-v = id.
+    INSERT temp266 INTO TABLE temp265.
     temp266-n = `vertical`.
     temp266-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( vertical ).
     INSERT temp266 INTO TABLE temp265.
@@ -8733,6 +8782,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp296-n = `adaptTitleSize`.
     temp296-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( adapttitlesize ).
     INSERT temp296 INTO TABLE temp295.
+    temp296-n = `unread`.
+    temp296-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( unread ).
+    INSERT temp296 INTO TABLE temp295.
     temp296-n = `iconInset`.
     temp296-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( iconinset ).
     INSERT temp296 INTO TABLE temp295.
@@ -8744,6 +8796,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp296 INTO TABLE temp295.
     temp296-n = `infoState`.
     temp296-v = infostate.
+    INSERT temp296 INTO TABLE temp295.
+    temp296-n = `highlight`.
+    temp296-v = highlight.
     INSERT temp296 INTO TABLE temp295.
     temp296-n = `wrapCharLimit`.
     temp296-v = wrapcharlimit.
@@ -9116,6 +9171,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp312-n = `width`.
     temp312-v = width.
     INSERT temp312 INTO TABLE temp311.
+    temp312-n = `id`.
+    temp312-v = id.
+    INSERT temp312 INTO TABLE temp311.
     temp312-n = `wrapping`.
     temp312-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( wrapping ).
     INSERT temp312 INTO TABLE temp311.
@@ -9326,6 +9384,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp324 INTO TABLE temp323.
     temp324-n = `enabled`.
     temp324-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
+    INSERT temp324 INTO TABLE temp323.
+    temp324-n = `required`.
+    temp324-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( required ).
+    INSERT temp324 INTO TABLE temp323.
+    temp324-n = `width`.
+    temp324-v = width.
     INSERT temp324 INTO TABLE temp323.
     temp324-n = `valueState`.
     temp324-v = valuestate.
