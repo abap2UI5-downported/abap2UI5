@@ -2919,7 +2919,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
   PROTECTED SECTION.
     DATA mv_name  TYPE string.
     DATA mv_ns     TYPE string.
-    DATA mt_prop  TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA mt_prop  TYPE SORTED TABLE OF z2ui5_if_client=>ty_s_name_value with non-UNIQUE key n.
 
     DATA mt_ns  TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line.
     DATA mo_root   TYPE REF TO z2ui5_cl_xml_view.
@@ -4415,7 +4415,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD factory.
-    DATA temp69 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp69 LIKE result->mt_prop.
     DATA temp70 LIKE LINE OF temp69.
     DATA temp71 TYPE z2ui5_if_client=>ty_s_name_value.
     DATA temp72 TYPE z2ui5_if_client=>ty_s_name_value.
@@ -10482,7 +10482,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
       temp367-n = `xmlns:layout`.
       temp367-v = `sap.ui.layout`.
       INSERT temp367 INTO TABLE temp366.
-      temp367-n = `xmlns:table `.
+      temp367-n = `xmlns:table`.
       temp367-v = `sap.ui.table`.
       INSERT temp367 INTO TABLE temp366.
       temp367-n = `xmlns:f`.
@@ -10579,7 +10579,10 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
           
           ns = lr_prop->n+6.
           IF ns = lr_ns->*.
+          try.
             INSERT lr_prop->* INTO TABLE mt_prop.
+            catch cx_root.
+            endtry.
             DELETE lt_prop.
             EXIT.
           ENDIF.
@@ -10588,7 +10591,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
       ENDLOOP.
 
-
+    DELETE ADJACENT DUPLICATES FROM mt_prop COMPARING n.
     ENDIF.
 
     
