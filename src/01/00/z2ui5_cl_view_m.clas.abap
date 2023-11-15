@@ -1,213 +1,438 @@
 CLASS z2ui5_cl_view_m DEFINITION
   PUBLIC
   FINAL
-  CREATE PUBLIC .
+  CREATE PUBLIC INHERITING FROM z2ui5_cl_view.
 
   PUBLIC SECTION.
 
     METHODS input
       IMPORTING
-        !id                            TYPE clike OPTIONAL
-        !value                         TYPE clike OPTIONAL
-        !placeholder                   TYPE clike OPTIONAL
-        !type                          TYPE clike OPTIONAL
-        !showclearicon                 TYPE clike OPTIONAL
-        !valuestate                    TYPE clike OPTIONAL
-        !valuestatetext                TYPE clike OPTIONAL
-        !showtablesuggestionvaluehelp  TYPE clike OPTIONAL
-        !description                   TYPE clike OPTIONAL
-        !editable                      TYPE clike OPTIONAL
-        !enabled                       TYPE clike OPTIONAL
-        !suggestionitems               TYPE clike OPTIONAL
-        !suggestionrows                TYPE clike OPTIONAL
-        !showsuggestion                TYPE clike OPTIONAL
-        !showvaluehelp                 TYPE clike OPTIONAL
-        !valuehelprequest              TYPE clike OPTIONAL
-        !required                      TYPE clike OPTIONAL
-        !suggest                       TYPE clike OPTIONAL
-        !class                         TYPE clike OPTIONAL
-        !visible                       TYPE clike OPTIONAL
-        !submit                        TYPE clike OPTIONAL
-        !valueliveupdate               TYPE clike OPTIONAL
-        !autocomplete                  TYPE clike OPTIONAL
-        !maxsuggestionwidth            TYPE clike OPTIONAL
-        !fieldwidth                    TYPE clike OPTIONAL
-        !valuehelponly                 TYPE clike OPTIONAL
-        !width                         TYPE clike OPTIONAL
-        !change                        TYPE clike OPTIONAL
-        !valuehelpiconsrc              TYPE clike OPTIONAL
-        !textformatter                 TYPE clike OPTIONAL
-        !textformatmode                TYPE clike OPTIONAL
-        !maxlength                     TYPE clike OPTIONAL
-        !startsuggestion               TYPE clike OPTIONAL
-        !enablesuggestionshighlighting TYPE clike OPTIONAL
-        !enabletableautopopinmode      TYPE clike OPTIONAL
+        id                            TYPE clike OPTIONAL
+        value                         TYPE clike OPTIONAL
+        placeholder                   TYPE clike OPTIONAL
+        type                          TYPE clike OPTIONAL
+        showclearicon                 TYPE clike OPTIONAL
+        valuestate                    TYPE clike OPTIONAL
+        valuestatetext                TYPE clike OPTIONAL
+        showtablesuggestionvaluehelp  TYPE clike OPTIONAL
+        description                   TYPE clike OPTIONAL
+        editable                      TYPE clike OPTIONAL
+        enabled                       TYPE clike OPTIONAL
+        suggestionitems               TYPE clike OPTIONAL
+        suggestionrows                TYPE clike OPTIONAL
+        showsuggestion                TYPE clike OPTIONAL
+        showvaluehelp                 TYPE clike OPTIONAL
+        valuehelprequest              TYPE clike OPTIONAL
+        required                      TYPE clike OPTIONAL
+        suggest                       TYPE clike OPTIONAL
+        class                         TYPE clike OPTIONAL
+        visible                       TYPE clike OPTIONAL
+        submit                        TYPE clike OPTIONAL
+        valueliveupdate               TYPE clike OPTIONAL
+        autocomplete                  TYPE clike OPTIONAL
+        maxsuggestionwidth            TYPE clike OPTIONAL
+        fieldwidth                    TYPE clike OPTIONAL
+        valuehelponly                 TYPE clike OPTIONAL
+        width                         TYPE clike OPTIONAL
+        change                        TYPE clike OPTIONAL
+        valuehelpiconsrc              TYPE clike OPTIONAL
+        textformatter                 TYPE clike OPTIONAL
+        textformatmode                TYPE clike OPTIONAL
+        maxlength                     TYPE clike OPTIONAL
+        startsuggestion               TYPE clike OPTIONAL
+        enablesuggestionshighlighting TYPE clike OPTIONAL
+        enabletableautopopinmode      TYPE clike OPTIONAL
           PREFERRED PARAMETER value
       RETURNING
-        VALUE(result)                  TYPE REF TO z2ui5_cl_view .
+        VALUE(result)                 TYPE REF TO z2ui5_cl_view_m.
+
+    METHODS page
+      IMPORTING
+        title            TYPE clike OPTIONAL
+        navbuttonpress   TYPE clike OPTIONAL
+        shownavbutton    TYPE clike OPTIONAL
+        showheader       TYPE clike OPTIONAL
+        id               TYPE clike OPTIONAL
+        class            TYPE clike OPTIONAL
+        backgrounddesign TYPE clike OPTIONAL
+        contentonlybusy  TYPE clike OPTIONAL
+        enablescrolling  TYPE clike OPTIONAL
+        navbuttontooltip TYPE clike OPTIONAL
+        floatingfooter   TYPE clike OPTIONAL
+        showfooter       TYPE clike OPTIONAL
+        showsubheader    TYPE clike OPTIONAL
+        titlealignment   TYPE clike OPTIONAL
+        titlelevel       TYPE clike OPTIONAL
+          PREFERRED PARAMETER title
+      RETURNING
+        VALUE(result)    TYPE REF TO z2ui5_cl_view_m.
+
+    METHODS shell
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_view_m.
+
+    METHODS title
+      IMPORTING
+        text          TYPE clike OPTIONAL
+        wrapping      TYPE clike OPTIONAL
+        level         TYPE clike OPTIONAL
+          PREFERRED PARAMETER text
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_view_m.
+
+    METHODS button
+      IMPORTING
+        text             TYPE clike OPTIONAL
+        icon             TYPE clike OPTIONAL
+        type             TYPE clike OPTIONAL
+        enabled          TYPE clike OPTIONAL
+        visible          TYPE clike OPTIONAL
+        press            TYPE clike OPTIONAL
+        class            TYPE clike OPTIONAL
+        id               TYPE clike OPTIONAL
+        tooltip          TYPE clike OPTIONAL
+        width            TYPE clike OPTIONAL
+        iconfirst        TYPE clike OPTIONAL
+        icondensityaware TYPE clike OPTIONAL
+        ariahaspopup     TYPE clike OPTIONAL
+        activeicon       TYPE clike OPTIONAL
+        accessiblerole   TYPE clike OPTIONAL
+        textdirection    TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result)    TYPE REF TO z2ui5_cl_view_m.
+
+    METHODS label
+      IMPORTING
+        text          TYPE clike OPTIONAL
+        labelfor      TYPE clike OPTIONAL
+        design        TYPE clike OPTIONAL
+        displayonly   TYPE clike OPTIONAL
+        required      TYPE clike OPTIONAL
+        showcolon     TYPE clike OPTIONAL
+        textalign     TYPE clike OPTIONAL
+        textdirection TYPE clike OPTIONAL
+        valign        TYPE clike OPTIONAL
+        width         TYPE clike OPTIONAL
+        wrapping      TYPE clike OPTIONAL
+        wrappingtype  TYPE clike OPTIONAL
+        id            TYPE clike OPTIONAL
+        class         TYPE clike OPTIONAL
+          PREFERRED PARAMETER text
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_view_m.
+
 
   PROTECTED SECTION.
-
-    DATA mo_view TYPE REF TO z2ui5_cl_view.
-
   PRIVATE SECTION.
 ENDCLASS.
 
 
-
 CLASS z2ui5_cl_view_m IMPLEMENTATION.
-
-  METHOD input.
+  METHOD button.
     DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp2 LIKE LINE OF temp1.
-
-    result = mo_view.
-
+    result = me.
     
     CLEAR temp1.
     
-    temp2-n = `id`.
-    temp2-v = id.
+    temp2-n = `press`.
+    temp2-v = press.
     INSERT temp2 INTO TABLE temp1.
-    temp2-n = `placeholder`.
-    temp2-v = placeholder.
+    temp2-n = `text`.
+    temp2-v = text.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-n = `enabled`.
+    temp2-v = b2json( enabled ).
+    INSERT temp2 INTO TABLE temp1.
+    temp2-n = `visible`.
+    temp2-v = b2json( visible ).
+    INSERT temp2 INTO TABLE temp1.
+    temp2-n = `iconDensityAware`.
+    temp2-v = b2json( icondensityaware ).
+    INSERT temp2 INTO TABLE temp1.
+    temp2-n = `iconFirst`.
+    temp2-v = b2json( iconfirst ).
+    INSERT temp2 INTO TABLE temp1.
+    temp2-n = `icon`.
+    temp2-v = icon.
     INSERT temp2 INTO TABLE temp1.
     temp2-n = `type`.
     temp2-v = type.
     INSERT temp2 INTO TABLE temp1.
-    temp2-n = `maxLength`.
-    temp2-v = maxlength.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `showClearIcon`.
-    temp2-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showclearicon ).
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `description`.
-    temp2-v = description.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `editable`.
-    temp2-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( editable ).
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `enabled`.
-    temp2-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `visible`.
-    temp2-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( visible ).
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `enableTableAutoPopinMode`.
-    temp2-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabletableautopopinmode ).
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `enableSuggestionsHighlighting`.
-    temp2-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enablesuggestionshighlighting ).
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `showTableSuggestionValueHelp`.
-    temp2-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showtablesuggestionvaluehelp ).
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `valueState`.
-    temp2-v = valuestate.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `valueStateText`.
-    temp2-v = valuestatetext.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `value`.
-    temp2-v = value.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `required`.
-    temp2-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( required ).
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `suggest`.
-    temp2-v = suggest.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `suggestionItems`.
-    temp2-v = suggestionitems.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `suggestionRows`.
-    temp2-v = suggestionrows.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `showSuggestion`.
-    temp2-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showsuggestion ).
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `valueHelpRequest`.
-    temp2-v = valuehelprequest.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `autocomplete`.
-    temp2-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( autocomplete ).
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `valueLiveUpdate`.
-    temp2-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( valueliveupdate ).
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `submit`.
-    temp2-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( submit ).
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `showValueHelp`.
-    temp2-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( showvaluehelp ).
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `valueHelpOnly`.
-    temp2-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( valuehelponly ).
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `class`.
-    temp2-v = class.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `change`.
-    temp2-v = change.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `maxSuggestionWidth`.
-    temp2-v = maxsuggestionwidth.
+    temp2-n = `id`.
+    temp2-v = id.
     INSERT temp2 INTO TABLE temp1.
     temp2-n = `width`.
     temp2-v = width.
     INSERT temp2 INTO TABLE temp1.
-    temp2-n = `textFormatter`.
-    temp2-v = textformatter.
+    temp2-n = `tooltip`.
+    temp2-v = tooltip.
     INSERT temp2 INTO TABLE temp1.
-    temp2-n = `startSuggestion`.
-    temp2-v = startsuggestion.
+    temp2-n = `textDirection`.
+    temp2-v = textdirection.
     INSERT temp2 INTO TABLE temp1.
-    temp2-n = `valueHelpIconSrc`.
-    temp2-v = valuehelpiconsrc.
+    temp2-n = `accessibleRole`.
+    temp2-v = accessiblerole.
     INSERT temp2 INTO TABLE temp1.
-    temp2-n = `textFormatMode`.
-    temp2-v = textformatmode.
+    temp2-n = `activeIcon`.
+    temp2-v = activeicon.
     INSERT temp2 INTO TABLE temp1.
-    temp2-n = `fieldWidth`.
-    temp2-v = fieldwidth.
+    temp2-n = `ariaHasPopup`.
+    temp2-v = ariahaspopup.
     INSERT temp2 INTO TABLE temp1.
-    mo_view->add( name   = `Input`
-              t_prop = temp1 ).
+    temp2-n = `class`.
+    temp2-v = class.
+    INSERT temp2 INTO TABLE temp1.
+    add( name   = `Button`
+                t_prop = temp1 ).
+  ENDMETHOD.
 
+  METHOD label.
+    DATA temp3 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp4 LIKE LINE OF temp3.
+    result = me.
+    
+    CLEAR temp3.
+    
+    temp4-n = `text`.
+    temp4-v = text.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `displayOnly`.
+    temp4-v = b2json( displayonly ).
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `required`.
+    temp4-v = b2json( required ).
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `showColon`.
+    temp4-v = b2json( showcolon ).
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `textAlign`.
+    temp4-v = textalign.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `textDirection`.
+    temp4-v = textdirection.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `vAlign`.
+    temp4-v = valign.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `width`.
+    temp4-v = width.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `wrapping`.
+    temp4-v = b2json( wrapping ).
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `wrappingType`.
+    temp4-v = wrappingtype.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `design`.
+    temp4-v = design.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `id`.
+    temp4-v = id.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `class`.
+    temp4-v = class.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `labelFor`.
+    temp4-v = labelfor.
+    INSERT temp4 INTO TABLE temp3.
+    add( name   = `Label`
+                t_prop = temp3 ).
+  ENDMETHOD.
 
-*    DATA(test) = `!function(){"use strict";const t="undefined"!=typeof window?window:Function("return this;")(),e=(e,o)=>((e,o)=>{let n=null!=o?o:t;for(let t=0;t<e.length&&null!=n;++t)n=n[e[t]];return n})(e.split("."),o),o=O` &&
-*`bject.keys,n=Object.hasOwnProperty,s=(t,e)=>n.call(t,e);let i=0;const r=t=>{const e=(new Date).getTime(),o=Math.floor(1e9*Math.random());return i++,t+"_"+o+i+String(e)},a=()=>({listeners:[],scriptId:r("tiny-script"),scriptLoaded:!1}),l=(()=>{let t=` &&
-*`a();return{load:(e,o,n)=>{t.scriptLoaded?n():(t.listeners.push(n),e.getElementById(t.scriptId)||((t,e,o,n)=>{const s=e.createElement("script");s.referrerPolicy="origin",s.type="application/javascript",s.id=t,s.src=o;const i=()=>{s.removeEventListen` &&
-*`er("load",i),n()};s.addEventListener("load",i),e.head&&e.head.appendChild(s)})(t.scriptId,e,o,(()=>{t.listeners.forEach((t=>t())),t.scriptLoaded=!0})))},reinitialize:()=>{t=a()}}})();var d;!function(t){t[t.Raw=0]="Raw",t[t.Initializing=1]="Initiali` &&
-*`zing",t[t.Ready=2]="Ready"}(d||(d={}));const u=(t,e)=>{const o=e.closest(t);if(null!==o)return o;const n=e.getRootNode().host;return null!=n?u(t,n):null},h=t=>e=>((t,e)=>s(t,e))(t,e)?t[e]:e,c=e,m=t=>t,_=h({false:!1}),p=h({true:!0,false:!1}),f=t=>/^` &&
-*`\d+$/.test(t)?Number.parseInt(t,10):t,g={setup:c,toolbar:_,menubar:_,plugins:m,content_css:m,content_style:m,width:f,height:f,toolbar_mode:m,contextmenu:_,quickbars_insert_toolbar:_,quickbars_selection_toolbar:_,powerpaste_word_import:m,powerpaste_` &&
-*`html_import:m,powerpaste_allow_local_images:p,resize:p,skin:m,skin_url:m,images_upload_url:m,images_upload_handler:c,images_upload_base_path:m,images_upload_credentials:p,images_reuse_filename:p,icons:m,icons_url:m,promotion:p},v={};class b extends` &&
-*` HTMLElement{static get formAssociated(){return!0}static get observedAttributes(){return["form","readonly","autofocus","placeholder"].concat(["on-BeforePaste","on-Blur","on-Click","on-ContextMenu","on-Copy","on-Cut","on-Dblclick","on-Drag","on-Drag` &&
-*`Drop","on-DragEnd","on-DragGesture","on-DragOver","on-Drop","on-Focus","on-FocusIn","on-FocusOut","on-KeyDown","on-KeyPress","on-KeyUp","on-MouseDown","on-MouseEnter","on-MouseLeave","on-MouseMove","on-MouseOut","on-MouseOver","on-MouseUp","on-Past` &&
-*`e","on-SelectionChange"]).concat(["on-Activate","on-AddUndo","on-BeforeAddUndo","on-BeforeExecCommand","on-BeforeGetContent","on-BeforeRenderUI","on-BeforeSetContent","on-Change","on-ClearUndos","on-Deactivate","on-Dirty","on-ExecCommand","on-GetCo` &&
-*`ntent","on-Hide","on-Init","on-LoadContent","on-NodeChange","on-PostProcess","on-PostRender","on-PreProcess","on-ProgressState","on-Redo","on-Remove","on-Reset","on-SaveContent","on-SetAttrib","on-ObjectResizeStart","on-ObjectResized","on-ObjectSel` &&
-*`ected","on-SetContent","on-Show","on-Submit","on-Undo","on-VisualAid"])}constructor(){super(),this._eventAttrHandler=t=>{t.forEach((t=>{var e;"attributes"===t.type&&t.target===this&&(null===(e=t.attributeName)||void 0===e?void 0:e.toLowerCase().sta` &&
-*`rtsWith("on-"))&&this._updateEventAttr(t.attributeName,this.getAttribute(t.attributeName))}))},this._formDataHandler=t=>{const e=this.name;if(null!=e){const o=this.value;if(null!=o){t.formData.append(e,o)}}},this._status=d.Raw,this._shadowDom=this.` &&
-*`attachShadow({mode:"open"}),this._form=null,this._eventHandlers={},this._mutationObserver=new MutationObserver(this._eventAttrHandler)}_updateEventAttr(t,o){const n=t.substring("on-".length).toLowerCase(),s=null!==o?e(o):void 0,i="function"==typeof` &&
-*` s?s:void 0;this._eventHandlers[n]!==i&&(this._editor&&this._eventHandlers[n]&&this._editor.off(n,this._eventHandlers[n]),i?(this._editor&&this._editor.on(n,i),this._eventHandlers[n]=i):delete this._eventHandlers[n])}_updateForm(){if(this.isConnect` &&
-*`ed){const t=this.getAttribute("form"),e=null!==t?this.ownerDocument.querySelector("form#"+t):u("form",this);this._form!==e&&(null!==this._form&&this._form.removeEventListener("formdata",this._formDataHandler),this._form=e,null!==this._form&&this._f` &&
-*`orm.addEventListener("formdata",this._formDataHandler))}else null!==this._form&&(this._form.removeEventListener("formdata",this._formDataHandler),this._form=null)}_getTinymce(){return t.tinymce}_getConfig(){var t,e;const o=null!==(e=c(null!==(t=thi` &&
-*`s.getAttribute("config"))&&void 0!==t?t:""))&&void 0!==e?e:{};for(let t=0;t<this.attributes.length;t++){const e=this.attributes.item(t);if(null!==e&&s(g,e.name)){o[s(v,e.name)?v[e.name]:e.name]=g[e.name](e.value)}}return this.readonly&&(o.readonly=` &&
-*`!0),this.autofocus&&(o.auto_focus=!0),delete o.target,delete o.selector,o}_getEventHandlers(){const t={};for(let o=0;o<this.attributes.length;o++){const n=this.attributes.item(o);if(null!==n&&n.name.toLowerCase().startsWith("on-")){const o=n.name.t` &&
-*`oLowerCase().substring("on-".length),s=e(n.value);"function"==typeof s&&(t[o]=s)}}return t}_doInit(){var t;this._status=d.Initializing;const e=document.createElement("textarea");e.value=null!==(t=this.textContent)&&void 0!==t?t:"",null!==this.place` &&
-*`holder&&(e.placeholder=this.placeholder),this._shadowDom.appendChild(e);const n=this._getConfig(),s=Object.assign(Object.assign({},n),{target:e,setup:t=>{this._editor=t,t.on("init",(t=>{this._status=d.Ready})),t.on("SwitchMode",(t=>{this.readonly=t` &&
-*`his.readonly})),((t,e)=>{const n=o(t);for(let o=0,s=n.length;o<s;o++){const s=n[o];e(t[s],s)}})(this._eventHandlers,((e,o)=>{void 0!==e&&t.on(o,e)})),"function"==typeof n.setup&&n.setup(t)}});this._getTinymce().init(s)}_getTinymceSrc(){var t;const ` &&
-*`e=this.getAttribute("src");if(e)return e;const o=null!==(t=this.getAttribute("channel"))&&void 0!==t?t:"6";return``https://cdn.tiny.cloud/1/${this.hasAttribute("api-key")?this.getAttribute("api-key"):"no-api-key"}/tinymce/${o}/tinymce.min.js``}_loa` &&
-*`dTinyDoInit(){this._getTinymce()?this._doInit():l.load(this.ownerDocument,this._getTinymceSrc(),(()=>this._doInit()))}attributeChangedCallback(t,e,o){e!==o&&("form"===t?this._updateForm():"readonly"===t?this.readonly=null!==o:"autofocus"===t?this.a` &&
-*`utofocus=null!==o:"placeholder"===t?this.placeholder=o:t.toLowerCase().startsWith("on-")&&this._updateEventAttr(t,o))}connectedCallback(){this._eventHandlers=this._getEventHandlers(),this._mutationObserver.observe(this,{attributes:!0,childList:!1,s` &&
-*`ubtree:!1}),this._updateForm(),this._status===d.Raw&&this._loadTinyDoInit()}disconnectedCallback(){this._mutationObserver.disconnect(),this._updateForm()}get value(){var t,e;return null!==(e=this._status===d.Ready?null===(t=this._editor)||void 0===` &&
-*`t?void 0:t.getContent():void 0)&&void 0!==e?e:null}set value(t){var e;this._status===d.Ready&&null!=t&&(null===(e=this._editor)||void 0===e||e.setContent(t))}get readonly(){return this._editor?"readonly"===this._editor.mode.get():this.hasAttribute(` &&
-*`"readonly")}set readonly(t){t?(this._editor&&"readonly"!==this._editor.mode.get()&&this._editor.mode.set("readonly"),this.hasAttribute("readonly")||this.setAttribute("readonly","")):(this._editor&&"readonly"===this._editor.mode.get()&&this._editor.` &&
-*`mode.set("design"),this.hasAttribute("readonly")&&this.removeAttribute("readonly"))}get placeholder(){return this.getAttribute("placeholder")}set placeholder(t){if(this._editor){const e=this._editor.getElement();null!==e&&(null!==t?e.setAttribute("` &&
-*`placeholder",t):e.removeAttribute("placeholder"))}null!==t?this.getAttribute("placeholder")!==t&&this.setAttribute("placeholder",t):this.hasAttribute("placeholder")&&this.removeAttribute("placeholder")}get autofocus(){return this.hasAttribute("auto` &&
-*`focus")}set autofocus(t){t?this.hasAttribute("autofocus")||this.setAttribute("autofocus",""):this.hasAttribute("autofocus")&&this.removeAttribute("autofocus")}get form(){return this._form}get name(){return this.getAttribute("name")}get type(){retur` &&
-*`n this.localName}}window.customElements.define("tinymce-editor",b)}();`.
+  METHOD title.
+    DATA temp5 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp6 LIKE LINE OF temp5.
+    result = me.
+    
+    CLEAR temp5.
+    
+    temp6-n = `text`.
+    temp6-v = text.
+    INSERT temp6 INTO TABLE temp5.
+    temp6-n = `wrapping`.
+    temp6-v = b2json( wrapping ).
+    INSERT temp6 INTO TABLE temp5.
+    temp6-n = `level`.
+    temp6-v = level.
+    INSERT temp6 INTO TABLE temp5.
+    add( name   = `Title`
+                t_prop = temp5 ).
+  ENDMETHOD.
+
+  METHOD page.
+
+    DATA temp7 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp8 LIKE LINE OF temp7.
+    CLEAR temp7.
+    
+    temp8-n = `title`.
+    temp8-v = title.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-n = `showNavButton`.
+    temp8-v = b2json( shownavbutton ).
+    INSERT temp8 INTO TABLE temp7.
+    temp8-n = `navButtonPress`.
+    temp8-v = navbuttonpress.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-n = `showHeader`.
+    temp8-v = b2json( showheader ).
+    INSERT temp8 INTO TABLE temp7.
+    temp8-n = `class`.
+    temp8-v = class.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-n = `backgroundDesign`.
+    temp8-v = backgrounddesign.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-n = `navButtonTooltip`.
+    temp8-v = navbuttontooltip.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-n = `titleAlignment`.
+    temp8-v = titlealignment.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-n = `titleLevel`.
+    temp8-v = titlelevel.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-n = `contentOnlyBusy`.
+    temp8-v = b2json( contentonlybusy ).
+    INSERT temp8 INTO TABLE temp7.
+    temp8-n = `enableScrolling`.
+    temp8-v = b2json( enablescrolling ).
+    INSERT temp8 INTO TABLE temp7.
+    temp8-n = `floatingFooter`.
+    temp8-v = b2json( floatingfooter ).
+    INSERT temp8 INTO TABLE temp7.
+    temp8-n = `showFooter`.
+    temp8-v = b2json( showfooter ).
+    INSERT temp8 INTO TABLE temp7.
+    temp8-n = `showSubHeader`.
+    temp8-v = b2json( showsubheader ).
+    INSERT temp8 INTO TABLE temp7.
+    temp8-n = `id`.
+    temp8-v = id.
+    INSERT temp8 INTO TABLE temp7.
+    result = add( name   = `Page`
+                  t_prop = temp7 )->ns_m( ).
 
   ENDMETHOD.
 
+  METHOD shell.
+    result = add( `Shell` )->ns_m( ).
+  ENDMETHOD.
+
+  METHOD input.
+    DATA temp9 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp10 LIKE LINE OF temp9.
+    result = me.
+    
+    CLEAR temp9.
+    
+    temp10-n = `id`.
+    temp10-v = id.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `placeholder`.
+    temp10-v = placeholder.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `type`.
+    temp10-v = type.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `maxLength`.
+    temp10-v = maxlength.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `showClearIcon`.
+    temp10-v = b2json( showclearicon ).
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `description`.
+    temp10-v = description.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `editable`.
+    temp10-v = b2json( editable ).
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `enabled`.
+    temp10-v = b2json( enabled ).
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `visible`.
+    temp10-v = b2json( visible ).
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `enableTableAutoPopinMode`.
+    temp10-v = b2json( enabletableautopopinmode ).
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `enableSuggestionsHighlighting`.
+    temp10-v = b2json( enablesuggestionshighlighting ).
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `showTableSuggestionValueHelp`.
+    temp10-v = b2json( showtablesuggestionvaluehelp ).
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `valueState`.
+    temp10-v = valuestate.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `valueStateText`.
+    temp10-v = valuestatetext.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `value`.
+    temp10-v = value.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `required`.
+    temp10-v = b2json( required ).
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `suggest`.
+    temp10-v = suggest.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `suggestionItems`.
+    temp10-v = suggestionitems.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `suggestionRows`.
+    temp10-v = suggestionrows.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `showSuggestion`.
+    temp10-v = b2json( showsuggestion ).
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `valueHelpRequest`.
+    temp10-v = valuehelprequest.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `autocomplete`.
+    temp10-v = b2json( autocomplete ).
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `valueLiveUpdate`.
+    temp10-v = b2json( valueliveupdate ).
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `submit`.
+    temp10-v = b2json( submit ).
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `showValueHelp`.
+    temp10-v = b2json( showvaluehelp ).
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `valueHelpOnly`.
+    temp10-v = b2json( valuehelponly ).
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `class`.
+    temp10-v = class.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `change`.
+    temp10-v = change.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `maxSuggestionWidth`.
+    temp10-v = maxsuggestionwidth.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `width`.
+    temp10-v = width.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `textFormatter`.
+    temp10-v = textformatter.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `startSuggestion`.
+    temp10-v = startsuggestion.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `valueHelpIconSrc`.
+    temp10-v = valuehelpiconsrc.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `textFormatMode`.
+    temp10-v = textformatmode.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `fieldWidth`.
+    temp10-v = fieldwidth.
+    INSERT temp10 INTO TABLE temp9.
+    add( name   = `Input`
+                t_prop = temp9 ).
+  ENDMETHOD.
 ENDCLASS.

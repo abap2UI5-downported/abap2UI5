@@ -102,6 +102,12 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD z2ui5_if_client~nest2_view_destroy.
+
+    mo_handler->ms_next-s_set-s_view_nest2-check_update_model = abap_true.
+
+  ENDMETHOD.
+
   METHOD z2ui5_if_client~nest_view_display.
 
     mo_handler->ms_next-s_set-s_view_nest-xml = val.
@@ -111,7 +117,7 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD z2ui5_if_client~nest_view_display2.
+  METHOD z2ui5_if_client~nest2_view_display.
 
     mo_handler->ms_next-s_set-s_view_nest2-xml = val.
     mo_handler->ms_next-s_set-s_view_nest2-id = id.
@@ -126,7 +132,7 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD z2ui5_if_client~nest_view_model_update2.
+  METHOD z2ui5_if_client~nest2_view_model_update.
 
     mo_handler->ms_next-s_set-s_view_nest2-check_update_model = abap_true.
 
@@ -273,6 +279,11 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD z2ui5_if_client~factory_view.
+
+    CREATE OBJECT result.
+
+  ENDMETHOD.
 
   METHOD z2ui5_if_client~_bind_clear.
 
@@ -295,7 +306,7 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
         DELETE mo_handler->ms_db-t_attri.
       ENDIF.
     ENDLOOP.
-    return.
+    RETURN.
 
 *    DATA(lr_in) = REF #( val ).
 *

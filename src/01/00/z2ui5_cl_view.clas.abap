@@ -1,56 +1,62 @@
 CLASS z2ui5_cl_view DEFINITION
   PUBLIC
-  FINAL
   CREATE PUBLIC .
 
   PUBLIC SECTION.
 
-    CLASS-DATA mt_prop  TYPE z2ui5_if_client=>ty_t_name_value.
 
-    CLASS-METHODS class_constructor.
+    METHODS to_parent
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_view.
+    METHODS to_root
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_view.
+    METHODS to_previous
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_view.
 
-    CLASS-METHODS factory
+    METHODS stringify
+      RETURNING
+        VALUE(result) TYPE string.
+
+    METHODS add_property
       IMPORTING
-        t_ns          TYPE z2ui5_if_client=>ty_t_name_value DEFAULT mt_prop
+        val           TYPE z2ui5_if_client=>ty_s_name_value OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_view.
 
     METHODS add
       IMPORTING
-        !name         TYPE clike
-        !ns           TYPE clike OPTIONAL
-        !t_prop       TYPE z2ui5_if_client=>ty_t_name_value OPTIONAL
+        name          TYPE clike
+        ns            TYPE clike OPTIONAL
+        t_prop        TYPE z2ui5_if_client=>ty_t_name_value OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_view.
-
-    METHODS add_property
-      IMPORTING
-        !val          TYPE z2ui5_if_client=>ty_s_name_value OPTIONAL
-      RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_view.
-
-    METHODS _cc_plain_xml
-      IMPORTING
-        !val          TYPE clike OPTIONAL
-      RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_view.
-
-    METHODS get_m
+    METHODS ns_m
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_view_m.
-
-    METHODS get_ui
+    METHODS ns_ui
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_view_ui.
+    METHODS ns_zcc
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_view_ui.
 
   PROTECTED SECTION.
 
+    DATA mt_prop  TYPE z2ui5_if_client=>ty_t_name_value.
     DATA mv_name  TYPE string.
     DATA mv_ns     TYPE string.
     DATA mo_root   TYPE REF TO z2ui5_cl_view.
     DATA mo_previous   TYPE REF TO z2ui5_cl_view.
     DATA mo_parent TYPE REF TO z2ui5_cl_view.
     DATA mt_child  TYPE STANDARD TABLE OF REF TO z2ui5_cl_view WITH DEFAULT KEY.
+
+    CLASS-METHODS b2json
+      IMPORTING
+        val           TYPE any
+      RETURNING
+        VALUE(result) TYPE string.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -60,20 +66,19 @@ ENDCLASS.
 CLASS z2ui5_cl_view IMPLEMENTATION.
 
 
-  METHOD class_constructor.
+  METHOD b2json.
 
-    DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
-    DATA temp2 LIKE LINE OF temp1.
-    CLEAR temp1.
-    temp1 = mt_prop.
-    
-    temp2-n = 'displayBlock'.
-    temp2-v = 'true'.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = 'height'.
-    temp2-v = '100%'.
-    INSERT temp2 INTO TABLE temp1.
-    mt_prop  = temp1.
+*    IF  val.
+    DATA temp1 TYPE string.
+    IF val = abap_true.
+      temp1 = `true`.
+    ELSE.
+      temp1 = `false`.
+    ENDIF.
+    result = temp1.
+*    ELSE.
+    result = val.
+*    ENDIF.
 
   ENDMETHOD.
 
@@ -84,38 +89,6 @@ CLASS z2ui5_cl_view IMPLEMENTATION.
     result = me.
 
   ENDMETHOD.
-
-  METHOD _cc_plain_xml.
-    DATA temp3 TYPE z2ui5_if_client=>ty_t_name_value.
-    DATA temp4 LIKE LINE OF temp3.
-
-    result = me.
-    
-    CLEAR temp3.
-    
-    temp4-n = `VALUE`.
-    temp4-v = val.
-    INSERT temp4 INTO TABLE temp3.
-    add( name   = `ZZPLAIN`
-              t_prop = temp3 ).
-
-  ENDMETHOD.
-
-  METHOD factory.
-
-    CREATE OBJECT result.
-
-    IF t_ns IS NOT INITIAL.
-      result->mt_prop = t_ns.
-    ENDIF.
-
-    result->mv_name   = `View`.
-    result->mv_ns     = `mvc`.
-    result->mo_root   = result.
-    result->mo_parent = result.
-
-  ENDMETHOD.
-
 
   METHOD add.
 
@@ -133,15 +106,45 @@ CLASS z2ui5_cl_view IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD get_m.
+  METHOD ns_m.
 
     CREATE OBJECT result.
 
   ENDMETHOD.
 
-  METHOD get_ui.
+  METHOD ns_ui.
 
- CREATE OBJECT result.
+    CREATE OBJECT result.
+
+  ENDMETHOD.
+
+  METHOD ns_zcc.
+
+    CREATE OBJECT result.
+
+  ENDMETHOD.
+
+  METHOD stringify.
+
+    result = ``.
+
+  ENDMETHOD.
+
+  METHOD to_parent.
+
+    result = mo_parent.
+
+  ENDMETHOD.
+
+  METHOD to_previous.
+
+    result = mo_previous.
+
+  ENDMETHOD.
+
+  METHOD to_root.
+
+    result = mo_root.
 
   ENDMETHOD.
 

@@ -110,6 +110,7 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
 
   METHOD view_display_start.
 
+*    DATA(lv_url) = z2ui5_cl_xml_view=>factory( client )->hlp_get_app_url( ms_home-classname ).
     DATA lv_url TYPE string.
     DATA page TYPE REF TO z2ui5_cl_xml_view.
     DATA grid TYPE REF TO z2ui5_cl_xml_view.
@@ -118,7 +119,11 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
     DATA form TYPE REF TO z2ui5_cl_xml_view.
     DATA cont TYPE REF TO z2ui5_cl_xml_view.
     DATA temp2 TYPE xsdboolean.
-    lv_url = z2ui5_cl_xml_view=>factory( client )->hlp_get_app_url( ms_home-classname ).
+    lv_url = z2ui5_cl_fw_utility=>app_get_url(
+                     client    = client
+                     classname = ms_home-classname
+                   ).
+
 
     
     page = z2ui5_cl_xml_view=>factory( client )->shell(
