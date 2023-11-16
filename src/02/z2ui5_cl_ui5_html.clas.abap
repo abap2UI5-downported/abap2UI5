@@ -28,10 +28,9 @@ CLASS z2ui5_cl_ui5_html IMPLEMENTATION.
     temp2-n = `src`.
     temp2-v = src.
     INSERT temp2 INTO TABLE temp1.
-    _add( n  = `script`
-          ns = `http://www.w3.org/1999/xhtml`
+    _add( n   = `script`
+          ns  = `http://www.w3.org/1999/xhtml`
           t_p = temp1 ).
-
   ENDMETHOD.
 
   METHOD style.

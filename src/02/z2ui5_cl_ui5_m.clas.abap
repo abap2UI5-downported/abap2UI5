@@ -459,6 +459,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
     temp12-v = class.
     INSERT temp12 INTO TABLE temp11.
     _add( n   = `MessageStrip`
+          ns  = `sap.m`
               t_p = temp11 ).
   ENDMETHOD.
 
