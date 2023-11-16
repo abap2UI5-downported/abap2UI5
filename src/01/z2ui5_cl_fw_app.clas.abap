@@ -41,7 +41,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_fw_app IMPLEMENTATION.
+CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
 
 
   METHOD factory_error.
@@ -67,7 +67,7 @@ CLASS z2ui5_cl_fw_app IMPLEMENTATION.
     DATA lx_error LIKE mx_error.
     DATA temp1 TYPE string_table.
     DATA temp2 TYPE string_table.
-    DATA view TYPE REF TO z2ui5_cl_xml_view.
+    DATA view TYPE REF TO z2ui5_cl_ui5_m.
     lv_url = shift_left( val = client->get( )-s_config-origin && client->get( )-s_config-pathname
                                sub = ` ` ).
     
@@ -89,12 +89,12 @@ CLASS z2ui5_cl_fw_app IMPLEMENTATION.
     CLEAR temp2.
     INSERT lv_url_app INTO TABLE temp2.
     
-    view = z2ui5_cl_xml_view=>factory( client )->shell( )->illustrated_message(
+    view = client->factory_view( )->_ns_m( )->shell( )->illustratedmessage(
         enableformattedtext = abap_true
         illustrationtype    = `sapIllus-ErrorScreen`
         title               = `500 Internal Server Error`
         description         = lv_text
-      )->additional_content(
+      )->additionalcontent(
         )->button(
             text  = `Home`
             type  = `Emphasized`
@@ -103,21 +103,20 @@ CLASS z2ui5_cl_fw_app IMPLEMENTATION.
             text  = `Restart`
             press = client->_event_client( val = client->cs_event-location_reload t_arg  = temp2 ) ).
 
-    client->view_display( view->stringify( ) ).
+    client->view_display( view->_stringify( ) ).
 
   ENDMETHOD.
 
 
   METHOD view_display_start.
 
-*    DATA(lv_url) = z2ui5_cl_xml_view=>factory( client )->hlp_get_app_url( ms_home-classname ).
     DATA lv_url TYPE string.
-    DATA page TYPE REF TO z2ui5_cl_xml_view.
-    DATA grid TYPE REF TO z2ui5_cl_xml_view.
-    DATA content TYPE REF TO z2ui5_cl_xml_view.
+    DATA page TYPE REF TO z2ui5_cl_ui5_m.
+    DATA grid TYPE REF TO z2ui5_cl_ui5_ui.
+    DATA content TYPE REF TO z2ui5_cl_ui5_m.
     DATA temp1 TYPE xsdboolean.
-    DATA form TYPE REF TO z2ui5_cl_xml_view.
-    DATA cont TYPE REF TO z2ui5_cl_xml_view.
+    DATA form TYPE REF TO z2ui5_cl_ui5_ui.
+    DATA cont TYPE REF TO z2ui5_cl_ui5_m.
     DATA temp2 TYPE xsdboolean.
     lv_url = z2ui5_cl_fw_utility=>app_get_url(
                      client    = client
@@ -126,12 +125,12 @@ CLASS z2ui5_cl_fw_app IMPLEMENTATION.
 
 
     
-    page = z2ui5_cl_xml_view=>factory( client )->shell(
+    page = client->factory_view( )->_ns_m( )->shell(
       )->page( shownavbutton = abap_false ).
 
-    page->header_content(
+    page->headercontent(
             )->title( `abap2UI5 - Developing UI5 Apps in Pure ABAP`
-            )->toolbar_spacer(
+            )->toolbarspacer(
             )->link( text   = `SCN`
                      target = `_blank`
                      href   = `https://blogs.sap.com/tag/abap2ui5/`
@@ -143,13 +142,13 @@ CLASS z2ui5_cl_fw_app IMPLEMENTATION.
                      href   = `https://github.com/abap2ui5/abap2ui5` ).
 
     
-    grid = page->grid( `XL7 L7 M12 S12`
-         )->content( `layout` ).
+    grid = page->_ns_ui( )->grid( `XL7 L7 M12 S12`
+         )->content( `sap.ui.layout` ).
     
-    content = grid->simple_form( title    = `Quickstart`
+    content = grid->simpleform( title    = `Quickstart`
                                        layout   = `ResponsiveGridLayout`
                                        editable = `true`
-           )->content( `form` ).
+           )->content(  )->_ns_m( ).
 
     content->label( `Step 1`
         )->text( `Create a new class in your abap system`
@@ -184,32 +183,32 @@ CLASS z2ui5_cl_fw_app IMPLEMENTATION.
                  enabled = z2ui5_cl_fw_utility=>boolean_abap_2_json( temp1 ) ).
 
     
-    form = grid->simple_form( title    = `Samples`
+    form = grid->simpleform( title    = `Samples`
                                     editable = abap_true
                                     layout   = `ResponsiveGridLayout` ).
 
     IF mv_check_demo = abap_false.
-      form->message_strip( text = `Oops! You need to install abap2UI5 demos before continuing...`
+      form->_ns_m( )->messagestrip( text = `Oops! You need to install abap2UI5 demos before continuing...`
                            type = `Warning`
-          )->get( )->_generic( `link` )->link( text   = `(HERE)`
+          )->_go_new( )->_add( `link` )->_ns_m( )->link( text   = `(HERE)`
                                                target = `_blank`
                                                href   = `https://github.com/abap2UI5/abap2UI5-samples` ).
     ENDIF.
 
     
-    cont = form->content( `form` ).
+    cont = form->content(  )->_ns_m( ).
     cont->label( ).
     
     temp2 = boolc( mv_check_demo = abap_true ).
     cont->button(
        text    = `Continue...`
        press   = client->_event( val = `DEMOS` check_view_destroy = abap_true )
-       enabled = temp2 )->get( ).
+       enabled = temp2 )->_go_new( ).
     cont->button( visible = abap_false )->link( text   = `More on GitHub...`
                                                target = `_blank`
                                                href   = `https://github.com/abap2UI5/abap2UI5-documentation/blob/main/docs/links.md` ).
 
-    client->view_display( form->stringify( ) ).
+    client->view_display( form->_stringify( ) ).
 
   ENDMETHOD.
 
