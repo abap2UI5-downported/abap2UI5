@@ -5400,19 +5400,25 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD header_content.
+
     result = _generic( name = `headerContent`
                        ns   = ns ).
+
   ENDMETHOD.
 
 
   METHOD header_title.
+
     result = _generic( name = `headerTitle`
                        ns   = `uxap` ).
+
   ENDMETHOD.
 
 
   METHOD header_toolbar.
+
     result = _generic( `headerToolbar` ).
+
   ENDMETHOD.
 
 
