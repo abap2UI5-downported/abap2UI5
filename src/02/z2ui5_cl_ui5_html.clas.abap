@@ -44,16 +44,14 @@ CLASS z2ui5_cl_ui5_html IMPLEMENTATION.
   METHOD script.
     DATA temp3 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp4 LIKE LINE OF temp3.
-    result = me.
-    
     CLEAR temp3.
     
     temp4-n = `src`.
     temp4-v = src.
     INSERT temp4 INTO TABLE temp3.
-    _add( n   = `script`
+    result = _add( n   = `script`
           ns  = `http://www.w3.org/1999/xhtml`
-          t_p = temp3 ).
+          t_p = temp3 )->_ns_html( ).
   ENDMETHOD.
 
   METHOD style.

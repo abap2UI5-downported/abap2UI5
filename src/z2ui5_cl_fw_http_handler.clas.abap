@@ -52,9 +52,6 @@ CLASS Z2UI5_CL_FW_HTTP_HANDLER IMPLEMENTATION.
       temp2-n = `src`.
       temp2-v = `https://sdk.openui5.org/resources/sap-ui-cachebuster/sap-ui-core.js`.
       INSERT temp2 INTO TABLE temp1.
-      temp2-n = `data-sap-ui-libs`.
-      temp2-v = `sap.m`.
-      INSERT temp2 INTO TABLE temp1.
       temp2-n = `data-sap-ui-bindingSyntax`.
       temp2-v = `complex`.
       INSERT temp2 INTO TABLE temp1.
@@ -456,11 +453,11 @@ CLASS Z2UI5_CL_FW_HTTP_HANDLER IMPLEMENTATION.
                            |\n| &&
                            `                    sap.z2ui5.oController.ViewDestroy();` && |\n| &&
                            |\n| &&
-                           `                    new sap.ui.core.mvc.XMLView.create({` && |\n| &&
+                           `                   new sap.ui.core.mvc.XMLView.create({` && |\n| &&
                            `                        definition: sap.z2ui5.oResponse.PARAMS.S_VIEW.XML,` && |\n| &&
                            `                        controller: sap.z2ui5.oController,` && |\n| &&
                            `                    }).then(oView => {` && |\n| &&
-                           `                        oView.setModel(new sap.ui.model.json.JSONModel(sap.z2ui5.oResponse.OVIEWMODEL));` && |\n| &&
+                           `                       oView.setModel(new sap.ui.model.json.JSONModel(sap.z2ui5.oResponse.OVIEWMODEL));` && |\n| &&
                            `                        if (sap.z2ui5.oParent) {` && |\n| &&
                            `                            sap.z2ui5.oParent.removeAllPages();` && |\n| &&
                            `                            sap.z2ui5.oParent.insertPage(oView);` && |\n| &&
@@ -521,7 +518,7 @@ CLASS Z2UI5_CL_FW_HTTP_HANDLER IMPLEMENTATION.
                            `                sap.z2ui5.checkNestAfter   = false;` && |\n| &&
                            `                sap.z2ui5.checkNestAfter2   = false;` && |\n| &&
                            |\n| &&
-*                           `               debugger;` && |\n| &&
+*                           `          debugger;` && |\n| &&
                            `                sap.z2ui5.oBody.OLOCATION = {` && |\n| &&
                            `                    ORIGIN: window.location.origin,` && |\n| &&
                            `                    PATHNAME: sap.z2ui5.pathname,` && |\n| &&
