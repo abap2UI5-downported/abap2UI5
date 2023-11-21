@@ -41,6 +41,10 @@ CLASS z2ui5_cl_cc_factory DEFINITION
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_cc_title.
 
+    METHODS focus
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_cc_focus.
+
     METHODS info
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_cc_info.
@@ -57,9 +61,15 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_CC_FACTORY IMPLEMENTATION.
+CLASS z2ui5_cl_cc_factory IMPLEMENTATION.
 
- METHOD info.
+  METHOD focus.
+
+    CREATE OBJECT result EXPORTING VIEW = mo_view.
+
+  ENDMETHOD.
+
+  METHOD info.
 
     CREATE OBJECT result EXPORTING VIEW = mo_view.
 
@@ -125,9 +135,9 @@ CLASS Z2UI5_CL_CC_FACTORY IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD GEOLOCATION.
+  METHOD geolocation.
 
-CREATE OBJECT result EXPORTING VIEW = mo_view.
+    CREATE OBJECT result EXPORTING VIEW = mo_view.
 
   ENDMETHOD.
 
