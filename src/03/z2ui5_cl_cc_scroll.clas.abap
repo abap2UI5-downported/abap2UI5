@@ -5,14 +5,21 @@ CLASS z2ui5_cl_cc_scroll DEFINITION
 
   PUBLIC SECTION.
 
+    TYPES:
+      BEGIN OF ty_s_item,
+        id       TYPE string,
+        scrollto TYPE string,
+      END OF ty_s_item.
+    TYPES ty_t_item TYPE STANDARD TABLE OF ty_s_item WITH DEFAULT KEY ##NEEDED.
+
     METHODS constructor
       IMPORTING
         view TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS control
       IMPORTING
-        setUpdate  TYPE clike OPTIONAL
-        items      TYPE clike OPTIONAL
+        setupdate     TYPE clike OPTIONAL
+        items         TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -32,7 +39,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_CC_SCROLL IMPLEMENTATION.
+CLASS z2ui5_cl_cc_scroll IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -51,7 +58,7 @@ CLASS Z2UI5_CL_CC_SCROLL IMPLEMENTATION.
     CLEAR temp1.
     
     temp2-n = `setUpdate`.
-    temp2-v = setUpdate.
+    temp2-v = setupdate.
     INSERT temp2 INTO TABLE temp1.
     temp2-n = `items`.
     temp2-v = items.
@@ -66,12 +73,12 @@ CLASS Z2UI5_CL_CC_SCROLL IMPLEMENTATION.
   METHOD get_js.
 
     result = `debugger; jQuery.sap.declare("z2ui5.Scroll");` && |\n|  &&
-             `sap.ui.define([` && |\n|  &&
+             `sap.ui.require([` && |\n|  &&
              `  "sap/ui/core/Control",` && |\n|  &&
              `], (Control) => {` && |\n|  &&
              `  "use strict";` && |\n|  &&
              |\n|  &&
-             `  return Control.extend("z2u5.Scroll", {` && |\n|  &&
+             `  return Control.extend("z2ui5.Scroll", {` && |\n|  &&
              `      metadata: {` && |\n|  &&
              `          properties: {` && |\n|  &&
              `              setUpdate: { type: "boolean" , defaultValue: true},` && |\n|  &&
@@ -85,6 +92,8 @@ CLASS Z2UI5_CL_CC_SCROLL IMPLEMENTATION.
              |\n|  &&
              `            oControl.setProperty("setUpdate", false);` && |\n|  &&
              `          var items = oControl.getProperty("items");` && |\n|  &&
+*            `           var resBinding = new sap.ui.model.ListBinding(sap.z2ui5.oView.getModel( ), "/EDIT/MT_SCROLL" );` && |\n|  &&
+*            `           resBinding.attachChange( ( ) => { alert( "Model Change" ); } ); ` &&
              `          if(!items){return;};` && |\n|  &&
              |\n|  &&
              `            setTimeout( (oControl) => { ` && |\n|  &&
