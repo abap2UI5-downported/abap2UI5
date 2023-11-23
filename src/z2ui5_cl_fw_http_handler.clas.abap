@@ -17,6 +17,7 @@ CLASS z2ui5_cl_fw_http_handler DEFINITION
         check_logging             TYPE abap_bool                        OPTIONAL
         custom_js                 TYPE string                           OPTIONAL
         custom_js_oneventfrontend TYPE string                           OPTIONAL
+        t_load_cc                 TYPE z2ui5_if_cc=>ty_t_cc             OPTIONAL
           PREFERRED PARAMETER t_config
       RETURNING
         VALUE(r_result)           TYPE string.
@@ -29,7 +30,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_FW_HTTP_HANDLER IMPLEMENTATION.
+CLASS z2ui5_cl_fw_http_handler IMPLEMENTATION.
 
 
   METHOD http_get.
@@ -37,11 +38,16 @@ CLASS Z2UI5_CL_FW_HTTP_HANDLER IMPLEMENTATION.
     DATA lt_config LIKE t_config.
       DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
       DATA temp2 LIKE LINE OF temp1.
+    DATA lt_load_cc LIKE t_load_cc.
+      DATA temp3 TYPE REF TO z2ui5_cl_cc_timer.
+      DATA temp4 TYPE REF TO z2ui5_cl_cc_focus.
+      DATA temp5 TYPE REF TO z2ui5_cl_cc_title.
+    DATA lv_cc TYPE string.
+    DATA li_cc LIKE LINE OF lt_load_cc.
       DATA lv_sec_policy TYPE string.
-    DATA temp3 LIKE LINE OF lt_config.
-    DATA lr_config LIKE REF TO temp3.
+    DATA temp6 LIKE LINE OF lt_config.
+    DATA lr_config LIKE REF TO temp6.
     lt_config = t_config.
-
     IF lt_config IS INITIAL.
       
       CLEAR temp1.
@@ -63,6 +69,27 @@ CLASS Z2UI5_CL_FW_HTTP_HANDLER IMPLEMENTATION.
       INSERT temp2 INTO TABLE temp1.
       lt_config = temp1.
     ENDIF.
+
+    
+    lt_load_cc = t_load_cc.
+    IF t_load_cc IS INITIAL.
+      
+      CREATE OBJECT temp3 TYPE z2ui5_cl_cc_timer.
+      INSERT temp3 INTO TABLE lt_load_cc.
+      
+      CREATE OBJECT temp4 TYPE z2ui5_cl_cc_focus.
+      INSERT temp4 INTO TABLE lt_load_cc.
+      
+      CREATE OBJECT temp5 TYPE z2ui5_cl_cc_title.
+      INSERT temp5 INTO TABLE lt_load_cc.
+    ENDIF.
+    
+    lv_cc = ``.
+    
+    LOOP AT lt_load_cc INTO li_cc.
+      lv_cc = lv_cc && li_cc->get_js( ) && |\n|.
+    ENDLOOP.
+
 
     IF content_security_policy IS NOT SUPPLIED.
       
@@ -573,6 +600,8 @@ CLASS Z2UI5_CL_FW_HTTP_HANDLER IMPLEMENTATION.
                            `sap.z2ui5.Helper.DateAbapDateTimeToDateObject = ((d,t = '000000') => new Date(d.slice(0,4), (d[4]+d[5])-1, d[6]+d[7],t.slice(0,2),t.slice(2,4),t.slice(4,6)));` && |\n| &&
                            custom_js && |\n|  &&
                            z2ui5_cl_cc_timer=>get_js( ) && |\n|  &&
+*                           VALUE string( FOR z2ui5_cl_cc_timer=>get_js( ) && |\n|  &&
+                           lv_cc && |\n|  &&
                            ` });` && |\n| &&
                            `</script>` && |\n| &&
                            `<abc/></body></html>`.
@@ -584,7 +613,7 @@ CLASS Z2UI5_CL_FW_HTTP_HANDLER IMPLEMENTATION.
   METHOD http_post.
         DATA lo_handler TYPE REF TO z2ui5_cl_fw_handler.
         DATA x TYPE REF TO cx_root.
-          DATA temp4 TYPE REF TO z2ui5_if_app.
+          DATA temp7 TYPE REF TO z2ui5_if_app.
           DATA temp1 TYPE REF TO z2ui5_cl_fw_client.
 
     TRY.
@@ -600,10 +629,10 @@ CLASS Z2UI5_CL_FW_HTTP_HANDLER IMPLEMENTATION.
 
           ROLLBACK WORK.
           
-          temp4 ?= lo_handler->ms_db-app.
+          temp7 ?= lo_handler->ms_db-app.
           
           CREATE OBJECT temp1 TYPE z2ui5_cl_fw_client EXPORTING HANDLER = lo_handler.
-          temp4->main( temp1 ).
+          temp7->main( temp1 ).
           ROLLBACK WORK.
 
           IF lo_handler->ms_next-o_app_leave IS NOT INITIAL.

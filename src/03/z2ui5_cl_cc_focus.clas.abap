@@ -5,18 +5,20 @@ CLASS z2ui5_cl_cc_focus DEFINITION
 
   PUBLIC SECTION.
 
+    INTERFACES z2ui5_if_cc.
+
     METHODS constructor
       IMPORTING
-        view TYPE REF TO z2ui5_cl_xml_view.
+        view TYPE REF TO z2ui5_cl_xml_view optional.
 
     METHODS control
       IMPORTING
-        focusId          TYPE clike OPTIONAL
-        selectionStart   TYPE clike OPTIONAL
-        selectionEnd     TYPE clike OPTIONAL
-        setUpdate        TYPE clike OPTIONAL
+        focusid        TYPE clike OPTIONAL
+        selectionstart TYPE clike OPTIONAL
+        selectionend   TYPE clike OPTIONAL
+        setupdate      TYPE clike OPTIONAL
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+        VALUE(result)  TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS load_cc
       RETURNING
@@ -34,13 +36,15 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_cc_focus IMPLEMENTATION.
+CLASS Z2UI5_CL_CC_FOCUS IMPLEMENTATION.
+
 
   METHOD constructor.
 
     me->mo_view = view.
 
   ENDMETHOD.
+
 
   METHOD control.
     DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
@@ -51,16 +55,16 @@ CLASS z2ui5_cl_cc_focus IMPLEMENTATION.
     CLEAR temp1.
     
     temp2-n = `setUpdate`.
-    temp2-v = setUpdate.
+    temp2-v = setupdate.
     INSERT temp2 INTO TABLE temp1.
     temp2-n = `selectionStart`.
-    temp2-v = selectionStart.
+    temp2-v = selectionstart.
     INSERT temp2 INTO TABLE temp1.
     temp2-n = `selectionEnd`.
-    temp2-v = selectionEnd.
+    temp2-v = selectionend.
     INSERT temp2 INTO TABLE temp1.
     temp2-n = `focusId`.
-    temp2-v = focusId.
+    temp2-v = focusid.
     INSERT temp2 INTO TABLE temp1.
     mo_view->_generic( name   = `Focus`
               ns     = `z2ui5`
@@ -68,11 +72,6 @@ CLASS z2ui5_cl_cc_focus IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD load_cc.
-
-    result = mo_view->_generic( ns = `html` name = `script` )->_cc_plain_xml( get_js( ) )->get_parent( ).
-
-  ENDMETHOD.
 
   METHOD get_js.
 
@@ -116,4 +115,15 @@ CLASS z2ui5_cl_cc_focus IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+  METHOD load_cc.
+
+    result = mo_view->_generic( ns = `html` name = `script` )->_cc_plain_xml( get_js( ) )->get_parent( ).
+
+  ENDMETHOD.
+
+
+  METHOD z2ui5_if_cc~get_js.
+    result = get_js( ).
+  ENDMETHOD.
 ENDCLASS.
