@@ -311,8 +311,8 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lo_data TYPE REF TO data.
     FIELD-SYMBOLS <val> TYPE any.
     DATA lv_assign TYPE string.
-    DATA temp3 TYPE string.
-    DATA lv_id LIKE temp3.
+    DATA temp1 TYPE string.
+    DATA lv_id LIKE temp1.
     DATA lv_request TYPE string.
     lv_response = z2ui5_cl_fw_http_handler=>http_post(  `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
 
@@ -333,9 +333,9 @@ CLASS ltcl_integration_test IMPLEMENTATION.
       cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
     ENDIF.
     
-    temp3 = <val>.
+    temp1 = <val>.
     
-    lv_id = temp3.
+    lv_id = temp1.
 
     
     lv_request = `{ "VIEWNAME": "MAIN" , "EDIT":{"QUANTITY":"600"},"ID": "` && lv_id && `" ,"ARGUMENTS":[{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}]}`.
@@ -363,8 +363,8 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lo_data TYPE REF TO data.
     FIELD-SYMBOLS <val> TYPE any.
     DATA lv_assign TYPE string.
-    DATA temp4 TYPE string.
-    DATA lv_id LIKE temp4.
+    DATA temp2 TYPE string.
+    DATA lv_id LIKE temp2.
     DATA lv_request TYPE string.
 
     z2ui5_cl_fw_integration_test=>sv_state = ``.
@@ -388,9 +388,9 @@ CLASS ltcl_integration_test IMPLEMENTATION.
 
 
     
-    temp4 = <val>.
+    temp2 = <val>.
     
-    lv_id = temp4.
+    lv_id = temp2.
     
     lv_request = `{"EDIT":{"QUANTITY":"700"},"ID": "` && lv_id && `" ,"ARGUMENTS": [{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}], "VIEWNAME" : "MAIN"}`.
     lv_response = z2ui5_cl_fw_http_handler=>http_post( lv_request ).

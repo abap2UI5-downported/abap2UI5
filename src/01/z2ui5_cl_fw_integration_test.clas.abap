@@ -22,8 +22,6 @@ CLASS Z2UI5_CL_FW_INTEGRATION_TEST IMPLEMENTATION.
 
   METHOD z2ui5_if_app~main.
         DATA lv_test TYPE i.
-      DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value_int.
-      DATA temp2 LIKE LINE OF temp1.
       DATA lo_app TYPE REF TO z2ui5_cl_fw_integration_test.
 
     IF check_initialized = abap_false.
@@ -129,25 +127,19 @@ CLASS Z2UI5_CL_FW_INTEGRATION_TEST IMPLEMENTATION.
 
     ENDCASE.
 
-    IF sv_state = 'TEST_SCROLL_CURSOR'.
-
-      client->view_display( `test` ).
-      client->cursor_set( id             = 'id_text2'
-                          cursorpos      = '5'
-                          selectionstart = '5'
-                          selectionend   = '10' ).
-
-      
-      CLEAR temp1.
-      
-      temp2-v = '99999'.
-      temp2-n = 'id_page'.
-      INSERT temp2 INTO TABLE temp1.
-      temp2-n = 'id_text3'.
-      INSERT temp2 INTO TABLE temp1.
-      client->scroll_position_set( temp1 ).
-
-    ENDIF.
+*    IF sv_state = 'TEST_SCROLL_CURSOR'.
+*
+**      client->view_display( `test` ).
+**      client->cursor_set( id             = 'id_text2'
+**                          cursorpos      = '5'
+**                          selectionstart = '5'
+**                          selectionend   = '10' ).
+**
+**      client->scroll_position_set( VALUE #( v = '99999'
+**                                ( n = 'id_page' )
+**                                ( n = 'id_text3' ) ) ).
+*
+*    ENDIF.
 
     IF sv_state = 'TEST_NAVIGATE'.
       

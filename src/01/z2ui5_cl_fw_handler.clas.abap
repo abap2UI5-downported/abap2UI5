@@ -188,7 +188,6 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
             FIELD-SYMBOLS <val> TYPE any.
             DATA temp3 TYPE string.
         DATA lo_message TYPE REF TO z2ui5_cl_fw_utility_json.
-        DATA lo_scroll TYPE REF TO z2ui5_cl_fw_utility_json.
         DATA lo_cursor TYPE REF TO z2ui5_cl_fw_utility_json.
 
     so_body = z2ui5_cl_fw_utility_json=>factory( body ).
@@ -327,16 +326,15 @@ CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
       CATCH cx_root.
     ENDTRY.
 
-    TRY.
-        
-        lo_scroll = so_body->get_attribute( `OSCROLL` ).
-        z2ui5_cl_fw_utility=>trans_ref_tab_2_tab(
-            EXPORTING
-                ir_tab_from = lo_scroll->mr_actual
-            IMPORTING
-                t_result    = result->ms_actual-t_scroll_pos ).
-      CATCH cx_root.
-    ENDTRY.
+*    TRY.
+*        DATA(lo_scroll) = so_body->get_attribute( `OSCROLL` ).
+*        z2ui5_cl_fw_utility=>trans_ref_tab_2_tab(
+*            EXPORTING
+*                ir_tab_from = lo_scroll->mr_actual
+*            IMPORTING
+*                t_result    = result->ms_actual-t_scroll_pos ).
+*      CATCH cx_root.
+*    ENDTRY.
 
     TRY.
         
