@@ -59,7 +59,7 @@ CLASS z2ui5_cl_cc_timer IMPLEMENTATION.
     temp2-n = `checkRepeat`.
     temp2-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( checkrepeat ).
     INSERT temp2 INTO TABLE temp1.
-    mo_view->_generic( name   = `CCTimer`
+    mo_view->_generic( name   = `Timer`
               ns     = `z2ui5`
               t_prop = temp1 ).
 
@@ -73,13 +73,13 @@ CLASS z2ui5_cl_cc_timer IMPLEMENTATION.
 
   METHOD get_js.
 
-    result = ` jQuery.sap.declare("z2ui5.CCTimer");` && |\n| &&
+    result = ` jQuery.sap.declare("z2ui5.Timer");` && |\n| &&
     `sap.ui.require([` && |\n|  &&
     `   "sap/ui/core/Control"` && |\n|  &&
     `], (Control) => {` && |\n|  &&
     `   "use strict";` && |\n|  &&
     |\n|  &&
-    `   return Control.extend("z2ui5.CCTimer", {` && |\n|  &&
+    `   return Control.extend("z2ui5.Timer", {` && |\n|  &&
     `       metadata : {` && |\n|  &&
     `           properties: {` && |\n|  &&
     `                delayMS: {` && |\n|  &&
