@@ -87,7 +87,7 @@ CLASS z2ui5_cl_ui5_ui IMPLEMENTATION.
     temp2-v = textdirection.
     INSERT temp2 INTO TABLE temp1.
     temp2-n = `enabled`.
-    temp2-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( enabled ).
+    temp2-v = _2bool( enabled ).
     INSERT temp2 INTO TABLE temp1.
     temp2-n = `additionalText`.
     temp2-v = additionaltext.
@@ -111,7 +111,7 @@ CLASS z2ui5_cl_ui5_ui IMPLEMENTATION.
     temp4-v = type.
     INSERT temp4 INTO TABLE temp3.
     temp4-n = `editable`.
-    temp4-v = z2ui5_cl_fw_utility=>boolean_abap_2_json( editable ).
+    temp4-v = _2bool( editable ).
     INSERT temp4 INTO TABLE temp3.
     temp4-n = `height`.
     temp4-v = height.

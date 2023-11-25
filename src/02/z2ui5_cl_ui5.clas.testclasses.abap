@@ -133,7 +133,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     DATA temp14 TYPE REF TO z2ui5_cl_ui5.
     DATA lo_suite TYPE REF TO z2ui5_cl_ui5_suite.
     DATA temp15 TYPE REF TO z2ui5_cl_ui5.
-    DATA lo_zcc TYPE REF TO z2ui5_cl_ui5_ui.
+    DATA lo_zcc TYPE REF TO z2ui5_cl_ui5_z2ui5.
     DATA temp16 TYPE REF TO z2ui5_cl_ui5.
     CREATE OBJECT temp12 TYPE z2ui5_cl_ui5.
     lo_html = temp12->_ns_html( ) ##NEEDED.
@@ -152,7 +152,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     
     
     CREATE OBJECT temp16 TYPE z2ui5_cl_ui5.
-    lo_zcc = temp16->_ns_zcc( ) ##NEEDED.
+    lo_zcc = temp16->_ns_z2ui5( ) ##NEEDED.
 
   ENDMETHOD.
 
