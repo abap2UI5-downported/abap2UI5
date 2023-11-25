@@ -69,43 +69,8 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_cc_factory IMPLEMENTATION.
+CLASS Z2UI5_CL_CC_FACTORY IMPLEMENTATION.
 
-  METHOD scroll.
-
-    CREATE OBJECT result EXPORTING VIEW = mo_view.
-
-  ENDMETHOD.
-
-  METHOD messaging.
-
-    CREATE OBJECT result EXPORTING VIEW = mo_view.
-
-  ENDMETHOD.
-
-  METHOD focus.
-
-    CREATE OBJECT result EXPORTING VIEW = mo_view.
-
-  ENDMETHOD.
-
-  METHOD info.
-
-    CREATE OBJECT result EXPORTING VIEW = mo_view.
-
-  ENDMETHOD.
-
-  METHOD timer.
-
-    CREATE OBJECT result EXPORTING VIEW = mo_view.
-
-  ENDMETHOD.
-
-  METHOD title.
-
-    CREATE OBJECT result EXPORTING VIEW = mo_view.
-
-  ENDMETHOD.
 
   METHOD bwip_js.
 
@@ -128,7 +93,7 @@ CLASS z2ui5_cl_cc_factory IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD gui_demo_output.
+  METHOD focus.
 
     CREATE OBJECT result EXPORTING VIEW = mo_view.
 
@@ -136,6 +101,55 @@ CLASS z2ui5_cl_cc_factory IMPLEMENTATION.
 
 
   METHOD font_awesome.
+
+    CREATE OBJECT result EXPORTING VIEW = mo_view.
+
+  ENDMETHOD.
+
+
+  METHOD geolocation.
+
+    CREATE OBJECT result EXPORTING VIEW = mo_view.
+
+  ENDMETHOD.
+
+
+  METHOD gui_demo_output.
+
+    CREATE OBJECT result EXPORTING VIEW = mo_view.
+
+  ENDMETHOD.
+
+
+  METHOD info.
+
+    CREATE OBJECT result EXPORTING VIEW = mo_view.
+
+  ENDMETHOD.
+
+
+  METHOD messaging.
+
+    CREATE OBJECT result EXPORTING VIEW = mo_view.
+
+  ENDMETHOD.
+
+
+  METHOD scroll.
+
+    CREATE OBJECT result EXPORTING VIEW = mo_view.
+
+  ENDMETHOD.
+
+
+  METHOD timer.
+
+    CREATE OBJECT result EXPORTING VIEW = mo_view.
+
+  ENDMETHOD.
+
+
+  METHOD title.
 
     CREATE OBJECT result EXPORTING VIEW = mo_view.
 
@@ -154,11 +168,4 @@ CLASS z2ui5_cl_cc_factory IMPLEMENTATION.
     CREATE OBJECT result EXPORTING VIEW = mo_view.
 
   ENDMETHOD.
-
-  METHOD geolocation.
-
-    CREATE OBJECT result EXPORTING VIEW = mo_view.
-
-  ENDMETHOD.
-
 ENDCLASS.
