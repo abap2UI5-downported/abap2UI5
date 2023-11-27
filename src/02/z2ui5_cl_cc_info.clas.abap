@@ -25,6 +25,7 @@ CLASS z2ui5_cl_cc_info DEFINITION
     METHODS load_cc
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
     CLASS-METHODS get_js
       RETURNING
         VALUE(r_js) TYPE string.
@@ -74,7 +75,7 @@ method control.
     temp2-n = `device_browser`.
     temp2-v = device_browser.
     INSERT temp2 INTO TABLE temp1.
-    mo_view->_generic( name   = `CCInfo`
+    mo_view->_generic( name   = `Info`
               ns     = `z2ui5`
               t_prop = temp1 ).
 
@@ -91,13 +92,13 @@ ENDMETHOD.
 
   METHOD get_js.
 
-    r_js  = ` jQuery.sap.declare("z2ui5.CCInfo");` && |\n| &&
+    r_js  = ` jQuery.sap.declare("z2ui5.Info");` && |\n| &&
   `sap.ui.require([` && |\n|  &&
   `   "sap/ui/core/Control"` && |\n|  &&
   `], (Control) => {` && |\n|  &&
   `   "use strict";` && |\n|  &&
   |\n|  &&
-  `   return Control.extend("z2ui5.CCInfo", {` && |\n|  &&
+  `   return Control.extend("z2ui5.Info", {` && |\n|  &&
   `       metadata : {` && |\n|  &&
   `           properties: {` && |\n|  &&
   `                ui5_version: {` && |\n|  &&
