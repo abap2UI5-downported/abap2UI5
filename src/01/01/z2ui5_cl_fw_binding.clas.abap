@@ -151,7 +151,7 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     ENDIF.
 
     IF bind->bind_type <> mv_type AND bind->bind_type IS NOT INITIAL.
-      RAISE EXCEPTION TYPE z2ui5_cx_fw_error
+      RAISE EXCEPTION TYPE z2ui5_cx_util_error
         EXPORTING
           val = `<p>Binding Error - Two different binding types for same attribute used (` && bind->name && `).`.
     ENDIF.
@@ -169,7 +169,7 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     ENDIF.
     result = temp1 && bind->name_front.
     IF strlen( result ) > 30.
-      bind->name_front = z2ui5_cl_fw_utility=>func_get_uuid_22( ).
+      bind->name_front = z2ui5_cl_util_func=>func_get_uuid_22( ).
       
       IF mv_type = cs_bind_type-two_way.
         temp2 = `/` && cv_model_edit_name && `/`.
@@ -189,12 +189,12 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     DATA temp3 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     ASSIGN mr_data->* TO <any>.
     
-    lv_id = z2ui5_cl_fw_utility=>func_get_uuid_22( ).
+    lv_id = z2ui5_cl_util_func=>func_get_uuid_22( ).
 
     
     CLEAR temp3.
     temp3-name = lv_id.
-    temp3-data_stringify = z2ui5_cl_fw_utility=>trans_json_any_2( mr_data ).
+    temp3-data_stringify = z2ui5_cl_util_func=>trans_json_any_2( mr_data ).
     temp3-bind_type = cs_bind_type-one_time.
     INSERT temp3
            INTO TABLE mt_attri.
@@ -293,8 +293,8 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     r_result->mv_pretty_name = pretty_name.
 
 
-    IF z2ui5_cl_fw_utility=>rtti_check_type_kind_dref( data ) IS NOT INITIAL.
-      RAISE EXCEPTION TYPE z2ui5_cx_fw_error
+    IF z2ui5_cl_util_func=>rtti_check_type_kind_dref( data ) IS NOT INITIAL.
+      RAISE EXCEPTION TYPE z2ui5_cx_util_error
         EXPORTING
           val = `BINDING_WITH_REFERENCES_NOT_ALLOWED`.
     ENDIF.
@@ -358,7 +358,7 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     ENDIF.
 
     
-    lt_attri2 = z2ui5_cl_fw_utility=>rtti_get_t_attri_by_object( <obj> ).
+    lt_attri2 = z2ui5_cl_util_func=>rtti_get_t_attri_by_object( <obj> ).
 
     
     LOOP AT lt_attri2 INTO ls_attri2
@@ -397,12 +397,12 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     ASSIGN (lv_name) TO <attribute>.
     
     temp1 = boolc( sy-subrc <> 0 ).
-    z2ui5_cl_fw_utility=>x_check_raise( temp1 ).
+    z2ui5_cl_util_func=>x_check_raise( temp1 ).
 
     
-    lt_comp = z2ui5_cl_fw_utility=>rtti_get_t_comp_by_struc( <attribute> ).
+    lt_comp = z2ui5_cl_util_func=>rtti_get_t_comp_by_struc( <attribute> ).
     
-    lv_attri = z2ui5_cl_fw_utility=>c_replace_assign_struc( val ).
+    lv_attri = z2ui5_cl_util_func=>c_replace_assign_struc( val ).
     
     
     LOOP AT lt_comp REFERENCE INTO lr_comp.
@@ -468,7 +468,7 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    RAISE EXCEPTION TYPE z2ui5_cx_fw_error
+    RAISE EXCEPTION TYPE z2ui5_cx_util_error
       EXPORTING
         val = `BINDING_ERROR - No class attribute for binding found - Please check if the binded values are public attributes of your class`.
 

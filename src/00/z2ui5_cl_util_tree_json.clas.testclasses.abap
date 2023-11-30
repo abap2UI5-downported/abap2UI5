@@ -14,9 +14,9 @@ CLASS ltcl_unit_01_json IMPLEMENTATION.
 
   METHOD test_json_attri.
 
-    DATA lo_tree TYPE REF TO z2ui5_cl_fw_utility_json.
+    DATA lo_tree TYPE REF TO z2ui5_cl_util_tree_json.
     DATA lv_result TYPE string.
-    CREATE OBJECT lo_tree TYPE z2ui5_cl_fw_utility_json.
+    CREATE OBJECT lo_tree TYPE z2ui5_cl_util_tree_json.
     lo_tree->add_attribute( n = `AAA`
                             v = `BBB` ).
 
@@ -30,9 +30,9 @@ CLASS ltcl_unit_01_json IMPLEMENTATION.
 
   METHOD test_json_object.
 
-    DATA lo_tree TYPE REF TO z2ui5_cl_fw_utility_json.
+    DATA lo_tree TYPE REF TO z2ui5_cl_util_tree_json.
     DATA lv_result TYPE string.
-    CREATE OBJECT lo_tree TYPE z2ui5_cl_fw_utility_json.
+    CREATE OBJECT lo_tree TYPE z2ui5_cl_util_tree_json.
     lo_tree->add_attribute_object( `CCC` )->add_attribute( n = `AAA`
                                                            v = `BBB` ).
 
@@ -46,7 +46,7 @@ CLASS ltcl_unit_01_json IMPLEMENTATION.
 
   METHOD test_json_struc.
 
-    DATA lo_tree TYPE REF TO z2ui5_cl_fw_utility_json.
+    DATA lo_tree TYPE REF TO z2ui5_cl_util_tree_json.
 TYPES BEGIN OF ty_s_test.
 TYPES comp1 TYPE string.
 TYPES comp2 TYPE string.
@@ -54,7 +54,7 @@ TYPES END OF ty_s_test.
     DATA temp5 TYPE ty_s_test.
     DATA ls_test LIKE temp5.
     DATA lv_result TYPE string.
-    CREATE OBJECT lo_tree TYPE z2ui5_cl_fw_utility_json.
+    CREATE OBJECT lo_tree TYPE z2ui5_cl_util_tree_json.
 
     
 
@@ -78,12 +78,12 @@ TYPES END OF ty_s_test.
 
 
 
-    DATA lo_json TYPE REF TO z2ui5_cl_fw_utility_json.
-    DATA lo_attri TYPE REF TO z2ui5_cl_fw_utility_json.
+    DATA lo_json TYPE REF TO z2ui5_cl_util_tree_json.
+    DATA lo_attri TYPE REF TO z2ui5_cl_util_tree_json.
     DATA lr_ref TYPE REF TO data.
     FIELD-SYMBOLS <any> TYPE any.
     DATA lv_val TYPE string.
-    lo_json = z2ui5_cl_fw_utility_json=>factory( `{"CCC":{"COMP1":"AAA","COMP2":"BBB"}}` ).
+    lo_json = z2ui5_cl_util_tree_json=>factory( `{"CCC":{"COMP1":"AAA","COMP2":"BBB"}}` ).
 
     
     lo_attri = lo_json->get_attribute( `CCC` )->get_attribute( `COMP2` ).

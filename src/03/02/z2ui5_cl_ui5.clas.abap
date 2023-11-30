@@ -56,13 +56,13 @@ CLASS z2ui5_cl_ui5 DEFINITION
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_ui5_ui_webc.
 
     METHODS constructor
-      IMPORTING node TYPE REF TO z2ui5_cl_fw_utility_xml OPTIONAL.
+      IMPORTING node TYPE REF TO z2ui5_cl_util_tree_xml OPTIONAL.
 
     METHODS _stringify
       RETURNING VALUE(result) TYPE string.
 
   PROTECTED SECTION.
-    DATA _node TYPE REF TO z2ui5_cl_fw_utility_xml.
+    DATA _node TYPE REF TO z2ui5_cl_util_tree_xml.
 
     CLASS-METHODS _2xml
       IMPORTING obj           TYPE REF TO z2ui5_cl_ui5
@@ -87,7 +87,7 @@ CLASS z2ui5_cl_ui5 IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD _2bool.
-    result = z2ui5_cl_fw_utility=>boolean_abap_2_json( val ).
+    result = z2ui5_cl_util_func=>boolean_abap_2_json( val ).
   ENDMETHOD.
 
   METHOD _2xml.
@@ -255,7 +255,7 @@ CLASS z2ui5_cl_ui5 IMPLEMENTATION.
             
             lv_text = temp4.
 
-            RAISE EXCEPTION TYPE z2ui5_cx_fw_error
+            RAISE EXCEPTION TYPE z2ui5_cx_util_error
               EXPORTING
                 val = lv_text.
         ENDTRY.
@@ -327,7 +327,7 @@ CLASS z2ui5_cl_ui5 IMPLEMENTATION.
 
   METHOD _add.
         DATA temp7 TYPE string.
-    DATA lo_node TYPE REF TO z2ui5_cl_fw_utility_xml.
+    DATA lo_node TYPE REF TO z2ui5_cl_util_tree_xml.
     DATA result2 TYPE REF TO z2ui5_cl_ui5.
     TRY.
         
@@ -337,7 +337,7 @@ CLASS z2ui5_cl_ui5 IMPLEMENTATION.
     ENDTRY.
 
     
-    CREATE OBJECT lo_node TYPE z2ui5_cl_fw_utility_xml.
+    CREATE OBJECT lo_node TYPE z2ui5_cl_util_tree_xml.
     
     CREATE OBJECT result2 TYPE z2ui5_cl_ui5 EXPORTING NODE = lo_node.
     result2->_node->mv_name = n.
@@ -409,7 +409,7 @@ CLASS z2ui5_cl_ui5 IMPLEMENTATION.
 
   METHOD _go_up.
     IF _node = _node->mo_root.
-      RAISE EXCEPTION TYPE z2ui5_cx_fw_error
+      RAISE EXCEPTION TYPE z2ui5_cx_util_error
         EXPORTING
           val = `XML_VIEW_PARSER_ERROR - go_up on root element not possible`.
     ENDIF.

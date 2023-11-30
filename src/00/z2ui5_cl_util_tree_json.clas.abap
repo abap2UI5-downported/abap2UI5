@@ -1,16 +1,16 @@
-CLASS z2ui5_cl_fw_utility_json DEFINITION
+CLASS z2ui5_cl_util_tree_json DEFINITION
   PUBLIC
   FINAL
   CREATE PUBLIC .
 
   PUBLIC SECTION.
 
-    DATA mo_root         TYPE REF TO z2ui5_cl_fw_utility_json.
-    DATA mo_parent       TYPE REF TO z2ui5_cl_fw_utility_json.
+    DATA mo_root         TYPE REF TO z2ui5_cl_util_tree_json.
+    DATA mo_parent       TYPE REF TO z2ui5_cl_util_tree_json.
     DATA mv_name         TYPE string.
     DATA mv_value        TYPE string.
-    TYPES temp1_610cae68cf TYPE STANDARD TABLE OF REF TO z2ui5_cl_fw_utility_json WITH DEFAULT KEY.
-DATA mt_values       TYPE temp1_610cae68cf.
+    TYPES temp1_4c96028f18 TYPE STANDARD TABLE OF REF TO z2ui5_cl_util_tree_json WITH DEFAULT KEY.
+DATA mt_values       TYPE temp1_4c96028f18.
     DATA mr_actual       TYPE REF TO data.
     DATA mv_apost_active TYPE abap_bool.
 
@@ -18,7 +18,7 @@ DATA mt_values       TYPE temp1_610cae68cf.
       IMPORTING
         iv_json       TYPE clike OPTIONAL
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_fw_utility_json.
+        VALUE(result) TYPE REF TO z2ui5_cl_util_tree_json.
 
     METHODS constructor.
 
@@ -26,7 +26,7 @@ DATA mt_values       TYPE temp1_610cae68cf.
       IMPORTING
         name          TYPE string
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_fw_utility_json.
+        VALUE(result) TYPE REF TO z2ui5_cl_util_tree_json.
 
     METHODS get_val
       RETURNING
@@ -42,25 +42,25 @@ DATA mt_values       TYPE temp1_610cae68cf.
         v             TYPE clike
         apos_active   TYPE abap_bool DEFAULT abap_true
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_fw_utility_json.
+        VALUE(result) TYPE REF TO z2ui5_cl_util_tree_json.
 
     METHODS add_attribute_object
       IMPORTING
         name          TYPE clike
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_fw_utility_json.
+        VALUE(result) TYPE REF TO z2ui5_cl_util_tree_json.
 
     METHODS add_attribute_struc
       IMPORTING
         val           TYPE data
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_fw_utility_json.
+        VALUE(result) TYPE REF TO z2ui5_cl_util_tree_json.
 
     METHODS add_attribute_instance
       IMPORTING
-        val           TYPE REF TO z2ui5_cl_fw_utility_json
+        val           TYPE REF TO z2ui5_cl_util_tree_json
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_fw_utility_json.
+        VALUE(result) TYPE REF TO z2ui5_cl_util_tree_json.
 
     METHODS stringify
       RETURNING
@@ -70,17 +70,17 @@ DATA mt_values       TYPE temp1_610cae68cf.
 
     CLASS-METHODS new
       IMPORTING
-        io_root       TYPE REF TO z2ui5_cl_fw_utility_json
+        io_root       TYPE REF TO z2ui5_cl_util_tree_json
         iv_name       TYPE simple
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_fw_utility_json.
+        VALUE(result) TYPE REF TO z2ui5_cl_util_tree_json.
 
   PRIVATE SECTION.
 ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_FW_UTILITY_JSON IMPLEMENTATION.
+CLASS Z2UI5_CL_UTIL_TREE_JSON IMPLEMENTATION.
 
 
   METHOD add_attribute.
@@ -161,7 +161,7 @@ CLASS Z2UI5_CL_FW_UTILITY_JSON IMPLEMENTATION.
     CREATE OBJECT result.
     result->mo_root = result.
 
-    z2ui5_cl_fw_utility=>trans_json_2_any(
+    z2ui5_cl_util_func=>trans_json_2_any(
       EXPORTING
         val  = iv_json
       CHANGING
@@ -178,7 +178,7 @@ CLASS Z2UI5_CL_FW_UTILITY_JSON IMPLEMENTATION.
     FIELD-SYMBOLS <attribute> TYPE any.
     DATA temp2 TYPE xsdboolean.
     temp1 = boolc( mr_actual IS INITIAL ).
-    z2ui5_cl_fw_utility=>x_check_raise( temp1 ).
+    z2ui5_cl_util_func=>x_check_raise( temp1 ).
 
     result = new( io_root = mo_root
                   iv_name = name ).
@@ -193,7 +193,7 @@ CLASS Z2UI5_CL_FW_UTILITY_JSON IMPLEMENTATION.
     ASSIGN (lv_name) TO <attribute>.
     
     temp2 = boolc( sy-subrc <> 0 ).
-    z2ui5_cl_fw_utility=>x_check_raise( temp2 ).
+    z2ui5_cl_util_func=>x_check_raise( temp2 ).
 
     result->mr_actual = <attribute>.
     result->mo_parent = me.
@@ -209,7 +209,7 @@ CLASS Z2UI5_CL_FW_UTILITY_JSON IMPLEMENTATION.
     ASSIGN mr_actual->* TO <attribute>.
     
     temp3 = boolc( sy-subrc <> 0 ).
-    z2ui5_cl_fw_utility=>x_check_raise( when = temp3
+    z2ui5_cl_util_func=>x_check_raise( when = temp3
                                 v  = `value of attribute in JSON not found` ).
     result = <attribute>.
 

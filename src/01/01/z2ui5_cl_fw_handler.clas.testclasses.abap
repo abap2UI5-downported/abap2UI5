@@ -16,7 +16,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
     DATA lv_body TYPE string.
     DATA lo_handler TYPE REF TO z2ui5_cl_fw_handler.
-    DATA temp4 TYPE REF TO z2ui5_cl_fw_app.
+    DATA temp4 TYPE REF TO z2ui5_cl_fw_app_startup.
     DATA lo_app_fw LIKE temp4.
     lv_body = `{"OLOCATION":{"ORIGIN":"https:/url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100","VERSION":"com.sap.ui5.dist:sapui5-sdk-dist:1.115.0:war"}}`.
 

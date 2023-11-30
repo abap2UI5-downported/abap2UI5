@@ -58,11 +58,11 @@ CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
 
     DATA lv_time TYPE timestampl.
     DATA lv_four_hours_ago TYPE timestampl.
-    lv_time = z2ui5_cl_fw_utility=>time_get_timestampl( ).
+    lv_time = z2ui5_cl_util_func=>time_get_timestampl( ).
 
 
     
-    lv_four_hours_ago = z2ui5_cl_fw_utility=>time_substract_seconds(
+    lv_four_hours_ago = z2ui5_cl_util_func=>time_substract_seconds(
                                 time    = lv_time
                                 seconds = 60 * 60 * 4
                               ).
@@ -88,15 +88,15 @@ CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
     temp1-id_prev = db-id_prev.
     temp1-id_prev_app = db-id_prev_app.
     temp1-id_prev_app_stack = db-id_prev_app_stack.
-    temp1-uname = z2ui5_cl_fw_utility=>func_get_user_tech( ).
-    temp1-timestampl = z2ui5_cl_fw_utility=>time_get_timestampl( ).
+    temp1-uname = z2ui5_cl_util_func=>func_get_user_tech( ).
+    temp1-timestampl = z2ui5_cl_util_func=>time_get_timestampl( ).
     temp1-data = lv_xml.
     
     ls_draft = temp1.
 
     MODIFY z2ui5_t_fw_01 FROM ls_draft.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE z2ui5_cx_fw_error
+      RAISE EXCEPTION TYPE z2ui5_cx_util_error
         EXPORTING
           val = `CREATE_OF_DRAFT_ENTRY_ON_DATABASE_FAILED`.
     ENDIF.
@@ -116,7 +116,7 @@ CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
       DATA lv_assign TYPE string.
     ls_db = read( id ).
 
-    z2ui5_cl_fw_utility=>trans_xml_2_any(
+    z2ui5_cl_util_func=>trans_xml_2_any(
         EXPORTING
             xml  = ls_db-data
         IMPORTING
@@ -137,7 +137,7 @@ CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
       lv_assign = 'LO_APP->' && lr_attri->name.
       ASSIGN (lv_assign) TO <ref>.
 
-      z2ui5_cl_fw_utility=>rtti_xml_set_to_data(
+      z2ui5_cl_util_func=>rtti_xml_set_to_data(
         EXPORTING
           rtti_data = lr_attri->data_rtti
          IMPORTING
@@ -168,7 +168,7 @@ CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
     ENDIF.
 
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE z2ui5_cx_fw_error
+      RAISE EXCEPTION TYPE z2ui5_cx_util_error
         EXPORTING
           val = `NO_DRAFT_ENTRY_OF_PREVIOUS_REQUEST_FOUND`.
     ENDIF.
@@ -191,7 +191,7 @@ CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
             DATA x2 TYPE REF TO cx_root.
 
     TRY.
-        result = z2ui5_cl_fw_utility=>trans_xml_any_2( db ).
+        result = z2ui5_cl_util_func=>trans_xml_any_2( db ).
 
         
       CATCH cx_xslt_serialization_error INTO x.
@@ -234,18 +234,18 @@ CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
                 CONTINUE.
               ENDIF.
 *              IF <deref_attri> IS NOT INITIAL.
-                lr_attri->data_rtti = z2ui5_cl_fw_utility=>rtti_xml_get_by_data( <deref_attri> ).
+                lr_attri->data_rtti = z2ui5_cl_util_func=>rtti_xml_get_by_data( <deref_attri> ).
 *              ENDIF.
               CLEAR <deref_attri>.
               CLEAR <attri>.
             ENDLOOP.
 
-            result = z2ui5_cl_fw_utility=>trans_xml_any_2( ls_db ).
+            result = z2ui5_cl_util_func=>trans_xml_any_2( ls_db ).
 
             
           CATCH cx_root INTO x2.
 
-            RAISE EXCEPTION TYPE z2ui5_cx_fw_error
+            RAISE EXCEPTION TYPE z2ui5_cx_util_error
               EXPORTING
                 val = x->get_text( ) && `<p>` && x->previous->get_text( ) && `<p>` && x2->get_text( ).
 
