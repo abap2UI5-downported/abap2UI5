@@ -391,14 +391,14 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   METHOD test_create.
 
-    DATA lo_test TYPE REF TO Z2UI5_CL_UTIL_FUNC.
+    DATA lo_test TYPE REF TO z2ui5_cl_util_func.
     CREATE OBJECT lo_test TYPE z2ui5_cl_util_func.
 
   ENDMETHOD.
 
   METHOD test_rtti_get_classname_by_ref.
 
-    DATA lo_test TYPE REF TO Z2UI5_CL_UTIL_FUNC.
+    DATA lo_test TYPE REF TO z2ui5_cl_util_func.
     DATA lv_name TYPE string.
     DATA lo_test2 TYPE REF TO ltcl_test_app.
     DATA lv_name2 TYPE string.
