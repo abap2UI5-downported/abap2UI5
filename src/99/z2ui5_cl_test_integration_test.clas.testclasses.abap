@@ -34,10 +34,10 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     FIELD-SYMBOLS <val> TYPE any.
     DATA lv_assign TYPE string.
 
-    z2ui5_cl_fw_integration_test=>sv_state = ``.
+    z2ui5_cl_test_integration_test=>sv_state = ``.
     
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
-        `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
+        `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
     
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
@@ -72,10 +72,10 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     FIELD-SYMBOLS <val> TYPE any.
     DATA lv_assign TYPE string.
 
-    z2ui5_cl_fw_integration_test=>sv_state = ``.
+    z2ui5_cl_test_integration_test=>sv_state = ``.
     
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
-      `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
+      `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
     
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
@@ -94,17 +94,17 @@ CLASS ltcl_integration_test IMPLEMENTATION.
 
   METHOD test_bind_one_way.
 
-    DATA lo_test TYPE REF TO z2ui5_cl_fw_integration_test.
+    DATA lo_test TYPE REF TO z2ui5_cl_test_integration_test.
     DATA lv_response TYPE string.
     DATA lo_data TYPE REF TO data.
     FIELD-SYMBOLS <val> TYPE any.
     DATA lv_assign TYPE string.
-    CREATE OBJECT lo_test TYPE z2ui5_cl_fw_integration_test.
+    CREATE OBJECT lo_test TYPE z2ui5_cl_test_integration_test.
 
-    z2ui5_cl_fw_integration_test=>sv_state = `TEST_ONE_WAY`.
+    z2ui5_cl_test_integration_test=>sv_state = `TEST_ONE_WAY`.
     
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
-      `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
+      `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
 
     
@@ -128,10 +128,10 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     FIELD-SYMBOLS <val> TYPE any.
     DATA lv_assign TYPE string.
 
-    z2ui5_cl_fw_integration_test=>sv_state = ``.
+    z2ui5_cl_test_integration_test=>sv_state = ``.
     
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
-      `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
+      `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
     
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
@@ -154,10 +154,10 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     FIELD-SYMBOLS <val> TYPE any.
     DATA lv_assign TYPE string.
 
-    z2ui5_cl_fw_integration_test=>sv_state = `TEST_MESSAGE_BOX`.
+    z2ui5_cl_test_integration_test=>sv_state = `TEST_MESSAGE_BOX`.
     
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
-      `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
+      `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
     
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
@@ -189,10 +189,10 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     FIELD-SYMBOLS <val> TYPE any.
     DATA lv_assign TYPE string.
 
-    z2ui5_cl_fw_integration_test=>sv_state = `TEST_MESSAGE_TOAST`.
+    z2ui5_cl_test_integration_test=>sv_state = `TEST_MESSAGE_TOAST`.
     
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
-      `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
+      `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
     
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
@@ -218,10 +218,10 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     FIELD-SYMBOLS <val> TYPE any.
     DATA lv_assign TYPE string.
 
-    z2ui5_cl_fw_integration_test=>sv_state = `TEST_POPUP`.
+    z2ui5_cl_test_integration_test=>sv_state = `TEST_POPUP`.
     
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
-      `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
+      `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
     
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
@@ -263,10 +263,10 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lv_response TYPE string.
     DATA lo_data TYPE REF TO data.
 
-    z2ui5_cl_fw_integration_test=>sv_state = `TEST_SCROLL_CURSOR`.
+    z2ui5_cl_test_integration_test=>sv_state = `TEST_SCROLL_CURSOR`.
     
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
-      `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
+      `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
     
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
@@ -278,10 +278,10 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lv_response TYPE string.
     DATA lo_data TYPE REF TO data.
 
-    z2ui5_cl_fw_integration_test=>sv_state = `TEST_NAVIGATE`.
+    z2ui5_cl_test_integration_test=>sv_state = `TEST_NAVIGATE`.
     
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
-      `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
+      `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
     
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
@@ -293,10 +293,10 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lv_response TYPE string.
     DATA lo_data TYPE REF TO data.
 
-    z2ui5_cl_fw_integration_test=>sv_state = `TEST_NAVIGATE`.
+    z2ui5_cl_test_integration_test=>sv_state = `TEST_NAVIGATE`.
     
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
-       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
+       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
     
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
@@ -314,7 +314,7 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA temp1 TYPE string.
     DATA lv_id LIKE temp1.
     DATA lv_request TYPE string.
-    lv_response = z2ui5_cl_fw_http_handler=>http_post(  `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
+    lv_response = z2ui5_cl_fw_http_handler=>http_post(  `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
     
     /ui2/cl_json=>deserialize(
@@ -367,9 +367,9 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     DATA lv_id LIKE temp2.
     DATA lv_request TYPE string.
 
-    z2ui5_cl_fw_integration_test=>sv_state = ``.
+    z2ui5_cl_test_integration_test=>sv_state = ``.
     
-    lv_response = z2ui5_cl_fw_http_handler=>http_post(  `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
+    lv_response = z2ui5_cl_fw_http_handler=>http_post(  `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
     
     /ui2/cl_json=>deserialize(
@@ -420,9 +420,9 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     FIELD-SYMBOLS <val> TYPE any.
     DATA lv_text TYPE string .
 
-    z2ui5_cl_fw_integration_test=>sv_state = `ERROR`.
+    z2ui5_cl_test_integration_test=>sv_state = `ERROR`.
     
-    lv_response = z2ui5_cl_fw_http_handler=>http_post( `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_fw_integration_test"}}` ).
+    lv_response = z2ui5_cl_fw_http_handler=>http_post( `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
     
     /ui2/cl_json=>deserialize(
