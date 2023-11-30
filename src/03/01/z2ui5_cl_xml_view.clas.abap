@@ -1143,10 +1143,12 @@ public section.
       !FILTERSECONDARYVALUES type CLIKE optional
     returning
       value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+
   methods MULTI_COMBOBOX
     importing
       !SELECTIONCHANGE type CLIKE optional
       !SELECTEDKEYS type CLIKE optional
+      !selectedItems type CLIKE optional
       !ITEMS type CLIKE optional
       !SELECTIONFINISH type CLIKE optional
       !WIDTH type CLIKE optional
@@ -1514,6 +1516,7 @@ public section.
       !WIDTH type CLIKE optional
       !SHOWSORTMENUENTRY type CLIKE optional
       !SORTPROPERTY type CLIKE optional
+      !autoresizable type CLIKE optional
       !FILTERPROPERTY type CLIKE optional
       !SHOWFILTERMENUENTRY type CLIKE optional
     preferred parameter WIDTH
@@ -7101,6 +7104,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp193-n = `selectedKeys`.
     temp193-v = selectedkeys.
     INSERT temp193 INTO TABLE temp192.
+    temp193-n = `selectedItems`.
+    temp193-v = selectedItems.
+    INSERT temp193 INTO TABLE temp192.
     temp193-n = `items`.
     temp193-v = items.
     INSERT temp193 INTO TABLE temp192.
@@ -10648,6 +10654,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp358 INTO TABLE temp357.
     temp358-n = `showFilterMenuEntry`.
     temp358-v = showfiltermenuentry.
+    INSERT temp358 INTO TABLE temp357.
+    temp358-n = `autoresizable`.
+    temp358-v = z2ui5_cl_util_func=>boolean_abap_2_json( autoresizable ).
     INSERT temp358 INTO TABLE temp357.
     temp358-n = `filterProperty`.
     temp358-v = filterproperty.
