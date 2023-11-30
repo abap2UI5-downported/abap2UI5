@@ -89,7 +89,7 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
     CLEAR temp2.
     INSERT lv_url_app INTO TABLE temp2.
     
-    view = client->factory_view( )->_ns_m( )->shell( )->illustratedmessage(
+    view = z2ui5_cl_ui5=>_factory( )->_ns_m( )->shell( )->illustratedmessage(
         enableformattedtext = abap_true
         illustrationtype    = `sapIllus-ErrorScreen`
         title               = `500 Internal Server Error`
@@ -125,7 +125,7 @@ CLASS Z2UI5_CL_FW_APP IMPLEMENTATION.
 
 
     
-    page = client->factory_view( )->_ns_m( )->shell(
+    page = z2ui5_cl_ui5=>_factory(  )->_ns_m( )->shell(
       )->page( shownavbutton = abap_false ).
 
     page->headercontent(

@@ -5,7 +5,10 @@ CLASS z2ui5_cl_fw_db DEFINITION
 
   PUBLIC SECTION.
 
-    TYPES:
+
+    types ty_S_db2 type z2ui5_t_fw_01.
+
+     TYPES:
       BEGIN OF ty_s_db,
         id                TYPE string,
         id_prev           TYPE string,
@@ -19,7 +22,8 @@ CLASS z2ui5_cl_fw_db DEFINITION
     CLASS-METHODS create
       IMPORTING
         !id TYPE string
-        !db TYPE ty_s_db .
+        !db TYPE ty_s_db.
+
     CLASS-METHODS load_app
       IMPORTING
         !id           TYPE clike
@@ -31,7 +35,7 @@ CLASS z2ui5_cl_fw_db DEFINITION
         !id             TYPE clike
         !check_load_app TYPE abap_bool DEFAULT abap_true
       RETURNING
-        VALUE(result)   TYPE z2ui5_t_draft .
+        VALUE(result)   TYPE ty_S_db2.
 
     CLASS-METHODS cleanup.
 
@@ -47,7 +51,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_fw_db IMPLEMENTATION.
+CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
 
 
   METHOD cleanup.
@@ -63,7 +67,7 @@ CLASS z2ui5_cl_fw_db IMPLEMENTATION.
                                 seconds = 60 * 60 * 4
                               ).
 
-    DELETE FROM z2ui5_t_draft WHERE timestampl < lv_four_hours_ago.
+    DELETE FROM z2ui5_t_fw_01 WHERE timestampl < lv_four_hours_ago.
     COMMIT WORK.
 
   ENDMETHOD.
@@ -71,7 +75,7 @@ CLASS z2ui5_cl_fw_db IMPLEMENTATION.
 
   METHOD create.
     DATA lv_xml TYPE string.
-    DATA temp1 TYPE z2ui5_t_draft.
+    DATA temp1 TYPE ty_s_db2.
     DATA ls_draft LIKE temp1.
 
     db-app->id = id.
@@ -80,17 +84,17 @@ CLASS z2ui5_cl_fw_db IMPLEMENTATION.
 
     
     CLEAR temp1.
-    temp1-uuid = id.
-    temp1-uuid_prev = db-id_prev.
-    temp1-uuid_prev_app = db-id_prev_app.
-    temp1-uuid_prev_app_stack = db-id_prev_app_stack.
+    temp1-id = id.
+    temp1-id_prev = db-id_prev.
+    temp1-id_prev_app = db-id_prev_app.
+    temp1-id_prev_app_stack = db-id_prev_app_stack.
     temp1-uname = z2ui5_cl_fw_utility=>func_get_user_tech( ).
     temp1-timestampl = z2ui5_cl_fw_utility=>time_get_timestampl( ).
     temp1-data = lv_xml.
     
     ls_draft = temp1.
 
-    MODIFY z2ui5_t_draft FROM ls_draft.
+    MODIFY z2ui5_t_fw_01 FROM ls_draft.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE z2ui5_cx_fw_error
         EXPORTING
@@ -103,7 +107,7 @@ CLASS z2ui5_cl_fw_db IMPLEMENTATION.
 
   METHOD load_app.
 
-    DATA ls_db TYPE z2ui5_t_draft.
+    DATA ls_db TYPE z2ui5_t_fw_01.
     DATA temp2 TYPE REF TO object.
     DATA lo_app LIKE temp2.
     DATA temp3 LIKE LINE OF result-t_attri.
@@ -150,15 +154,15 @@ CLASS z2ui5_cl_fw_db IMPLEMENTATION.
     IF check_load_app = abap_true.
 
       SELECT SINGLE *
-        FROM z2ui5_t_draft
-        WHERE uuid = id
+        FROM z2ui5_t_fw_01
+        WHERE id = id
         INTO result.
 
     ELSE.
 
-      SELECT SINGLE uuid uuid_prev uuid_prev_app uuid_prev_app_stack
-        FROM z2ui5_t_draft
-        WHERE uuid = id
+      SELECT SINGLE id id_prev id_prev_app id_prev_app_stack
+        FROM z2ui5_t_fw_01
+        WHERE id = id
         INTO CORRESPONDING FIELDS OF result.
 
     ENDIF.
