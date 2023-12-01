@@ -81,6 +81,13 @@ CLASS z2ui5_cl_fw_binding DEFINITION
       RETURNING
         VALUE(result) TYPE ty_t_attri.
 
+    METHODS get_t_attri_by_include
+      IMPORTING
+        type          TYPE REF TO cl_abap_datadescr
+        attri         TYPE clike
+      RETURNING
+        VALUE(result) TYPE ty_t_attri.
+
     METHODS get_t_attri_by_oref
       IMPORTING
         val           TYPE clike OPTIONAL
@@ -379,6 +386,39 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD get_t_attri_by_include.
+
+    DATA temp11 TYPE REF TO cl_abap_structdescr.
+    DATA sdescr LIKE temp11.
+    DATA temp12 LIKE LINE OF sdescr->components.
+    DATA lr_comp LIKE REF TO temp12.
+      DATA lv_element TYPE string.
+      DATA temp13 TYPE ty_s_attri.
+      DATA ls_attri LIKE temp13.
+    temp11 ?= cl_abap_typedescr=>describe_by_name( type->absolute_name ).
+    
+    sdescr = temp11.
+
+    
+    
+    LOOP AT sdescr->components REFERENCE INTO lr_comp.
+
+      
+      lv_element = attri && lr_comp->name.
+
+      
+      CLEAR temp13.
+      temp13-name = lv_element.
+      temp13-type_kind = lr_comp->type_kind.
+      
+      ls_attri = temp13.
+      INSERT ls_attri INTO TABLE result.
+
+    ENDLOOP.
+
+
+  ENDMETHOD.
+
   METHOD get_t_attri_by_struc.
 
     DATA lv_name TYPE string.
@@ -386,12 +426,12 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     DATA temp1 TYPE xsdboolean.
     DATA lt_comp TYPE abap_component_tab.
     DATA lv_attri TYPE string.
-    DATA temp11 LIKE LINE OF lt_comp.
-    DATA lr_comp LIKE REF TO temp11.
+    DATA temp14 LIKE LINE OF lt_comp.
+    DATA lr_comp LIKE REF TO temp14.
       DATA lv_element TYPE string.
-        DATA lt_attri TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-        DATA temp12 TYPE ty_s_attri.
-        DATA ls_attri LIKE temp12.
+          DATA lt_attri TYPE z2ui5_cl_fw_binding=>ty_t_attri.
+        DATA temp15 TYPE ty_s_attri.
+        DATA ls_attri LIKE temp15.
     lv_name = `MO_APP->` && val.
     
     ASSIGN (lv_name) TO <attribute>.
@@ -401,6 +441,7 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
 
     
     lt_comp = z2ui5_cl_util_func=>rtti_get_t_comp_by_struc( <attribute> ).
+
     
     lv_attri = z2ui5_cl_util_func=>c_replace_assign_struc( val ).
     
@@ -414,17 +455,22 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
       OR lr_comp->type->type_kind = cl_abap_classdescr=>typekind_struct2
       OR lr_comp->type->type_kind = cl_abap_classdescr=>typekind_struct1.
 
-        
-        lt_attri = get_t_attri_by_struc( lv_element ).
+        IF lr_comp->name IS INITIAL.
+          
+          lt_attri = me->get_t_attri_by_include( type = lr_comp->type attri = lv_attri ).
+        ELSE.
+          lt_attri = get_t_attri_by_struc( lv_element ).
+        ENDIF.
+
         INSERT LINES OF lt_attri INTO TABLE result.
 
       ELSE.
         
-        CLEAR temp12.
-        temp12-name = lv_element.
-        temp12-type_kind = lr_comp->type->type_kind.
+        CLEAR temp15.
+        temp15-name = lv_element.
+        temp15-type_kind = lr_comp->type->type_kind.
         
-        ls_attri = temp12.
+        ls_attri = temp15.
         INSERT ls_attri INTO TABLE result.
 
       ENDIF.
@@ -486,11 +532,11 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
 
   METHOD search_binding.
 
-    DATA temp13 LIKE REF TO mt_attri.
-    DATA temp14 LIKE LINE OF mt_attri.
-    DATA lr_bind LIKE REF TO temp14.
-    GET REFERENCE OF mt_attri INTO temp13.
-set_attri_ready( temp13 ).
+    DATA temp16 LIKE REF TO mt_attri.
+    DATA temp17 LIKE LINE OF mt_attri.
+    DATA lr_bind LIKE REF TO temp17.
+    GET REFERENCE OF mt_attri INTO temp16.
+set_attri_ready( temp16 ).
 
     
     
