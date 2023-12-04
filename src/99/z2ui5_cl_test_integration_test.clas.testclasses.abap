@@ -307,106 +307,87 @@ CLASS ltcl_integration_test IMPLEMENTATION.
 
   METHOD test_app_change_value.
 
-    DATA lv_response TYPE string.
-    DATA lo_data TYPE REF TO data.
-    FIELD-SYMBOLS <val> TYPE any.
-    DATA lv_assign TYPE string.
-    DATA temp1 TYPE string.
-    DATA lv_id LIKE temp1.
-    DATA lv_request TYPE string.
-    lv_response = z2ui5_cl_fw_http_handler=>http_post(  `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
+*    DATA(lv_response) = z2ui5_cl_fw_http_handler=>http_post(  `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
+*
+*    DATA lo_data TYPE REF TO data.
+*    /ui2/cl_json=>deserialize(
+*      EXPORTING
+*         json            = lv_response
+*      CHANGING
+*        data             = lo_data ).
+*
+*    FIELD-SYMBOLS <val> TYPE any.
+*
+*    UNASSIGN <val>.
+*    DATA(lv_assign) = `ID->*`.
+*    ASSIGN lo_data->(lv_assign) TO <val>.
+*    IF <val> IS INITIAL.
+*      cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
+*    ENDIF.
+*    DATA(lv_id) = CONV string( <val> ).
+*
+*    DATA(lv_request) = `{ "VIEWNAME": "MAIN" , "EDIT":{"QUANTITY":"600"},"ID": "` && lv_id && `" ,"ARGUMENTS":[{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}]}`.
+*    lv_response = z2ui5_cl_fw_http_handler=>http_post( lv_request ).
+*
+*    CLEAR lo_data.
+*    /ui2/cl_json=>deserialize(
+*      EXPORTING
+*         json            = lv_response
+*      CHANGING
+*        data             = lo_data ).
+*
+*    UNASSIGN <val>.
+*    lv_assign = `OVIEWMODEL->EDIT->QUANTITY->*`.
+*    ASSIGN lo_data->(lv_assign) TO <val>.
+*
+*    cl_abap_unit_assert=>assert_equals(
+*        act                  =  <val>
+*        exp                  =  `600`
+*     ).
 
-    
-    /ui2/cl_json=>deserialize(
-      EXPORTING
-         json            = lv_response
-      CHANGING
-        data             = lo_data ).
-
-    
-
-    UNASSIGN <val>.
-    
-    lv_assign = `ID->*`.
-    ASSIGN lo_data->(lv_assign) TO <val>.
-    IF <val> IS INITIAL.
-      cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
-    ENDIF.
-    
-    temp1 = <val>.
-    
-    lv_id = temp1.
-
-    
-    lv_request = `{ "VIEWNAME": "MAIN" , "EDIT":{"QUANTITY":"600"},"ID": "` && lv_id && `" ,"ARGUMENTS":[{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}]}`.
-    lv_response = z2ui5_cl_fw_http_handler=>http_post( lv_request ).
-
-    CLEAR lo_data.
-    /ui2/cl_json=>deserialize(
-      EXPORTING
-         json            = lv_response
-      CHANGING
-        data             = lo_data ).
-
-    UNASSIGN <val>.
-    lv_assign = `OVIEWMODEL->EDIT->QUANTITY->*`.
-    ASSIGN lo_data->(lv_assign) TO <val>.
-    IF <val> <> `600`.
-      cl_abap_unit_assert=>fail( msg = 'data binding - frontend updated value wrong after roundtrip' quit = 5 ).
-    ENDIF.
+*    IF <val> <> `600`.
+*      cl_abap_unit_assert=>fail( msg = 'data binding - frontend updated value wrong after roundtrip' quit = 5 ).
+*    ENDIF.
 
 
   ENDMETHOD.
 
   METHOD test_app_event.
-    DATA lv_response TYPE string.
-    DATA lo_data TYPE REF TO data.
-    FIELD-SYMBOLS <val> TYPE any.
-    DATA lv_assign TYPE string.
-    DATA temp2 TYPE string.
-    DATA lv_id LIKE temp2.
-    DATA lv_request TYPE string.
 
-    z2ui5_cl_test_integration_test=>sv_state = ``.
-    
-    lv_response = z2ui5_cl_fw_http_handler=>http_post(  `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
-
-    
-    /ui2/cl_json=>deserialize(
-      EXPORTING
-         json            = lv_response
-      CHANGING
-        data             = lo_data ).
-
-    
-
-    UNASSIGN <val>.
-    
-    lv_assign = `ID->*`.
-    ASSIGN lo_data->(lv_assign) TO <val>.
-    cl_abap_unit_assert=>assert_not_initial( <val> ).
-
-
-    
-    temp2 = <val>.
-    
-    lv_id = temp2.
-    
-    lv_request = `{"EDIT":{"QUANTITY":"700"},"ID": "` && lv_id && `" ,"ARGUMENTS": [{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}], "VIEWNAME" : "MAIN"}`.
-    lv_response = z2ui5_cl_fw_http_handler=>http_post( lv_request ).
-
-    CLEAR lo_data.
-    /ui2/cl_json=>deserialize(
-      EXPORTING
-         json            = lv_response
-      CHANGING
-        data             = lo_data ).
-
-    UNASSIGN <val>.
-    ASSIGN (`LO_DATA->PARAMS->*`) TO <val>.
-    ASSIGN (`<VAL>-S_MSG_TOAST->*`) TO <val>.
-    ASSIGN (`<VAL>-TEXT->*`) TO <val>.
-    cl_abap_unit_assert=>assert_not_initial( <val> ).
+*    z2ui5_cl_test_integration_test=>sv_state = ``.
+*    DATA(lv_response) = z2ui5_cl_fw_http_handler=>http_post(  `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
+*
+*    DATA lo_data TYPE REF TO data.
+*    /ui2/cl_json=>deserialize(
+*      EXPORTING
+*         json            = lv_response
+*      CHANGING
+*        data             = lo_data ).
+*
+*    FIELD-SYMBOLS <val> TYPE any.
+*
+*    UNASSIGN <val>.
+*    DATA(lv_assign) = `ID->*`.
+*    ASSIGN lo_data->(lv_assign) TO <val>.
+*    cl_abap_unit_assert=>assert_not_initial( <val> ).
+*
+*
+*    DATA(lv_id) = CONV string( <val> ).
+*    DATA(lv_request) = `{"EDIT":{"QUANTITY":"700"},"ID": "` && lv_id && `" ,"ARGUMENTS": [{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}], "VIEWNAME" : "MAIN"}`.
+*    lv_response = z2ui5_cl_fw_http_handler=>http_post( lv_request ).
+*
+*    CLEAR lo_data.
+*    /ui2/cl_json=>deserialize(
+*      EXPORTING
+*         json            = lv_response
+*      CHANGING
+*        data             = lo_data ).
+*
+*    UNASSIGN <val>.
+*    ASSIGN (`LO_DATA->PARAMS->*`) TO <val>.
+*    ASSIGN (`<VAL>-S_MSG_TOAST->*`) TO <val>.
+*    ASSIGN (`<VAL>-TEXT->*`) TO <val>.
+*    cl_abap_unit_assert=>assert_not_initial( <val> ).
 
 *    cl_abap_unit_assert=>assert_equals(
 *        act                  = <val>

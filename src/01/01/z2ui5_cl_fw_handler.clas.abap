@@ -74,29 +74,13 @@ CLASS z2ui5_cl_fw_handler DEFINITION
       RETURNING
         VALUE(result) TYPE string.
 
-    CLASS-METHODS set_app_start
-      RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_fw_handler.
+    CLASS-METHODS body_read_location.
 
-    CLASS-METHODS set_app_client
-      IMPORTING
-        id_prev       TYPE clike
+    CLASS-METHODS _get_id
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_fw_handler.
+        VALUE(result) TYPE string.
 
-    METHODS set_app_leave
-      IMPORTING
-        check_no_db_save TYPE abap_bool DEFAULT abap_false
-      RETURNING
-        VALUE(result)    TYPE REF TO z2ui5_cl_fw_handler.
-
-    METHODS set_app_call
-      IMPORTING
-        check_no_db_save TYPE abap_bool DEFAULT abap_false
-      RETURNING
-        VALUE(result)    TYPE REF TO z2ui5_cl_fw_handler.
-
-    CLASS-METHODS set_app_system
+    CLASS-METHODS app_system_factory
       IMPORTING
         VALUE(ix)     TYPE REF TO cx_root OPTIONAL
         error_text    TYPE string         OPTIONAL
@@ -104,11 +88,48 @@ CLASS z2ui5_cl_fw_handler DEFINITION
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_fw_handler.
 
-    METHODS app_set_next
+    METHODS app_next_factory
       IMPORTING
         app             TYPE REF TO z2ui5_if_app
       RETURNING
         VALUE(r_result) TYPE REF TO z2ui5_cl_fw_handler.
+
+    METHODS app_client_begin_event.
+    METHODS app_client_begin_model.
+
+    CLASS-METHODS app_start_factory
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_fw_handler.
+
+    CLASS-METHODS app_client_begin_factory
+      IMPORTING
+        id_prev       TYPE clike
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_fw_handler.
+
+    METHODS app_leave_factory
+      IMPORTING
+        check_no_db_save TYPE abap_bool DEFAULT abap_false
+      RETURNING
+        VALUE(result)    TYPE REF TO z2ui5_cl_fw_handler.
+
+    METHODS app_call_factory
+      IMPORTING
+        check_no_db_save TYPE abap_bool DEFAULT abap_false
+      RETURNING
+        VALUE(result)    TYPE REF TO z2ui5_cl_fw_handler.
+
+    METHODS app_client_end_model
+      RETURNING
+        VALUE(rv_viewmodel) TYPE string.
+
+    METHODS app_client_end_response
+      IMPORTING
+        iv_viewmodel    TYPE string
+      RETURNING
+        VALUE(r_result) TYPE string.
+
+    METHODS app_client_end_db.
 
   PROTECTED SECTION.
   PRIVATE SECTION.
@@ -116,10 +137,10 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_FW_HANDLER IMPLEMENTATION.
+CLASS z2ui5_cl_fw_handler IMPLEMENTATION.
 
 
-  METHOD app_set_next.
+  METHOD app_next_factory.
 
     DATA temp1 TYPE string.
         DATA ls_db_next TYPE z2ui5_cl_fw_db=>ty_s_db.
@@ -149,108 +170,16 @@ CLASS Z2UI5_CL_FW_HANDLER IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD request_begin.
-        DATA location TYPE REF TO z2ui5_cl_util_tree_json.
-            FIELD-SYMBOLS <struc> TYPE any.
-            DATA ls_params TYPE REF TO any.
-            DATA lt_comp TYPE abap_component_tab.
-            DATA ls_comp LIKE LINE OF lt_comp.
-              FIELD-SYMBOLS <val_ref> TYPE REF TO data.
-              FIELD-SYMBOLS <tab> TYPE table.
-              FIELD-SYMBOLS <val2> TYPE data.
-              DATA temp2 TYPE z2ui5_if_client=>ty_s_name_value.
-        DATA lv_id_prev TYPE string.
+  METHOD app_client_begin_event.
         FIELD-SYMBOLS <any> TYPE any.
         DATA temp1 TYPE xsdboolean.
+        DATA temp3 TYPE xsdboolean.
         DATA temp4 TYPE xsdboolean.
-        DATA temp5 TYPE xsdboolean.
         FIELD-SYMBOLS <arg> TYPE STANDARD TABLE.
-        DATA temp6 TYPE xsdboolean.
+        DATA temp5 TYPE xsdboolean.
         FIELD-SYMBOLS <arg_row> TYPE any.
             FIELD-SYMBOLS <val> TYPE any.
-            DATA temp3 TYPE string.
-
-    so_body = z2ui5_cl_util_tree_json=>factory( body ).
-
-    TRY.
-        
-        location     = so_body->get_attribute( `OLOCATION` ).
-        ss_config-body     = body.
-
-        TRY.
-            ss_config-search   = location->get_attribute( `SEARCH` )->get_val( ).
-          CATCH cx_root.
-        ENDTRY.
-
-        TRY.
-            ss_config-origin   = location->get_attribute( `ORIGIN` )->get_val( ).
-          CATCH cx_root.
-        ENDTRY.
-
-        TRY.
-            ss_config-pathname = location->get_attribute( `PATHNAME` )->get_val( ).
-          CATCH cx_root.
-        ENDTRY.
-
-        TRY.
-            ss_config-version  = location->get_attribute( `VERSION` )->get_val( ).
-          CATCH cx_root.
-        ENDTRY.
-
-        TRY.
-            ss_config-check_launchpad_active  = location->get_attribute( `CHECK_LAUNCHPAD_ACTIVE` )->get_val( ).
-          CATCH cx_root.
-        ENDTRY.
-
-        TRY.
-            
-            
-            ls_params  = location->get_attribute( `STARTUP_PARAMETERS` )->get_val_ref( ).
-            ASSIGN ls_params->* TO <struc>.
-
-            
-            lt_comp = z2ui5_cl_util_func=>rtti_get_t_comp_by_struc( <struc> ).
-
-            
-            LOOP AT lt_comp INTO ls_comp.
-
-              
-              
-              
-              ASSIGN COMPONENT ls_comp-name OF STRUCTURE <struc> TO <val_ref>.
-              ASSIGN <val_ref>->* TO <tab>.
-              READ TABLE <tab> INDEX 1 ASSIGNING <val_ref>.
-              ASSIGN <val_ref>->* TO <val2>.
-
-              
-              CLEAR temp2.
-              temp2-n = ls_comp-name.
-              temp2-v = <val2>.
-              INSERT temp2 INTO TABLE ss_config-t_startup_params.
-
-            ENDLOOP.
-          CATCH cx_root.
-        ENDTRY.
-
-      CATCH cx_root.
-    ENDTRY.
-    ss_config-view_model_edit_name = z2ui5_cl_fw_binding=>cv_model_edit_name.
-
-
-    TRY.
-        
-        lv_id_prev = so_body->get_attribute( `ID` )->get_val( ).
-      CATCH cx_root.
-    ENDTRY.
-    IF lv_id_prev IS INITIAL.
-      result = set_app_start( ).
-      result->ms_actual-check_on_navigated = abap_true.
-    ELSE.
-      result = set_app_client( lv_id_prev ).
-      result->ms_actual-check_on_navigated = abap_false.
-    ENDIF.
-
-    result->ms_db-check_attri = abap_false.
+            DATA temp2 TYPE string.
 
     TRY.
 
@@ -261,18 +190,18 @@ CLASS Z2UI5_CL_FW_HANDLER IMPLEMENTATION.
         z2ui5_cl_util_func=>x_check_raise( temp1 ).
         ASSIGN (`<ANY>->ARGUMENTS`) TO <any>.
         
-        temp4 = boolc( sy-subrc <> 0 ).
-        z2ui5_cl_util_func=>x_check_raise( temp4 ).
+        temp3 = boolc( sy-subrc <> 0 ).
+        z2ui5_cl_util_func=>x_check_raise( temp3 ).
         ASSIGN (`<ANY>->*`) TO <any>.
         
-        temp5 = boolc( sy-subrc <> 0 ).
-        z2ui5_cl_util_func=>x_check_raise( temp5 ).
+        temp4 = boolc( sy-subrc <> 0 ).
+        z2ui5_cl_util_func=>x_check_raise( temp4 ).
 
         
         ASSIGN <any> TO <arg>.
         
-        temp6 = boolc( sy-subrc <> 0 ).
-        z2ui5_cl_util_func=>x_check_raise( temp6 ).
+        temp5 = boolc( sy-subrc <> 0 ).
+        z2ui5_cl_util_func=>x_check_raise( temp5 ).
 
         
         LOOP AT <arg> ASSIGNING <arg_row>.
@@ -280,20 +209,120 @@ CLASS Z2UI5_CL_FW_HANDLER IMPLEMENTATION.
           IF sy-tabix = 1.
             
             ASSIGN (`<ARG_ROW>->EVENT->*`) TO <val>.
-            result->ms_actual-event = <val>.
+            ms_actual-event = <val>.
           ELSE.
             ASSIGN <arg_row>->* TO <val>.
             IF sy-subrc <> 0.
               CONTINUE.
             ENDIF.
             
-            temp3 = <val>.
-            INSERT temp3 INTO TABLE result->ms_actual-t_event_arg.
+            temp2 = <val>.
+            INSERT temp2 INTO TABLE ms_actual-t_event_arg.
           ENDIF.
 
         ENDLOOP.
       CATCH cx_root.
     ENDTRY.
+
+  ENDMETHOD.
+
+
+  METHOD body_read_location.
+        DATA location TYPE REF TO z2ui5_cl_util_tree_json.
+        FIELD-SYMBOLS <struc> TYPE any.
+        DATA ls_params TYPE REF TO any.
+        DATA lt_comp TYPE abap_component_tab.
+        DATA ls_comp LIKE LINE OF lt_comp.
+          FIELD-SYMBOLS <val_ref> TYPE REF TO data.
+          FIELD-SYMBOLS <tab> TYPE table.
+          FIELD-SYMBOLS <val2> TYPE data.
+          DATA temp3 TYPE z2ui5_if_client=>ty_s_name_value.
+
+    TRY.
+        
+        location     = so_body->get_attribute( `OLOCATION` ).
+      CATCH cx_root.
+    ENDTRY.
+
+    TRY.
+        ss_config-search   = location->get_attribute( `SEARCH` )->get_val( ).
+      CATCH cx_root.
+    ENDTRY.
+
+    TRY.
+        ss_config-origin   = location->get_attribute( `ORIGIN` )->get_val( ).
+      CATCH cx_root.
+    ENDTRY.
+
+    TRY.
+        ss_config-pathname = location->get_attribute( `PATHNAME` )->get_val( ).
+      CATCH cx_root.
+    ENDTRY.
+
+    TRY.
+        ss_config-version  = location->get_attribute( `VERSION` )->get_val( ).
+      CATCH cx_root.
+    ENDTRY.
+
+    TRY.
+        ss_config-check_launchpad_active  = location->get_attribute( `CHECK_LAUNCHPAD_ACTIVE` )->get_val( ).
+      CATCH cx_root.
+    ENDTRY.
+
+    TRY.
+        
+        
+        ls_params  = location->get_attribute( `STARTUP_PARAMETERS` )->get_val_ref( ).
+        ASSIGN ls_params->* TO <struc>.
+
+        
+        lt_comp = z2ui5_cl_util_func=>rtti_get_t_comp_by_struc( <struc> ).
+
+        
+        LOOP AT lt_comp INTO ls_comp.
+
+          
+          
+          
+          ASSIGN COMPONENT ls_comp-name OF STRUCTURE <struc> TO <val_ref>.
+          ASSIGN <val_ref>->* TO <tab>.
+          READ TABLE <tab> INDEX 1 ASSIGNING <val_ref>.
+          ASSIGN <val_ref>->* TO <val2>.
+
+          
+          CLEAR temp3.
+          temp3-n = ls_comp-name.
+          temp3-v = <val2>.
+          INSERT temp3 INTO TABLE ss_config-t_startup_params.
+
+        ENDLOOP.
+      CATCH cx_root.
+    ENDTRY.
+
+  ENDMETHOD.
+
+
+  METHOD request_begin.
+    DATA lv_id_prev TYPE string.
+
+    ss_config-body                 = body.
+    so_body                        = z2ui5_cl_util_tree_json=>factory( ss_config-body ).
+    ss_config-view_model_edit_name = z2ui5_cl_fw_binding=>cv_model_edit_name.
+    body_read_location( ).
+
+    
+    lv_id_prev = _get_id( ).
+    IF lv_id_prev IS INITIAL.
+      result = app_start_factory( ).
+      result->ms_actual-check_on_navigated = abap_true.
+    ELSE.
+      result = app_client_begin_factory( lv_id_prev ).
+      result->app_client_begin_model(  ).
+      result->app_client_begin_event( ).
+      result->ms_actual-check_on_navigated = abap_false.
+    ENDIF.
+
+    result->ms_db-check_attri = abap_false.
 
     IF ss_config-search CS `scenario=LAUNCHPAD`.
       result->ms_actual-check_launchpad_active = abap_true.
@@ -304,40 +333,17 @@ CLASS Z2UI5_CL_FW_HANDLER IMPLEMENTATION.
 
   METHOD request_end.
 
-    DATA lo_resp TYPE REF TO z2ui5_cl_util_tree_json.
-    DATA lo_binder TYPE REF TO z2ui5_cl_fw_model.
     DATA lv_viewmodel TYPE string.
-    lo_resp = z2ui5_cl_util_tree_json=>factory( ).
-
-    
-    lo_binder = z2ui5_cl_fw_model=>factory(
-        viewname = ms_actual-viewname
-        app      = ms_db-app
-        attri    = ms_db-t_attri ).
-
-    
-    lv_viewmodel = lo_binder->main_set_frontend( ).
-
-    lo_resp->add_attribute( n           = `OVIEWMODEL`
-                            v           = lv_viewmodel
-                            apos_active = abap_false ).
-
-    lo_resp->add_attribute( n           = `PARAMS`
-                            v           = z2ui5_cl_util_func=>trans_json_any_2( ms_next-s_set )
-                            apos_active = abap_false ).
-
-    lo_resp->add_attribute( n = `ID`
-                            v = ms_db-id ).
-
-    result = lo_resp->mo_root->stringify( ).
-    z2ui5_cl_fw_db=>create( id = ms_db-id db = ms_db ).
+    lv_viewmodel = app_client_end_model( ).
+    result = app_client_end_response( lv_viewmodel ).
+    app_client_end_db( ).
 
   ENDMETHOD.
 
 
-  METHOD set_app_call.
+  METHOD app_call_factory.
 
-    result = app_set_next( ms_next-o_app_call ).
+    result = app_next_factory( ms_next-o_app_call ).
     result->ms_db-id_prev_app_stack = ms_db-id.
 
     CLEAR ms_next.
@@ -350,8 +356,7 @@ CLASS Z2UI5_CL_FW_HANDLER IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD set_app_client.
-        DATA lo_model TYPE REF TO z2ui5_cl_fw_model.
+  METHOD app_client_begin_factory.
 
     CREATE OBJECT result.
     result->ms_db         = z2ui5_cl_fw_db=>load_app( id_prev ).
@@ -363,26 +368,13 @@ CLASS Z2UI5_CL_FW_HANDLER IMPLEMENTATION.
       CATCH cx_root.
     ENDTRY.
 
-    TRY.
-        
-        lo_model = z2ui5_cl_fw_model=>factory(
-        viewname = result->ms_actual-viewname
-        app      = result->ms_db-app
-        attri    = result->ms_db-t_attri ).
-
-        lo_model->main_set_backend(
-            so_body->get_attribute( ss_config-view_model_edit_name )->mr_actual  ).
-
-      CATCH cx_root.
-    ENDTRY.
-
   ENDMETHOD.
 
 
-  METHOD set_app_leave.
+  METHOD app_leave_factory.
         DATA ls_draft TYPE z2ui5_t_fw_01.
 
-    result = app_set_next( ms_next-o_app_leave ).
+    result = app_next_factory( ms_next-o_app_leave ).
 
     TRY.
         
@@ -397,12 +389,10 @@ CLASS Z2UI5_CL_FW_HANDLER IMPLEMENTATION.
       z2ui5_cl_fw_db=>create( id = ms_db-id db = ms_db ).
     ENDIF.
 
-*    CLEAR result->ms_db-t_attri.
-
   ENDMETHOD.
 
 
-  METHOD set_app_start.
+  METHOD app_start_factory.
         DATA lv_classname TYPE string.
 
     TRY.
@@ -420,7 +410,7 @@ CLASS Z2UI5_CL_FW_HANDLER IMPLEMENTATION.
     ENDIF.
 
     IF lv_classname IS INITIAL.
-      result = set_app_system( ).
+      result = app_system_factory( ).
       RETURN.
     ENDIF.
 
@@ -433,13 +423,13 @@ CLASS Z2UI5_CL_FW_HANDLER IMPLEMENTATION.
         result->ms_db-app->id = result->ms_db-id.
 
       CATCH cx_root.
-        result = set_app_system( error_text = `App with name ` && lv_classname && ` not found...` ).
+        result = app_system_factory( error_text = `App with name ` && lv_classname && ` not found...` ).
     ENDTRY.
 
   ENDMETHOD.
 
 
-  METHOD set_app_system.
+  METHOD app_system_factory.
 
     CREATE OBJECT result.
     result->ms_db-id = z2ui5_cl_util_func=>func_get_uuid_32( ).
@@ -450,7 +440,7 @@ CLASS Z2UI5_CL_FW_HANDLER IMPLEMENTATION.
 
     IF ix IS BOUND.
       result->ms_next-o_app_call = z2ui5_cl_fw_app_error=>factory( ix ).
-      result = result->set_app_call( abap_true ).
+      result = result->app_call_factory( abap_true ).
       RETURN.
     ENDIF.
 
@@ -458,4 +448,74 @@ CLASS Z2UI5_CL_FW_HANDLER IMPLEMENTATION.
     result->ms_db-app->id = result->ms_db-id.
 
   ENDMETHOD.
+
+  METHOD app_client_begin_model.
+        DATA lo_model TYPE REF TO z2ui5_cl_fw_model.
+
+    TRY.
+        
+        lo_model = z2ui5_cl_fw_model=>factory(
+        viewname = ms_actual-viewname
+        app      = ms_db-app
+        attri    = ms_db-t_attri ).
+
+        lo_model->main_set_backend(
+            so_body->get_attribute( ss_config-view_model_edit_name )->mr_actual  ).
+
+      CATCH cx_root.
+    ENDTRY.
+
+  ENDMETHOD.
+
+
+  METHOD _get_id.
+
+    TRY.
+        result  = so_body->get_attribute( `ID` )->get_val( ).
+      CATCH cx_root.
+    ENDTRY.
+
+  ENDMETHOD.
+
+
+  METHOD app_client_end_model.
+
+    DATA lo_binder TYPE REF TO z2ui5_cl_fw_model.
+    lo_binder = z2ui5_cl_fw_model=>factory(
+        viewname = ms_actual-viewname
+        app      = ms_db-app
+        attri    = ms_db-t_attri ).
+
+    rv_viewmodel  = lo_binder->main_set_frontend( ).
+
+  ENDMETHOD.
+
+
+  METHOD app_client_end_response.
+
+    DATA lo_resp TYPE REF TO z2ui5_cl_util_tree_json.
+    lo_resp = z2ui5_cl_util_tree_json=>factory( ).
+
+    lo_resp->add_attribute( n           = `OVIEWMODEL`
+                            v           = iv_viewmodel
+                            apos_active = abap_false ).
+
+    lo_resp->add_attribute( n           = `PARAMS`
+                            v           = z2ui5_cl_util_func=>trans_json_any_2( ms_next-s_set )
+                            apos_active = abap_false ).
+
+    lo_resp->add_attribute( n = `ID`
+                            v = ms_db-id ).
+
+    r_result = lo_resp->mo_root->stringify( ).
+
+  ENDMETHOD.
+
+
+  METHOD app_client_end_db.
+
+    z2ui5_cl_fw_db=>create( id = ms_db-id db = ms_db ).
+
+  ENDMETHOD.
+
 ENDCLASS.
