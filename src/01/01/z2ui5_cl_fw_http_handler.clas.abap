@@ -66,7 +66,7 @@ CLASS z2ui5_cl_fw_http_handler IMPLEMENTATION.
     ENDIF.
 
     
-    lv_add_js = z2ui5_cl_cc__factory_fw=>get_js_startup( ) && custom_js.
+    lv_add_js = z2ui5_cl_fw_cc_factory=>get_js_startup( ) && custom_js.
 
     IF content_security_policy IS NOT SUPPLIED.
       
@@ -568,17 +568,17 @@ CLASS z2ui5_cl_fw_http_handler IMPLEMENTATION.
 
 
   METHOD http_post.
-        DATA lo_handler TYPE REF TO z2ui5_cl_fw_handler.
+        DATA lo_handler TYPE REF TO z2ui5_cl_fw_controller.
         DATA x TYPE REF TO cx_root.
           DATA temp4 TYPE REF TO z2ui5_if_app.
           DATA temp1 TYPE REF TO z2ui5_cl_fw_client.
 
     TRY.
         
-        lo_handler = z2ui5_cl_fw_handler=>request_begin( body ).
+        lo_handler = z2ui5_cl_fw_controller=>request_begin( body ).
         
       CATCH cx_root INTO x.
-        lo_handler = z2ui5_cl_fw_handler=>app_system_factory( x ).
+        lo_handler = z2ui5_cl_fw_controller=>app_system_factory( x ).
     ENDTRY.
 
     DO.
@@ -605,7 +605,7 @@ CLASS z2ui5_cl_fw_http_handler IMPLEMENTATION.
           result = lo_handler->request_end( ).
 
         CATCH cx_root INTO x.
-          lo_handler = z2ui5_cl_fw_handler=>app_system_factory( x ).
+          lo_handler = z2ui5_cl_fw_controller=>app_system_factory( x ).
           CONTINUE.
       ENDTRY.
 
