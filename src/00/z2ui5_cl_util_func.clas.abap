@@ -506,7 +506,7 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
     temp9 ?= lo_type.
     
     lo_struct = temp9.
-    result   = lo_struct->get_components( ).
+    result = lo_struct->get_components( ).
 
   ENDMETHOD.
 

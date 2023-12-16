@@ -430,8 +430,8 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     DATA lr_comp LIKE REF TO temp14.
       DATA lv_element TYPE string.
           DATA lt_attri TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-        DATA temp15 TYPE ty_s_attri.
-        DATA ls_attri LIKE temp15.
+          DATA temp15 TYPE ty_s_attri.
+          DATA ls_attri LIKE temp15.
     lv_name = `MO_APP->` && val.
     
     ASSIGN (lv_name) TO <attribute>.
@@ -465,14 +465,26 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
         INSERT LINES OF lt_attri INTO TABLE result.
 
       ELSE.
-        
-        CLEAR temp15.
-        temp15-name = lv_element.
-        temp15-type_kind = lr_comp->type->type_kind.
-        
-        ls_attri = temp15.
-        INSERT ls_attri INTO TABLE result.
 
+        IF lr_comp->type->absolute_name = '\TYPE=XSDBOOLEAN'
+        OR lr_comp->type->absolute_name = '\TYPE=ABAP_BOOL'.
+
+          
+          CLEAR temp15.
+          temp15-name = lv_element.
+          temp15-type = 'ABAP_BOOL'.
+          temp15-type_kind = lr_comp->type->type_kind.
+          
+          ls_attri = temp15.
+
+        ELSE.
+
+          CLEAR ls_attri.
+          ls_attri-name = lv_element.
+          ls_attri-type_kind = lr_comp->type->type_kind.
+
+        ENDIF.
+        INSERT ls_attri INTO TABLE result.
       ENDIF.
     ENDLOOP.
 
