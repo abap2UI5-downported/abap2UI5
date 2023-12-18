@@ -5,6 +5,27 @@ CLASS z2ui5_cl_xml_view_cc DEFINITION
 
   PUBLIC SECTION.
 
+
+    METHODS multiinput
+      IMPORTING
+        !showclearicon    TYPE clike OPTIONAL
+        !showvaluehelp    TYPE clike OPTIONAL
+        !suggestionitems  TYPE clike OPTIONAL
+        !tokenupdate      TYPE clike OPTIONAL
+        !width            TYPE clike OPTIONAL
+        !id               TYPE clike OPTIONAL
+        !value            TYPE clike OPTIONAL
+        !tokens           TYPE clike OPTIONAL
+        !submit           TYPE clike OPTIONAL
+        !valuehelprequest TYPE clike OPTIONAL
+        !enabled          TYPE clike OPTIONAL
+        !class            TYPE clike OPTIONAL
+        !change           TYPE clike OPTIONAL
+        !addedTokens      TYPE clike OPTIONAL
+        !removedTokens    TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result)     TYPE REF TO z2ui5_cl_xml_view .
+
     METHODS camera_picture
       IMPORTING
         !id           TYPE clike OPTIONAL
@@ -22,11 +43,13 @@ CLASS z2ui5_cl_xml_view_cc DEFINITION
         !height       TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+
     METHODS demo_output
       IMPORTING
         !val          TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+
     METHODS focus
       IMPORTING
         !focusid        TYPE clike OPTIONAL
@@ -483,4 +506,59 @@ CLASS z2ui5_cl_xml_view_cc IMPLEMENTATION.
               t_prop = temp23 ).
 
   ENDMETHOD.
+  METHOD multiinput.
+
+    DATA temp25 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp26 LIKE LINE OF temp25.
+    CLEAR temp25.
+    
+    temp26-n = `tokens`.
+    temp26-v = tokens.
+    INSERT temp26 INTO TABLE temp25.
+    temp26-n = `showClearIcon`.
+    temp26-v = z2ui5_cl_util_func=>boolean_abap_2_json( showclearicon ).
+    INSERT temp26 INTO TABLE temp25.
+    temp26-n = `showValueHelp`.
+    temp26-v = z2ui5_cl_util_func=>boolean_abap_2_json( showvaluehelp ).
+    INSERT temp26 INTO TABLE temp25.
+    temp26-n = `enabled`.
+    temp26-v = z2ui5_cl_util_func=>boolean_abap_2_json( enabled ).
+    INSERT temp26 INTO TABLE temp25.
+    temp26-n = `suggestionItems`.
+    temp26-v = suggestionitems.
+    INSERT temp26 INTO TABLE temp25.
+    temp26-n = `tokenUpdate`.
+    temp26-v = tokenupdate.
+    INSERT temp26 INTO TABLE temp25.
+    temp26-n = `submit`.
+    temp26-v = submit.
+    INSERT temp26 INTO TABLE temp25.
+    temp26-n = `width`.
+    temp26-v = width.
+    INSERT temp26 INTO TABLE temp25.
+    temp26-n = `value`.
+    temp26-v = value.
+    INSERT temp26 INTO TABLE temp25.
+    temp26-n = `id`.
+    temp26-v = id.
+    INSERT temp26 INTO TABLE temp25.
+    temp26-n = `change`.
+    temp26-v = change.
+    INSERT temp26 INTO TABLE temp25.
+    temp26-n = `valueHelpRequest`.
+    temp26-v = valuehelprequest.
+    INSERT temp26 INTO TABLE temp25.
+    temp26-n = `addedTokens`.
+    temp26-v = addedTokens.
+    INSERT temp26 INTO TABLE temp25.
+    temp26-n = `removedTokens`.
+    temp26-v = removedTokens.
+    INSERT temp26 INTO TABLE temp25.
+    temp26-n = `class`.
+    temp26-v = class.
+    INSERT temp26 INTO TABLE temp25.
+    result = mo_view->_generic( name   = `MultiInput` ns = `z2ui5`
+                       t_prop = temp25 ).
+  ENDMETHOD.
+
 ENDCLASS.
