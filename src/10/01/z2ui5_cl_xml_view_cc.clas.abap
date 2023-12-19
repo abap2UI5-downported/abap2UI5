@@ -5,7 +5,6 @@ CLASS z2ui5_cl_xml_view_cc DEFINITION
 
   PUBLIC SECTION.
 
-
     METHODS multiinput
       IMPORTING
         !showclearicon    TYPE clike OPTIONAL
@@ -25,6 +24,12 @@ CLASS z2ui5_cl_xml_view_cc DEFINITION
         !removedTokens    TYPE clike OPTIONAL
       RETURNING
         VALUE(result)     TYPE REF TO z2ui5_cl_xml_view .
+
+    METHODS uitableext
+      IMPORTING
+        !tableid  TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
     METHODS camera_picture
       IMPORTING
@@ -507,9 +512,11 @@ CLASS z2ui5_cl_xml_view_cc IMPLEMENTATION.
 
   ENDMETHOD.
   METHOD multiinput.
-
     DATA temp25 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp26 LIKE LINE OF temp25.
+
+    result = mo_view.
+    
     CLEAR temp25.
     
     temp26-n = `tokens`.
@@ -557,8 +564,22 @@ CLASS z2ui5_cl_xml_view_cc IMPLEMENTATION.
     temp26-n = `class`.
     temp26-v = class.
     INSERT temp26 INTO TABLE temp25.
-    result = mo_view->_generic( name   = `MultiInput` ns = `z2ui5`
+    mo_view->_generic( name   = `MultiInput` ns = `z2ui5`
                        t_prop = temp25 ).
+  ENDMETHOD.
+
+  METHOD uitableext.
+
+    DATA temp27 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp28 LIKE LINE OF temp27.
+    CLEAR temp27.
+    
+    temp28-n = `tableId`.
+    temp28-v = tableId.
+    INSERT temp28 INTO TABLE temp27.
+    result = mo_view->_generic( name   = `UITableExt` ns = `z2ui5`
+                       t_prop = temp27 ).
+
   ENDMETHOD.
 
 ENDCLASS.
