@@ -370,12 +370,12 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
 
   METHOD bind_tab_cell.
 
-    FIELD-SYMBOLS <ele> TYPE any.
-    FIELD-SYMBOLS <row> TYPE any.
+    FIELD-SYMBOLS <ele>  TYPE any.
+    FIELD-SYMBOLS <row>  TYPE any.
+    data lr_ref_in type ref to data.
+    data lr_ref type ref to data.
     DATA lt_attri TYPE abap_component_tab.
     FIELD-SYMBOLS <comp> LIKE LINE OF lt_attri.
-      DATA lr_ref_in LIKE REF TO <ele>.
-      DATA lr_ref LIKE REF TO i_val.
         DATA temp6 TYPE string.
 
     READ TABLE i_tab INDEX i_tab_index ASSIGNING <row>.
@@ -386,10 +386,8 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
     LOOP AT lt_attri ASSIGNING <comp>.
 
       ASSIGN COMPONENT <comp>-name OF STRUCTURE <row> TO <ele>.
-      
       GET REFERENCE OF <ele> INTO lr_ref_in.
 
-      
       GET REFERENCE OF i_val INTO lr_ref.
       IF lr_ref = lr_ref_in.
         

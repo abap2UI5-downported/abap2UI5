@@ -230,7 +230,7 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
   METHOD body_read_location.
         DATA location TYPE REF TO z2ui5_cl_util_tree_json.
         FIELD-SYMBOLS <struc> TYPE any.
-        DATA ls_params TYPE REF TO any.
+        data ls_params type ref to data.
         DATA lt_comp TYPE abap_component_tab.
         DATA ls_comp LIKE LINE OF lt_comp.
           FIELD-SYMBOLS <val_ref> TYPE REF TO data.
