@@ -5,6 +5,15 @@ CLASS z2ui5_cl_xml_view_cc DEFINITION
 
   PUBLIC SECTION.
 
+    METHODS multiinput_ext
+      IMPORTING
+        !MultiInputId    TYPE clike OPTIONAL
+        !change    TYPE clike OPTIONAL
+        !addedTokens      TYPE clike OPTIONAL
+        !removedTokens    TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result)     TYPE REF TO z2ui5_cl_xml_view .
+
     METHODS multiinput
       IMPORTING
         !showclearicon    TYPE clike OPTIONAL
@@ -579,6 +588,31 @@ CLASS z2ui5_cl_xml_view_cc IMPLEMENTATION.
     INSERT temp28 INTO TABLE temp27.
     result = mo_view->_generic( name   = `UITableExt` ns = `z2ui5`
                        t_prop = temp27 ).
+
+  ENDMETHOD.
+
+  METHOD multiinput_ext.
+    DATA temp29 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp30 LIKE LINE OF temp29.
+
+    result = mo_view.
+    
+    CLEAR temp29.
+    
+    temp30-n = `MultiInputId`.
+    temp30-v = MultiInputId.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `change`.
+    temp30-v = change.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `addedTokens`.
+    temp30-v = addedTokens.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `removedTokens`.
+    temp30-v = removedTokens.
+    INSERT temp30 INTO TABLE temp29.
+    mo_view->_generic( name   = `MultiInputExt` ns = `z2ui5`
+                       t_prop = temp29 ).
 
   ENDMETHOD.
 
