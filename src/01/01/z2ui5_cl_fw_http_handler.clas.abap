@@ -515,7 +515,7 @@ CLASS Z2UI5_CL_FW_HTTP_HANDLER IMPLEMENTATION.
       r_result = r_result && `` &&
          z2ui5_cl_fw_cc_debugging_tools=>get_js( ) &&
    `        sap.ui.require(["z2ui5/DebuggingTools","z2ui5/Controller"], (DebuggingTools) => { sap.z2ui5.DebuggingTools = new DebuggingTools(); ` && |\n|  &&
-   `            sap.z2ui5.DebuggingTools.activateLogging(` && z2ui5_cl_util_func=>boolean_abap_2_json( check_debugging ) && ` );` && |\n|  &&
+*   `            sap.z2ui5.DebuggingTools.activateLogging(` && z2ui5_cl_util_func=>boolean_abap_2_json( check_debugging ) && ` );` && |\n|  &&
         ` });`.
     ENDIF.
     r_result =  r_result && ` ` && |\n| &&
