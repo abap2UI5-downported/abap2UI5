@@ -493,6 +493,7 @@ public section.
       !RESIZABLE type CLIKE optional
       !HORIZONTALSCROLLING type CLIKE optional
       !VERTICALSCROLLING type CLIKE optional
+      !afterclose type CLIKE optional
     preferred parameter TITLE
     returning
       value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
@@ -4913,6 +4914,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp68 INTO TABLE temp67.
     temp68-n = `verticalScrolling`.
     temp68-v = z2ui5_cl_util_func=>boolean_abap_2_json( verticalscrolling ).
+    INSERT temp68 INTO TABLE temp67.
+    temp68-n = `afterClose`.
+    temp68-v = afterclose.
     INSERT temp68 INTO TABLE temp67.
     result = _generic( name   = `Dialog`
                        t_prop = temp67 ).
