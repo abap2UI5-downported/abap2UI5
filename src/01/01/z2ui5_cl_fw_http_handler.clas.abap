@@ -447,7 +447,7 @@ CLASS Z2UI5_CL_FW_HTTP_HANDLER IMPLEMENTATION.
       CLEAR temp1.
       
       temp2-n = `src`.
-      temp2-v = `https://sdk.openui5.org/resources/sap-ui-cachebuster/sap-ui-core.js`.
+      temp2-v = `https://sdk.openui5.org/nightly/2/resources/sap-ui-core.js`.
       INSERT temp2 INTO TABLE temp1.
       temp2-n = `data-sap-ui-theme`.
       temp2-v = `sap_horizon`.
@@ -517,12 +517,11 @@ CLASS Z2UI5_CL_FW_HTTP_HANDLER IMPLEMENTATION.
     IF check_debugging = abap_true.
       r_result = r_result && `` &&
          z2ui5_cl_fw_cc_debugging_tools=>get_js( ) &&
-   `        sap.ui.require(["z2ui5/DebuggingTools","z2ui5/Controller"], (DebuggingTools) => { sap.z2ui5.DebuggingTools = new DebuggingTools(); ` && |\n|  &&
-*   `            sap.z2ui5.DebuggingTools.activateLogging(` && z2ui5_cl_util_func=>boolean_abap_2_json( check_debugging ) && ` );` && |\n|  &&
-        ` });`.
+      `  sap.ui.require(["z2ui5/DebuggingTools","z2ui5/Controller"], (DebuggingTools) => { sap.z2ui5.DebuggingTools = new DebuggingTools(); ` && |\n|  &&
+      ` });`.
     ENDIF.
     r_result =  r_result && ` ` && |\n| &&
-                   `</script>` && |\n| &&
+                 `</script>` && |\n| &&
                  `<abc/></body></html>`.
 
   ENDMETHOD.
