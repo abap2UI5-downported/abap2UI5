@@ -21,7 +21,8 @@ CLASS z2ui5_cl_fw_http_handler DEFINITION
         json_model_limit        TYPE string                           DEFAULT '100'
           PREFERRED PARAMETER t_config
       RETURNING
-        VALUE(r_result)         TYPE string.
+        VALUE(r_result)         TYPE string
+        ##NEEDED.
 
   PROTECTED SECTION.
     CLASS-METHODS get_js
@@ -447,7 +448,7 @@ CLASS Z2UI5_CL_FW_HTTP_HANDLER IMPLEMENTATION.
       CLEAR temp1.
       
       temp2-n = `src`.
-      temp2-v = `https://sdk.openui5.org/nightly/2/resources/sap-ui-core.js`.
+      temp2-v = `https://sdk.openui5.org/resources/sap-ui-cachebuster/sap-ui-core.js`.
       INSERT temp2 INTO TABLE temp1.
       temp2-n = `data-sap-ui-theme`.
       temp2-v = `sap_horizon`.
@@ -514,12 +515,12 @@ CLASS Z2UI5_CL_FW_HTTP_HANDLER IMPLEMENTATION.
                          lv_add_js && |\n| &&
     `        sap.z2ui5.JSON_MODEL_LIMIT = ` && json_model_limit && `;`.
 
-    IF check_debugging = abap_true.
+*    IF check_debugging = abap_true.
       r_result = r_result && `` &&
          z2ui5_cl_fw_cc_debugging_tools=>get_js( ) &&
       `  sap.ui.require(["z2ui5/DebuggingTools","z2ui5/Controller"], (DebuggingTools) => { sap.z2ui5.DebuggingTools = new DebuggingTools(); ` && |\n|  &&
       ` });`.
-    ENDIF.
+*    ENDIF.
     r_result =  r_result && ` ` && |\n| &&
                  `</script>` && |\n| &&
                  `<abc/></body></html>`.
