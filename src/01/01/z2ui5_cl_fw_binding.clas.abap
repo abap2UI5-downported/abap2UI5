@@ -28,6 +28,7 @@ CLASS z2ui5_cl_fw_binding DEFINITION
         check_temp      TYPE abap_bool,
         viewname        TYPE string,
         pretty_name     TYPE string,
+        compress        TYPE string,
         depth           TYPE i,
       END OF ty_s_attri.
     TYPES ty_t_attri TYPE SORTED TABLE OF ty_s_attri WITH UNIQUE KEY name.
@@ -41,6 +42,7 @@ CLASS z2ui5_cl_fw_binding DEFINITION
         check_attri     TYPE data OPTIONAL
         view            TYPE string OPTIONAL
         pretty_name     TYPE clike OPTIONAL
+        compress        TYPE clike OPTIONAL
       RETURNING
         VALUE(r_result) TYPE REF TO z2ui5_cl_fw_binding.
 
@@ -55,6 +57,7 @@ CLASS z2ui5_cl_fw_binding DEFINITION
     DATA mv_check_attri TYPE abap_bool.
     DATA mv_view TYPE string.
     DATA mv_pretty_name TYPE string.
+    DATA mv_compress TYPE string.
 
     CLASS-METHODS update_attri
       IMPORTING
@@ -131,7 +134,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
+CLASS Z2UI5_CL_FW_BINDING IMPLEMENTATION.
 
 
   METHOD bind.
@@ -162,6 +165,7 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
 
     bind->bind_type   = mv_type.
     bind->pretty_name = mv_pretty_name.
+    bind->compress    = mv_compress.
     bind->name_front  = name_front_create( bind->name ).
     bind->viewname    = mv_view.
 
@@ -295,6 +299,7 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     r_result->mv_check_attri = check_attri.
     r_result->mv_view = view.
     r_result->mv_pretty_name = pretty_name.
+    r_result->mv_compress = compress.
 
 
     IF z2ui5_cl_util_func=>rtti_check_type_kind_dref( data ) IS NOT INITIAL.
@@ -339,22 +344,56 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD get_t_attri_by_include.
+
+    DATA temp9 TYPE REF TO cl_abap_structdescr.
+    DATA sdescr LIKE temp9.
+    DATA temp10 LIKE LINE OF sdescr->components.
+    DATA lr_comp LIKE REF TO temp10.
+      DATA lv_element TYPE string.
+      DATA temp11 TYPE ty_s_attri.
+      DATA ls_attri LIKE temp11.
+    temp9 ?= cl_abap_typedescr=>describe_by_name( type->absolute_name ).
+    
+    sdescr = temp9.
+
+    
+    
+    LOOP AT sdescr->components REFERENCE INTO lr_comp.
+
+      
+      lv_element = attri && lr_comp->name.
+
+      
+      CLEAR temp11.
+      temp11-name = lv_element.
+      temp11-type_kind = lr_comp->type_kind.
+      
+      ls_attri = temp11.
+      INSERT ls_attri INTO TABLE result.
+
+    ENDLOOP.
+
+
+  ENDMETHOD.
+
+
   METHOD get_t_attri_by_oref.
 
-    DATA temp9 TYPE string.
-    DATA lv_name LIKE temp9.
+    DATA temp12 TYPE string.
+    DATA lv_name LIKE temp12.
     FIELD-SYMBOLS <obj> TYPE any.
     DATA lt_attri2 TYPE abap_attrdescr_tab.
     DATA ls_attri2 LIKE LINE OF lt_attri2.
-      DATA temp10 TYPE ty_s_attri.
-      DATA ls_attri LIKE temp10.
+      DATA temp13 TYPE ty_s_attri.
+      DATA ls_attri LIKE temp13.
     IF val IS NOT INITIAL.
-      temp9 = `MO_APP` && `->` && val.
+      temp12 = `MO_APP` && `->` && val.
     ELSE.
-      temp9 = `MO_APP`.
+      temp12 = `MO_APP`.
     ENDIF.
     
-    lv_name = temp9.
+    lv_name = temp12.
     
     ASSIGN (lv_name) TO <obj>.
     IF sy-subrc <> 0 OR <obj> IS NOT BOUND.
@@ -369,10 +408,10 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
         WHERE visibility = cl_abap_classdescr=>public
            AND is_interface = abap_false.
       
-      CLEAR temp10.
-      MOVE-CORRESPONDING ls_attri2 TO temp10.
+      CLEAR temp13.
+      MOVE-CORRESPONDING ls_attri2 TO temp13.
       
-      ls_attri = temp10.
+      ls_attri = temp13.
       IF val IS NOT INITIAL.
         ls_attri-name = val && `->` && ls_attri-name.
         ls_attri-check_temp = abap_true.
@@ -382,39 +421,6 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-  METHOD get_t_attri_by_include.
-
-    DATA temp11 TYPE REF TO cl_abap_structdescr.
-    DATA sdescr LIKE temp11.
-    DATA temp12 LIKE LINE OF sdescr->components.
-    DATA lr_comp LIKE REF TO temp12.
-      DATA lv_element TYPE string.
-      DATA temp13 TYPE ty_s_attri.
-      DATA ls_attri LIKE temp13.
-    temp11 ?= cl_abap_typedescr=>describe_by_name( type->absolute_name ).
-    
-    sdescr = temp11.
-
-    
-    
-    LOOP AT sdescr->components REFERENCE INTO lr_comp.
-
-      
-      lv_element = attri && lr_comp->name.
-
-      
-      CLEAR temp13.
-      temp13-name = lv_element.
-      temp13-type_kind = lr_comp->type_kind.
-      
-      ls_attri = temp13.
-      INSERT ls_attri INTO TABLE result.
-
-    ENDLOOP.
-
-
-  ENDMETHOD.
 
   METHOD get_t_attri_by_struc.
 

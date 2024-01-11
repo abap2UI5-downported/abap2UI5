@@ -74,6 +74,7 @@ CLASS z2ui5_cl_util_func DEFINITION
       IMPORTING
         !any          TYPE any
         !pretty_name  TYPE clike DEFAULT /ui2/cl_json=>pretty_mode-none
+        !compress     TYPE abap_bool DEFAULT abap_false
       RETURNING
         VALUE(result) TYPE string.
 
@@ -194,7 +195,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_util_func IMPLEMENTATION.
+CLASS Z2UI5_CL_UTIL_FUNC IMPLEMENTATION.
 
 
   METHOD app_get_url.
@@ -613,7 +614,7 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
     DATA temp11 TYPE /ui2/cl_json=>pretty_name_mode.
     temp11 = pretty_name.
-    result = /ui2/cl_json=>serialize( data = any pretty_name = temp11 ).
+    result = /ui2/cl_json=>serialize( data = any pretty_name = temp11 compress = compress ).
 
   ENDMETHOD.
 
