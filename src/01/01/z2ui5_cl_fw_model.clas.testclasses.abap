@@ -16,20 +16,20 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   METHOD test_model_set_frontend.
 
-    DATA temp7 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-    DATA temp8 LIKE LINE OF temp7.
-    DATA lt_attri LIKE temp7.
+    DATA temp5 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
+    DATA temp6 LIKE LINE OF temp5.
+    DATA lt_attri LIKE temp5.
     DATA lo_app TYPE REF TO ltcl_unit_test.
     DATA lo_model TYPE REF TO z2ui5_cl_fw_model.
     DATA lv_frontend TYPE string.
-    CLEAR temp7.
+    CLEAR temp5.
     
-    temp8-name = `QUANTITY`.
-    temp8-bind_type = z2ui5_cl_fw_binding=>cs_bind_type-two_way.
-    temp8-name_front = `QUANTITY`.
-    INSERT temp8 INTO TABLE temp7.
+    temp6-name = `QUANTITY`.
+    temp6-bind_type = z2ui5_cl_fw_binding=>cs_bind_type-two_way.
+    temp6-name_front = `QUANTITY`.
+    INSERT temp6 INTO TABLE temp5.
     
-    lt_attri = temp7.
+    lt_attri = temp5.
     
     CREATE OBJECT lo_app TYPE ltcl_unit_test.
 
@@ -53,23 +53,23 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   METHOD test_model_set_backend.
 
-    DATA temp9 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-    DATA temp10 LIKE LINE OF temp9.
-    DATA lt_attri LIKE temp9.
+    DATA temp7 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
+    DATA temp8 LIKE LINE OF temp7.
+    DATA lt_attri LIKE temp7.
     DATA lo_app TYPE REF TO ltcl_unit_test.
     DATA lv_model TYPE string.
     DATA lr_model TYPE REF TO data.
     DATA lo_model TYPE REF TO z2ui5_cl_fw_model.
     DATA lv_assign TYPE string.
     FIELD-SYMBOLS <any> TYPE any.
-    CLEAR temp9.
+    CLEAR temp7.
     
-    temp10-name = `QUANTITY`.
-    temp10-bind_type = z2ui5_cl_fw_binding=>cs_bind_type-two_way.
-    temp10-name_front = `QUANTITY`.
-    INSERT temp10 INTO TABLE temp9.
+    temp8-name = `QUANTITY`.
+    temp8-bind_type = z2ui5_cl_fw_binding=>cs_bind_type-two_way.
+    temp8-name_front = `QUANTITY`.
+    INSERT temp8 INTO TABLE temp7.
     
-    lt_attri = temp9.
+    lt_attri = temp7.
     
     CREATE OBJECT lo_app TYPE ltcl_unit_test.
 

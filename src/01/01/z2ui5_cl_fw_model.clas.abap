@@ -25,13 +25,13 @@ CLASS z2ui5_cl_fw_model DEFINITION
     DATA mt_attri TYPE z2ui5_cl_fw_binding=>ty_t_attri.
     DATA mv_viewname TYPE string.
 
-protected section.
+  PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_FW_MODEL IMPLEMENTATION.
+CLASS z2ui5_cl_fw_model IMPLEMENTATION.
 
 
   METHOD factory.
@@ -56,7 +56,6 @@ CLASS Z2UI5_CL_FW_MODEL IMPLEMENTATION.
         WHERE bind_type = z2ui5_cl_fw_binding=>cs_bind_type-two_way AND
               viewname  = mv_viewname.
       TRY.
-
           
           lv_name_back = `MO_APP->` && lr_attri->name.
 
@@ -88,6 +87,13 @@ CLASS Z2UI5_CL_FW_MODEL IMPLEMENTATION.
                     ir_tab_from = <frontend>
                 IMPORTING
                     t_result    = <backend> ).
+
+            WHEN cl_abap_typedescr=>typekind_struct1 OR cl_abap_typedescr=>typekind_struct2.
+              z2ui5_cl_util_func=>trans_ref_struc_2_struc(
+                  EXPORTING
+                      ir_struc_from = <frontend>
+                  IMPORTING
+                      r_result      = <backend> ).
 
             WHEN OTHERS.
 
@@ -123,9 +129,7 @@ CLASS Z2UI5_CL_FW_MODEL IMPLEMENTATION.
       DATA lo_actual LIKE temp3.
       DATA lv_name_back TYPE string.
       FIELD-SYMBOLS <attribute> TYPE any.
-          DATA temp4 TYPE abap_bool.
-              DATA temp5 TYPE string.
-              DATA temp6 TYPE abap_bool.
+              DATA temp4 TYPE string.
     lr_view_model = z2ui5_cl_util_tree_json=>factory( ).
     
     lo_update = lr_view_model->add_attribute_object( z2ui5_cl_fw_binding=>cv_model_edit_name ).
@@ -163,10 +167,8 @@ CLASS Z2UI5_CL_FW_MODEL IMPLEMENTATION.
       CASE lr_attri->type_kind.
 
         WHEN `h`.
-          
-          temp4 = lr_attri->compress.
           lo_actual->add_attribute( n           = lr_attri->name_front
-                                    v           = z2ui5_cl_util_func=>trans_json_any_2( any = <attribute>  pretty_name = lr_attri->pretty_name compress = temp4 )
+                                    v           = z2ui5_cl_util_func=>trans_json_any_2( any = <attribute>  pretty_name = lr_attri->pretty_name compress = lr_attri->compress )
                                     apos_active = abap_false ).
 
         WHEN OTHERS.
@@ -178,20 +180,18 @@ CLASS Z2UI5_CL_FW_MODEL IMPLEMENTATION.
               
               CASE <attribute>.
                 WHEN abap_true.
-                  temp5 = `true`.
+                  temp4 = `true`.
                 WHEN OTHERS.
-                  temp5 = `false`.
+                  temp4 = `false`.
               ENDCASE.
               lo_actual->add_attribute( n           = lr_attri->name_front
-                                        v           = temp5
+                                        v           = temp4
                                         apos_active = abap_false ).
 
             WHEN OTHERS.
 
-              
-              temp6 = lr_attri->compress.
               lo_actual->add_attribute( n           = lr_attri->name_front
-                                        v           = z2ui5_cl_util_func=>trans_json_any_2( any = <attribute> pretty_name = lr_attri->pretty_name compress = temp6 )
+                                        v           = z2ui5_cl_util_func=>trans_json_any_2( any = <attribute> pretty_name = lr_attri->pretty_name compress = lr_attri->compress )
                                         apos_active = abap_false ).
           ENDCASE.
       ENDCASE.

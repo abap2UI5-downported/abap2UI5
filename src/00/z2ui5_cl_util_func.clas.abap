@@ -74,7 +74,7 @@ CLASS z2ui5_cl_util_func DEFINITION
       IMPORTING
         !any          TYPE any
         !pretty_name  TYPE clike DEFAULT /ui2/cl_json=>pretty_mode-none
-        !compress     TYPE abap_bool DEFAULT abap_false
+        !compress     TYPE abap_bool DEFAULT abap_true
       RETURNING
         VALUE(result) TYPE string.
 
@@ -121,6 +121,12 @@ CLASS z2ui5_cl_util_func DEFINITION
         !ir_tab_from TYPE REF TO data
       EXPORTING
         !t_result    TYPE STANDARD TABLE.
+
+    CLASS-METHODS trans_ref_struc_2_struc
+      IMPORTING
+        !ir_struc_from TYPE REF TO data
+      EXPORTING
+        !r_result      TYPE data.
 
     CLASS-METHODS c_trim_upper
       IMPORTING
@@ -195,7 +201,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_UTIL_FUNC IMPLEMENTATION.
+CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
 
   METHOD app_get_url.
@@ -748,6 +754,83 @@ CLASS Z2UI5_CL_UTIL_FUNC IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD trans_ref_struc_2_struc.
+
+    FIELD-SYMBOLS <ls_from> TYPE any.
+    DATA temp4 TYPE xsdboolean.
+    DATA temp15 TYPE REF TO cl_abap_structdescr.
+    DATA lo_struc LIKE temp15.
+    DATA lt_components TYPE abap_component_tab.
+    DATA ls_comp LIKE LINE OF lt_components.
+      DATA lv_from LIKE ls_comp-name.
+      FIELD-SYMBOLS <comp_from> TYPE any.
+      FIELD-SYMBOLS <comp_to> TYPE any.
+      FIELD-SYMBOLS <comp_from_deref> TYPE any.
+      DATA lv_type_kind TYPE string.
+
+    ASSIGN ir_struc_from->* TO <ls_from>.
+    
+    temp4 = boolc( sy-subrc <> 0 ).
+    x_check_raise( temp4 ).
+    CLEAR r_result.
+
+    
+    temp15 ?= cl_abap_datadescr=>describe_by_data( r_result ).
+    
+    lo_struc = temp15.
+    
+    lt_components = lo_struc->get_components( ).
+    
+    LOOP AT lt_components INTO ls_comp.
+
+      
+      lv_from = ls_comp-name.
+      REPLACE ALL OCCURRENCES OF `_` IN lv_from WITH ``.
+      
+      ASSIGN COMPONENT lv_from OF STRUCTURE <ls_from> TO <comp_from>.
+      IF sy-subrc <> 0.
+        CONTINUE.
+      ENDIF.
+      
+      ASSIGN COMPONENT ls_comp-name OF STRUCTURE r_result TO <comp_to>.
+      IF sy-subrc <> 0.
+        CONTINUE.
+      ENDIF.
+      
+      ASSIGN <comp_from>->* TO <comp_from_deref>.
+      
+      lv_type_kind = rtti_get_type_kind( <comp_to> ).
+
+      IF <comp_from_deref> IS INITIAL.
+        CONTINUE.
+      ENDIF.
+
+      CASE lv_type_kind.
+
+        WHEN cl_abap_typedescr=>typekind_table.
+          trans_ref_tab_2_tab(
+         EXPORTING
+             ir_tab_from = <comp_from>
+         IMPORTING
+             t_result    = <comp_to> ).
+
+        WHEN cl_abap_typedescr=>typekind_struct1 OR cl_abap_typedescr=>typekind_struct2.
+          trans_ref_struc_2_struc(
+            EXPORTING
+                ir_struc_from = <comp_from>
+            IMPORTING
+                r_result    = <comp_to> ).
+
+        WHEN OTHERS.
+          <comp_to> = <comp_from_deref>.
+      ENDCASE.
+
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+
   METHOD trans_xml_2_any.
 
     CALL TRANSFORMATION id
@@ -782,19 +865,19 @@ CLASS Z2UI5_CL_UTIL_FUNC IMPLEMENTATION.
 
     DATA lt_params TYPE z2ui5_if_client=>ty_t_name_value.
     DATA lv_val TYPE string.
-    DATA temp15 TYPE string.
-    DATA temp16 TYPE z2ui5_if_client=>ty_s_name_value.
+    DATA temp16 TYPE string.
+    DATA temp17 TYPE z2ui5_if_client=>ty_s_name_value.
     lt_params = url_param_get_tab( url ).
     
     lv_val = c_trim_lower( val ).
     
-    CLEAR temp15.
+    CLEAR temp16.
     
-    READ TABLE lt_params INTO temp16 WITH KEY n = lv_val.
+    READ TABLE lt_params INTO temp17 WITH KEY n = lv_val.
     IF sy-subrc = 0.
-      temp15 = temp16-v.
+      temp16 = temp17-v.
     ENDIF.
-    result = temp15.
+    result = temp16.
 
   ENDMETHOD.
 
@@ -803,14 +886,14 @@ CLASS Z2UI5_CL_UTIL_FUNC IMPLEMENTATION.
 
     DATA lv_search TYPE string.
     DATA lv_search2 TYPE string.
-    DATA temp17 TYPE string.
+    DATA temp18 TYPE string.
     TYPES temp1 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA lt_param TYPE temp1.
-    DATA temp18 LIKE LINE OF lt_param.
-    DATA lr_param LIKE REF TO temp18.
+    DATA temp19 LIKE LINE OF lt_param.
+    DATA lr_param LIKE REF TO temp19.
       DATA lv_name TYPE string.
       DATA lv_value TYPE string.
-      DATA temp19 TYPE z2ui5_if_client=>ty_s_name_value.
+      DATA temp20 TYPE z2ui5_if_client=>ty_s_name_value.
     lv_search = replace( val  = i_val sub  = `%3D` with = '=' occ  = 0 ).
     lv_search = shift_left( val = lv_search sub = `?` ).
     lv_search = c_trim_lower( lv_search ).
@@ -820,11 +903,11 @@ DATA lt_param TYPE temp1.
                                         sub = `&sap-startup-params=` ).
     
     IF lv_search2 IS NOT INITIAL.
-      temp17 = lv_search2.
+      temp18 = lv_search2.
     ELSE.
-      temp17 = lv_search.
+      temp18 = lv_search.
     ENDIF.
-    lv_search = temp17.
+    lv_search = temp18.
 
     lv_search2 = substring_after( val = c_trim_lower( lv_search ) sub = `?` ).
     IF lv_search2 IS NOT INITIAL.
@@ -842,10 +925,10 @@ DATA lt_param TYPE temp1.
       
       SPLIT lr_param->* AT `=` INTO lv_name lv_value.
       
-      CLEAR temp19.
-      temp19-n = c_trim_lower( lv_name ).
-      temp19-v = c_trim_lower( lv_value ).
-      INSERT temp19 INTO TABLE rt_params.
+      CLEAR temp20.
+      temp20-n = c_trim_lower( lv_name ).
+      temp20-v = c_trim_lower( lv_value ).
+      INSERT temp20 INTO TABLE rt_params.
     ENDLOOP.
 
   ENDMETHOD.
@@ -855,9 +938,9 @@ DATA lt_param TYPE temp1.
 
     DATA lt_params TYPE z2ui5_if_client=>ty_t_name_value.
     DATA lv_n TYPE string.
-    DATA temp20 LIKE LINE OF lt_params.
-    DATA lr_params LIKE REF TO temp20.
-      DATA temp21 TYPE z2ui5_if_client=>ty_s_name_value.
+    DATA temp21 LIKE LINE OF lt_params.
+    DATA lr_params LIKE REF TO temp21.
+      DATA temp22 TYPE z2ui5_if_client=>ty_s_name_value.
     lt_params = url_param_get_tab( url ).
     
     lv_n = c_trim_lower( name ).
@@ -870,10 +953,10 @@ DATA lt_param TYPE temp1.
     ENDLOOP.
     IF sy-subrc <> 0.
       
-      CLEAR temp21.
-      temp21-n = lv_n.
-      temp21-v = c_trim_lower( value ).
-      INSERT temp21 INTO TABLE lt_params.
+      CLEAR temp22.
+      temp22-n = lv_n.
+      temp22-v = c_trim_lower( value ).
+      INSERT temp22 INTO TABLE lt_params.
     ENDIF.
 
     result = url_param_create_url( lt_params ).
