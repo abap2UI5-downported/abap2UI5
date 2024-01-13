@@ -782,7 +782,7 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
       
       lv_from = ls_comp-name.
-      REPLACE ALL OCCURRENCES OF `_` IN lv_from WITH ``.
+*      REPLACE ALL OCCURRENCES OF `_` IN lv_from WITH ``.
       
       ASSIGN COMPONENT lv_from OF STRUCTURE <ls_from> TO <comp_from>.
       IF sy-subrc <> 0.
