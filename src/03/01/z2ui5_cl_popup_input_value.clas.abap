@@ -1,4 +1,4 @@
-CLASS z2ui5_cl_popup_to_inform DEFINITION
+CLASS z2ui5_cl_popup_input_value DEFINITION
   PUBLIC
   FINAL
   CREATE PUBLIC .
@@ -9,12 +9,24 @@ CLASS z2ui5_cl_popup_to_inform DEFINITION
 
     CLASS-METHODS factory
       IMPORTING
-        i_text          TYPE string
-        i_title         TYPE string DEFAULT `Title`
-        i_icon          TYPE string DEFAULT 'sap-icon://question-mark'
-        i_button_text   TYPE string DEFAULT `OK`
+        i_text                TYPE string
+        i_title               TYPE string DEFAULT `Title`
+        i_button_text_confirm TYPE string DEFAULT `OK`
+        i_button_text_cancel  TYPE string DEFAULT `Cancel`
       RETURNING
-        VALUE(r_result) TYPE REF TO z2ui5_cl_popup_to_inform.
+        VALUE(r_result)       TYPE REF TO z2ui5_cl_popup_input_value.
+
+    TYPES:
+      BEGIN OF ty_s_result,
+        text         TYPE string,
+        check_cancel TYPE abap_bool,
+      END OF ty_s_result.
+    DATA ms_result TYPE ty_s_result.
+
+
+    METHODS result
+      RETURNING
+        VALUE(result) TYPE ty_s_result.
 
   PROTECTED SECTION.
     DATA client TYPE REF TO z2ui5_if_client.
@@ -22,22 +34,33 @@ CLASS z2ui5_cl_popup_to_inform DEFINITION
     DATA icon TYPE string.
     DATA question_text TYPE string.
     DATA button_text_confirm TYPE string.
+    DATA button_text_cancel TYPE string.
     DATA check_initialized TYPE abap_bool.
+    DATA check_result_confirmed TYPE abap_bool.
     METHODS view_display.
   PRIVATE SECTION.
 ENDCLASS.
 
 
 
-CLASS z2ui5_cl_popup_to_inform IMPLEMENTATION.
+CLASS Z2UI5_CL_POPUP_INPUT_VALUE IMPLEMENTATION.
+
 
   METHOD factory.
 
     CREATE OBJECT r_result.
     r_result->title = i_title.
-    r_result->icon = i_icon.
+*    r_result->icon = i_icon.
     r_result->question_text = i_text.
-    r_result->button_text_confirm = i_button_text.
+    r_result->button_text_confirm = i_button_text_confirm.
+    r_result->button_text_cancel = i_button_text_cancel.
+
+  ENDMETHOD.
+
+
+  METHOD result.
+
+    result = ms_result.
 
   ENDMETHOD.
 
@@ -48,13 +71,19 @@ CLASS z2ui5_cl_popup_to_inform IMPLEMENTATION.
     popup = z2ui5_cl_xml_view=>factory_popup(  )->dialog(
                   title = title
                   icon = icon
-                  afterclose = client->_event( 'BUTTON_CONFIRM' )
+                  afterclose = client->_event( 'BUTTON_CANCEL' )
               )->content(
                   )->vbox( 'sapUiMediumMargin'
-                      )->text( question_text
+                  )->label( text  = question_text
+                  )->input(
+                    value  = client->_bind_edit( ms_result-text )
+                    submit = client->_event( 'BUTTON_CONFIRM' )
               )->get_parent( )->get_parent(
               )->footer( )->overflow_toolbar(
                   )->toolbar_spacer(
+                  )->button(
+                      text  = button_text_cancel
+                      press = client->_event( 'BUTTON_CANCEL' )
                   )->button(
                       text  = button_text_confirm
                       press = client->_event( 'BUTTON_CONFIRM' )
@@ -77,6 +106,11 @@ CLASS z2ui5_cl_popup_to_inform IMPLEMENTATION.
 
     CASE client->get( )-event.
       WHEN `BUTTON_CONFIRM`.
+        check_result_confirmed = abap_true.
+        client->popup_destroy( ).
+        client->nav_app_leave( client->get_app( client->get( )-s_draft-id_prev_app_stack ) ).
+      WHEN `BUTTON_CANCEL`.
+        check_result_confirmed = abap_false.
         client->popup_destroy( ).
         client->nav_app_leave( client->get_app( client->get( )-s_draft-id_prev_app_stack ) ).
     ENDCASE.
