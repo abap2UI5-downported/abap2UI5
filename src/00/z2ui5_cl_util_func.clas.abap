@@ -119,12 +119,14 @@ CLASS z2ui5_cl_util_func DEFINITION
     CLASS-METHODS trans_ref_tab_2_tab
       IMPORTING
         !ir_tab_from TYPE REF TO data
+        pretty_name  TYPE abap_bool DEFAULT abap_false
       EXPORTING
         !t_result    TYPE STANDARD TABLE.
 
     CLASS-METHODS trans_ref_struc_2_struc
       IMPORTING
         !ir_struc_from TYPE REF TO data
+        pretty_name    TYPE abap_bool DEFAULT abap_false
       EXPORTING
         !r_result      TYPE data.
 
@@ -617,136 +619,10 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
     DATA temp10 TYPE /ui2/cl_json=>pretty_name_mode.
     temp10 = pretty_name.
-    result = /ui2/cl_json=>serialize( data = any pretty_name = temp10 compress = compress ).
-
-  ENDMETHOD.
-
-
-  METHOD trans_ref_tab_2_tab.
-
-    TYPES ty_t_ref TYPE STANDARD TABLE OF REF TO data.
-    FIELD-SYMBOLS <lt_from> TYPE ty_t_ref.
-    DATA temp2 TYPE xsdboolean.
-    DATA temp11 TYPE REF TO cl_abap_tabledescr.
-    DATA lo_tab LIKE temp11.
-      DATA lr_string LIKE LINE OF <lt_from>.
-        FIELD-SYMBOLS <row_string> TYPE any.
-    DATA temp12 TYPE REF TO cl_abap_structdescr.
-    DATA lo_struc LIKE temp12.
-    DATA lt_components TYPE abap_component_tab.
-    DATA lr_from LIKE LINE OF <lt_from>.
-      DATA lr_row TYPE REF TO data.
-      FIELD-SYMBOLS <row> TYPE any.
-      FIELD-SYMBOLS <row_ui5> TYPE any.
-      DATA temp3 TYPE xsdboolean.
-      DATA lt_components_dissolved LIKE lt_components.
-      DATA ls_comp LIKE LINE OF lt_components.
-          DATA temp13 TYPE REF TO cl_abap_structdescr.
-          DATA struct LIKE temp13.
-            FIELD-SYMBOLS <comp> TYPE data.
-            FIELD-SYMBOLS <comp_ui5> TYPE data.
-            FIELD-SYMBOLS <ls_data_ui5> TYPE any.
-
-    ASSIGN ir_tab_from->* TO <lt_from>.
-    
-    temp2 = boolc( sy-subrc <> 0 ).
-    x_check_raise( temp2 ).
-    CLEAR t_result.
-
-    
-    temp11 ?= cl_abap_datadescr=>describe_by_data( t_result ).
-    
-    lo_tab = temp11.
-    IF lo_tab->absolute_name = `\TYPE=STRING_TABLE`.
-      
-      LOOP AT <lt_from> INTO lr_string.
-        
-        ASSIGN lr_string->* TO <row_string>.
-        INSERT <row_string> INTO TABLE t_result.
-      ENDLOOP.
-      RETURN.
-    ENDIF.
-    
-    temp12 ?= lo_tab->get_table_line_type( ).
-    
-    lo_struc = temp12.
-    
-    lt_components = lo_struc->get_components( ).
-
-    
-    LOOP AT <lt_from> INTO lr_from.
-
-      
-      CREATE DATA lr_row TYPE HANDLE lo_struc.
-      
-      ASSIGN lr_row->* TO <row>.
-
-      IF sy-subrc <> 0.
-        EXIT.
-      ENDIF.
-
-      
-      ASSIGN lr_from->* TO <row_ui5>.
-      
-      temp3 = boolc( sy-subrc <> 0 ).
-      x_check_raise( when = temp3 ).
-
-      
-      lt_components_dissolved = lt_components.
-      CLEAR lt_components_dissolved.
-
-      
-      LOOP AT lt_components INTO ls_comp.
-
-        IF ls_comp-as_include = abap_false.
-          APPEND ls_comp TO lt_components_dissolved.
-        ELSE.
-          
-          temp13 ?= ls_comp-type.
-          
-          struct = temp13.
-          APPEND LINES OF struct->get_components( ) TO lt_components_dissolved.
-
-        ENDIF.
-      ENDLOOP.
-
-      LOOP AT lt_components_dissolved INTO ls_comp.
-        TRY.
-
-            
-            ASSIGN COMPONENT ls_comp-name OF STRUCTURE <row> TO <comp>.
-
-            IF sy-subrc <> 0.
-              CONTINUE.
-            ENDIF.
-
-            
-            ASSIGN COMPONENT ls_comp-name OF STRUCTURE <row_ui5> TO <comp_ui5>.
-
-            IF sy-subrc <> 0.
-              CONTINUE.
-            ENDIF.
-
-            
-            ASSIGN <comp_ui5>->* TO <ls_data_ui5>.
-
-            IF sy-subrc = 0.
-              CASE ls_comp-type->kind.
-                WHEN cl_abap_typedescr=>kind_table.
-                  trans_ref_tab_2_tab( EXPORTING ir_tab_from = <comp_ui5>
-                                       IMPORTING t_result    = <comp> ).
-                WHEN OTHERS.
-                  <comp> = <ls_data_ui5>.
-              ENDCASE.
-            ENDIF.
-
-          CATCH cx_root.
-        ENDTRY.
-      ENDLOOP.
-
-      INSERT <row> INTO TABLE t_result.
-    ENDLOOP.
-
+    result = /ui2/cl_json=>serialize(
+        data = any
+        pretty_name = temp10
+        compress = compress ).
 
   ENDMETHOD.
 
@@ -754,9 +630,9 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
   METHOD trans_ref_struc_2_struc.
 
     FIELD-SYMBOLS <ls_from> TYPE any.
-    DATA temp4 TYPE xsdboolean.
-    DATA temp14 TYPE REF TO cl_abap_structdescr.
-    DATA lo_struc LIKE temp14.
+    DATA temp2 TYPE xsdboolean.
+    DATA temp11 TYPE REF TO cl_abap_structdescr.
+    DATA lo_struc LIKE temp11.
     DATA lt_components TYPE abap_component_tab.
     DATA ls_comp LIKE LINE OF lt_components.
       DATA lv_from LIKE ls_comp-name.
@@ -767,14 +643,14 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
     ASSIGN ir_struc_from->* TO <ls_from>.
     
-    temp4 = boolc( sy-subrc <> 0 ).
-    x_check_raise( temp4 ).
+    temp2 = boolc( sy-subrc <> 0 ).
+    x_check_raise( temp2 ).
     CLEAR r_result.
 
     
-    temp14 ?= cl_abap_datadescr=>describe_by_data( r_result ).
+    temp11 ?= cl_abap_datadescr=>describe_by_data( r_result ).
     
-    lo_struc = temp14.
+    lo_struc = temp11.
     
     lt_components = lo_struc->get_components( ).
     
@@ -782,7 +658,9 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
       
       lv_from = ls_comp-name.
-*      REPLACE ALL OCCURRENCES OF `_` IN lv_from WITH ``.
+      IF pretty_name = abap_true.
+        REPLACE ALL OCCURRENCES OF `_` IN lv_from WITH ``.
+      ENDIF.
       
       ASSIGN COMPONENT lv_from OF STRUCTURE <ls_from> TO <comp_from>.
       IF sy-subrc <> 0.
@@ -808,6 +686,7 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
           trans_ref_tab_2_tab(
          EXPORTING
              ir_tab_from = <comp_from>
+             pretty_name = pretty_name
          IMPORTING
              t_result    = <comp_to> ).
 
@@ -826,6 +705,140 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+  METHOD trans_ref_tab_2_tab.
+
+    TYPES ty_t_ref TYPE STANDARD TABLE OF REF TO data.
+    FIELD-SYMBOLS <lt_from> TYPE ty_t_ref.
+    DATA temp3 TYPE xsdboolean.
+    DATA temp12 TYPE REF TO cl_abap_tabledescr.
+    DATA lo_tab LIKE temp12.
+      DATA lr_string LIKE LINE OF <lt_from>.
+        FIELD-SYMBOLS <row_string> TYPE any.
+    DATA temp13 TYPE REF TO cl_abap_structdescr.
+    DATA lo_struc LIKE temp13.
+    DATA lt_components TYPE abap_component_tab.
+    DATA lr_from LIKE LINE OF <lt_from>.
+      DATA lr_row TYPE REF TO data.
+      FIELD-SYMBOLS <row> TYPE any.
+      FIELD-SYMBOLS <row_ui5> TYPE any.
+      DATA temp4 TYPE xsdboolean.
+      DATA lt_components_dissolved LIKE lt_components.
+      DATA ls_comp LIKE LINE OF lt_components.
+          DATA temp14 TYPE REF TO cl_abap_structdescr.
+          DATA struct LIKE temp14.
+            FIELD-SYMBOLS <comp> TYPE data.
+            FIELD-SYMBOLS <comp_ui5> TYPE data.
+            FIELD-SYMBOLS <ls_data_ui5> TYPE any.
+
+    ASSIGN ir_tab_from->* TO <lt_from>.
+    
+    temp3 = boolc( sy-subrc <> 0 ).
+    x_check_raise( temp3 ).
+    CLEAR t_result.
+
+    
+    temp12 ?= cl_abap_datadescr=>describe_by_data( t_result ).
+    
+    lo_tab = temp12.
+    IF lo_tab->absolute_name = `\TYPE=STRING_TABLE`.
+      
+      LOOP AT <lt_from> INTO lr_string.
+        
+        ASSIGN lr_string->* TO <row_string>.
+        INSERT <row_string> INTO TABLE t_result.
+      ENDLOOP.
+      RETURN.
+    ENDIF.
+    
+    temp13 ?= lo_tab->get_table_line_type( ).
+    
+    lo_struc = temp13.
+    
+    lt_components = lo_struc->get_components( ).
+
+    
+    LOOP AT <lt_from> INTO lr_from.
+
+      
+      CREATE DATA lr_row TYPE HANDLE lo_struc.
+      
+      ASSIGN lr_row->* TO <row>.
+
+      IF sy-subrc <> 0.
+        EXIT.
+      ENDIF.
+
+      
+      ASSIGN lr_from->* TO <row_ui5>.
+      
+      temp4 = boolc( sy-subrc <> 0 ).
+      x_check_raise( when = temp4 ).
+
+      
+      lt_components_dissolved = lt_components.
+      CLEAR lt_components_dissolved.
+
+      
+      LOOP AT lt_components INTO ls_comp.
+
+        IF ls_comp-as_include = abap_false.
+          APPEND ls_comp TO lt_components_dissolved.
+        ELSE.
+          
+          temp14 ?= ls_comp-type.
+          
+          struct = temp14.
+          APPEND LINES OF struct->get_components( ) TO lt_components_dissolved.
+
+        ENDIF.
+      ENDLOOP.
+
+      LOOP AT lt_components_dissolved INTO ls_comp.
+        TRY.
+
+            
+            ASSIGN COMPONENT ls_comp-name OF STRUCTURE <row> TO <comp>.
+
+            IF sy-subrc <> 0.
+              CONTINUE.
+            ENDIF.
+
+            
+            IF pretty_name = abap_true.
+              REPLACE ALL OCCURRENCES OF `_` IN ls_comp-name  WITH ``.
+            ENDIF.
+            ASSIGN COMPONENT ls_comp-name OF STRUCTURE <row_ui5> TO <comp_ui5>.
+
+            IF sy-subrc <> 0.
+              CONTINUE.
+            ENDIF.
+
+            
+            ASSIGN <comp_ui5>->* TO <ls_data_ui5>.
+
+            IF sy-subrc = 0.
+              CASE ls_comp-type->kind.
+                WHEN cl_abap_typedescr=>kind_table.
+                  trans_ref_tab_2_tab(
+                    EXPORTING
+                        ir_tab_from = <comp_ui5>
+                        pretty_name = pretty_name
+                    IMPORTING
+                        t_result    = <comp> ).
+                WHEN OTHERS.
+                  <comp> = <ls_data_ui5>.
+              ENDCASE.
+            ENDIF.
+
+          CATCH cx_root.
+        ENDTRY.
+      ENDLOOP.
+
+      INSERT <row> INTO TABLE t_result.
+    ENDLOOP.
+
+  ENDMETHOD.
 
 
   METHOD trans_xml_2_any.
