@@ -559,38 +559,23 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
 
 
   METHOD name_front_create.
-      TYPES temp1 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-DATA lt_tab TYPE temp1.
-      DATA temp17 LIKE LINE OF lt_tab.
-      DATA temp18 LIKE sy-tabix.
-      DATA lv_val LIKE LINE OF lt_tab.
 
     result = replace( val = val    sub = `*` with = `_` occ = 0 ).
     result = replace( val = result sub = `>` with = `_` occ = 0 ).
     result = replace( val = result sub = `-` with = `_` occ = 0 ).
 
     IF mv_pretty_name = abap_true.
-      
-
-      SPLIT result AT `_` INTO TABLE lt_tab.
-      
-      
-      temp18 = sy-tabix.
-      READ TABLE lt_tab INDEX 1 INTO temp17.
-      sy-tabix = temp18.
-      IF sy-subrc <> 0.
-        RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
-      ENDIF.
-      result = to_lower( temp17 ).
-      
-      LOOP AT lt_tab INTO lv_val FROM 2.
-        TRY.
-            lv_val = to_lower( lv_val ).
-            lv_val = to_upper( lv_val(1) ) && lv_val+1.
-            result = result && lv_val.
-          CATCH cx_root.
-        ENDTRY.
-      ENDLOOP.
+      replace all OCCURRENCES OF `_` in result with ``.
+*      SPLIT result AT `_` INTO TABLE DATA(lt_tab).
+*      result = to_lower( lt_tab[ 1 ] ).
+*      LOOP AT lt_tab INTO DATA(lv_val) FROM 2.
+*        TRY.
+*            lv_val = to_lower( lv_val ).
+*            lv_val = to_upper( lv_val(1) ) && lv_val+1.
+*            result = result && lv_val.
+*          CATCH cx_root.
+*        ENDTRY.
+*      ENDLOOP.
     ENDIF.
 
   ENDMETHOD.
@@ -598,11 +583,11 @@ DATA lt_tab TYPE temp1.
 
   METHOD search_binding.
 
-    DATA temp19 LIKE REF TO mt_attri.
-    DATA temp20 LIKE LINE OF mt_attri.
-    DATA lr_bind LIKE REF TO temp20.
-    GET REFERENCE OF mt_attri INTO temp19.
-set_attri_ready( temp19 ).
+    DATA temp17 LIKE REF TO mt_attri.
+    DATA temp18 LIKE LINE OF mt_attri.
+    DATA lr_bind LIKE REF TO temp18.
+    GET REFERENCE OF mt_attri INTO temp17.
+set_attri_ready( temp17 ).
 
     
     

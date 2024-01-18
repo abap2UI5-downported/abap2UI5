@@ -43,6 +43,8 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     DATA lo_app TYPE REF TO ltcl_test_dissolve.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     DATA lt_dissolve LIKE lo_bind->mt_attri.
+    DATA temp19 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
+    DATA temp20 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp21 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp22 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp23 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
@@ -51,8 +53,6 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     DATA temp26 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp27 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp28 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
-    DATA temp29 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
-    DATA temp30 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     CREATE OBJECT lo_app TYPE ltcl_test_dissolve.
     
     CREATE OBJECT lo_bind TYPE z2ui5_cl_fw_binding.
@@ -63,9 +63,17 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     lt_dissolve = lo_bind->mt_attri.
 
     
+    CLEAR temp19.
+    
+    READ TABLE lt_dissolve INTO temp20 WITH KEY name = `MO_APP`.
+    IF sy-subrc = 0.
+      temp19 = temp20.
+    ENDIF.
+    cl_abap_unit_assert=>assert_not_initial( temp19 ).
+    
     CLEAR temp21.
     
-    READ TABLE lt_dissolve INTO temp22 WITH KEY name = `MO_APP`.
+    READ TABLE lt_dissolve INTO temp22 WITH KEY name = `MR_STRUC`.
     IF sy-subrc = 0.
       temp21 = temp22.
     ENDIF.
@@ -73,7 +81,7 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp23.
     
-    READ TABLE lt_dissolve INTO temp24 WITH KEY name = `MR_STRUC`.
+    READ TABLE lt_dissolve INTO temp24 WITH KEY name = `MR_VALUE`.
     IF sy-subrc = 0.
       temp23 = temp24.
     ENDIF.
@@ -81,7 +89,7 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp25.
     
-    READ TABLE lt_dissolve INTO temp26 WITH KEY name = `MR_VALUE`.
+    READ TABLE lt_dissolve INTO temp26 WITH KEY name = `MS_STRUC`.
     IF sy-subrc = 0.
       temp25 = temp26.
     ENDIF.
@@ -89,19 +97,11 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp27.
     
-    READ TABLE lt_dissolve INTO temp28 WITH KEY name = `MS_STRUC`.
+    READ TABLE lt_dissolve INTO temp28 WITH KEY name = `MV_VALUE`.
     IF sy-subrc = 0.
       temp27 = temp28.
     ENDIF.
     cl_abap_unit_assert=>assert_not_initial( temp27 ).
-    
-    CLEAR temp29.
-    
-    READ TABLE lt_dissolve INTO temp30 WITH KEY name = `MV_VALUE`.
-    IF sy-subrc = 0.
-      temp29 = temp30.
-    ENDIF.
-    cl_abap_unit_assert=>assert_not_initial( temp29 ).
 
   ENDMETHOD.
 
@@ -110,6 +110,8 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     DATA lo_app TYPE REF TO ltcl_test_dissolve.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     DATA lt_dissolve LIKE lo_bind->mt_attri.
+    DATA temp29 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
+    DATA temp30 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp31 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp32 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp33 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
@@ -118,8 +120,6 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     DATA temp36 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp37 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp38 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
-    DATA temp39 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
-    DATA temp40 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     CREATE OBJECT lo_app TYPE ltcl_test_dissolve.
     
     CREATE OBJECT lo_bind TYPE z2ui5_cl_fw_binding.
@@ -134,9 +134,17 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     lt_dissolve = lo_bind->mt_attri.
 
     
+    CLEAR temp29.
+    
+    READ TABLE lt_dissolve INTO temp30 WITH KEY name = `MO_APP`.
+    IF sy-subrc = 0.
+      temp29 = temp30.
+    ENDIF.
+    cl_abap_unit_assert=>assert_not_initial( temp29 ).
+    
     CLEAR temp31.
     
-    READ TABLE lt_dissolve INTO temp32 WITH KEY name = `MO_APP`.
+    READ TABLE lt_dissolve INTO temp32 WITH KEY name = `MR_STRUC->*`.
     IF sy-subrc = 0.
       temp31 = temp32.
     ENDIF.
@@ -144,7 +152,7 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp33.
     
-    READ TABLE lt_dissolve INTO temp34 WITH KEY name = `MR_STRUC->*`.
+    READ TABLE lt_dissolve INTO temp34 WITH KEY name = `MR_VALUE->*`.
     IF sy-subrc = 0.
       temp33 = temp34.
     ENDIF.
@@ -152,7 +160,7 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp35.
     
-    READ TABLE lt_dissolve INTO temp36 WITH KEY name = `MR_VALUE->*`.
+    READ TABLE lt_dissolve INTO temp36 WITH KEY name = `MS_STRUC`.
     IF sy-subrc = 0.
       temp35 = temp36.
     ENDIF.
@@ -160,19 +168,11 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp37.
     
-    READ TABLE lt_dissolve INTO temp38 WITH KEY name = `MS_STRUC`.
+    READ TABLE lt_dissolve INTO temp38 WITH KEY name = `MV_VALUE`.
     IF sy-subrc = 0.
       temp37 = temp38.
     ENDIF.
     cl_abap_unit_assert=>assert_not_initial( temp37 ).
-    
-    CLEAR temp39.
-    
-    READ TABLE lt_dissolve INTO temp40 WITH KEY name = `MV_VALUE`.
-    IF sy-subrc = 0.
-      temp39 = temp40.
-    ENDIF.
-    cl_abap_unit_assert=>assert_not_initial( temp39 ).
 
   ENDMETHOD.
 
@@ -181,6 +181,8 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     DATA lo_app TYPE REF TO ltcl_test_dissolve.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     DATA lt_dissolve LIKE lo_bind->mt_attri.
+    DATA temp39 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
+    DATA temp40 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp41 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp42 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp43 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
@@ -195,8 +197,6 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     DATA temp52 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp53 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp54 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
-    DATA temp55 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
-    DATA temp56 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     CREATE OBJECT lo_app TYPE ltcl_test_dissolve.
     CREATE OBJECT lo_app->mo_app.
     
@@ -212,9 +212,17 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     lt_dissolve = lo_bind->mt_attri.
 
     
+    CLEAR temp39.
+    
+    READ TABLE lt_dissolve INTO temp40 WITH KEY name = `MO_APP->MV_VALUE`.
+    IF sy-subrc = 0.
+      temp39 = temp40.
+    ENDIF.
+    cl_abap_unit_assert=>assert_not_initial( temp39 ).
+    
     CLEAR temp41.
     
-    READ TABLE lt_dissolve INTO temp42 WITH KEY name = `MO_APP->MV_VALUE`.
+    READ TABLE lt_dissolve INTO temp42 WITH KEY name = `MO_APP->MR_STRUC`.
     IF sy-subrc = 0.
       temp41 = temp42.
     ENDIF.
@@ -222,7 +230,7 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp43.
     
-    READ TABLE lt_dissolve INTO temp44 WITH KEY name = `MO_APP->MR_STRUC`.
+    READ TABLE lt_dissolve INTO temp44 WITH KEY name = `MO_APP->MR_VALUE`.
     IF sy-subrc = 0.
       temp43 = temp44.
     ENDIF.
@@ -230,7 +238,7 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp45.
     
-    READ TABLE lt_dissolve INTO temp46 WITH KEY name = `MO_APP->MR_VALUE`.
+    READ TABLE lt_dissolve INTO temp46 WITH KEY name = `MO_APP->MS_STRUC`.
     IF sy-subrc = 0.
       temp45 = temp46.
     ENDIF.
@@ -238,7 +246,7 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp47.
     
-    READ TABLE lt_dissolve INTO temp48 WITH KEY name = `MO_APP->MS_STRUC`.
+    READ TABLE lt_dissolve INTO temp48 WITH KEY name = `MR_STRUC`.
     IF sy-subrc = 0.
       temp47 = temp48.
     ENDIF.
@@ -246,7 +254,7 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp49.
     
-    READ TABLE lt_dissolve INTO temp50 WITH KEY name = `MR_STRUC`.
+    READ TABLE lt_dissolve INTO temp50 WITH KEY name = `MR_VALUE`.
     IF sy-subrc = 0.
       temp49 = temp50.
     ENDIF.
@@ -254,7 +262,7 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp51.
     
-    READ TABLE lt_dissolve INTO temp52 WITH KEY name = `MR_VALUE`.
+    READ TABLE lt_dissolve INTO temp52 WITH KEY name = `MS_STRUC`.
     IF sy-subrc = 0.
       temp51 = temp52.
     ENDIF.
@@ -262,19 +270,11 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp53.
     
-    READ TABLE lt_dissolve INTO temp54 WITH KEY name = `MS_STRUC`.
+    READ TABLE lt_dissolve INTO temp54 WITH KEY name = `MV_VALUE`.
     IF sy-subrc = 0.
       temp53 = temp54.
     ENDIF.
     cl_abap_unit_assert=>assert_not_initial( temp53 ).
-    
-    CLEAR temp55.
-    
-    READ TABLE lt_dissolve INTO temp56 WITH KEY name = `MV_VALUE`.
-    IF sy-subrc = 0.
-      temp55 = temp56.
-    ENDIF.
-    cl_abap_unit_assert=>assert_not_initial( temp55 ).
 
   ENDMETHOD.
 
@@ -283,6 +283,8 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     DATA lo_app TYPE REF TO ltcl_test_dissolve.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     DATA lt_dissolve LIKE lo_bind->mt_attri.
+    DATA temp55 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
+    DATA temp56 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp57 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp58 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp59 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
@@ -297,8 +299,6 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     DATA temp68 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp69 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp70 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
-    DATA temp71 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
-    DATA temp72 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     CREATE OBJECT lo_app TYPE ltcl_test_dissolve.
     
     CREATE OBJECT lo_bind TYPE z2ui5_cl_fw_binding.
@@ -310,9 +310,17 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     lt_dissolve = lo_bind->mt_attri.
 
     
+    CLEAR temp55.
+    
+    READ TABLE lt_dissolve INTO temp56 WITH KEY name = `MO_APP`.
+    IF sy-subrc = 0.
+      temp55 = temp56.
+    ENDIF.
+    cl_abap_unit_assert=>assert_not_initial( temp55 ).
+    
     CLEAR temp57.
     
-    READ TABLE lt_dissolve INTO temp58 WITH KEY name = `MO_APP`.
+    READ TABLE lt_dissolve INTO temp58 WITH KEY name = `MR_STRUC`.
     IF sy-subrc = 0.
       temp57 = temp58.
     ENDIF.
@@ -320,7 +328,7 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp59.
     
-    READ TABLE lt_dissolve INTO temp60 WITH KEY name = `MR_STRUC`.
+    READ TABLE lt_dissolve INTO temp60 WITH KEY name = `MS_STRUC-INPUT`.
     IF sy-subrc = 0.
       temp59 = temp60.
     ENDIF.
@@ -328,7 +336,7 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp61.
     
-    READ TABLE lt_dissolve INTO temp62 WITH KEY name = `MS_STRUC-INPUT`.
+    READ TABLE lt_dissolve INTO temp62 WITH KEY name = `MS_STRUC-S_02-INPUT`.
     IF sy-subrc = 0.
       temp61 = temp62.
     ENDIF.
@@ -336,7 +344,7 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp63.
     
-    READ TABLE lt_dissolve INTO temp64 WITH KEY name = `MS_STRUC-S_02-INPUT`.
+    READ TABLE lt_dissolve INTO temp64 WITH KEY name = `MS_STRUC-S_02-S_03-S_04-INPUT`.
     IF sy-subrc = 0.
       temp63 = temp64.
     ENDIF.
@@ -344,7 +352,7 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp65.
     
-    READ TABLE lt_dissolve INTO temp66 WITH KEY name = `MS_STRUC-S_02-S_03-S_04-INPUT`.
+    READ TABLE lt_dissolve INTO temp66 WITH KEY name = `MR_VALUE`.
     IF sy-subrc = 0.
       temp65 = temp66.
     ENDIF.
@@ -352,7 +360,7 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp67.
     
-    READ TABLE lt_dissolve INTO temp68 WITH KEY name = `MR_VALUE`.
+    READ TABLE lt_dissolve INTO temp68 WITH KEY name = `MS_STRUC`.
     IF sy-subrc = 0.
       temp67 = temp68.
     ENDIF.
@@ -360,19 +368,11 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     
     CLEAR temp69.
     
-    READ TABLE lt_dissolve INTO temp70 WITH KEY name = `MS_STRUC`.
+    READ TABLE lt_dissolve INTO temp70 WITH KEY name = `MV_VALUE`.
     IF sy-subrc = 0.
       temp69 = temp70.
     ENDIF.
     cl_abap_unit_assert=>assert_not_initial( temp69 ).
-    
-    CLEAR temp71.
-    
-    READ TABLE lt_dissolve INTO temp72 WITH KEY name = `MV_VALUE`.
-    IF sy-subrc = 0.
-      temp71 = temp72.
-    ENDIF.
-    cl_abap_unit_assert=>assert_not_initial( temp71 ).
 
   ENDMETHOD.
 
@@ -425,9 +425,9 @@ CLASS ltcl_test_bind IMPLEMENTATION.
 
     DATA lo_app TYPE REF TO ltcl_test_bind.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
-    DATA temp73 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
-    DATA ls_attri LIKE temp73.
-    DATA temp74 LIKE REF TO ls_attri.
+    DATA temp71 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
+    DATA ls_attri LIKE temp71.
+    DATA temp72 LIKE REF TO ls_attri.
 DATA lv_result TYPE string.
     CREATE OBJECT lo_app TYPE ltcl_test_bind.
     
@@ -438,14 +438,14 @@ DATA lv_result TYPE string.
     lo_bind->mv_type = z2ui5_cl_fw_binding=>cs_bind_type-one_way.
 
     
-    CLEAR temp73.
-    temp73-name = `MV_VALUE`.
+    CLEAR temp71.
+    temp71-name = `MV_VALUE`.
     
-    ls_attri = temp73.
+    ls_attri = temp71.
     
-    GET REFERENCE OF ls_attri INTO temp74.
+    GET REFERENCE OF ls_attri INTO temp72.
 
-lv_result = lo_bind->bind( temp74 ).
+lv_result = lo_bind->bind( temp72 ).
 
     cl_abap_unit_assert=>assert_equals(
      act                  = lv_result
@@ -458,9 +458,9 @@ lv_result = lo_bind->bind( temp74 ).
 
     DATA lo_app TYPE REF TO ltcl_test_bind.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
-    DATA temp75 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
-    DATA ls_attri LIKE temp75.
-    DATA temp76 LIKE REF TO ls_attri.
+    DATA temp73 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
+    DATA ls_attri LIKE temp73.
+    DATA temp74 LIKE REF TO ls_attri.
 DATA lv_result TYPE string.
     CREATE OBJECT lo_app TYPE ltcl_test_bind.
     
@@ -471,14 +471,14 @@ DATA lv_result TYPE string.
     lo_bind->mv_type = z2ui5_cl_fw_binding=>cs_bind_type-one_way.
 
     
-    CLEAR temp75.
-    temp75-name = `MS_STRUC-S_02-S_03-S_04-INPUT`.
+    CLEAR temp73.
+    temp73-name = `MS_STRUC-S_02-S_03-S_04-INPUT`.
     
-    ls_attri = temp75.
+    ls_attri = temp73.
     
-    GET REFERENCE OF ls_attri INTO temp76.
+    GET REFERENCE OF ls_attri INTO temp74.
 
-lv_result = lo_bind->bind( temp76 ).
+lv_result = lo_bind->bind( temp74 ).
 
     cl_abap_unit_assert=>assert_equals(
      act                  = lv_result
@@ -492,9 +492,9 @@ lv_result = lo_bind->bind( temp76 ).
     DATA lo_app TYPE REF TO ltcl_test_bind.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     FIELD-SYMBOLS <any> TYPE any.
-    DATA temp77 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
-    DATA ls_attri LIKE temp77.
-    DATA temp78 LIKE REF TO ls_attri.
+    DATA temp75 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
+    DATA ls_attri LIKE temp75.
+    DATA temp76 LIKE REF TO ls_attri.
 DATA lv_result TYPE string.
     CREATE OBJECT lo_app TYPE ltcl_test_bind.
     
@@ -509,14 +509,14 @@ DATA lv_result TYPE string.
     lo_bind->mv_type = z2ui5_cl_fw_binding=>cs_bind_type-one_way.
 
     
-    CLEAR temp77.
-    temp77-name = `MR_VALUE->*`.
+    CLEAR temp75.
+    temp75-name = `MR_VALUE->*`.
     
-    ls_attri = temp77.
+    ls_attri = temp75.
     
-    GET REFERENCE OF ls_attri INTO temp78.
+    GET REFERENCE OF ls_attri INTO temp76.
 
-lv_result = lo_bind->bind( temp78 ).
+lv_result = lo_bind->bind( temp76 ).
 
     cl_abap_unit_assert=>assert_equals(
      act                  = lv_result
@@ -529,9 +529,9 @@ lv_result = lo_bind->bind( temp78 ).
     DATA lo_app TYPE REF TO ltcl_test_bind.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     FIELD-SYMBOLS <any> TYPE any.
-    DATA temp79 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
-    DATA ls_attri LIKE temp79.
-    DATA temp80 LIKE REF TO ls_attri.
+    DATA temp77 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
+    DATA ls_attri LIKE temp77.
+    DATA temp78 LIKE REF TO ls_attri.
 DATA lv_result TYPE string.
     CREATE OBJECT lo_app TYPE ltcl_test_bind.
     
@@ -546,8 +546,41 @@ DATA lv_result TYPE string.
     lo_bind->mv_type = z2ui5_cl_fw_binding=>cs_bind_type-one_way.
 
     
+    CLEAR temp77.
+    temp77-name = `MR_STRUC->INPUT`.
+    
+    ls_attri = temp77.
+    
+    GET REFERENCE OF ls_attri INTO temp78.
+
+lv_result = lo_bind->bind( temp78 ).
+
+    cl_abap_unit_assert=>assert_equals(
+     act                  = lv_result
+     exp                  = `/MR_STRUC__INPUT` ).
+
+  ENDMETHOD.
+
+  METHOD test_oref_val.
+
+    DATA lo_app TYPE REF TO ltcl_test_bind.
+    DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
+    DATA temp79 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
+    DATA ls_attri LIKE temp79.
+    DATA temp80 LIKE REF TO ls_attri.
+DATA lv_result TYPE string.
+    CREATE OBJECT lo_app TYPE ltcl_test_bind.
+    CREATE OBJECT lo_app->mo_app.
+    
+    CREATE OBJECT lo_bind TYPE z2ui5_cl_fw_binding.
+
+    lo_bind->mo_app = lo_app.
+    GET REFERENCE OF lo_app->mo_app->mv_value INTO lo_bind->mr_data.
+    lo_bind->mv_type = z2ui5_cl_fw_binding=>cs_bind_type-one_way.
+
+    
     CLEAR temp79.
-    temp79-name = `MR_STRUC->INPUT`.
+    temp79-name = `MO_APP->MV_VALUE`.
     
     ls_attri = temp79.
     
@@ -557,11 +590,11 @@ lv_result = lo_bind->bind( temp80 ).
 
     cl_abap_unit_assert=>assert_equals(
      act                  = lv_result
-     exp                  = `/MR_STRUC__INPUT` ).
+     exp                  = `/MO_APP__MV_VALUE` ).
 
   ENDMETHOD.
 
-  METHOD test_oref_val.
+  METHOD test_oref_struc.
 
     DATA lo_app TYPE REF TO ltcl_test_bind.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
@@ -575,51 +608,18 @@ DATA lv_result TYPE string.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_fw_binding.
 
     lo_bind->mo_app = lo_app.
-    GET REFERENCE OF lo_app->mo_app->mv_value INTO lo_bind->mr_data.
+    GET REFERENCE OF lo_app->mo_app->ms_struc-input INTO lo_bind->mr_data.
     lo_bind->mv_type = z2ui5_cl_fw_binding=>cs_bind_type-one_way.
 
     
     CLEAR temp81.
-    temp81-name = `MO_APP->MV_VALUE`.
+    temp81-name = `MO_APP->MS_STRUC-INPUT`.
     
     ls_attri = temp81.
     
     GET REFERENCE OF ls_attri INTO temp82.
 
 lv_result = lo_bind->bind( temp82 ).
-
-    cl_abap_unit_assert=>assert_equals(
-     act                  = lv_result
-     exp                  = `/MO_APP__MV_VALUE` ).
-
-  ENDMETHOD.
-
-  METHOD test_oref_struc.
-
-    DATA lo_app TYPE REF TO ltcl_test_bind.
-    DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
-    DATA temp83 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
-    DATA ls_attri LIKE temp83.
-    DATA temp84 LIKE REF TO ls_attri.
-DATA lv_result TYPE string.
-    CREATE OBJECT lo_app TYPE ltcl_test_bind.
-    CREATE OBJECT lo_app->mo_app.
-    
-    CREATE OBJECT lo_bind TYPE z2ui5_cl_fw_binding.
-
-    lo_bind->mo_app = lo_app.
-    GET REFERENCE OF lo_app->mo_app->ms_struc-input INTO lo_bind->mr_data.
-    lo_bind->mv_type = z2ui5_cl_fw_binding=>cs_bind_type-one_way.
-
-    
-    CLEAR temp83.
-    temp83-name = `MO_APP->MS_STRUC-INPUT`.
-    
-    ls_attri = temp83.
-    
-    GET REFERENCE OF ls_attri INTO temp84.
-
-lv_result = lo_bind->bind( temp84 ).
 
     cl_abap_unit_assert=>assert_equals(
      act                  = lv_result
@@ -632,9 +632,9 @@ lv_result = lo_bind->bind( temp84 ).
     DATA lo_app TYPE REF TO ltcl_test_bind.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     FIELD-SYMBOLS <any> TYPE any.
-    DATA temp85 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
-    DATA ls_attri LIKE temp85.
-    DATA temp86 LIKE REF TO ls_attri.
+    DATA temp83 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
+    DATA ls_attri LIKE temp83.
+    DATA temp84 LIKE REF TO ls_attri.
 DATA lv_result TYPE string.
     CREATE OBJECT lo_app TYPE ltcl_test_bind.
     CREATE OBJECT lo_app->mo_app.
@@ -650,14 +650,14 @@ DATA lv_result TYPE string.
     lo_bind->mv_type = z2ui5_cl_fw_binding=>cs_bind_type-one_way.
 
     
-    CLEAR temp85.
-    temp85-name = `MO_APP->MR_VALUE->*`.
+    CLEAR temp83.
+    temp83-name = `MO_APP->MR_VALUE->*`.
     
-    ls_attri = temp85.
+    ls_attri = temp83.
     
-    GET REFERENCE OF ls_attri INTO temp86.
+    GET REFERENCE OF ls_attri INTO temp84.
 
-lv_result = lo_bind->bind( temp86 ).
+lv_result = lo_bind->bind( temp84 ).
 
     cl_abap_unit_assert=>assert_equals(
      act                  = lv_result
@@ -711,17 +711,17 @@ CLASS ltcl_test_main_value IMPLEMENTATION.
   METHOD test_one_way.
 
     DATA lo_app TYPE REF TO ltcl_test_main_value.
-    DATA temp87 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-    DATA lt_attri LIKE temp87.
+    DATA temp85 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
+    DATA lt_attri LIKE temp85.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     DATA lv_result TYPE string.
     CREATE OBJECT lo_app TYPE ltcl_test_main_value.
     lo_app->mv_value = `my value`.
 
     
-    CLEAR temp87.
+    CLEAR temp85.
     
-    lt_attri = temp87.
+    lt_attri = temp85.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
@@ -743,17 +743,17 @@ CLASS ltcl_test_main_value IMPLEMENTATION.
   METHOD test_two_way.
 
     DATA lo_app TYPE REF TO ltcl_test_main_value.
-    DATA temp88 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-    DATA lt_attri LIKE temp88.
+    DATA temp86 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
+    DATA lt_attri LIKE temp86.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     DATA lv_result TYPE string.
     CREATE OBJECT lo_app TYPE ltcl_test_main_value.
     lo_app->mv_value = `my value`.
 
     
-    CLEAR temp88.
+    CLEAR temp86.
     
-    lt_attri = temp88.
+    lt_attri = temp86.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
@@ -775,8 +775,8 @@ CLASS ltcl_test_main_value IMPLEMENTATION.
   METHOD test_one_way_t_attri.
 
     DATA lo_app TYPE REF TO ltcl_test_main_value.
-    DATA temp89 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-    DATA lt_attri LIKE temp89.
+    DATA temp87 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
+    DATA lt_attri LIKE temp87.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     DATA ls_attri TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA temp1 LIKE LINE OF lo_bind->mt_attri.
@@ -785,9 +785,9 @@ CLASS ltcl_test_main_value IMPLEMENTATION.
     lo_app->mv_value = `my value`.
 
     
-    CLEAR temp89.
+    CLEAR temp87.
     
-    lt_attri = temp89.
+    lt_attri = temp87.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
@@ -815,8 +815,8 @@ CLASS ltcl_test_main_value IMPLEMENTATION.
   METHOD test_one_way_multiple.
 
     DATA lo_app TYPE REF TO ltcl_test_main_value.
-    DATA temp90 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-    DATA lt_attri LIKE temp90.
+    DATA temp88 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
+    DATA lt_attri LIKE temp88.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     DATA lv_result TYPE string.
     DATA lo_bind2 TYPE REF TO z2ui5_cl_fw_binding.
@@ -825,9 +825,9 @@ CLASS ltcl_test_main_value IMPLEMENTATION.
     lo_app->mv_value = `my value`.
 
     
-    CLEAR temp90.
+    CLEAR temp88.
     
-    lt_attri = temp90.
+    lt_attri = temp88.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
@@ -860,17 +860,17 @@ CLASS ltcl_test_main_value IMPLEMENTATION.
   METHOD test_one_way_two_way_error.
 
     DATA lo_app TYPE REF TO ltcl_test_main_value.
-    DATA temp91 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-    DATA lt_attri LIKE temp91.
+    DATA temp89 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
+    DATA lt_attri LIKE temp89.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     DATA lo_bind2 TYPE REF TO z2ui5_cl_fw_binding.
     CREATE OBJECT lo_app TYPE ltcl_test_main_value.
     lo_app->mv_value = `my value`.
 
     
-    CLEAR temp91.
+    CLEAR temp89.
     
-    lt_attri = temp91.
+    lt_attri = temp89.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
@@ -940,17 +940,17 @@ CLASS ltcl_test_main_structure IMPLEMENTATION.
   METHOD test_one_way_lev1.
 
     DATA lo_app TYPE REF TO ltcl_test_main_structure.
-    DATA temp92 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-    DATA lt_attri LIKE temp92.
+    DATA temp90 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
+    DATA lt_attri LIKE temp90.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     DATA lv_result TYPE string.
     CREATE OBJECT lo_app TYPE ltcl_test_main_structure.
     lo_app->ms_struc-input = `my value`.
 
     
-    CLEAR temp92.
+    CLEAR temp90.
     
-    lt_attri = temp92.
+    lt_attri = temp90.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
@@ -972,17 +972,17 @@ CLASS ltcl_test_main_structure IMPLEMENTATION.
   METHOD test_one_way_lev2.
 
     DATA lo_app TYPE REF TO ltcl_test_main_structure.
-    DATA temp93 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-    DATA lt_attri LIKE temp93.
+    DATA temp91 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
+    DATA lt_attri LIKE temp91.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     DATA lv_result TYPE string.
     CREATE OBJECT lo_app TYPE ltcl_test_main_structure.
     lo_app->ms_struc-s_02-input = `my value`.
 
     
-    CLEAR temp93.
+    CLEAR temp91.
     
-    lt_attri = temp93.
+    lt_attri = temp91.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
@@ -1004,17 +1004,17 @@ CLASS ltcl_test_main_structure IMPLEMENTATION.
   METHOD test_one_way_lev3.
 
     DATA lo_app TYPE REF TO ltcl_test_main_structure.
-    DATA temp94 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-    DATA lt_attri LIKE temp94.
+    DATA temp92 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
+    DATA lt_attri LIKE temp92.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     DATA lv_result TYPE string.
     CREATE OBJECT lo_app TYPE ltcl_test_main_structure.
     lo_app->ms_struc-s_02-s_03-input = `my value`.
 
     
-    CLEAR temp94.
+    CLEAR temp92.
     
-    lt_attri = temp94.
+    lt_attri = temp92.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
@@ -1036,8 +1036,8 @@ CLASS ltcl_test_main_structure IMPLEMENTATION.
   METHOD test_one_way_lev4_long_name.
 
     DATA lo_app TYPE REF TO ltcl_test_main_structure.
-    DATA temp95 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-    DATA lt_attri LIKE temp95.
+    DATA temp93 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
+    DATA lt_attri LIKE temp93.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     DATA lv_result TYPE string.
     DATA ls_attri TYPE z2ui5_cl_fw_binding=>ty_s_attri.
@@ -1047,9 +1047,9 @@ CLASS ltcl_test_main_structure IMPLEMENTATION.
     lo_app->ms_struc-s_02-s_03-s_04-input = `my value`.
 
     
-    CLEAR temp95.
+    CLEAR temp93.
     
-    lt_attri = temp95.
+    lt_attri = temp93.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
@@ -1192,8 +1192,8 @@ CLASS ltcl_test_main_object IMPLEMENTATION.
   METHOD test_one_way_value.
 
     DATA lo_app TYPE REF TO ltcl_test_main_object.
-    DATA temp96 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-    DATA lt_attri LIKE temp96.
+    DATA temp94 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
+    DATA lt_attri LIKE temp94.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     DATA lv_result TYPE string.
     CREATE OBJECT lo_app TYPE ltcl_test_main_object.
@@ -1202,9 +1202,9 @@ CLASS ltcl_test_main_object IMPLEMENTATION.
 
 
     
-    CLEAR temp96.
+    CLEAR temp94.
     
-    lt_attri = temp96.
+    lt_attri = temp94.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
@@ -1226,8 +1226,8 @@ CLASS ltcl_test_main_object IMPLEMENTATION.
   METHOD test_one_way_struc.
 
     DATA lo_app TYPE REF TO ltcl_test_main_object.
-    DATA temp97 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-    DATA lt_attri LIKE temp97.
+    DATA temp95 TYPE z2ui5_cl_fw_binding=>ty_t_attri.
+    DATA lt_attri LIKE temp95.
     DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     DATA lv_result TYPE string.
     CREATE OBJECT lo_app TYPE ltcl_test_main_object.
@@ -1235,9 +1235,9 @@ CLASS ltcl_test_main_object IMPLEMENTATION.
     lo_app->mo_obj->ms_struc-input = `my value`.
 
     
-    CLEAR temp97.
+    CLEAR temp95.
     
-    lt_attri = temp97.
+    lt_attri = temp95.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
