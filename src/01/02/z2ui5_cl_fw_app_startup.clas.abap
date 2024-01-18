@@ -29,6 +29,7 @@ CLASS z2ui5_cl_fw_app_startup DEFINITION
     METHODS z2ui5_on_event.
     METHODS view_display_start.
   PROTECTED SECTION.
+    DATA mt_classes TYPE string_table.
   PRIVATE SECTION.
 ENDCLASS.
 
@@ -100,7 +101,10 @@ CLASS z2ui5_cl_fw_app_startup IMPLEMENTATION.
       content->input( placeholder = `fill in the class name and press 'check'`
                       editable    = z2ui5_cl_util_func=>boolean_abap_2_json( ms_home-class_editable )
                       value       = client->_bind_edit( ms_home-classname )
-                      submit      = client->_event( ms_home-btn_event_id ) ).
+                      submit      = client->_event( ms_home-btn_event_id )
+                      valuehelprequest = client->_event( 'VALUE_HELP' )
+                      showvaluehelp = abap_true
+                       ).
 
     ELSE.
       content->text( ms_home-classname ).
@@ -149,12 +153,40 @@ CLASS z2ui5_cl_fw_app_startup IMPLEMENTATION.
 
 
   METHOD z2ui5_if_app~main.
+          DATA temp1 TYPE REF TO z2ui5_cl_popup_to_select.
+          DATA lo_f4 LIKE temp1.
+          DATA ls_result TYPE z2ui5_cl_popup_to_select=>ty_s_result.
+            DATA temp2 LIKE LINE OF mt_classes.
+            DATA temp3 LIKE sy-tabix.
 
     me->client = client.
 
     IF mv_check_initialized = abap_false.
       mv_check_initialized = abap_true.
       z2ui5_on_init( ).
+    ENDIF.
+
+    IF client->get( )-check_on_navigated = abap_true.
+      TRY.
+          
+          temp1 ?= client->get_app( client->get( )-s_draft-id_prev_app ).
+          
+          lo_f4 = temp1.
+          
+          ls_result = lo_f4->result( ).
+          IF ls_result-check_cancel = abap_false.
+            
+            
+            temp3 = sy-tabix.
+            READ TABLE mt_classes INDEX ls_result-index INTO temp2.
+            sy-tabix = temp3.
+            IF sy-subrc <> 0.
+              RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+            ENDIF.
+            ms_home-classname = temp2.
+          ENDIF.
+        CATCH cx_root.
+      ENDTRY.
     ENDIF.
 
     z2ui5_on_event( ).
@@ -196,6 +228,10 @@ CLASS z2ui5_cl_fw_app_startup IMPLEMENTATION.
             client->message_box_display( text = ms_home-class_value_state_text
                                          type = `error` ).
         ENDTRY.
+
+      WHEN 'VALUE_HELP'.
+        mt_classes = z2ui5_cl_util_func=>rtti_get_classes_impl_intf( `Z2UI5_IF_APP` ).
+        client->nav_app_call( z2ui5_cl_popup_to_select=>factory( mt_classes ) ).
 
       WHEN `DEMOS`.
 

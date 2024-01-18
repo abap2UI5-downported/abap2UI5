@@ -49,7 +49,7 @@ CLASS Z2UI5_CL_FW_CLIENT IMPLEMENTATION.
 
     READ TABLE i_tab INDEX i_tab_index ASSIGNING <row>.
     
-    lt_attri = z2ui5_cl_util_func=>rtti_get_t_comp_by_struc( <row> ).
+    lt_attri = z2ui5_cl_util_func=>rtti_get_t_comp_by_data( <row> ).
 
     
     LOOP AT lt_attri ASSIGNING <comp>.

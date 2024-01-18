@@ -276,7 +276,7 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
         ASSIGN ls_params->* TO <struc>.
 
         
-        lt_comp = z2ui5_cl_util_func=>rtti_get_t_comp_by_struc( <struc> ).
+        lt_comp = z2ui5_cl_util_func=>rtti_get_t_comp_by_data( <struc> ).
 
         
         LOOP AT lt_comp INTO ls_comp.

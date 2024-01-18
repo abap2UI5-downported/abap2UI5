@@ -461,7 +461,7 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     z2ui5_cl_util_func=>x_check_raise( temp1 ).
 
     
-    lt_comp = z2ui5_cl_util_func=>rtti_get_t_comp_by_struc( <attribute> ).
+    lt_comp = z2ui5_cl_util_func=>rtti_get_t_comp_by_data( <attribute> ).
 
     
     lv_attri = z2ui5_cl_util_func=>c_replace_assign_struc( val ).
