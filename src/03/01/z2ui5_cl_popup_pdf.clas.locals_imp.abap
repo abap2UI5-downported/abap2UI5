@@ -4,15 +4,9 @@ CLASS lcl_utility DEFINITION
 
   PUBLIC SECTION.
 
-  CLASS-METHODS boolean_abap_2_json
-      IMPORTING
-        val           TYPE any
-      RETURNING
-        VALUE(result) TYPE string.
-
     CLASS-METHODS factory
       IMPORTING
-        client          TYPE REF TO z2ui5_if_client optional
+        client          TYPE REF TO z2ui5_if_client OPTIONAL
       RETURNING
         VALUE(r_result) TYPE REF TO lcl_utility.
 
@@ -22,9 +16,9 @@ CLASS lcl_utility DEFINITION
 
     METHODS app_get_url
       IMPORTING
-        classname TYPE string OPTIONAL
+        classname     TYPE string OPTIONAL
       RETURNING
-        VALUE(result)    TYPE string.
+        VALUE(result) TYPE string.
 
     METHODS url_param_get
       IMPORTING
@@ -120,13 +114,7 @@ CLASS lcl_utility DEFINITION
       RETURNING
         VALUE(result) TYPE string.
 
-    CLASS-METHODS boolean_check
-      IMPORTING
-        val           TYPE any
-      RETURNING
-        VALUE(result) TYPE abap_bool.
-
-            CLASS-METHODS rtti_get_type_name
+    CLASS-METHODS rtti_get_type_name
       IMPORTING
         val           TYPE any
       RETURNING
@@ -154,38 +142,6 @@ CLASS lcl_utility IMPLEMENTATION.
     
     lo_ele = temp3.
     result  = lo_ele->get_relative_name( ).
-
-  ENDMETHOD.
-
- METHOD boolean_check.
-        DATA lv_type_name TYPE string.
-
-    TRY.
-        
-        lv_type_name = rtti_get_type_name( val ).
-        CASE lv_type_name.
-          WHEN `ABAP_BOOL` OR `XSDBOOLEAN`.
-            result = abap_true.
-        ENDCASE.
-      CATCH cx_root.
-    ENDTRY.
-
-  ENDMETHOD.
-
-  METHOD boolean_abap_2_json.
-      DATA temp4 TYPE string.
-
-    IF boolean_check( val ) IS NOT INITIAL.
-      
-      IF val = abap_true.
-        temp4 = `true`.
-      ELSE.
-        temp4 = `false`.
-      ENDIF.
-      result = temp4.
-    ELSE.
-      result = val.
-    ENDIF.
 
   ENDMETHOD.
 
@@ -311,16 +267,16 @@ CLASS lcl_utility IMPLEMENTATION.
     DATA temp1 LIKE LINE OF lt_rows.
     DATA temp2 LIKE sy-tabix.
     DATA lt_comp TYPE cl_abap_structdescr=>component_table.
-    DATA temp5 LIKE LINE OF lt_cols.
-    DATA lr_col LIKE REF TO temp5.
+    DATA temp4 LIKE LINE OF lt_cols.
+    DATA lr_col LIKE REF TO temp4.
       DATA lv_name TYPE string.
-      DATA temp6 TYPE abap_componentdescr.
+      DATA temp5 TYPE abap_componentdescr.
     DATA struc TYPE REF TO cl_abap_structdescr.
-    DATA temp7 TYPE REF TO cl_abap_datadescr.
+    DATA temp6 TYPE REF TO cl_abap_datadescr.
     DATA o_table_desc TYPE REF TO cl_abap_tabledescr.
     FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
-    DATA temp8 LIKE LINE OF lt_rows.
-    DATA lr_rows LIKE REF TO temp8.
+    DATA temp7 LIKE LINE OF lt_rows.
+    DATA lr_rows LIKE REF TO temp7.
       DATA lr_row TYPE REF TO data.
         FIELD-SYMBOLS <row> TYPE any.
         FIELD-SYMBOLS <field> TYPE any.
@@ -346,19 +302,19 @@ CLASS lcl_utility IMPLEMENTATION.
       REPLACE ` ` IN lv_name WITH `_`.
 
       
-      CLEAR temp6.
-      temp6-name = lv_name.
-      temp6-type = cl_abap_elemdescr=>get_c( 40 ).
-      INSERT temp6 INTO TABLE lt_comp.
+      CLEAR temp5.
+      temp5-name = lv_name.
+      temp5-type = cl_abap_elemdescr=>get_c( 40 ).
+      INSERT temp5 INTO TABLE lt_comp.
     ENDLOOP.
 
     
     struc = cl_abap_structdescr=>get( lt_comp ).
     
-    temp7 ?= struc.
+    temp6 ?= struc.
     
     o_table_desc = cl_abap_tabledescr=>create(
-          p_line_type  = temp7
+          p_line_type  = temp6
           p_table_kind = cl_abap_tabledescr=>tablekind_std
           p_unique     = abap_false ).
 
@@ -445,12 +401,12 @@ CLASS lcl_utility IMPLEMENTATION.
 
     FIELD-SYMBOLS <tab> TYPE table.
     DATA lr_row TYPE REF TO data.
-    DATA temp9 TYPE REF TO cl_abap_tabledescr.
-    DATA tab LIKE temp9.
-    DATA temp10 TYPE REF TO cl_abap_structdescr.
-    DATA struc LIKE temp10.
-    DATA temp11 TYPE abap_component_tab.
-    DATA temp3 LIKE LINE OF temp11.
+    DATA temp8 TYPE REF TO cl_abap_tabledescr.
+    DATA tab LIKE temp8.
+    DATA temp9 TYPE REF TO cl_abap_structdescr.
+    DATA struc LIKE temp9.
+    DATA temp10 TYPE abap_component_tab.
+    DATA temp3 LIKE LINE OF temp10.
     DATA lr_comp LIKE REF TO temp3.
       DATA lv_index TYPE i.
         FIELD-SYMBOLS <row> TYPE any.
@@ -460,20 +416,20 @@ CLASS lcl_utility IMPLEMENTATION.
     
 
     
-    temp9 ?= cl_abap_typedescr=>describe_by_data( <tab> ).
+    temp8 ?= cl_abap_typedescr=>describe_by_data( <tab> ).
     
-    tab = temp9.
+    tab = temp8.
 
     
-    temp10 ?= tab->get_table_line_type( ).
+    temp9 ?= tab->get_table_line_type( ).
     
-    struc = temp10.
+    struc = temp9.
 
     
-    temp11 = struc->get_components( ).
+    temp10 = struc->get_components( ).
     
     
-    LOOP AT temp11 REFERENCE INTO lr_comp.
+    LOOP AT temp10 REFERENCE INTO lr_comp.
       result = result && lr_comp->name && ';'.
     ENDLOOP.
 
@@ -529,19 +485,19 @@ CLASS lcl_utility IMPLEMENTATION.
 
   METHOD get_fieldlist_by_table.
 
-    DATA temp12 TYPE REF TO cl_abap_tabledescr.
-    DATA lo_tab LIKE temp12.
-    DATA temp13 TYPE REF TO cl_abap_structdescr.
-    DATA lo_struc LIKE temp13.
+    DATA temp11 TYPE REF TO cl_abap_tabledescr.
+    DATA lo_tab LIKE temp11.
+    DATA temp12 TYPE REF TO cl_abap_structdescr.
+    DATA lo_struc LIKE temp12.
     DATA lt_comp TYPE abap_component_tab.
     DATA ls_comp LIKE LINE OF lt_comp.
-    temp12 ?= cl_abap_datadescr=>describe_by_data( it_table ).
+    temp11 ?= cl_abap_datadescr=>describe_by_data( it_table ).
     
-    lo_tab = temp12.
+    lo_tab = temp11.
     
-    temp13 ?= lo_tab->get_table_line_type( ).
+    temp12 ?= lo_tab->get_table_line_type( ).
     
-    lo_struc = temp13.
+    lo_struc = temp12.
 
     
     lt_comp = lo_struc->get_components( ).

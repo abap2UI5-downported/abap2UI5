@@ -131,7 +131,7 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
       DATA lo_actual LIKE temp3.
       DATA lv_name_back TYPE string.
       FIELD-SYMBOLS <attribute> TYPE any.
-              DATA temp4 TYPE string.
+            DATA temp4 TYPE string.
     lr_view_model = z2ui5_cl_util_tree_json=>factory( ).
     
     lo_update = lr_view_model->add_attribute_object( z2ui5_cl_fw_binding=>cv_model_edit_name ).
@@ -175,32 +175,37 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
 
         WHEN OTHERS.
 
-          CASE lr_attri->type.
+          IF z2ui5_cl_util_func=>boolean_check_by_name( lr_attri->type ) IS NOT INITIAL.
 
-            WHEN `ABAP_BOOL` OR `ABAP_BOOLEAN` OR `XSDBOOLEAN`.
+            
+            CASE <attribute>.
+              WHEN abap_true.
+                temp4 = `true`.
+              WHEN OTHERS.
+                temp4 = `false`.
+            ENDCASE.
+            lo_actual->add_attribute( n           = lr_attri->name_front
+                             v           = temp4
+                             apos_active = abap_false ).
 
-              
-              CASE <attribute>.
-                WHEN abap_true.
-                  temp4 = `true`.
-                WHEN OTHERS.
-                  temp4 = `false`.
-              ENDCASE.
-              lo_actual->add_attribute( n           = lr_attri->name_front
-                                        v           = temp4
-                                        apos_active = abap_false ).
+          ELSE.
 
-            WHEN OTHERS.
+            lo_actual->add_attribute( n           = lr_attri->name_front
+                             v           = z2ui5_cl_util_func=>trans_json_any_2( any = <attribute> pretty_name = lr_attri->pretty_name compress = lr_attri->compress )
+                             apos_active = abap_false ).
 
-              lo_actual->add_attribute( n           = lr_attri->name_front
-                                        v           = z2ui5_cl_util_func=>trans_json_any_2( any = <attribute> pretty_name = lr_attri->pretty_name compress = lr_attri->compress )
-                                        apos_active = abap_false ).
-          ENDCASE.
-      ENDCASE.
+          ENDIF.
 
-    ENDLOOP.
+*          CASE lr_attri->type.
+*            WHEN `ABAP_BOOL` OR `ABAP_BOOLEAN` OR `XSDBOOLEAN`
+*        WHEN OTHERS.
+*      ENDCASE.
 
-    result = lr_view_model->stringify( ).
+  ENDCASE.
 
-  ENDMETHOD.
+ENDLOOP.
+
+result = lr_view_model->stringify( ).
+
+ENDMETHOD.
 ENDCLASS.

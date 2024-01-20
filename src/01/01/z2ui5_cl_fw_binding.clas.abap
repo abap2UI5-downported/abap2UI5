@@ -451,6 +451,7 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     DATA lr_comp LIKE REF TO temp15.
       DATA lv_element TYPE string.
           DATA lt_attri TYPE z2ui5_cl_fw_binding=>ty_t_attri.
+        DATA lv_type_name TYPE string.
           DATA temp16 TYPE ty_s_attri.
           DATA ls_attri LIKE temp16.
     lv_name = `MO_APP->` && val.
@@ -487,8 +488,11 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
 
       ELSE.
 
-        IF lr_comp->type->absolute_name = '\TYPE=XSDBOOLEAN'
-        OR lr_comp->type->absolute_name = '\TYPE=ABAP_BOOL'.
+        
+        lv_type_name = substring_after( val = lr_comp->type->absolute_name sub = '\TYPE=').
+        IF z2ui5_cl_util_func=>boolean_check_by_name( lv_type_name ) IS NOT INITIAL.
+*        IF lr_comp->type->absolute_name = '\TYPE=XSDBOOLEAN'
+*        OR lr_comp->type->absolute_name = '\TYPE=ABAP_BOOL'.
 
           
           CLEAR temp16.
