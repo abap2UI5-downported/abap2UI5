@@ -174,7 +174,7 @@ CLASS z2ui5_cl_util_func DEFINITION
 
     CLASS-METHODS c_trim
       IMPORTING
-        !val          TYPE clike
+        !val          TYPE any
       RETURNING
         VALUE(result) TYPE string.
 
@@ -254,13 +254,19 @@ CLASS z2ui5_cl_util_func DEFINITION
       RETURNING
         VALUE(result) TYPE z2ui5_if_client=>ty_t_name_value.
 
+    CLASS-METHODS get_tab_filter_by_val
+      IMPORTING
+        val TYPE clike
+      CHANGING
+        tab TYPE STANDARD TABLE.
+
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
 
 
 
-CLASS z2ui5_cl_util_func IMPLEMENTATION.
+CLASS Z2UI5_CL_UTIL_FUNC IMPLEMENTATION.
 
 
   METHOD app_get_url.
@@ -339,7 +345,7 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
       WHEN 'ABAP_BOOL'
       OR 'XSDBOOLEAN'
       OR 'FLAG'
-      OR 'XFELD'
+*      OR 'XFELD'
       OR 'ABAP_BOOLEAN'
       OR 'WDY_BOOLEAN'
       OR 'OS_BOOLEAN'.
@@ -473,15 +479,6 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD get_range_t_by_token_t.
-
-    DATA ls_token LIKE LINE OF val.
-    LOOP AT val INTO ls_token.
-      INSERT get_range_by_token( ls_token-text ) INTO TABLE result.
-    ENDLOOP.
-
-  ENDMETHOD.
-
   METHOD get_range_by_token.
 
     DATA lv_length TYPE i.
@@ -535,6 +532,45 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
         ENDIF.
 
     ENDCASE.
+
+  ENDMETHOD.
+
+
+  METHOD get_range_t_by_token_t.
+
+    DATA ls_token LIKE LINE OF val.
+    LOOP AT val INTO ls_token.
+      INSERT get_range_by_token( ls_token-text ) INTO TABLE result.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+  METHOD get_tab_filter_by_val.
+
+    FIELD-SYMBOLS <row> LIKE LINE OF tab.
+      DATA lv_row TYPE string.
+      DATA lv_index TYPE i.
+        FIELD-SYMBOLS <field> TYPE any.
+    LOOP AT tab ASSIGNING <row>.
+      
+      lv_row = ``.
+      
+      lv_index = 1.
+      DO.
+        
+        ASSIGN COMPONENT lv_index OF STRUCTURE <row> TO <field>.
+        IF sy-subrc <> 0.
+          EXIT.
+        ENDIF.
+        lv_row = lv_row && <field>.
+        lv_index = lv_index + 1.
+      ENDDO.
+
+      IF lv_row NS val.
+        DELETE tab.
+      ENDIF.
+    ENDLOOP.
 
   ENDMETHOD.
 
