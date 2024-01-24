@@ -8,14 +8,14 @@ CLASS z2ui5_cl_popup_to_select DEFINITION
 
     CLASS-METHODS factory
       IMPORTING
-        i_tab           TYPE data
+        i_tab           TYPE STANDARD TABLE
       RETURNING
         VALUE(r_result) TYPE REF TO z2ui5_cl_popup_to_select.
 
     TYPES:
       BEGIN OF ty_s_result,
-        index        TYPE i,
-        check_cancel TYPE abap_bool,
+        row             TYPE REF TO data,
+        check_confirmed TYPE abap_bool,
       END OF ty_s_result.
     DATA ms_result TYPE ty_s_result.
 
@@ -29,6 +29,7 @@ CLASS z2ui5_cl_popup_to_select DEFINITION
 
   PROTECTED SECTION.
     DATA check_initialized TYPE abap_bool.
+    DATA check_table_line TYPE abap_bool.
     DATA client TYPE REF TO z2ui5_if_client.
     METHODS on_event.
     METHODS display.
@@ -37,7 +38,6 @@ CLASS z2ui5_cl_popup_to_select DEFINITION
     METHODS on_event_search.
 
   PRIVATE SECTION.
-    DATA lv_check_table_line TYPE abap_bool.
 ENDCLASS.
 
 
@@ -49,6 +49,7 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
 
     CREATE OBJECT r_result.
     CREATE DATA r_result->mr_tab LIKE i_tab.
+    CREATE DATA r_result->ms_result-row LIKE LINE OF i_tab.
     
     ASSIGN r_result->mr_tab->* TO <tab>.
     <tab> = i_tab.
@@ -114,7 +115,7 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
 
   METHOD z2ui5_if_app~main.
 
-    me->client     = client.
+    me->client = client.
 
     IF check_initialized = abap_false.
       check_initialized = abap_true.
@@ -132,10 +133,10 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
     CASE client->get( )-event.
 
       WHEN 'CONFIRM'.
+        ms_result-check_confirmed = abap_true.
         on_event_confirm( ).
 
       WHEN 'CANCEL'.
-        ms_result-check_cancel = abap_true.
         client->popup_destroy( ).
         client->nav_app_leave( client->get_app( client->get( )-s_draft-id_prev_app_stack ) ).
 
@@ -193,7 +194,7 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
         
         lt_comp = lo_struct->get_components( ).
       CATCH cx_root.
-        lv_check_table_line = abap_true.
+        check_table_line = abap_true.
         
         temp5 ?= lo_table->get_table_line_type( ).
         
@@ -233,7 +234,7 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
       
       CREATE DATA lr_row LIKE LINE OF <tab_out>.
       ASSIGN lr_row->* TO <row2>.
-      IF lv_check_table_line = abap_true.
+      IF check_table_line = abap_true.
         ASSIGN lr_row->('TAB_LINE') TO <field>.
         <field> = <row>.
       ELSE.
@@ -251,19 +252,32 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
   METHOD on_event_confirm.
 
     FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
-    FIELD-SYMBOLS <row> TYPE any.
-    FIELD-SYMBOLS <field> TYPE any.
-      DATA lv_tabix LIKE sy-tabix.
+    FIELD-SYMBOLS <row_selected> TYPE any.
+    FIELD-SYMBOLS <selkz> TYPE any.
+      FIELD-SYMBOLS <row_result> TYPE any.
+        FIELD-SYMBOLS <table_line_selected> TYPE any.
     ASSIGN mr_tab_popup->* TO <tab>.
-    LOOP AT <tab> ASSIGNING <row>.
-      
-      lv_tabix = sy-tabix.
-      ASSIGN ('<row>-ZZSELKZ') TO <field>.
-      IF <field> = abap_true.
-        ms_result-index = lv_tabix.
-        EXIT.
+
+    LOOP AT <tab> ASSIGNING <row_selected>.
+
+      ASSIGN ('<ROW_SELECTED>-ZZSELKZ') TO <selkz>.
+      IF <selkz> = abap_false.
+        CONTINUE.
       ENDIF.
+
+      
+      ASSIGN ms_result-row->* TO <row_result>.
+
+      IF check_table_line = abap_true.
+        
+        ASSIGN ('<ROW_SELECTED>-TAB_LINE') TO <table_line_selected>.
+        <row_result> = <table_line_selected>.
+      ELSE.
+        MOVE-CORRESPONDING <row_selected> TO <row_result>.
+      ENDIF.
+      EXIT.
     ENDLOOP.
+
     client->popup_destroy( ).
     client->nav_app_leave( client->get_app( client->get( )-s_draft-id_prev_app_stack ) ).
 

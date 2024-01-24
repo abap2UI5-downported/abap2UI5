@@ -9,7 +9,7 @@ CLASS z2ui5_cl_popup_error DEFINITION
 
     CLASS-METHODS factory
       IMPORTING
-        error           TYPE ref to cx_root
+        error           TYPE REF TO cx_root
         i_title         TYPE string DEFAULT `Error View`
         i_icon          TYPE string DEFAULT 'sap-icon://question-mark'
         i_button_text   TYPE string DEFAULT `OK`
@@ -36,7 +36,10 @@ CLASS z2ui5_cl_popup_error IMPLEMENTATION.
     CREATE OBJECT r_result.
     r_result->title = i_title.
     r_result->icon = i_icon.
-    r_result->question_text = error->get_text( ).
+    if error->previous is bound.
+    r_result->question_text = error->previous->get_text( ).
+    endif.
+    r_result->question_text = r_result->question_text && `  ` && error->get_text( ).
     r_result->button_text_confirm = i_button_text.
 
   ENDMETHOD.
@@ -51,8 +54,9 @@ CLASS z2ui5_cl_popup_error IMPLEMENTATION.
                   afterclose = client->_event( 'BUTTON_CONFIRM' )
               )->content(
                   )->vbox( 'sapUiMediumMargin'
-                      )->text( question_text
-              )->get_parent( )->get_parent(
+*                      )->text( question_text
+                      )->html( question_text
+              )->get_parent( )->get_parent( )->get_parent(
               )->footer( )->overflow_toolbar(
                   )->toolbar_spacer(
                   )->button(
@@ -60,6 +64,7 @@ CLASS z2ui5_cl_popup_error IMPLEMENTATION.
                       press = client->_event( 'BUTTON_CONFIRM' )
                       type  = 'Emphasized' ).
 
+    client->clear( client->cs_clear-view ).
     client->popup_display( popup->stringify( ) ).
 
   ENDMETHOD.

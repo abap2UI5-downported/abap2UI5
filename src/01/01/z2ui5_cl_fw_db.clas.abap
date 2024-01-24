@@ -6,9 +6,9 @@ CLASS z2ui5_cl_fw_db DEFINITION
   PUBLIC SECTION.
 
 
-    types ty_S_db2 type z2ui5_t_fw_01.
+    TYPES ty_s_db2 TYPE z2ui5_t_fw_01.
 
-     TYPES:
+    TYPES:
       BEGIN OF ty_s_db,
         id                TYPE string,
         id_prev           TYPE string,
@@ -35,7 +35,7 @@ CLASS z2ui5_cl_fw_db DEFINITION
         !id             TYPE clike
         !check_load_app TYPE abap_bool DEFAULT abap_true
       RETURNING
-        VALUE(result)   TYPE ty_S_db2.
+        VALUE(result)   TYPE ty_s_db2.
 
     CLASS-METHODS cleanup.
 
@@ -51,7 +51,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
+CLASS z2ui5_cl_fw_db IMPLEMENTATION.
 
 
   METHOD cleanup.
@@ -78,7 +78,7 @@ CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
     DATA temp1 TYPE ty_s_db2.
     DATA ls_draft LIKE temp1.
 
-    db-app->id = id.
+    db-app->id_draft = id.
     
     lv_xml = trans_any_2_xml( db ).
 
@@ -136,6 +136,11 @@ CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
       
       lv_assign = 'LO_APP->' && lr_attri->name.
       ASSIGN (lv_assign) TO <ref>.
+      IF sy-subrc <> 0.
+        RAISE EXCEPTION TYPE z2ui5_cx_util_error
+          EXPORTING
+            val = `LOAD_DRAFT_FROM_DATABASE_FAILED / ATTRI_NOT_FOUND ` && lr_attri->name.
+      ENDIF.
 
       z2ui5_cl_util_func=>rtti_xml_set_to_data(
         EXPORTING
@@ -188,6 +193,7 @@ CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
               DATA lv_assign TYPE string.
               FIELD-SYMBOLS <attri> TYPE any.
               FIELD-SYMBOLS <deref_attri> TYPE any.
+            DATA x_util TYPE REF TO z2ui5_cx_util_error.
             DATA x2 TYPE REF TO cx_root.
 
     TRY.
@@ -233,7 +239,7 @@ CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
               IF sy-subrc <> 0.
                 CONTINUE.
               ENDIF.
-                lr_attri->data_rtti = z2ui5_cl_util_func=>rtti_xml_get_by_data( <deref_attri> ).
+              lr_attri->data_rtti = z2ui5_cl_util_func=>rtti_xml_get_by_data( <deref_attri> ).
               CLEAR <deref_attri>.
               CLEAR <attri>.
             ENDLOOP.
@@ -241,11 +247,16 @@ CLASS Z2UI5_CL_FW_DB IMPLEMENTATION.
             result = z2ui5_cl_util_func=>trans_xml_any_2( ls_db ).
 
             
+          CATCH z2ui5_cx_util_error INTO x_util.
+            RAISE EXCEPTION x_util.
+
+            
           CATCH cx_root INTO x2.
 
             RAISE EXCEPTION TYPE z2ui5_cx_util_error
               EXPORTING
-                val = x->get_text( ) && `<p>` && x->previous->get_text( ) && `<p>` && x2->get_text( ).
+*                val = x->get_text( ) && `<p>` && x->previous->get_text( ) && `<p>` && x2->get_text( ) && `<p> Please check if all generic data references are public attribtues of your class`.
+                val = `<p>` && x->previous->get_text( ) && `<p>` && x2->get_text( ) && `<p> Please check if all generic data references are public attributes of your class`.
 
         ENDTRY.
     ENDTRY.

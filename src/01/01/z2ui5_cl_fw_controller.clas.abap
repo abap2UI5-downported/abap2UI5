@@ -144,16 +144,16 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
 
     DATA temp1 TYPE string.
         DATA ls_db_next TYPE z2ui5_cl_fw_db=>ty_s_db.
-    IF app->id IS INITIAL.
+    IF app->id_draft IS INITIAL.
       temp1 = z2ui5_cl_util_func=>func_get_uuid_32( ).
     ELSE.
-      temp1 = app->id.
+      temp1 = app->id_draft.
     ENDIF.
-    app->id = temp1.
+    app->id_draft = temp1.
 
     CREATE OBJECT r_result.
     r_result->ms_db-app         = app.
-    r_result->ms_db-id          = app->id.
+    r_result->ms_db-id          = app->id_draft.
     r_result->ms_db-id_prev     = ms_db-id.
     r_result->ms_db-id_prev_app = ms_db-id.
     r_result->ms_actual-check_launchpad_active = ms_actual-check_launchpad_active.
@@ -162,7 +162,7 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
 
     TRY.
         
-        ls_db_next = z2ui5_cl_fw_db=>load_app( id = app->id ).
+        ls_db_next = z2ui5_cl_fw_db=>load_app( id = app->id_draft ).
         r_result->ms_db-t_attri = ls_db_next-t_attri.
       CATCH cx_root.
     ENDTRY.
@@ -420,7 +420,7 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
 
         lv_classname = z2ui5_cl_util_func=>c_trim_upper( lv_classname ).
         CREATE OBJECT result->ms_db-app TYPE (lv_classname).
-        result->ms_db-app->id = result->ms_db-id.
+        result->ms_db-app->id_draft = result->ms_db-id.
 
       CATCH cx_root.
         result = app_system_factory( error_text = `App with name ` && lv_classname && ` not found...` ).
@@ -445,7 +445,7 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
     ENDIF.
 
     result->ms_db-app = z2ui5_cl_fw_app_startup=>factory( ).
-    result->ms_db-app->id = result->ms_db-id.
+    result->ms_db-app->id_draft = result->ms_db-id.
 
   ENDMETHOD.
 

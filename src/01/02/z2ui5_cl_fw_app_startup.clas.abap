@@ -28,6 +28,7 @@ CLASS z2ui5_cl_fw_app_startup DEFINITION
     METHODS z2ui5_on_init.
     METHODS z2ui5_on_event.
     METHODS view_display_start.
+    METHODS on_event_check.
   PROTECTED SECTION.
     DATA mt_classes TYPE string_table.
   PRIVATE SECTION.
@@ -156,14 +157,15 @@ CLASS z2ui5_cl_fw_app_startup IMPLEMENTATION.
           DATA temp1 TYPE REF TO z2ui5_cl_popup_to_select.
           DATA lo_f4 LIKE temp1.
           DATA ls_result TYPE z2ui5_cl_popup_to_select=>ty_s_result.
-            DATA temp2 LIKE LINE OF mt_classes.
-            DATA temp3 LIKE sy-tabix.
+            FIELD-SYMBOLS <class> TYPE string.
 
     me->client = client.
 
     IF mv_check_initialized = abap_false.
       mv_check_initialized = abap_true.
       z2ui5_on_init( ).
+       view_display_start( ).
+       return.
     ENDIF.
 
     IF client->get( )-check_on_navigated = abap_true.
@@ -174,16 +176,12 @@ CLASS z2ui5_cl_fw_app_startup IMPLEMENTATION.
           lo_f4 = temp1.
           
           ls_result = lo_f4->result( ).
-          IF ls_result-check_cancel = abap_false.
+          IF ls_result-check_confirmed = abap_true.
             
-            
-            temp3 = sy-tabix.
-            READ TABLE mt_classes INDEX ls_result-index INTO temp2.
-            sy-tabix = temp3.
-            IF sy-subrc <> 0.
-              RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
-            ENDIF.
-            ms_home-classname = temp2.
+            ASSIGN ls_result-row->* TO <class>.
+            ms_home-classname = <class>.
+            view_display_start( ).
+            return.
           ENDIF.
         CATCH cx_root.
       ENDTRY.
@@ -196,8 +194,6 @@ CLASS z2ui5_cl_fw_app_startup IMPLEMENTATION.
 
 
   METHOD z2ui5_on_event.
-            DATA li_app_test TYPE REF TO z2ui5_if_app.
-            DATA lx TYPE REF TO cx_root.
         DATA li_app TYPE REF TO z2ui5_if_app.
 
     CASE client->get( )-event.
@@ -207,27 +203,10 @@ CLASS z2ui5_cl_fw_app_startup IMPLEMENTATION.
         ms_home-btn_event_id   = `BUTTON_CHECK`.
         ms_home-btn_icon       = `sap-icon://validate`.
         ms_home-class_editable = abap_true.
+        client->view_model_update( ).
 
       WHEN `BUTTON_CHECK`.
-        TRY.
-            
-            ms_home-classname = z2ui5_cl_util_func=>c_trim_upper( ms_home-classname ).
-            CREATE OBJECT li_app_test TYPE (ms_home-classname).
-
-            client->message_toast_display( `App is ready to start!` ).
-            ms_home-btn_text          = `edit`.
-            ms_home-btn_event_id      = `BUTTON_CHANGE`.
-            ms_home-btn_icon          = `sap-icon://edit`.
-            ms_home-class_value_state = `Success`.
-            ms_home-class_editable    = abap_false.
-
-            
-          CATCH cx_root INTO lx.
-            ms_home-class_value_state_text = lx->get_text( ).
-            ms_home-class_value_state      = `Warning`.
-            client->message_box_display( text = ms_home-class_value_state_text
-                                         type = `error` ).
-        ENDTRY.
+        on_event_check( ).
 
       WHEN 'VALUE_HELP'.
         mt_classes = z2ui5_cl_util_func=>rtti_get_classes_impl_intf( `Z2UI5_IF_APP` ).
@@ -259,4 +238,31 @@ CLASS z2ui5_cl_fw_app_startup IMPLEMENTATION.
     mv_check_demo          = abap_true.
 
   ENDMETHOD.
+
+  METHOD on_event_check.
+        DATA li_app_test TYPE REF TO z2ui5_if_app.
+        DATA lx TYPE REF TO cx_root.
+
+    TRY.
+        
+        ms_home-classname = z2ui5_cl_util_func=>c_trim_upper( ms_home-classname ).
+        CREATE OBJECT li_app_test TYPE (ms_home-classname).
+
+        client->message_toast_display( `App is ready to start!` ).
+        ms_home-btn_text          = `edit`.
+        ms_home-btn_event_id      = `BUTTON_CHANGE`.
+        ms_home-btn_icon          = `sap-icon://edit`.
+        ms_home-class_value_state = `Success`.
+        ms_home-class_editable    = abap_false.
+
+        
+      CATCH cx_root INTO lx.
+        ms_home-class_value_state_text = lx->get_text( ).
+        ms_home-class_value_state      = `Warning`.
+        client->message_box_display( text = ms_home-class_value_state_text
+                                     type = `error` ).
+    ENDTRY.
+
+  ENDMETHOD.
+
 ENDCLASS.

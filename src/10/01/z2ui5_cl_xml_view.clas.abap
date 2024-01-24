@@ -264,6 +264,7 @@ public section.
     importing
       !UNIT type CLIKE optional
       !FOOTERCOLOR type CLIKE optional
+      !blocked type CLIKE optional
       !FRAMETYPE type CLIKE optional
       !PRIORITY type CLIKE optional
       !PRIORITYTEXT type CLIKE optional
@@ -11059,6 +11060,9 @@ ENDMETHOD.
     INSERT temp357 INTO TABLE temp356.
     temp357-n = `footerColor`.
     temp357-v = footerColor.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `blocked`.
+    temp357-v = z2ui5_cl_util_func=>boolean_abap_2_json( blocked ).
     INSERT temp357 INTO TABLE temp356.
     temp357-n = `frameType`.
     temp357-v = frameType.
