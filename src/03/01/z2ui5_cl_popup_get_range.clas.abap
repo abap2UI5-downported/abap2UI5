@@ -101,7 +101,7 @@ CLASS z2ui5_cl_popup_get_range IMPLEMENTATION.
     INSERT `${KEY}` INTO TABLE temp2.
     grid->combobox(
                  selectedkey = `{OPTION}`
-                 items       = client->_bind_local( z2ui5_cl_util_func=>get_token_range_mapping( ) )
+                 items       = client->_bind_local( z2ui5_cl_util_func=>filter_get_token_range_mapping( ) )
              )->item(
                      key = '{N}'
                      text = '{N}'
@@ -156,7 +156,7 @@ CLASS z2ui5_cl_popup_get_range IMPLEMENTATION.
         temp5-low = lr_product->low.
         temp5-high = lr_product->high.
         temp5-option = lr_product->option.
-        temp5-key = z2ui5_cl_util_func=>func_get_uuid_32( ).
+        temp5-key = z2ui5_cl_util_func=>uuid_get_c32( ).
         INSERT temp5 INTO TABLE mt_filter.
       ENDLOOP.
 
@@ -194,7 +194,7 @@ CLASS z2ui5_cl_popup_get_range IMPLEMENTATION.
       WHEN `POPUP_ADD`.
         
         CLEAR temp8.
-        temp8-key = z2ui5_cl_util_func=>func_get_uuid_32( ).
+        temp8-key = z2ui5_cl_util_func=>uuid_get_c32( ).
         INSERT temp8 INTO TABLE mt_filter.
         client->popup_model_update( ).
 

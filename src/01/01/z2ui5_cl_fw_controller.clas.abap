@@ -64,6 +64,14 @@ CLASS z2ui5_cl_fw_controller DEFINITION
     DATA ms_actual TYPE z2ui5_if_client=>ty_s_get.
     DATA ms_next   TYPE ty_s_next.
 
+    CLASS-METHODS main
+      IMPORTING
+        body          TYPE string
+      RETURNING
+        VALUE(result) TYPE string.
+
+  PROTECTED SECTION.
+
     CLASS-METHODS request_begin
       IMPORTING
         body          TYPE string
@@ -131,7 +139,6 @@ CLASS z2ui5_cl_fw_controller DEFINITION
 
     METHODS app_client_end_db.
 
-  PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
 
@@ -139,17 +146,63 @@ ENDCLASS.
 
 CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
 
+  METHOD main.
+        DATA lo_handler TYPE REF TO z2ui5_cl_fw_controller.
+        DATA x TYPE REF TO cx_root.
+          DATA temp1 TYPE REF TO z2ui5_if_app.
+          DATA temp2 TYPE REF TO z2ui5_cl_fw_client.
+
+    TRY.
+        
+        lo_handler = request_begin( body ).
+        
+      CATCH cx_root INTO x.
+        lo_handler = app_system_factory( x ).
+    ENDTRY.
+
+    DO.
+      TRY.
+
+          ROLLBACK WORK.
+          
+          temp1 ?= lo_handler->ms_db-app.
+          
+          CREATE OBJECT temp2 TYPE z2ui5_cl_fw_client EXPORTING HANDLER = lo_handler.
+          temp1->main( temp2 ).
+          ROLLBACK WORK.
+
+          IF lo_handler->ms_next-o_app_leave IS NOT INITIAL.
+            lo_handler = lo_handler->app_leave_factory( ).
+            CONTINUE.
+          ENDIF.
+
+          IF lo_handler->ms_next-o_app_call IS NOT INITIAL.
+            lo_handler = lo_handler->app_call_factory( ).
+            CONTINUE.
+          ENDIF.
+
+          result = lo_handler->request_end( ).
+
+        CATCH cx_root INTO x.
+          lo_handler = app_system_factory( x ).
+          CONTINUE.
+      ENDTRY.
+
+      EXIT.
+    ENDDO.
+
+  ENDMETHOD.
 
   METHOD app_next_factory.
 
-    DATA temp1 TYPE string.
+    DATA temp2 TYPE string.
         DATA ls_db_next TYPE z2ui5_cl_fw_db=>ty_s_db.
     IF app->id_draft IS INITIAL.
-      temp1 = z2ui5_cl_util_func=>func_get_uuid_32( ).
+      temp2 = z2ui5_cl_util_func=>uuid_get_c32( ).
     ELSE.
-      temp1 = app->id_draft.
+      temp2 = app->id_draft.
     ENDIF.
-    app->id_draft = temp1.
+    app->id_draft = temp2.
 
     CREATE OBJECT r_result.
     r_result->ms_db-app         = app.
@@ -173,13 +226,13 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
   METHOD app_client_begin_event.
         FIELD-SYMBOLS <any> TYPE any.
         DATA temp1 TYPE xsdboolean.
-        DATA temp3 TYPE xsdboolean.
+        DATA temp2 TYPE xsdboolean.
         DATA temp4 TYPE xsdboolean.
         FIELD-SYMBOLS <arg> TYPE STANDARD TABLE.
         DATA temp5 TYPE xsdboolean.
         FIELD-SYMBOLS <arg_row> TYPE any.
             FIELD-SYMBOLS <val> TYPE any.
-            DATA temp2 TYPE string.
+            DATA temp3 TYPE string.
 
     TRY.
 
@@ -190,8 +243,8 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
         z2ui5_cl_util_func=>x_check_raise( temp1 ).
         ASSIGN (`<ANY>->ARGUMENTS`) TO <any>.
         
-        temp3 = boolc( sy-subrc <> 0 ).
-        z2ui5_cl_util_func=>x_check_raise( temp3 ).
+        temp2 = boolc( sy-subrc <> 0 ).
+        z2ui5_cl_util_func=>x_check_raise( temp2 ).
         ASSIGN (`<ANY>->*`) TO <any>.
         
         temp4 = boolc( sy-subrc <> 0 ).
@@ -216,8 +269,8 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
               CONTINUE.
             ENDIF.
             
-            temp2 = <val>.
-            INSERT temp2 INTO TABLE ms_actual-t_event_arg.
+            temp3 = <val>.
+            INSERT temp3 INTO TABLE ms_actual-t_event_arg.
           ENDIF.
 
         ENDLOOP.
@@ -230,13 +283,13 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
   METHOD body_read_location.
         DATA location TYPE REF TO z2ui5_cl_util_tree_json.
         FIELD-SYMBOLS <struc> TYPE any.
-        data ls_params type ref to data.
+        DATA ls_params TYPE REF TO data.
         DATA lt_comp TYPE abap_component_tab.
         DATA ls_comp LIKE LINE OF lt_comp.
           FIELD-SYMBOLS <val_ref> TYPE REF TO data.
           FIELD-SYMBOLS <tab> TYPE table.
           FIELD-SYMBOLS <val2> TYPE data.
-          DATA temp3 TYPE z2ui5_if_client=>ty_s_name_value.
+          DATA temp4 TYPE z2ui5_if_client=>ty_s_name_value.
 
     TRY.
         
@@ -290,10 +343,10 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
           ASSIGN <val_ref>->* TO <val2>.
 
           
-          CLEAR temp3.
-          temp3-n = ls_comp-name.
-          temp3-v = <val2>.
-          INSERT temp3 INTO TABLE ss_config-t_startup_params.
+          CLEAR temp4.
+          temp4-n = ls_comp-name.
+          temp4-v = <val2>.
+          INSERT temp4 INTO TABLE ss_config-t_startup_params.
 
         ENDLOOP.
       CATCH cx_root.
@@ -360,7 +413,7 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
 
     CREATE OBJECT result.
     result->ms_db         = z2ui5_cl_fw_db=>load_app( id_prev ).
-    result->ms_db-id      = z2ui5_cl_util_func=>func_get_uuid_32( ).
+    result->ms_db-id      = z2ui5_cl_util_func=>uuid_get_c32( ).
     result->ms_db-id_prev = id_prev.
 
     TRY.
@@ -398,10 +451,9 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
     TRY.
         
         lv_classname = to_upper( so_body->get_attribute( `APP_START` )->get_val( ) ).
-        lv_classname = shift_left( val = lv_classname
-                                   sub = cl_abap_char_utilities=>horizontal_tab ).
-        lv_classname = shift_right( val = lv_classname
-                                    sub = cl_abap_char_utilities=>horizontal_tab ).
+        lv_classname = z2ui5_cl_util_func=>c_trim( lv_classname ).
+*        lv_classname = shift_left( val = lv_classname sub = cl_abap_char_utilities=>horizontal_tab ).
+*        lv_classname = shift_right( val = lv_classname sub = cl_abap_char_utilities=>horizontal_tab ).
       CATCH cx_root.
     ENDTRY.
 
@@ -416,7 +468,7 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
 
     TRY.
         CREATE OBJECT result.
-        result->ms_db-id = z2ui5_cl_util_func=>func_get_uuid_32( ).
+        result->ms_db-id = z2ui5_cl_util_func=>uuid_get_c32( ).
 
         lv_classname = z2ui5_cl_util_func=>c_trim_upper( lv_classname ).
         CREATE OBJECT result->ms_db-app TYPE (lv_classname).
@@ -432,7 +484,7 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
   METHOD app_system_factory.
 
     CREATE OBJECT result.
-    result->ms_db-id = z2ui5_cl_util_func=>func_get_uuid_32( ).
+    result->ms_db-id = z2ui5_cl_util_func=>uuid_get_c32( ).
 
     IF ix IS NOT BOUND AND error_text IS NOT INITIAL.
       CREATE OBJECT ix TYPE z2ui5_cx_util_error EXPORTING val = error_text.
@@ -501,7 +553,7 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
                             apos_active = abap_false ).
 
     lo_resp->add_attribute( n           = `PARAMS`
-                            v           = z2ui5_cl_util_func=>trans_json_any_2( ms_next-s_set )
+                            v           = z2ui5_cl_util_func=>trans_json_by_any( ms_next-s_set )
                             apos_active = abap_false ).
 
     lo_resp->add_attribute( n = `ID`

@@ -9,6 +9,7 @@ CLASS ltcl_unit_test DEFINITION FINAL FOR TESTING
 
 ENDCLASS.
 
+class z2ui5_cl_fw_controller definition local friends ltcl_unit_test.
 
 CLASS ltcl_unit_test IMPLEMENTATION.
 
@@ -16,30 +17,9 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
     DATA lv_body TYPE string.
     DATA lo_handler TYPE REF TO z2ui5_cl_fw_controller.
-    DATA temp4 TYPE REF TO z2ui5_cl_fw_app_startup.
-    DATA lo_app_fw LIKE temp4.
-    lv_body = `{"OLOCATION":{"ORIGIN":"https:/url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100","VERSION":"com.sap.ui5.dist:sapui5-sdk-dist:1.115.0:war"}}`.
-
-    
-    lo_handler = z2ui5_cl_fw_controller=>request_begin( lv_body ).
-
-    cl_abap_unit_assert=>assert_bound( lo_handler->ms_db-app ).
-
-    
-    temp4 ?= lo_handler->ms_db-app.
-    
-    lo_app_fw = temp4.
-
-  ENDMETHOD.
-
-  METHOD test_req_begin_app_start.
-
-    DATA lv_body TYPE string.
-    DATA lo_handler TYPE REF TO z2ui5_cl_fw_controller.
-    DATA temp5 TYPE REF TO z2ui5_cl_app_hello_world.
+    DATA temp5 TYPE REF TO z2ui5_cl_fw_app_startup.
     DATA lo_app_fw LIKE temp5.
-    lv_body = `{"OLOCATION":{"ORIGIN":"https://url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100&app_start=z2ui5_cl_app_hello_world","VERSION":"c` &&
-      `om.sap.ui5.dist:sapui5-sdk-dist:1.115.0:war"}}`.
+    lv_body = `{"OLOCATION":{"ORIGIN":"https:/url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100","VERSION":"com.sap.ui5.dist:sapui5-sdk-dist:1.115.0:war"}}`.
 
     
     lo_handler = z2ui5_cl_fw_controller=>request_begin( lv_body ).
@@ -53,13 +33,34 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD test_req_begin_app_start.
+
+    DATA lv_body TYPE string.
+    DATA lo_handler TYPE REF TO z2ui5_cl_fw_controller.
+    DATA temp6 TYPE REF TO z2ui5_cl_app_hello_world.
+    DATA lo_app_fw LIKE temp6.
+    lv_body = `{"OLOCATION":{"ORIGIN":"https://url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100&app_start=z2ui5_cl_app_hello_world","VERSION":"c` &&
+      `om.sap.ui5.dist:sapui5-sdk-dist:1.115.0:war"}}`.
+
+    
+    lo_handler = z2ui5_cl_fw_controller=>request_begin( lv_body ).
+
+    cl_abap_unit_assert=>assert_bound( lo_handler->ms_db-app ).
+
+    
+    temp6 ?= lo_handler->ms_db-app.
+    
+    lo_app_fw = temp6.
+
+  ENDMETHOD.
+
 
   METHOD test_req_end.
 
     DATA lv_body TYPE string.
     DATA lo_handler TYPE REF TO z2ui5_cl_fw_controller.
-    DATA temp6 TYPE REF TO z2ui5_if_app.
-    DATA temp1 TYPE REF TO z2ui5_cl_fw_client.
+    DATA temp7 TYPE REF TO z2ui5_if_app.
+    DATA temp3 TYPE REF TO z2ui5_cl_fw_client.
     DATA lv_resp TYPE string.
     lv_body = `{"OLOCATION":{"ORIGIN":"https://url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100&app_start=z2ui5_cl_app_hello_world","VERSION":"c` &&
           `om.sap.ui5.dist:sapui5-sdk-dist:1.115.0:war"}}`.
@@ -68,10 +69,10 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     lo_handler = z2ui5_cl_fw_controller=>request_begin( lv_body ).
 
     
-    temp6 ?= lo_handler->ms_db-app.
+    temp7 ?= lo_handler->ms_db-app.
     
-    CREATE OBJECT temp1 TYPE z2ui5_cl_fw_client EXPORTING HANDLER = lo_handler.
-    temp6->main( temp1 ).
+    CREATE OBJECT temp3 TYPE z2ui5_cl_fw_client EXPORTING HANDLER = lo_handler.
+    temp7->main( temp3 ).
 
 
     

@@ -195,7 +195,7 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     ENDIF.
     result = temp2 && bind->name_front.
     IF strlen( result ) > 30.
-      bind->name_front = z2ui5_cl_util_func=>func_get_uuid_22( ).
+      bind->name_front = z2ui5_cl_util_func=>uuid_Get_c22( ).
       
       IF mv_type = cs_bind_type-two_way.
         temp3 = `/` && cv_model_edit_name && `/`.
@@ -215,12 +215,12 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     DATA temp4 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     ASSIGN mr_data->* TO <any>.
     
-    lv_id = z2ui5_cl_util_func=>func_get_uuid_22( ).
+    lv_id = z2ui5_cl_util_func=>uuid_Get_c22( ).
 
     
     CLEAR temp4.
     temp4-name = lv_id.
-    temp4-data_stringify = z2ui5_cl_util_func=>trans_json_any_2( any = mr_data compress = me->mv_compress ).
+    temp4-data_stringify = z2ui5_cl_util_func=>trans_json_by_any( any = mr_data compress = me->mv_compress ).
     temp4-bind_type = cs_bind_type-one_time.
     INSERT temp4
            INTO TABLE mt_attri.
