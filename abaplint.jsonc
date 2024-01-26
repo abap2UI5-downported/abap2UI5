@@ -10,7 +10,7 @@
     }
   ],
   "syntax": {
-    "version": "v702",
+    "version": "v740",
     "errorNamespace": "."
   },
   "rules": {
