@@ -48,7 +48,7 @@ CLASS z2ui5_cl_util_func DEFINITION
         iv_classname  TYPE clike
         iv_methodname TYPE clike
       RETURNING
-        VALUE(result) TYPE string_table.
+        VALUE(result) TYPE string.
 
     CLASS-METHODS filter_get_multi_by_data
       IMPORTING
@@ -116,7 +116,7 @@ CLASS z2ui5_cl_util_func DEFINITION
       RETURNING
         VALUE(result) TYPE string.
 
-    CLASS-METHODS uuid_Get_c22
+    CLASS-METHODS uuid_get_c22
       RETURNING
         VALUE(result) TYPE string.
 
@@ -364,7 +364,7 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
   METHOD itab_get_itab_by_csv.
 
-   TYPES temp7 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    TYPES temp7 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA lt_rows TYPE temp7.
     TYPES temp8 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA lt_cols TYPE temp8.
@@ -384,7 +384,7 @@ DATA lt_cols TYPE temp8.
       DATA lr_row TYPE REF TO data.
         FIELD-SYMBOLS <row> TYPE any.
         FIELD-SYMBOLS <field> TYPE any.
-   SPLIT val AT cl_abap_char_utilities=>newline INTO TABLE lt_rows.
+    SPLIT val AT cl_abap_char_utilities=>newline INTO TABLE lt_rows.
     
 
     
@@ -528,7 +528,10 @@ DATA lt_cols TYPE temp8.
 
     DATA lv_source LIKE LINE OF it_source.
     LOOP AT it_source INTO lv_source.
-      result = result && lv_source+1 && cl_abap_char_utilities=>newline.
+      TRY.
+          result = result && lv_source+1 && cl_abap_char_utilities=>newline.
+        CATCH cx_root.
+      ENDTRY.
     ENDLOOP.
 
   ENDMETHOD.
@@ -743,7 +746,7 @@ DATA lt_cols TYPE temp8.
   ENDMETHOD.
 
 
-  METHOD uuid_Get_c22.
+  METHOD uuid_get_c22.
         DATA uuid TYPE c LENGTH 22.
             DATA lv_fm TYPE string.
 
@@ -959,10 +962,11 @@ DATA lt_cols TYPE temp8.
 
   METHOD itab_filter_by_val.
 
-    FIELD-SYMBOLS <row> LIKE LINE OF tab.
+    FIELD-SYMBOLS <row> TYPE any.
       DATA lv_row TYPE string.
       DATA lv_index TYPE i.
         FIELD-SYMBOLS <field> TYPE any.
+
     LOOP AT tab ASSIGNING <row>.
       
       lv_row = ``.
@@ -1371,6 +1375,7 @@ TYPES END OF ty_s_key.
     DATA object TYPE REF TO object.
     FIELD-SYMBOLS <any> TYPE any.
     DATA lt_source TYPE string_table.
+    DATA lt_string TYPE string_table.
         DATA lv_class TYPE c LENGTH 30.
         DATA lv_method TYPE c LENGTH 61.
         DATA lv_name TYPE c LENGTH 13.
@@ -1381,8 +1386,8 @@ TYPES END OF ty_s_key.
     TRY.
         
         
-        lv_class  = iv_classname.
-        lv_method = iv_methodname.
+        lv_class  = to_upper( iv_classname ).
+        lv_method = to_upper( iv_methodname ).
 
         CALL METHOD ('XCO_CP_ABAP')=>('CLASS')
           EXPORTING
@@ -1417,7 +1422,7 @@ TYPES END OF ty_s_key.
 
         CALL METHOD object->('IF_OO_CLIF_SOURCE_FACTORY~CREATE_CLIF_SOURCE')
           EXPORTING
-            clif_name = iv_classname
+            clif_name = lv_class
           RECEIVING
             result    = object.
 
@@ -1436,18 +1441,20 @@ TYPES END OF ty_s_key.
             lv_check_method = abap_false.
           ENDIF.
 
-          IF lv_source_upper CS to_upper( |{ iv_methodname }| ).
+          IF lv_source_upper CS `METHOD ` && lv_method.
             lv_check_method = abap_true.
             CONTINUE.
           ENDIF.
 
           IF lv_check_method = abap_true.
-            INSERT lv_source INTO TABLE result.
+            INSERT lv_source INTO TABLE lt_string.
           ENDIF.
 
         ENDLOOP.
 
     ENDTRY.
+
+    result = source_method_to_file( lt_string ).
 
   ENDMETHOD.
 

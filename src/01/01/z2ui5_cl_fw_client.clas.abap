@@ -20,6 +20,7 @@ CLASS z2ui5_cl_fw_client DEFINITION
         val           TYPE string_table
       RETURNING
         VALUE(result) TYPE string.
+
     METHODS bind_tab_cell
       IMPORTING
         iv_name         TYPE string
@@ -33,8 +34,6 @@ CLASS z2ui5_cl_fw_client DEFINITION
       IMPORTING
         iv_name         TYPE string
         i_struc         type data
-*        i_tab_index     TYPE i
-*        i_tab           TYPE STANDARD TABLE
         i_val           TYPE data
       RETURNING
         VALUE(r_result) TYPE string.
@@ -440,7 +439,6 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
 
     ENDIF.
 
-
     
     lo_binder = z2ui5_cl_fw_binding=>factory(
                         app   = mo_handler->ms_db-app
@@ -490,7 +488,6 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~_event.
 
-*    result = `onEvent(  ${$source>} , { 'EVENT' : '` && val && `', 'METHOD' : 'UPDATE' , 'CHECK_VIEW_DESTROY' : ` && z2ui5_cl_util_func=>boolean_abap_2_json( check_view_destroy ) && ` }`.
     result = `onEvent(  { 'EVENT' : '` && val && `', 'METHOD' : 'UPDATE' , 'CHECK_VIEW_DESTROY' : ` && z2ui5_cl_util_func=>boolean_abap_2_json( check_view_destroy ) && ` }`.
     result = result && set_arg_string( t_arg ).
 
