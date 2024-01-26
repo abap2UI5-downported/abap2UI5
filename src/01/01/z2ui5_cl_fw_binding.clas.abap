@@ -454,6 +454,7 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
         DATA lv_type_name TYPE string.
           DATA temp16 TYPE ty_s_attri.
           DATA ls_attri LIKE temp16.
+          DATA temp17 TYPE ty_s_attri.
     lv_name = `MO_APP->` && val.
     
     ASSIGN (lv_name) TO <attribute>.
@@ -502,9 +503,11 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
 
         ELSE.
 
-          CLEAR ls_attri.
-          ls_attri-name = lv_element.
-          ls_attri-type_kind = lr_comp->type->type_kind.
+          
+          CLEAR temp17.
+          temp17-name = lv_element.
+          temp17-type_kind = lr_comp->type->type_kind.
+          ls_attri = temp17.
 
         ENDIF.
         INSERT ls_attri INTO TABLE result.
@@ -571,11 +574,11 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
 
   METHOD search_binding.
 
-    DATA temp17 LIKE REF TO mt_attri.
-    DATA temp18 LIKE LINE OF mt_attri.
-    DATA lr_bind LIKE REF TO temp18.
-    GET REFERENCE OF mt_attri INTO temp17.
-set_attri_ready( temp17 ).
+    DATA temp18 LIKE REF TO mt_attri.
+    DATA temp19 LIKE LINE OF mt_attri.
+    DATA lr_bind LIKE REF TO temp19.
+    GET REFERENCE OF mt_attri INTO temp18.
+set_attri_ready( temp18 ).
 
     
     
