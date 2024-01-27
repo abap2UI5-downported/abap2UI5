@@ -42,6 +42,31 @@ CLASS z2ui5_cl_util_func DEFINITION
       RETURNING
         VALUE(result) TYPE string.
 
+    CLASS-METHODS db_save
+      IMPORTING
+        uname         TYPE clike OPTIONAL
+        handle        TYPE clike OPTIONAL
+        handle2       TYPE clike OPTIONAL
+        handle3       TYPE clike OPTIONAL
+        data          TYPE any
+        check_commit  TYPE abap_bool DEFAULT abap_true
+      RETURNING
+        VALUE(result) TYPE string.
+
+    CLASS-METHODS db_load_by_id
+      IMPORTING
+        id            TYPE clike OPTIONAL
+      EXPORTING
+        VALUE(result) TYPE any.
+
+    CLASS-METHODS db_load_by_handle
+      IMPORTING
+        uname         TYPE clike OPTIONAL
+        handle        TYPE clike OPTIONAL
+        handle2       TYPE clike OPTIONAL
+        handle3       TYPE clike OPTIONAL
+      EXPORTING
+        VALUE(result) TYPE any.
 
     CLASS-METHODS source_get_method
       IMPORTING
@@ -1919,4 +1944,99 @@ DATA lt_param TYPE temp10.
     RAISE EXCEPTION TYPE z2ui5_cx_util_error EXPORTING val = v.
 
   ENDMETHOD.
+
+  METHOD db_load_by_handle.
+
+    TYPES temp11 TYPE STANDARD TABLE OF z2ui5_t_fw_02 WITH DEFAULT KEY.
+DATA lt_db TYPE temp11.
+    DATA ls_db LIKE LINE OF lt_db.
+    DATA temp12 LIKE LINE OF lt_db.
+    DATA temp13 LIKE sy-tabix.
+
+    SELECT data
+    FROM z2ui5_t_fw_02
+       WHERE
+        uname = uname
+        AND handle = handle
+        AND handle2 = handle2
+        AND handle3 = handle3
+     INTO CORRESPONDING FIELDS OF TABLE lt_db.
+
+    
+    
+    
+    temp13 = sy-tabix.
+    READ TABLE lt_db INDEX 1 INTO temp12.
+    sy-tabix = temp13.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+    ls_db = temp12.
+
+    trans_xml_2_any(
+      EXPORTING
+        xml = ls_db-data
+      IMPORTING
+        any = result
+    ).
+
+  ENDMETHOD.
+
+  METHOD db_load_by_id.
+
+    TYPES temp12 TYPE STANDARD TABLE OF z2ui5_t_fw_02 WITH DEFAULT KEY.
+DATA lt_db TYPE temp12.
+    DATA ls_db LIKE LINE OF lt_db.
+    DATA temp14 LIKE LINE OF lt_db.
+    DATA temp15 LIKE sy-tabix.
+
+    SELECT data
+    FROM z2ui5_t_fw_02
+    WHERE id = id
+    INTO CORRESPONDING FIELDS OF TABLE lt_db.
+
+    
+    
+    
+    temp15 = sy-tabix.
+    READ TABLE lt_db INDEX 1 INTO temp14.
+    sy-tabix = temp15.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+    ENDIF.
+    ls_db = temp14.
+
+    trans_xml_2_any(
+      EXPORTING
+        xml = ls_db-data
+      IMPORTING
+        any = result
+    ).
+
+  ENDMETHOD.
+
+  METHOD db_save.
+
+    DATA temp42 TYPE z2ui5_t_fw_02.
+    DATA ls_db LIKE temp42.
+    CLEAR temp42.
+    temp42-id = uuid_get_c32( ).
+    temp42-uname = uname.
+    temp42-handle = handle.
+    temp42-handle2 = handle2.
+    temp42-handle3 = handle3.
+    temp42-data = trans_xml_by_any( data ).
+    
+    ls_db = temp42.
+
+    MODIFY z2ui5_t_fw_02 FROM ls_db.
+
+    IF check_commit = abap_true.
+      COMMIT WORK AND WAIT.
+    ENDIF.
+
+    result = ls_db-id.
+
+  ENDMETHOD.
+
 ENDCLASS.
