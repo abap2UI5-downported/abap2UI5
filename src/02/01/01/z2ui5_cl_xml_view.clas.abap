@@ -499,6 +499,15 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !horizontalscrolling TYPE clike OPTIONAL
         !verticalscrolling   TYPE clike OPTIONAL
         !afterclose          TYPE clike OPTIONAL
+        !beforeopen          TYPE clike OPTIONAL
+        !beforeclose         TYPE clike OPTIONAL
+        !afteropen           TYPE clike OPTIONAL
+        !draggable           TYPE clike OPTIONAL
+        !closeonnavigation   TYPE clike OPTIONAL
+        !escapehandler       TYPE clike OPTIONAL
+        !type                TYPE clike OPTIONAL
+        !titlealignment      TYPE clike OPTIONAL
+        !state               TYPE clike OPTIONAL
           PREFERRED PARAMETER title
       RETURNING
         VALUE(result)        TYPE REF TO z2ui5_cl_xml_view .
@@ -2075,6 +2084,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !tabdensitymode      TYPE clike OPTIONAL
         !tabsoverflowmode    TYPE clike OPTIONAL
         !visible             TYPE clike OPTIONAL
+        !id                  TYPE clike OPTIONAL
       RETURNING
         VALUE(result)        TYPE REF TO z2ui5_cl_xml_view .
     METHODS nav_container
@@ -5002,6 +5012,15 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp68-n = `stretch`.
     temp68-v = stretch.
     INSERT temp68 INTO TABLE temp67.
+    temp68-n = `state`.
+    temp68-v = state.
+    INSERT temp68 INTO TABLE temp67.
+    temp68-n = `titleAlignment`.
+    temp68-v = titleAlignment.
+    INSERT temp68 INTO TABLE temp67.
+    temp68-n = `type`.
+    temp68-v = type.
+    INSERT temp68 INTO TABLE temp67.
     temp68-n = `showHeader`.
     temp68-v = showheader.
     INSERT temp68 INTO TABLE temp67.
@@ -5010,6 +5029,15 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp68 INTO TABLE temp67.
     temp68-n = `contentHeight`.
     temp68-v = contentheight.
+    INSERT temp68 INTO TABLE temp67.
+    temp68-n = `escapeHandler`.
+    temp68-v = escapeHandler.
+    INSERT temp68 INTO TABLE temp67.
+    temp68-n = `closeOnNavigation`.
+    temp68-v = z2ui5_cl_util_func=>boolean_abap_2_json( closeonnavigation ).
+    INSERT temp68 INTO TABLE temp67.
+    temp68-n = `draggable`.
+    temp68-v = z2ui5_cl_util_func=>boolean_abap_2_json( draggable ).
     INSERT temp68 INTO TABLE temp67.
     temp68-n = `resizable`.
     temp68-v = z2ui5_cl_util_func=>boolean_abap_2_json( resizable ).
@@ -5020,12 +5048,20 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp68-n = `verticalScrolling`.
     temp68-v = z2ui5_cl_util_func=>boolean_abap_2_json( verticalscrolling ).
     INSERT temp68 INTO TABLE temp67.
+    temp68-n = `afterOpen`.
+    temp68-v = afterOpen.
+    INSERT temp68 INTO TABLE temp67.
+    temp68-n = `beforeClose`.
+    temp68-v = beforeClose.
+    INSERT temp68 INTO TABLE temp67.
+    temp68-n = `beforeOpen`.
+    temp68-v = beforeOpen.
+    INSERT temp68 INTO TABLE temp67.
     temp68-n = `afterClose`.
     temp68-v = afterclose.
     INSERT temp68 INTO TABLE temp67.
     result = _generic( name   = `Dialog`
                        t_prop = temp67 ).
-
   ENDMETHOD.
 
 
@@ -6857,6 +6893,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp147 INTO TABLE temp146.
     temp147-n = `tabsOverflowMode`.
     temp147-v = tabsoverflowmode.
+    INSERT temp147 INTO TABLE temp146.
+    temp147-n = `id`.
+    temp147-v = id.
     INSERT temp147 INTO TABLE temp146.
     temp147-n = `visible`.
     temp147-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
