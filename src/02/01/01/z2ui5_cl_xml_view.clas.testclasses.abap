@@ -11,7 +11,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   METHOD test_create.
 
-    DATA lo_view TYPE REF TO Z2UI5_CL_XML_VIEW.
+    DATA lo_view TYPE REF TO z2ui5_cl_xml_view.
     DATA lv_xml TYPE string.
     lo_view = z2ui5_cl_xml_view=>factory( ).
     

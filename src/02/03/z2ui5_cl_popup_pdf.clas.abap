@@ -69,7 +69,7 @@ CLASS Z2UI5_CL_POPUP_PDF IMPLEMENTATION.
 
     DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
     DATA temp2 LIKE LINE OF temp1.
-    DATA popup TYPE REF TO Z2UI5_CL_XML_VIEW.
+    DATA popup TYPE REF TO z2ui5_cl_xml_view.
     CLEAR temp1.
     
     temp2-n = `src`.

@@ -69,10 +69,10 @@ CLASS z2ui5_cl_popup_get_range IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA lo_popup TYPE REF TO Z2UI5_CL_XML_VIEW.
-    DATA vbox TYPE REF TO Z2UI5_CL_XML_VIEW.
-    DATA item TYPE REF TO Z2UI5_CL_XML_VIEW.
-    DATA grid TYPE REF TO Z2UI5_CL_XML_VIEW.
+    DATA lo_popup TYPE REF TO z2ui5_cl_xml_view.
+    DATA vbox TYPE REF TO z2ui5_cl_xml_view.
+    DATA item TYPE REF TO z2ui5_cl_xml_view.
+    DATA grid TYPE REF TO z2ui5_cl_xml_view.
     DATA temp2 TYPE string_table.
     lo_popup = z2ui5_cl_xml_view=>factory_popup( client ).
 

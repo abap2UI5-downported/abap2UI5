@@ -47,10 +47,10 @@ CLASS z2ui5_cl_popup_get_range_multi IMPLEMENTATION.
 
   METHOD popup_display.
 
-    DATA lo_popup TYPE REF TO Z2UI5_CL_XML_VIEW.
-    DATA vbox TYPE REF TO Z2UI5_CL_XML_VIEW.
-    DATA item TYPE REF TO Z2UI5_CL_XML_VIEW.
-    DATA grid TYPE REF TO Z2UI5_CL_XML_VIEW.
+    DATA lo_popup TYPE REF TO z2ui5_cl_xml_view.
+    DATA vbox TYPE REF TO z2ui5_cl_xml_view.
+    DATA item TYPE REF TO z2ui5_cl_xml_view.
+    DATA grid TYPE REF TO z2ui5_cl_xml_view.
     DATA temp1 TYPE string_table.
     DATA temp3 TYPE string_table.
     DATA temp5 TYPE string_table.

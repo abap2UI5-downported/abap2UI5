@@ -59,15 +59,15 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
   METHOD display.
 
     FIELD-SYMBOLS <tab_out> TYPE STANDARD TABLE.
-    DATA popup TYPE REF TO Z2UI5_CL_XML_VIEW.
+    DATA popup TYPE REF TO z2ui5_cl_xml_view.
     DATA temp1 TYPE string_table.
     DATA temp2 TYPE string_table.
-    DATA tab TYPE REF TO Z2UI5_CL_XML_VIEW.
+    DATA tab TYPE REF TO z2ui5_cl_xml_view.
     DATA lt_comp TYPE abap_component_tab.
-    DATA list TYPE REF TO Z2UI5_CL_XML_VIEW.
-    DATA cells TYPE REF TO Z2UI5_CL_XML_VIEW.
+    DATA list TYPE REF TO z2ui5_cl_xml_view.
+    DATA cells TYPE REF TO z2ui5_cl_xml_view.
     DATA ls_comp LIKE LINE OF lt_comp.
-    DATA columns TYPE REF TO Z2UI5_CL_XML_VIEW.
+    DATA columns TYPE REF TO z2ui5_cl_xml_view.
     ASSIGN mr_tab_popup->* TO <tab_out>.
 
     

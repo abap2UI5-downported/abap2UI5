@@ -48,7 +48,7 @@ CLASS z2ui5_cl_popup_textedit IMPLEMENTATION.
 
   METHOD display.
 
-    DATA popup TYPE REF TO Z2UI5_CL_XML_VIEW.
+    DATA popup TYPE REF TO z2ui5_cl_xml_view.
     popup = z2ui5_cl_xml_view=>factory_popup( client )->dialog(
               afterclose = client->_event( 'BUTTON_TEXTAREA_CANCEL' )
               stretch = mv_stretch_active

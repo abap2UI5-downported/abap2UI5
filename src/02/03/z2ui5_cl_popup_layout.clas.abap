@@ -50,14 +50,14 @@ CLASS Z2UI5_CL_POPUP_LAYOUT IMPLEMENTATION.
 
   METHOD display.
 
-    DATA popup TYPE REF TO Z2UI5_CL_XML_VIEW.
-    DATA tab TYPE REF TO Z2UI5_CL_XML_VIEW.
+    DATA popup TYPE REF TO z2ui5_cl_xml_view.
+    DATA tab TYPE REF TO z2ui5_cl_xml_view.
     DATA lt_comp TYPE abap_component_tab.
-    DATA list TYPE REF TO Z2UI5_CL_XML_VIEW.
-    DATA cells TYPE REF TO Z2UI5_CL_XML_VIEW.
-    DATA columns TYPE REF TO Z2UI5_CL_XML_VIEW.
+    DATA list TYPE REF TO z2ui5_cl_xml_view.
+    DATA cells TYPE REF TO z2ui5_cl_xml_view.
+    DATA columns TYPE REF TO z2ui5_cl_xml_view.
     DATA ls_comp2 LIKE LINE OF lt_comp.
-      DATA col TYPE REF TO Z2UI5_CL_XML_VIEW.
+      DATA col TYPE REF TO z2ui5_cl_xml_view.
     DATA ls_comp LIKE LINE OF lt_comp.
     popup = z2ui5_cl_xml_view=>factory_popup( client )->dialog(
               afterclose = client->_event( 'BUTTON_CONFIRM' )

@@ -152,8 +152,8 @@ CLASS ltcl_unit_test_abap_api IMPLEMENTATION.
     DATA temp45 TYPE REF TO cl_abap_classdescr.
     DATA lt_attri LIKE temp45->attributes.
     DATA lv_test LIKE LINE OF lt_attri.
-    DATA temp16 LIKE LINE OF lt_attri.
-    DATA temp17 LIKE sy-tabix.
+    DATA temp11 LIKE LINE OF lt_attri.
+    DATA temp12 LIKE sy-tabix.
     DATA temp46 LIKE LINE OF lt_attri.
     DATA temp47 LIKE sy-tabix.
     DATA temp48 LIKE LINE OF lt_attri.
@@ -176,13 +176,13 @@ CLASS ltcl_unit_test_abap_api IMPLEMENTATION.
     
     
     
-    temp17 = sy-tabix.
-    READ TABLE lt_attri WITH KEY name = `MS_TAB` INTO temp16.
-    sy-tabix = temp17.
+    temp12 = sy-tabix.
+    READ TABLE lt_attri WITH KEY name = `MS_TAB` INTO temp11.
+    sy-tabix = temp12.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
     ENDIF.
-    lv_test = temp16.
+    lv_test = temp11.
     
     
     temp47 = sy-tabix.
@@ -917,8 +917,8 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     DATA temp78 LIKE sy-subrc.
     DATA temp79 LIKE sy-subrc.
     DATA ls_title LIKE LINE OF lt_comp.
-    DATA temp18 LIKE LINE OF lt_comp.
-    DATA temp19 LIKE sy-tabix.
+    DATA temp13 LIKE LINE OF lt_comp.
+    DATA temp14 LIKE sy-tabix.
     CLEAR temp75.
     
     ls_row = temp75.
@@ -961,13 +961,13 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     
     
     
-    temp19 = sy-tabix.
-    READ TABLE lt_comp INDEX 1 INTO temp18.
-    sy-tabix = temp19.
+    temp14 = sy-tabix.
+    READ TABLE lt_comp INDEX 1 INTO temp13.
+    sy-tabix = temp14.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
     ENDIF.
-    ls_title = temp18.
+    ls_title = temp13.
 
     IF ls_title-type->type_kind <> `g`.
       cl_abap_unit_assert=>fail( ).

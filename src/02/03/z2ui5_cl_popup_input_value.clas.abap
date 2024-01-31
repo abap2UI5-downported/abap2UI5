@@ -69,7 +69,7 @@ CLASS Z2UI5_CL_POPUP_INPUT_VALUE IMPLEMENTATION.
 
   METHOD view_display.
 
-    DATA popup TYPE REF TO Z2UI5_CL_XML_VIEW.
+    DATA popup TYPE REF TO z2ui5_cl_xml_view.
     popup = z2ui5_cl_xml_view=>factory_popup(  )->dialog(
                   title = title
                   icon = icon

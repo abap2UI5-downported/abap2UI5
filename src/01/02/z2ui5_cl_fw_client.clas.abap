@@ -342,7 +342,7 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
     IF struc IS NOT INITIAL.
 
       
-      lv_name_struc = z2ui5_if_client~_bind_edit( val = struc path = abap_true pretty_name = pretty_name ).
+      lv_name_struc = z2ui5_if_client~_bind_edit( val = struc path = abap_true pretty_mode = pretty_mode ).
       result = bind_struc_comp(
             iv_name     = lv_name_struc
             i_struc     = struc
@@ -359,8 +359,8 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
                         check_attri = mo_handler->ms_db-check_attri
                         type  = z2ui5_cl_fw_binding=>cs_bind_type-one_way
                         data  = val
-                        pretty_name = pretty_name
-                        compress = compress
+                        pretty_name = pretty_mode
+                        compress = compress_mode
                       ).
 
     result = lo_binder->main( ).
@@ -415,7 +415,7 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
     IF tab IS NOT INITIAL.
 
       
-      lv_name = z2ui5_if_client~_bind_edit( val = tab path = abap_true pretty_name = pretty_name ).
+      lv_name = z2ui5_if_client~_bind_edit( val = tab path = abap_true pretty_mode = pretty_mode ).
       result = bind_tab_cell(
             iv_name     = lv_name
             i_tab_index = tab_index
@@ -429,7 +429,7 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
     IF struc IS NOT INITIAL.
 
       
-      lv_name_struc = z2ui5_if_client~_bind_edit( val = struc path = abap_true pretty_name = pretty_name ).
+      lv_name_struc = z2ui5_if_client~_bind_edit( val = struc path = abap_true pretty_mode = pretty_mode ).
       result = bind_struc_comp(
             iv_name     = lv_name_struc
             i_struc     = struc
@@ -447,8 +447,8 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
                         type  = z2ui5_cl_fw_binding=>cs_bind_type-two_way
                         data  = val
                         view  = view
-                        pretty_name = pretty_name
-                        compress = compress
+                        pretty_name = pretty_mode
+                        compress = compress_mode
                       ).
 
     result = lo_binder->main( ).
@@ -471,8 +471,8 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
                         check_attri = mo_handler->ms_db-check_attri
                         type  = z2ui5_cl_fw_binding=>cs_bind_type-one_time
                         data  = val
-                        pretty_name = pretty_name
-                        compress = compress
+                        pretty_name = pretty_mode
+                        compress = compress_mode
                       ).
 
     result = lo_binder->main( ).

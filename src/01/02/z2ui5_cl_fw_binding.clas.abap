@@ -220,7 +220,7 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     
     CLEAR temp4.
     temp4-name = lv_id.
-    temp4-data_stringify = z2ui5_cl_util_func=>trans_json_by_any( any = mr_data compress = me->mv_compress ).
+    temp4-data_stringify = z2ui5_cl_util_func=>trans_json_by_any( any = mr_data compress_mode = me->mv_compress ).
     temp4-bind_type = cs_bind_type-one_time.
     INSERT temp4
            INTO TABLE mt_attri.
