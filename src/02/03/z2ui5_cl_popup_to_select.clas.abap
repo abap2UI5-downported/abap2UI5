@@ -9,6 +9,7 @@ CLASS z2ui5_cl_popup_to_select DEFINITION
     CLASS-METHODS factory
       IMPORTING
         i_tab           TYPE STANDARD TABLE
+        i_title         TYPE clike OPTIONAL
       RETURNING
         VALUE(r_result) TYPE REF TO z2ui5_cl_popup_to_select.
 
@@ -31,6 +32,7 @@ CLASS z2ui5_cl_popup_to_select DEFINITION
     DATA check_initialized TYPE abap_bool.
     DATA check_table_line TYPE abap_bool.
     DATA client TYPE REF TO z2ui5_if_client.
+    DATA title TYPE string.
     METHODS on_event.
     METHODS display.
     METHODS set_output_table.
@@ -48,6 +50,7 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
     FIELD-SYMBOLS <tab> TYPE any.
 
     CREATE OBJECT r_result.
+    r_result->title = i_title.
     CREATE DATA r_result->mr_tab LIKE i_tab.
     CREATE DATA r_result->ms_result-row LIKE LINE OF i_tab.
     
@@ -68,6 +71,11 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
     DATA cells TYPE REF TO z2ui5_cl_xml_view.
     DATA ls_comp LIKE LINE OF lt_comp.
     DATA columns TYPE REF TO z2ui5_cl_xml_view.
+      DATA temp3 TYPE REF TO cl_abap_elemdescr.
+      DATA temp5 TYPE z2ui5_cl_util_func=>ty_data_element_texts-medium.
+      DATA data_element_name TYPE string.
+      DATA medium_label TYPE z2ui5_cl_util_func=>ty_data_element_texts-medium.
+      DATA text LIKE temp5.
     ASSIGN mr_tab_popup->* TO <tab_out>.
 
     
@@ -86,6 +94,7 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
               search             = client->_event( val = 'SEARCH'  t_arg = temp1 )
               confirm            = client->_event( val = 'CONFIRM' t_arg = temp2 )
               growing = abap_true
+              title   = title
             ).
 
     
@@ -105,7 +114,21 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
     
     columns = tab->columns( ).
     LOOP AT lt_comp INTO ls_comp.
-      columns->column( width = '8rem' )->header( ns = `` )->text( text = ls_comp-name ).
+      
+      temp3 ?= ls_comp-type.
+      
+      
+      data_element_name = substring_after( val = temp3->absolute_name sub = '\TYPE=' ).
+      
+      medium_label = z2ui5_cl_util_func=>rtti_get_data_element_texts( data_element_name )-medium.
+      IF medium_label IS NOT INITIAL.
+        temp5 = medium_label.
+      ELSE.
+        temp5 = ls_comp-name.
+      ENDIF.
+      
+      text = temp5.
+      columns->column( width = '8rem' )->header( ns = `` )->text( text = text ).
     ENDLOOP.
 
     client->popup_display( popup->stringify( ) ).
@@ -160,18 +183,18 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
     FIELD-SYMBOLS <row2> TYPE any.
     FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
     DATA lo_type TYPE REF TO cl_abap_typedescr.
-    DATA temp3 TYPE REF TO cl_abap_tabledescr.
-    DATA lo_table LIKE temp3.
-        DATA temp4 TYPE REF TO cl_abap_structdescr.
-        DATA lo_struct LIKE temp4.
+    DATA temp4 TYPE REF TO cl_abap_tabledescr.
+    DATA lo_table LIKE temp4.
+        DATA temp5 TYPE REF TO cl_abap_structdescr.
+        DATA lo_struct LIKE temp5.
         DATA lt_comp TYPE abap_component_tab.
-        DATA temp5 TYPE REF TO cl_abap_elemdescr.
-        DATA lo_elem LIKE temp5.
-        DATA temp6 TYPE abap_componentdescr.
-        DATA temp8 TYPE REF TO cl_abap_datadescr.
+        DATA temp6 TYPE REF TO cl_abap_elemdescr.
+        DATA lo_elem LIKE temp6.
+        DATA temp7 TYPE abap_componentdescr.
+        DATA temp9 TYPE REF TO cl_abap_datadescr.
     DATA lo_type_bool TYPE REF TO cl_abap_typedescr.
-    DATA temp7 TYPE abap_componentdescr.
-    DATA temp9 TYPE REF TO cl_abap_datadescr.
+    DATA temp8 TYPE abap_componentdescr.
+    DATA temp10 TYPE REF TO cl_abap_datadescr.
     DATA lo_line_type TYPE REF TO cl_abap_structdescr.
     DATA lo_tab_type TYPE REF TO cl_abap_tabledescr.
     FIELD-SYMBOLS <tab_out> TYPE STANDARD TABLE.
@@ -183,39 +206,39 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
     
     lo_type = cl_abap_structdescr=>describe_by_data( <tab> ).
     
-    temp3 ?= lo_type.
+    temp4 ?= lo_type.
     
-    lo_table = temp3.
+    lo_table = temp4.
     TRY.
         
-        temp4 ?= lo_table->get_table_line_type( ).
+        temp5 ?= lo_table->get_table_line_type( ).
         
-        lo_struct = temp4.
+        lo_struct = temp5.
         
         lt_comp = lo_struct->get_components( ).
       CATCH cx_root.
         check_table_line = abap_true.
         
-        temp5 ?= lo_table->get_table_line_type( ).
+        temp6 ?= lo_table->get_table_line_type( ).
         
-        lo_elem = temp5.
+        lo_elem = temp6.
         
-        CLEAR temp6.
-        temp6-name = 'TAB_LINE'.
+        CLEAR temp7.
+        temp7-name = 'TAB_LINE'.
         
-        temp8 ?= lo_elem.
-        temp6-type = temp8.
-        INSERT temp6 INTO TABLE lt_comp.
+        temp9 ?= lo_elem.
+        temp7-type = temp9.
+        INSERT temp7 INTO TABLE lt_comp.
     ENDTRY.
     
     lo_type_bool = cl_abap_structdescr=>describe_by_name( 'ABAP_BOOL' ).
     
-    CLEAR temp7.
-    temp7-name = `ZZSELKZ`.
+    CLEAR temp8.
+    temp8-name = `ZZSELKZ`.
     
-    temp9 ?= lo_type_bool.
-    temp7-type = temp9.
-    INSERT temp7 INTO TABLE lt_comp.
+    temp10 ?= lo_type_bool.
+    temp8-type = temp10.
+    INSERT temp8 INTO TABLE lt_comp.
 
     
     lo_line_type = cl_abap_structdescr=>create( lt_comp ).
@@ -293,10 +316,10 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
     FIELD-SYMBOLS <row2> TYPE any.
     FIELD-SYMBOLS <field2> TYPE any.
     DATA lo_type TYPE REF TO cl_abap_typedescr.
-    DATA temp8 TYPE REF TO cl_abap_tabledescr.
-    DATA lo_table LIKE temp8.
-    DATA temp9 TYPE REF TO cl_abap_structdescr.
-    DATA lo_struct LIKE temp9.
+    DATA temp9 TYPE REF TO cl_abap_tabledescr.
+    DATA lo_table LIKE temp9.
+    DATA temp10 TYPE REF TO cl_abap_structdescr.
+    DATA lo_struct LIKE temp10.
     DATA lt_comp TYPE abap_component_tab.
       DATA lv_check_continue LIKE abap_false.
       DATA ls_comp LIKE LINE OF lt_comp.
@@ -317,13 +340,13 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
     
     lo_type = cl_abap_structdescr=>describe_by_data( <tab_out> ).
     
-    temp8 ?= lo_type.
+    temp9 ?= lo_type.
     
-    lo_table = temp8.
+    lo_table = temp9.
     
-    temp9 ?= lo_table->get_table_line_type( ).
+    temp10 ?= lo_table->get_table_line_type( ).
     
-    lo_struct = temp9.
+    lo_struct = temp10.
     
     lt_comp = lo_struct->get_components( ).
     LOOP AT <tab_out> ASSIGNING <row2>.
