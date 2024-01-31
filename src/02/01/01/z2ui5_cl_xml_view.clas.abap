@@ -53,6 +53,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !alt                   TYPE clike OPTIONAL
         !activecolor           TYPE clike OPTIONAL
         !activebackgroundcolor TYPE clike OPTIONAL
+        !visible               TYPE clike OPTIONAL
       RETURNING
         VALUE(result)          TYPE REF TO z2ui5_cl_xml_view .
     METHODS dynamic_page
@@ -154,6 +155,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !popinlayout         TYPE clike OPTIONAL
         !fixedlayout         TYPE clike OPTIONAL
         !backgrounddesign    TYPE clike OPTIONAL
+        !visible             TYPE clike OPTIONAL
           PREFERRED PARAMETER items
       RETURNING
         VALUE(result)        TYPE REF TO z2ui5_cl_xml_view .
@@ -3391,7 +3393,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_xml_view IMPLEMENTATION.
+CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD actions.
@@ -6685,6 +6687,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp141 INTO TABLE temp140.
     temp141-n = `hoverColor`.
     temp141-v = hovercolor.
+    INSERT temp141 INTO TABLE temp140.
+    temp141-n = `visible`.
+    temp141-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp141 INTO TABLE temp140.
     temp141-n = `decorative`.
     temp141-v = z2ui5_cl_util_func=>boolean_abap_2_json( decorative ).
@@ -11175,6 +11180,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp353 INTO TABLE temp352.
     temp353-n = `backgroundDesign`.
     temp353-v = backgrounddesign.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `visible`.
+    temp353-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp353 INTO TABLE temp352.
     temp353-n = `alternateRowColors`.
     temp353-v = z2ui5_cl_util_func=>boolean_abap_2_json( alternaterowcolors ).
