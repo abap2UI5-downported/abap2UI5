@@ -45,13 +45,13 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
 
 
   METHOD main_set_backend.
+    FIELD-SYMBOLS <backend> TYPE any.
+    FIELD-SYMBOLS <frontend> TYPE any.
 
     DATA temp1 LIKE LINE OF mt_attri.
     DATA lr_attri LIKE REF TO temp1.
           DATA lv_name_back TYPE string.
-          FIELD-SYMBOLS <backend> TYPE any.
           DATA lv_name_front TYPE string.
-          FIELD-SYMBOLS <frontend> TYPE any.
     LOOP AT mt_attri REFERENCE INTO lr_attri
         WHERE bind_type = z2ui5_cl_fw_binding=>cs_bind_type-two_way AND
               viewname  = mv_viewname.
@@ -59,7 +59,7 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
           
           lv_name_back = `MO_APP->` && lr_attri->name.
 
-          
+
           UNASSIGN <backend>.
           ASSIGN (lv_name_back) TO <backend>.
           IF sy-subrc <> 0.
@@ -70,7 +70,7 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
 
           
           lv_name_front = `MODEL->` && lr_attri->name_front.
-          
+
           UNASSIGN <frontend>.
           ASSIGN (lv_name_front) TO <frontend>.
           IF sy-subrc <> 0.
@@ -101,10 +101,10 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
 
               ASSIGN <frontend>->* TO <frontend>.
               CASE lr_attri->type_kind.
-                WHEN  cl_abap_typedescr=>typekind_date  OR cl_abap_typedescr=>typekind_time.
+                WHEN cl_abap_typedescr=>typekind_date  OR cl_abap_typedescr=>typekind_time.
                   z2ui5_cl_util_func=>trans_json_2_any(
                     EXPORTING
-                        val = `"` && <frontend> && `"`
+                        val  = `"` && <frontend> && `"`
                     CHANGING
                         data = <backend> ).
 
@@ -125,16 +125,17 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
 
     DATA lr_view_model TYPE REF TO z2ui5_cl_util_tree_json.
     DATA lo_update TYPE REF TO z2ui5_cl_util_tree_json.
+    FIELD-SYMBOLS <attribute> TYPE any.
     DATA temp2 LIKE LINE OF mt_attri.
     DATA lr_attri LIKE REF TO temp2.
       DATA temp3 TYPE REF TO z2ui5_cl_util_tree_json.
       DATA lo_actual LIKE temp3.
       DATA lv_name_back TYPE string.
-      FIELD-SYMBOLS <attribute> TYPE any.
             DATA temp4 TYPE string.
     lr_view_model = z2ui5_cl_util_tree_json=>factory( ).
     
     lo_update = lr_view_model->add_attribute_object( z2ui5_cl_fw_binding=>cv_model_edit_name ).
+    
 
     
     
@@ -158,7 +159,7 @@ CLASS z2ui5_cl_fw_model IMPLEMENTATION.
 
       
       lv_name_back = `MO_APP->` && lr_attri->name.
-      
+
       ASSIGN (lv_name_back) TO <attribute>.
       IF sy-subrc <> 0.
         RAISE EXCEPTION TYPE z2ui5_cx_util_error

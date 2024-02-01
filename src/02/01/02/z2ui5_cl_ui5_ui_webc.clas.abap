@@ -34,8 +34,8 @@ CLASS z2ui5_cl_ui5_ui_webc DEFINITION
 
     METHODS input
       IMPORTING id            TYPE clike OPTIONAL
-                text          type clike OPTIONAL
-                click         type clike optional
+                text          TYPE clike OPTIONAL
+                click         TYPE clike OPTIONAL
                 value         TYPE clike OPTIONAL
                 width         TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_ui5_ui_webc.
@@ -99,7 +99,7 @@ CLASS Z2UI5_CL_UI5_UI_WEBC IMPLEMENTATION.
     temp4-n = `design`.
     temp4-v = design.
     INSERT temp4 INTO TABLE temp3.
-    _add( n   = `Button`
+    _add( n            = `Button`
                    ns  = 'sap.ui.webc.main'
                    t_p = temp3 )->_ns_webc( ).
 
@@ -145,7 +145,7 @@ CLASS Z2UI5_CL_UI5_UI_WEBC IMPLEMENTATION.
     temp8-n = `value`.
     temp8-v = value.
     INSERT temp8 INTO TABLE temp7.
-    _add( n   = `Input`
+    _add( n            = `Input`
                    ns  = 'sap.ui.webc.main'
                    t_p = temp7 )->_ns_webc( ).
 
@@ -166,7 +166,7 @@ CLASS Z2UI5_CL_UI5_UI_WEBC IMPLEMENTATION.
     temp10-n = `text`.
     temp10-v = text.
     INSERT temp10 INTO TABLE temp9.
-    _add( n   = `Label`
+    _add( n            = `Label`
                    ns  = 'sap.ui.webc.main'
                    t_p = temp9 )->_ns_webc( ).
 
@@ -200,7 +200,7 @@ CLASS Z2UI5_CL_UI5_UI_WEBC IMPLEMENTATION.
     temp14-n = `id`.
     temp14-v = id.
     INSERT temp14 INTO TABLE temp13.
-    _add( n   = `Toast`
+    _add( n            = `Toast`
                    ns  = 'sap.ui.webc.main'
                    t_p = temp13 )->_ns_webc( ).
 

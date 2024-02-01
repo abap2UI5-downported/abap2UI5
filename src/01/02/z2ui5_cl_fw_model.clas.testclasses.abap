@@ -1,5 +1,5 @@
 CLASS ltcl_unit_test DEFINITION FINAL FOR TESTING
-  DURATION long
+  DURATION LONG
   RISK LEVEL DANGEROUS.
 
   PUBLIC SECTION.
@@ -45,9 +45,8 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     lv_frontend = lo_model->main_set_frontend( ).
 
     cl_abap_unit_assert=>assert_equals(
-        act                  =  lv_frontend
-        exp                  =  `{"EDIT":{"QUANTITY":"600"}}`
-   ).
+        act = lv_frontend
+        exp = `{"EDIT":{"QUANTITY":"600"}}` ).
 
   ENDMETHOD.
 
@@ -59,9 +58,9 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     DATA lo_app TYPE REF TO ltcl_unit_test.
     DATA lv_model TYPE string.
     DATA lr_model TYPE REF TO data.
+    FIELD-SYMBOLS <any> TYPE any.
     DATA lo_model TYPE REF TO z2ui5_cl_fw_model.
     DATA lv_assign TYPE string.
-    FIELD-SYMBOLS <any> TYPE any.
     CLEAR temp7.
     
     temp8-name = `QUANTITY`.
@@ -75,32 +74,31 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
     
     lv_model = `{"EDIT":{"QUANTITY":"600"},"oScroll":[],"OMESSAGEMANAGER":[],"ID":"0242B09497911EDE90A60CD0D8519DD5","ARGUMENTS":[{"EVENT":"BUTTON_POST","METHOD":"UPDATE","CHECK_VIEW_DESTROY":false}],"OCURSOR":{"id":"__button1"},"OLOCATION":{`
-     && `"SEARCH":"?sap-client=001&app_start=z2ui5_cl_app_hello_world","VERSION":"com.sap.ui5.dist:sapui5-sdk-dist:1.116.0:war"}}`.
+      && `"SEARCH":"?sap-client=001&app_start=z2ui5_cl_app_hello_world","VERSION":"com.sap.ui5.dist:sapui5-sdk-dist:1.116.0:war"}}`.
 
+    
     
     /ui2/cl_json=>deserialize(
       EXPORTING
-        json             =  lv_model
+        json = lv_model
       CHANGING
-        data             =  lr_model
-    ).
+        data = lr_model ).
 
     
     lo_model = z2ui5_cl_fw_model=>factory(
-    viewname = ``
-    app      = lo_app
-    attri    = lt_attri ).
+      viewname = ``
+      app      = lo_app
+      attri    = lt_attri ).
 
     
     lv_assign = `LR_MODEL->` && z2ui5_cl_fw_binding=>cv_model_edit_name.
-    
+
     ASSIGN (lv_assign) TO <any>.
     lo_model->main_set_backend( <any> ).
 
     cl_abap_unit_assert=>assert_equals(
-        act                  =  lo_app->quantity
-        exp                  = `600`
-     ).
+        act = lo_app->quantity
+        exp = `600` ).
 
   ENDMETHOD.
 

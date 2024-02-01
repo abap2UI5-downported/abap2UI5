@@ -8,24 +8,21 @@ CLASS z2ui5_cl_xml_view DEFINITION
     CLASS-METHODS factory
       IMPORTING
         !t_ns         TYPE z2ui5_if_client=>ty_t_name_value OPTIONAL
-        !client       TYPE REF TO z2ui5_if_client OPTIONAL
-          PREFERRED PARAMETER client
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     CLASS-METHODS factory_plain
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     CLASS-METHODS factory_popup
       IMPORTING
         !t_ns         TYPE z2ui5_if_client=>ty_t_name_value OPTIONAL
-        !client       TYPE REF TO z2ui5_if_client OPTIONAL
-          PREFERRED PARAMETER client
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
-    METHODS constructor .
+    METHODS constructor.
+
     METHODS horizontal_layout
       IMPORTING
         !class         TYPE clike OPTIONAL
@@ -33,7 +30,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !allowwrapping TYPE clike OPTIONAL
         !id            TYPE clike OPTIONAL
       RETURNING
-        VALUE(result)  TYPE REF TO z2ui5_cl_xml_view .
+        VALUE(result)  TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS icon
       IMPORTING
         !src                   TYPE clike OPTIONAL
@@ -3396,8 +3394,6 @@ CLASS z2ui5_cl_xml_view DEFINITION
     DATA mo_parent TYPE REF TO z2ui5_cl_xml_view.
     DATA mt_child  TYPE STANDARD TABLE OF REF TO z2ui5_cl_xml_view WITH DEFAULT KEY.
 
-    DATA mi_client TYPE REF TO z2ui5_if_client.
-
   PRIVATE SECTION.
 ENDCLASS.
 
@@ -3453,7 +3449,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp2-n = `visible`.
     temp2-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp2 INTO TABLE temp1.
-    result = _generic( name = `ActionSheet`
+    result = _generic( name   = `ActionSheet`
                        t_prop = temp1 ).
   ENDMETHOD.
 
@@ -3464,7 +3460,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD additional_numbers.
-    result = _generic( name = `additionalNumbers` ).
+    result = _generic( `additionalNumbers` ).
   ENDMETHOD.
 
 
@@ -3483,8 +3479,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp4-n = `initialZoom`.
     temp4-v = initialzoom.
     INSERT temp4 INTO TABLE temp3.
-    result = _generic( name = `AnalyticMap`
-                      ns    = `vbm`
+    result = _generic( name  = `AnalyticMap`
+                      ns     = `vbm`
                       t_prop = temp3 ).
 
   ENDMETHOD.
@@ -3496,7 +3492,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD appointment_items.
-    result = _generic( name = `appointmentItems` ).
+    result = _generic( `appointmentItems` ).
   ENDMETHOD.
 
 
@@ -3962,7 +3958,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp24-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp24 INTO TABLE temp23.
     result = _generic( name = `BusyIndicator`
-                   t_prop = temp23 ).
+                   t_prop   = temp23 ).
   ENDMETHOD.
 
 
@@ -4114,8 +4110,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp32-n = `visible`.
     temp32-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp32 INTO TABLE temp31.
-    result = _generic( name = `Card` ns = `f`
-                   t_prop = temp31 ).
+    result = _generic( name = `Card`
+                       ns   = `f`
+                   t_prop   = temp31 ).
   ENDMETHOD.
 
 
@@ -4178,8 +4175,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp34-n = `visible`.
     temp34-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp34 INTO TABLE temp33.
-    result = _generic( name = `Header` ns = `f`
-                   t_prop = temp33 ).
+    result = _generic( name = `Header`
+                       ns   = `f`
+                   t_prop   = temp33 ).
   ENDMETHOD.
 
 
@@ -4240,7 +4238,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp38-v = visiblepagescount.
     INSERT temp38 INTO TABLE temp37.
     result = _generic( name = `CarouselLayout`
-                   t_prop = temp37 ).
+                   t_prop   = temp37 ).
   ENDMETHOD.
 
 
@@ -4415,7 +4413,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp46-n = `cellsSmall`.
     temp46-v = cellssmall.
     INSERT temp46 INTO TABLE temp45.
-    result =  _generic( name   = `ColumnElementData` ns = `form`
+    result = _generic( name    = `ColumnElementData`
+                       ns      = `form`
                         t_prop = temp45 ).
   ENDMETHOD.
 
@@ -4634,41 +4633,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
   METHOD constructor.
 
-*    mt_prop = VALUE #( ( n = `xmlns`           v = `sap.m` )
-*                       ( n = `xmlns:z2ui5`     v = `z2ui5` )
-*                       ( n = `xmlns:core`      v = `sap.ui.core` )
-*                       ( n = `xmlns:mvc`       v = `sap.ui.core.mvc` )
-*                       ( n = `xmlns:layout`    v = `sap.ui.layout` )
-**                       ( n = `core:require` v = `{ MessageToast: 'sap/m/MessageToast' }` )
-**                       ( n = `core:require` v = `{ URLHelper: 'sap/m/library/URLHelper' }` )
-*                       ( n = `xmlns:table `    v = `sap.ui.table` )
-*                       ( n = `xmlns:f`         v = `sap.f` )
-*                       ( n = `xmlns:form`      v = `sap.ui.layout.form` )
-*                       ( n = `xmlns:editor`    v = `sap.ui.codeeditor` )
-*                       ( n = `xmlns:mchart`    v = `sap.suite.ui.microchart` )
-*                       ( n = `xmlns:webc`      v = `sap.ui.webc.main` )
-*                       ( n = `xmlns:uxap`      v = `sap.uxap` )
-*                       ( n = `xmlns:sap`       v = `sap` )
-*                       ( n = `xmlns:text`      v = `sap.ui.richtexteditor` )
-*                       ( n = `xmlns:html`      v = `http://www.w3.org/1999/xhtml` )
-*                       ( n = `xmlns:fb`        v = `sap.ui.comp.filterbar` )
-*                       ( n = `xmlns:u`         v = `sap.ui.unified` )
-*                       ( n = `xmlns:gantt`     v = `sap.gantt.simple` )
-*                       ( n = `xmlns:axistime`  v = `sap.gantt.axistime` )
-*                       ( n = `xmlns:config`    v = `sap.gantt.config` )
-*                       ( n = `xmlns:shapes`    v = `sap.gantt.simple.shapes` )
-*                       ( n = `xmlns:commons`   v = `sap.suite.ui.commons` )
-*                       ( n = `xmlns:vm`        v = `sap.ui.comp.variants` )
-*                       ( n = `xmlns:viz`        v = `sap.viz.ui5.controls` )
-*                       ( n = `xmlns:vk`        v = `sap.ui.vk` )
-*                       ( n = `xmlns:vbm`        v = `sap.ui.vbm` )
-*                       ( n = `xmlns:ndc`        v = `sap.ndc` )
-*                       ( n = `xmlns:svm`       v = `sap.ui.comp.smartvariants` )
-*                       ( n = `xmlns:flvm`      v = `sap.ui.fl.variants` )
-*                       ( n = `xmlns:p13n`      v = `sap.m.p13n` )
-*                       ( n = `xmlns:upload`    v = `sap.m.upload` )
-*                       ( n = `xmlns:fl`        v = `sap.ui.fl` )
-*                       ( n = `xmlns:tnt `      v = `sap.tnt` ) ).
+
   ENDMETHOD.
 
 
@@ -4687,8 +4652,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp56-n = `icon`.
     temp56-v = icon.
     INSERT temp56 INTO TABLE temp55.
-    result = _generic( name = `ContainerContent`
-                      ns    = `vk`
+    result = _generic( name  = `ContainerContent`
+                      ns     = `vk`
                       t_prop = temp55 ).
 
   ENDMETHOD.
@@ -4794,7 +4759,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD custom_layout.
-    result = _generic( name = `customLayout` ).
+    result = _generic( `customLayout` ).
   ENDMETHOD.
 
 
@@ -4993,7 +4958,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD detail_pages.
-    result = _generic( name = `detailPages` ).
+    result = _generic( `detailPages` ).
   ENDMETHOD.
 
 
@@ -5085,7 +5050,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp70-n = `visible`.
     temp70-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp70 INTO TABLE temp69.
-    result = _generic( name = `DraftIndicator`
+    result = _generic( name   = `DraftIndicator`
                        t_prop = temp69 ).
   ENDMETHOD.
 
@@ -5208,7 +5173,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp78-n = `visible`.
     temp78-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp78 INTO TABLE temp77.
-    result = _generic( name = `ExpandableText`
+    result = _generic( name   = `ExpandableText`
                        t_prop = temp77 ).
   ENDMETHOD.
 
@@ -5266,7 +5231,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp80-n = `visible`.
     temp80-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp80 INTO TABLE temp79.
-    result = _generic( name = `FacetFilter`
+    result = _generic( name   = `FacetFilter`
                        t_prop = temp79 ).
   ENDMETHOD.
 
@@ -5321,7 +5286,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp82-n = `visible`.
     temp82-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp82 INTO TABLE temp81.
-    result = _generic( name = `FacetFilterItem`
+    result = _generic( name   = `FacetFilterItem`
                        t_prop = temp81 ).
   ENDMETHOD.
 
@@ -5460,7 +5425,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp84-n = `visible`.
     temp84-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp84 INTO TABLE temp83.
-    result = _generic( name = `FacetFilterList`
+    result = _generic( name   = `FacetFilterList`
                        t_prop = temp83 ).
   ENDMETHOD.
 
@@ -5478,7 +5443,6 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
       result->mt_prop = t_ns.
     ENDIF.
 
-    result->mi_client = client.
     
     CLEAR temp85.
     temp85 = result->mt_prop.
@@ -5535,7 +5499,6 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
       result->mt_prop = t_ns.
     ENDIF.
 
-    result->mi_client = client.
     result->mv_name   = `FragmentDefinition`.
     result->mv_ns     = `core`.
     result->mo_root   = result.
@@ -5716,7 +5679,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp97-n = `visible`.
     temp97-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp97 INTO TABLE temp96.
-    result =  _generic( name   = `FeedListItemAction`
+    result = _generic( name    = `FeedListItemAction`
                         t_prop = temp96 ).
   ENDMETHOD.
 
@@ -5868,12 +5831,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD filter_items.
-    result = _generic( name = `filterItems` ).
+    result = _generic( `filterItems` ).
   ENDMETHOD.
 
 
   METHOD first_status.
-    result = _generic( name = `firstStatus` ).
+    result = _generic( `firstStatus` ).
   ENDMETHOD.
 
 
@@ -6343,7 +6306,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD group_items.
-    result = _generic( name = `groupItems` ).
+    result = _generic( `groupItems` ).
   ENDMETHOD.
 
 
@@ -6459,7 +6422,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD header_container.
-    result = _generic( name = `headerContainer` ).
+    result = _generic( `headerContainer` ).
   ENDMETHOD.
 
 
@@ -6507,7 +6470,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp129-n = `scroll`.
     temp129-v = scroll.
     INSERT temp129 INTO TABLE temp128.
-    result = _generic( name = `HeaderContainer`
+    result = _generic( name   = `HeaderContainer`
                        t_prop = temp128 ).
   ENDMETHOD.
 
@@ -6591,8 +6554,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp133-n = 'visible'.
     temp133-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp133 INTO TABLE temp132.
-    result = _generic( name = `HTML`
-                       ns   = `core`
+    result = _generic( name   = `HTML`
+                       ns     = `core`
                        t_prop = temp132 ).
 
   ENDMETHOD.
@@ -6624,7 +6587,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp135-n = `onclick`.
     temp135-v = onclick.
     INSERT temp135 INTO TABLE temp134.
-    result = _generic( name = `area` ns = 'html'
+    result = _generic( name   = `area`
+                       ns     = 'html'
                        t_prop = temp134 ).
   ENDMETHOD.
 
@@ -6649,8 +6613,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp137-n = `style`.
     temp137-v = style.
     INSERT temp137 INTO TABLE temp136.
-    result = _generic( name = `canvas`
-                       ns = `html`
+    result = _generic( name   = `canvas`
+                       ns     = `html`
                        t_prop = temp136 ).
   ENDMETHOD.
 
@@ -6669,7 +6633,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp139-n = `name`.
     temp139-v = name.
     INSERT temp139 INTO TABLE temp138.
-    result = _generic( name = `map` ns = 'html'
+    result = _generic( name   = `map`
+                       ns     = 'html'
                        t_prop = temp138 ).
   ENDMETHOD.
 
@@ -6930,7 +6895,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp149-n = `visible`.
     temp149-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp149 INTO TABLE temp148.
-    result = _generic( name = `IconTabSeparator`
+    result = _generic( name    = `IconTabSeparator`
                         t_prop = temp148 ).
 
   ENDMETHOD.
@@ -7415,7 +7380,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD items.
-    result = _generic( name = `items`  ns = ns ).
+    result = _generic( name = `items`
+                       ns   = ns ).
   ENDMETHOD.
 
 
@@ -7499,8 +7465,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp179-n = `visible`.
     temp179-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp179 INTO TABLE temp178.
-    result =  _generic( name   = `LightBox`
-                    t_prop = temp178 ).
+    result = _generic( name = `LightBox`
+                    t_prop  = temp178 ).
   ENDMETHOD.
 
 
@@ -7521,7 +7487,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp181-n = `title`.
     temp181-v = title.
     INSERT temp181 INTO TABLE temp180.
-    result =  _generic( name   = `LightBoxItem`
+    result = _generic( name    = `LightBoxItem`
                         t_prop = temp180 ).
   ENDMETHOD.
 
@@ -7687,7 +7653,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp187-v = linkpress.
     INSERT temp187 INTO TABLE temp186.
     result = _generic( name = `LinkTileContent`
-                   t_prop = temp186 ).
+                   t_prop   = temp186 ).
   ENDMETHOD.
 
 
@@ -7821,8 +7787,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
   METHOD main_contents.
 
-    result = _generic( name   = `mainContents`
-                       ns     = `tnt` ).
+    result = _generic( name = `mainContents`
+                       ns   = `tnt` ).
 
   ENDMETHOD.
 
@@ -7839,15 +7805,16 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp193-n = `autoAdjustHeight`.
     temp193-v = z2ui5_cl_util_func=>boolean_abap_2_json( autoadjustheight ).
     INSERT temp193 INTO TABLE temp192.
-    result = _generic( name = `MapContainer`
-                      ns    = `vk`
+    result = _generic( name  = `MapContainer`
+                      ns     = `vk`
                       t_prop = temp192 ).
 
   ENDMETHOD.
 
 
   METHOD markers.
-    result = _generic( name = `markers` ns = ns ).
+    result = _generic( name = `markers`
+                       ns   = ns ).
   ENDMETHOD.
 
 
@@ -7937,7 +7904,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD master_pages.
-    result = _generic( name = `masterPages` ).
+    result = _generic( `masterPages` ).
   ENDMETHOD.
 
 
@@ -8283,7 +8250,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp217-v = defaulttransitionname.
     INSERT temp217 INTO TABLE temp216.
     result = _generic( name   = `NavContainer`
-                       t_prop = temp216  ).
+                       t_prop = temp216 ).
 
   ENDMETHOD.
 
@@ -8404,7 +8371,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp219-n = `showUnread`.
     temp219-v = z2ui5_cl_util_func=>boolean_abap_2_json( showunread ).
     INSERT temp219 INTO TABLE temp218.
-    result = _generic( name = `NotificationList`
+    result = _generic( name   = `NotificationList`
                        t_prop = temp218 ).
   ENDMETHOD.
 
@@ -8471,7 +8438,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp221-n = `unread`.
     temp221-v = z2ui5_cl_util_func=>boolean_abap_2_json( unread ).
     INSERT temp221 INTO TABLE temp220.
-    result = _generic( name = `NotificationListGroup`
+    result = _generic( name   = `NotificationListGroup`
                        t_prop = temp220 ).
   ENDMETHOD.
 
@@ -8559,7 +8526,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp223-n = `unread`.
     temp223-v = z2ui5_cl_util_func=>boolean_abap_2_json( unread ).
     INSERT temp223 INTO TABLE temp222.
-    result = _generic( name = `NotificationListItem`
+    result = _generic( name   = `NotificationListItem`
                        t_prop = temp222 ).
   ENDMETHOD.
 
@@ -8714,8 +8681,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp227-n = `visible`.
     temp227-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp227 INTO TABLE temp226.
-    result = _generic( name = `NumericHeader` ns = `f`
-                   t_prop = temp226 ).
+    result = _generic( name = `NumericHeader`
+                       ns   = `f`
+                   t_prop   = temp226 ).
   ENDMETHOD.
 
 
@@ -8745,7 +8713,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp229-n = `visible`.
     temp229-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp229 INTO TABLE temp228.
-    result = _generic( name = `NumericSideIndicator`  ns = `f`
+    result = _generic( name   = `NumericSideIndicator`
+                       ns     = `f`
                        t_prop = temp228 ).
   ENDMETHOD.
 
@@ -8982,7 +8951,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp239-n = `visibility`.
     temp239-v = visibility.
     INSERT temp239 INTO TABLE temp238.
-    result = _generic( name = `ObjectMarker`
+    result = _generic( name   = `ObjectMarker`
                        t_prop = temp238 ).
   ENDMETHOD.
 
@@ -9360,7 +9329,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD pages.
-    result = _generic( name   = `pages`  ).
+    result = _generic( `pages` ).
 
   ENDMETHOD.
 
@@ -9445,7 +9414,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp265-n = `orientation`.
     temp265-v = orientation.
     INSERT temp265 INTO TABLE temp264.
-    result = _generic( name   = `PaneContainer` ns = `layout`
+    result = _generic( name   = `PaneContainer`
+                       ns     = `layout`
                        t_prop = temp264 ).
   ENDMETHOD.
 
@@ -9641,9 +9611,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp275-n = `nodes`.
     temp275-v = nodes.
     INSERT temp275 INTO TABLE temp274.
-    result = _generic( name   = `ProcessFlow`
-                   ns     = 'commons'
-                   t_prop = temp274 ).
+    result = _generic( name = `ProcessFlow`
+                   ns       = 'commons'
+                   t_prop   = temp274 ).
   ENDMETHOD.
 
 
@@ -9671,9 +9641,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp277-n = `zoomLevel`.
     temp277-v = zoomlevel.
     INSERT temp277 INTO TABLE temp276.
-    result = _generic( name   = `ProcessFlowLaneHeader`
-                   ns     = 'commons'
-                   t_prop = temp276 ).
+    result = _generic( name = `ProcessFlowLaneHeader`
+                   ns       = 'commons'
+                   t_prop   = temp276 ).
   ENDMETHOD.
 
 
@@ -9724,9 +9694,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp279-n = `type`.
     temp279-v = type.
     INSERT temp279 INTO TABLE temp278.
-    result = _generic( name   = `ProcessFlowNode`
-                   ns     = 'commons'
-                   t_prop = temp278 ).
+    result = _generic( name = `ProcessFlowNode`
+                   ns       = 'commons'
+                   t_prop   = temp278 ).
   ENDMETHOD.
 
 
@@ -9802,8 +9772,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp285-n = `visible`.
     temp285-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp285 INTO TABLE temp284.
-    result = _generic( name = `QuickViewGroup`
-                       t_prop   = temp284 ).
+    result = _generic( name   = `QuickViewGroup`
+                       t_prop = temp284 ).
   ENDMETHOD.
 
 
@@ -9836,7 +9806,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp287-n = `visible`.
     temp287-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp287 INTO TABLE temp286.
-    result =  _generic( name   = `QuickViewGroupElement`
+    result = _generic( name    = `QuickViewGroupElement`
                         t_prop = temp286 ).
   ENDMETHOD.
 
@@ -9867,7 +9837,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD quick_view_page_avatar.
-    result = _generic( name = `avatar` ).
+    result = _generic( `avatar` ).
   ENDMETHOD.
 
 
@@ -10087,7 +10057,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp301-n = `width`.
     temp301-v = width.
     INSERT temp301 INTO TABLE temp300.
-    result = _generic( name   = `ResponsiveSplitter` ns = `layout`
+    result = _generic( name   = `ResponsiveSplitter`
+                       ns     = `layout`
                        t_prop = temp300 ).
   ENDMETHOD.
 
@@ -10278,7 +10249,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD second_status.
-    result = _generic( name = `secondStatus` ).
+    result = _generic( `secondStatus` ).
   ENDMETHOD.
 
 
@@ -10441,7 +10412,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp313-n = `visible`.
     temp313-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp313 INTO TABLE temp312.
-    result = _generic( name = `Select`
+    result = _generic( name   = `Select`
                        t_prop = temp312 ).
   ENDMETHOD.
 
@@ -10466,10 +10437,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp315-n = `appWidthLimited`.
     temp315-v = z2ui5_cl_util_func=>boolean_abap_2_json( appwidthlimited ).
     INSERT temp315 INTO TABLE temp314.
-    result = _generic( name = `Shell`
-                       ns   = ns
-                              t_prop = temp314
-                    ).
+    result = _generic( name          = `Shell`
+                       ns            = ns
+                              t_prop = temp314 ).
   ENDMETHOD.
 
 
@@ -10684,7 +10654,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp327-n = `showExecuteOnSelection`.
     temp327-v = z2ui5_cl_util_func=>boolean_abap_2_json( showexecuteonselection ).
     INSERT temp327 INTO TABLE temp326.
-    result = _generic( name   = `SmartVariantManagement` ns = `svm`
+    result = _generic( name   = `SmartVariantManagement`
+                       ns     = `svm`
                        t_prop = temp326 ).
   ENDMETHOD.
 
@@ -10709,7 +10680,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD sort_items.
-    result = _generic( name = `sortItems` ).
+    result = _generic( `sortItems` ).
   ENDMETHOD.
 
 
@@ -10727,7 +10698,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp329-n = `resizable`.
     temp329-v = z2ui5_cl_util_func=>boolean_abap_2_json( resizable ).
     INSERT temp329 INTO TABLE temp328.
-    result = _generic( name   = `SplitterLayoutData` ns = `layout`
+    result = _generic( name   = `SplitterLayoutData`
+                       ns     = `layout`
                        t_prop = temp328 ).
   ENDMETHOD.
 
@@ -10820,7 +10792,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp333-n = `requiredParentWidth`.
     temp333-v = requiredparentwidth.
     INSERT temp333 INTO TABLE temp332.
-    result = _generic( name   = `SplitPane` ns = `layout`
+    result = _generic( name   = `SplitPane`
+                       ns     = `layout`
                        t_prop = temp332 ).
   ENDMETHOD.
 
@@ -10857,8 +10830,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp335-n = `icon`.
     temp335-v = icon.
     INSERT temp335 INTO TABLE temp334.
-    _generic( name = `Spot`
-                      ns    = `vbm`
+    _generic( name           = `Spot`
+                      ns     = `vbm`
                       t_prop = temp334 ).
 
   ENDMETHOD.
@@ -10876,8 +10849,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp337-n = `items`.
     temp337-v = items.
     INSERT temp337 INTO TABLE temp336.
-    result = _generic( name = `Spots`
-                      ns    = `vbm`
+    result = _generic( name  = `Spots`
+                      ns     = `vbm`
                       t_prop = temp336 ).
 
   ENDMETHOD.
@@ -11022,7 +10995,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD statuses.
-    result = _generic( name = `statuses` ns = ns ).
+    result = _generic( name = `statuses`
+                       ns   = ns ).
   ENDMETHOD.
 
 
@@ -11069,7 +11043,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   METHOD sub_header.
 
     result = _generic( name = `subHeader`
-                      ns   = ns ).
+                      ns    = ns ).
 
   ENDMETHOD.
 
@@ -11309,8 +11283,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp355-n = `visible`.
     temp355-v = z2ui5_cl_util_func=>boolean_abap_2_json( visible ).
     INSERT temp355 INTO TABLE temp354.
-    result = _generic( name   = `TableSelectDialog`
-               t_prop = temp354 ).
+    result = _generic( name = `TableSelectDialog`
+               t_prop       = temp354 ).
   ENDMETHOD.
 
 
@@ -11939,7 +11913,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
   METHOD tokens.
 
-    result = _generic( name = `tokens` ns = ns ).
+    result = _generic( name = `tokens`
+                       ns   = ns ).
 
   ENDMETHOD.
 
@@ -11980,8 +11955,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp380-n = `press`.
     temp380-v = press.
     INSERT temp380 INTO TABLE temp379.
-    result = _generic( name = `Toolbar`
-                       ns = ns
+    result = _generic( name   = `Toolbar`
+                       ns     = ns
                        t_prop = temp379 ).
 
   ENDMETHOD.
@@ -12487,14 +12462,15 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp396-n = `statuses`.
     temp396-v = statuses.
     INSERT temp396 INTO TABLE temp395.
-    result = _generic( name   = `UploadSetItem`
-                   ns     = 'upload'
-                   t_prop = temp395 ).
+    result = _generic( name = `UploadSetItem`
+                   ns       = 'upload'
+                   t_prop   = temp395 ).
   ENDMETHOD.
 
 
   METHOD upload_set_toolbar_placeholder.
-    result = _generic( name = `UploadSetToolbarPlaceholder` ns = `upload` ).
+    result = _generic( name = `UploadSetToolbarPlaceholder`
+                       ns   = `upload` ).
   ENDMETHOD.
 
 
@@ -12573,7 +12549,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp398-n = `change`.
     temp398-v = change.
     INSERT temp398 INTO TABLE temp397.
-    result = _generic( name   = `VariantItem`
+    result = _generic( name     = `VariantItem`
                          ns     = `vm`
                          t_prop = temp397 ).
 
@@ -12582,8 +12558,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
   METHOD variant_items.
 
-    result = _generic( name   = `variantItems`
-                         ns     = `vm` ).
+    result = _generic( name = `variantItems`
+                         ns = `vm` ).
 
   ENDMETHOD.
 
@@ -12861,8 +12837,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp408-n = `titleAlignment`.
     temp408-v = titlealignment.
     INSERT temp408 INTO TABLE temp407.
-    result = _generic( name   = `ViewSettingsDialog`
-              t_prop = temp407 ).
+    result = _generic( name = `ViewSettingsDialog`
+              t_prop        = temp407 ).
 
   ENDMETHOD.
 
@@ -12890,8 +12866,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp410-n = `multiSelect`.
     temp410-v = z2ui5_cl_util_func=>boolean_abap_2_json( multiselect ).
     INSERT temp410 INTO TABLE temp409.
-    result = _generic( name   = `ViewSettingsFilterItem`
-                  t_prop = temp409 ).
+    result = _generic( name = `ViewSettingsFilterItem`
+                  t_prop    = temp409 ).
   ENDMETHOD.
 
 
@@ -12915,8 +12891,8 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp412-n = `textDirection`.
     temp412-v = textdirection.
     INSERT temp412 INTO TABLE temp411.
-    result = _generic( name   = `ViewSettingsItem`
-                  t_prop = temp411 ).
+    result = _generic( name = `ViewSettingsItem`
+                  t_prop    = temp411 ).
 
   ENDMETHOD.
 
@@ -12930,16 +12906,15 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   METHOD vos.
 
     result = _generic( name = `vos`
-                      ns    = `vbm`
-                  ).
+                      ns    = `vbm` ).
 
   ENDMETHOD.
 
 
   METHOD xml_get.
+    DATA lt_prop TYPE z2ui5_if_client=>ty_t_name_value.
         DATA temp413 LIKE LINE OF mt_prop.
         DATA temp414 LIKE sy-tabix.
-      DATA lt_prop TYPE z2ui5_if_client=>ty_t_name_value.
       DATA temp415 TYPE z2ui5_if_client=>ty_t_name_value.
       DATA temp416 LIKE LINE OF temp415.
       DATA temp417 LIKE LINE OF mt_ns.
@@ -12974,7 +12949,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     ENDCASE.
 
     IF me = mo_root.
-      
+
 
 
 

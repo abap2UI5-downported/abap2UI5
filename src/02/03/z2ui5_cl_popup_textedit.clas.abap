@@ -49,16 +49,16 @@ CLASS z2ui5_cl_popup_textedit IMPLEMENTATION.
   METHOD display.
 
     DATA popup TYPE REF TO z2ui5_cl_xml_view.
-    popup = z2ui5_cl_xml_view=>factory_popup( client )->dialog(
+    popup = z2ui5_cl_xml_view=>factory_popup( )->dialog(
               afterclose = client->_event( 'BUTTON_TEXTAREA_CANCEL' )
-              stretch = mv_stretch_active
-              title = 'Title'
-              icon = 'sap-icon://edit'
+              stretch    = mv_stretch_active
+              title      = 'Title'
+              icon       = 'sap-icon://edit'
           )->content(
               )->text_area(
 *                  height = '100%'
-                  width  = '100%'
-                  value  = client->_bind_edit( ms_result-text )
+                  width = '100%'
+                  value = client->_bind_edit( ms_result-text )
           )->get_parent(
           )->footer( )->overflow_toolbar(
               )->toolbar_spacer(
@@ -73,7 +73,6 @@ CLASS z2ui5_cl_popup_textedit IMPLEMENTATION.
     client->popup_display( popup->stringify( ) ).
 
   ENDMETHOD.
-
 
 
   METHOD z2ui5_if_app~main.

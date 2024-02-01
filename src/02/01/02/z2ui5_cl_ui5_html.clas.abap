@@ -11,9 +11,9 @@ CLASS z2ui5_cl_ui5_html DEFINITION
     METHODS style
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_ui5_html.
 
-   METHODS zz_plain
-    importing
-    val type string
+    METHODS zz_plain
+      IMPORTING
+      val TYPE string
       RETURNING
       VALUE(result) TYPE REF TO z2ui5_cl_ui5_html.
 
@@ -37,8 +37,7 @@ CLASS z2ui5_cl_ui5_html IMPLEMENTATION.
     INSERT temp2 INTO TABLE temp1.
     _add( n   = `script`
           ns  = `http://www.w3.org/1999/xhtml`
-          t_p = temp1 )
-          .
+          t_p = temp1 ).
   ENDMETHOD.
 
   METHOD script.
@@ -49,9 +48,9 @@ CLASS z2ui5_cl_ui5_html IMPLEMENTATION.
     temp4-n = `src`.
     temp4-v = src.
     INSERT temp4 INTO TABLE temp3.
-    result = _add( n   = `script`
-          ns  = `http://www.w3.org/1999/xhtml`
-          t_p = temp3 )->_ns_html( ).
+    result = _add( n = `script`
+          ns         = `http://www.w3.org/1999/xhtml`
+          t_p        = temp3 )->_ns_html( ).
   ENDMETHOD.
 
   METHOD style.

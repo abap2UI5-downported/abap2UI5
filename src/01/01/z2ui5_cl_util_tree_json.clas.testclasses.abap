@@ -1,6 +1,6 @@
 CLASS ltcl_unit_01_json DEFINITION FINAL FOR TESTING
-  DURATION long
-  RISK LEVEL harmless.
+  DURATION LONG
+  RISK LEVEL HARMLESS.
 
   PRIVATE SECTION.
     METHODS test_json_attri     FOR TESTING RAISING cx_static_check.
@@ -80,17 +80,19 @@ TYPES END OF ty_s_test.
 
     DATA lo_json TYPE REF TO z2ui5_cl_util_tree_json.
     DATA lo_attri TYPE REF TO z2ui5_cl_util_tree_json.
-    DATA lr_ref TYPE REF TO data.
     FIELD-SYMBOLS <any> TYPE any.
+    DATA lr_ref TYPE REF TO any.
     DATA lv_val TYPE string.
     lo_json = z2ui5_cl_util_tree_json=>factory( `{"CCC":{"COMP1":"AAA","COMP2":"BBB"}}` ).
 
     
     lo_attri = lo_json->get_attribute( `CCC` )->get_attribute( `COMP2` ).
 
+
+    
     
     lr_ref = lo_attri->get_val_ref( ).
-    
+
     ASSIGN lr_ref->* TO <any>.
     IF <any> <> `BBB`.
       cl_abap_unit_assert=>fail( quit = 5 ).

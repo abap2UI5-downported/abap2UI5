@@ -209,9 +209,9 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp2-n = `height`.
     temp2-v = height.
     INSERT temp2 INTO TABLE temp1.
-    mo_view->_generic( name   = `bwipjs`
-              ns     = `z2ui5`
-              t_prop = temp1 ).
+    mo_view->_generic( name = `bwipjs`
+              ns            = `z2ui5`
+              t_prop        = temp1 ).
 
   ENDMETHOD.
 
@@ -239,9 +239,9 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp4-n = `autoplay`.
     temp4-v = z2ui5_cl_util_func=>boolean_abap_2_json( autoplay ).
     INSERT temp4 INTO TABLE temp3.
-    mo_view->_generic( name   = `CameraPicture`
-              ns     = `z2ui5`
-              t_prop = temp3 ).
+    mo_view->_generic( name = `CameraPicture`
+              ns            = `z2ui5`
+              t_prop        = temp3 ).
 
   ENDMETHOD.
 
@@ -288,8 +288,9 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     DATA lv_style TYPE string.
 
     "make it run without syntax error also when CC are deleted (for example for downports))
-    mo_view->_generic( ns = `html` name = `style` ).
-    
+    mo_view->_generic( ns   = `html`
+                       name = `style` ).
+
     CALL METHOD ('Z2UI5_CL_CC_DEMO_OUTPUT')=>('GET_STYLE')
       RECEIVING
         result = lv_style.
@@ -354,9 +355,9 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp10-n = `checkDirectUpload`.
     temp10-v = z2ui5_cl_util_func=>boolean_abap_2_json( checkdirectupload ).
     INSERT temp10 INTO TABLE temp9.
-    mo_view->_generic( name   = `FileUploader`
-              ns     = `z2ui5`
-              t_prop = temp9 ).
+    mo_view->_generic( name = `FileUploader`
+              ns            = `z2ui5`
+              t_prop        = temp9 ).
 
 
   ENDMETHOD.
@@ -382,9 +383,9 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp12-n = `focusId`.
     temp12-v = focusid.
     INSERT temp12 INTO TABLE temp11.
-    mo_view->_generic( name   = `Focus`
-              ns     = `z2ui5`
-              t_prop = temp11 ).
+    mo_view->_generic( name = `Focus`
+              ns            = `z2ui5`
+              t_prop        = temp11 ).
 
   ENDMETHOD.
 
@@ -427,9 +428,9 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp14-n = `timeout`.
     temp14-v = timeout.
     INSERT temp14 INTO TABLE temp13.
-    mo_view->_generic( name   = `Geolocation`
-              ns     = `z2ui5`
-              t_prop = temp13 ).
+    mo_view->_generic( name = `Geolocation`
+              ns            = `z2ui5`
+              t_prop        = temp13 ).
 
   ENDMETHOD.
 
@@ -445,9 +446,9 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp16-n = `search`.
     temp16-v = search.
     INSERT temp16 INTO TABLE temp15.
-    mo_view->_generic( name   = `History`
-              ns     = `z2ui5`
-              t_prop = temp15 ).
+    mo_view->_generic( name = `History`
+              ns            = `z2ui5`
+              t_prop        = temp15 ).
 
   ENDMETHOD.
 
@@ -481,9 +482,9 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp18-n = `device_browser`.
     temp18-v = device_browser.
     INSERT temp18 INTO TABLE temp17.
-    mo_view->_generic( name   = `Info`
-              ns     = `z2ui5`
-              t_prop = temp17 ).
+    mo_view->_generic( name = `Info`
+              ns            = `z2ui5`
+              t_prop        = temp17 ).
 
   ENDMETHOD.
 
@@ -499,9 +500,9 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp20-n = `items`.
     temp20-v = items.
     INSERT temp20 INTO TABLE temp19.
-    mo_view->_generic( name   = `Messaging`
-              ns     = `z2ui5`
-              t_prop = temp19 ).
+    mo_view->_generic( name = `Messaging`
+              ns            = `z2ui5`
+              t_prop        = temp19 ).
 
   ENDMETHOD.
 
@@ -559,7 +560,8 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp22-n = `class`.
     temp22-v = class.
     INSERT temp22 INTO TABLE temp21.
-    mo_view->_generic( name   = `MultiInput` ns = `z2ui5`
+    mo_view->_generic( name   = `MultiInput`
+                       ns     = `z2ui5`
                        t_prop = temp21 ).
   ENDMETHOD.
 
@@ -584,7 +586,8 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp24-n = `removedTokens`.
     temp24-v = removedtokens.
     INSERT temp24 INTO TABLE temp23.
-    mo_view->_generic( name   = `MultiInputExt` ns = `z2ui5`
+    mo_view->_generic( name   = `MultiInputExt`
+                       ns     = `z2ui5`
                        t_prop = temp23 ).
 
   ENDMETHOD.
@@ -604,9 +607,9 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp26-n = `items`.
     temp26-v = items.
     INSERT temp26 INTO TABLE temp25.
-    mo_view->_generic( name   = `Scrolling`
-              ns     = `z2ui5`
-              t_prop = temp25 ).
+    mo_view->_generic( name = `Scrolling`
+              ns            = `z2ui5`
+              t_prop        = temp25 ).
 
   ENDMETHOD.
 
@@ -631,9 +634,9 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp28-n = `type`.
     temp28-v = type.
     INSERT temp28 INTO TABLE temp27.
-    mo_view->_generic( name   = `ExportSpreadsheet`
-              ns     = `z2ui5`
-              t_prop = temp27 ).
+    mo_view->_generic( name = `ExportSpreadsheet`
+              ns            = `z2ui5`
+              t_prop        = temp27 ).
 
   ENDMETHOD.
 
@@ -658,9 +661,9 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp30-n = `checkRepeat`.
     temp30-v = z2ui5_cl_util_func=>boolean_abap_2_json( checkrepeat ).
     INSERT temp30 INTO TABLE temp29.
-    mo_view->_generic( name   = `Timer`
-              ns     = `z2ui5`
-              t_prop = temp29 ).
+    mo_view->_generic( name = `Timer`
+              ns            = `z2ui5`
+              t_prop        = temp29 ).
 
   ENDMETHOD.
 
@@ -676,9 +679,9 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp32-n = `title`.
     temp32-v = title.
     INSERT temp32 INTO TABLE temp31.
-    mo_view->_generic( name   = `Title`
-              ns     = `z2ui5`
-              t_prop = temp31 ).
+    mo_view->_generic( name = `Title`
+              ns            = `z2ui5`
+              t_prop        = temp31 ).
 
   ENDMETHOD.
 
@@ -692,8 +695,9 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp34-n = `tableId`.
     temp34-v = tableid.
     INSERT temp34 INTO TABLE temp33.
-    result = mo_view->_generic( name   = `UITableExt` ns = `z2ui5`
-                       t_prop = temp33 ).
+    result = mo_view->_generic( name = `UITableExt`
+                                ns   = `z2ui5`
+                       t_prop        = temp33 ).
 
   ENDMETHOD.
 ENDCLASS.

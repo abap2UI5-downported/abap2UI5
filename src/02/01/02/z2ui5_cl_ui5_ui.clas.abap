@@ -92,9 +92,9 @@ CLASS z2ui5_cl_ui5_ui IMPLEMENTATION.
     temp2-n = `additionalText`.
     temp2-v = additionaltext.
     INSERT temp2 INTO TABLE temp1.
-    _add( n   = `ListItem`
-              ns     = `sap.ui.core`
-              t_p  = temp1 ).
+    _add( n       = `ListItem`
+              ns  = `sap.ui.core`
+              t_p = temp1 ).
   ENDMETHOD.
 
   METHOD codeeditor.
@@ -119,8 +119,8 @@ CLASS z2ui5_cl_ui5_ui IMPLEMENTATION.
     temp4-n = `width`.
     temp4-v = width.
     INSERT temp4 INTO TABLE temp3.
-    _add( n   = `CodeEditor`
-              ns     = `sap.ui.codeeditor`
+    _add( n       = `CodeEditor`
+              ns  = `sap.ui.codeeditor`
               t_p = temp3 )->_ns_ui( ).
   ENDMETHOD.
 
@@ -172,7 +172,8 @@ CLASS z2ui5_cl_ui5_ui IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD tabcontainer.
-    result = _add( n = `TabContainer` ns = `sap.ui.webc.main` )->_ns_ui( ).
+    result = _add( n  = `TabContainer`
+                   ns = `sap.ui.webc.main` )->_ns_ui( ).
   ENDMETHOD.
 
   METHOD content.

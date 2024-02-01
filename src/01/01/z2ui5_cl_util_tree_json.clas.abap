@@ -165,17 +165,16 @@ CLASS Z2UI5_CL_UTIL_TREE_JSON IMPLEMENTATION.
       EXPORTING
         val  = iv_json
       CHANGING
-        data = result->mr_actual
-    ).
+        data = result->mr_actual ).
 
   ENDMETHOD.
 
 
   METHOD get_attribute.
+    FIELD-SYMBOLS <attribute> TYPE any.
 
     DATA temp1 TYPE xsdboolean.
     DATA lv_name TYPE string.
-    FIELD-SYMBOLS <attribute> TYPE any.
     DATA temp2 TYPE xsdboolean.
     temp1 = boolc( mr_actual IS INITIAL ).
     z2ui5_cl_util_func=>x_check_raise( temp1 ).
@@ -189,7 +188,7 @@ CLASS Z2UI5_CL_UTIL_TREE_JSON IMPLEMENTATION.
                                               with = `_`
                                               occ  = 0 ).
 
-    
+
     ASSIGN (lv_name) TO <attribute>.
     
     temp2 = boolc( sy-subrc <> 0 ).
@@ -210,7 +209,7 @@ CLASS Z2UI5_CL_UTIL_TREE_JSON IMPLEMENTATION.
     
     temp3 = boolc( sy-subrc <> 0 ).
     z2ui5_cl_util_func=>x_check_raise( when = temp3
-                                v  = `value of attribute in JSON not found` ).
+                                v           = `value of attribute in JSON not found` ).
     result = <attribute>.
 
   ENDMETHOD.

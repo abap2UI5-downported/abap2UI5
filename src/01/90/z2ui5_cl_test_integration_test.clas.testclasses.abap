@@ -1,6 +1,6 @@
 CLASS ltcl_integration_test DEFINITION FINAL FOR TESTING
-  DURATION long
-  RISK LEVEL harmless.
+  DURATION LONG
+  RISK LEVEL HARMLESS.
 
   PUBLIC SECTION.
 
@@ -19,8 +19,6 @@ CLASS ltcl_integration_test DEFINITION FINAL FOR TESTING
     METHODS test_navigate      FOR TESTING RAISING cx_static_check.
     METHODS test_startup_path  FOR TESTING RAISING cx_static_check.
 
-    METHODS test_app_change_value FOR TESTING RAISING cx_static_check.
-    METHODS test_app_event        FOR TESTING RAISING cx_static_check.
     METHODS test_app_dump         FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
@@ -29,9 +27,9 @@ ENDCLASS.
 CLASS ltcl_integration_test IMPLEMENTATION.
 
   METHOD test_xml_view.
-    DATA lv_response TYPE string.
     DATA lo_data TYPE REF TO data.
     FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_response TYPE string.
     DATA lv_assign TYPE string.
 
     z2ui5_cl_test_integration_test=>sv_state = ``.
@@ -39,18 +37,18 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
         `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
-    
+
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    
+
     UNASSIGN <val>.
     
     lv_assign = `PARAMS->S_VIEW->XML->*`.
     ASSIGN lo_data->(lv_assign) TO <val>.
     <val> = shift_left( <val> ).
     IF <val>(9) <> `<mvc:View`.
-      cl_abap_unit_assert=>fail( msg  = 'xml view - intital view wrong' ).
+      cl_abap_unit_assert=>fail( 'xml view - intital view wrong' ).
     ENDIF.
 
   ENDMETHOD.
@@ -67,9 +65,9 @@ CLASS ltcl_integration_test IMPLEMENTATION.
 
 
   METHOD test_id.
-    DATA lv_response TYPE string.
     DATA lo_data TYPE REF TO data.
     FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_response TYPE string.
     DATA lv_assign TYPE string.
 
     z2ui5_cl_test_integration_test=>sv_state = ``.
@@ -77,11 +75,11 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
-    
+
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    
+
     UNASSIGN <val>.
     
     lv_assign = `ID->*`.
@@ -95,11 +93,13 @@ CLASS ltcl_integration_test IMPLEMENTATION.
   METHOD test_bind_one_way.
 
     DATA lo_test TYPE REF TO z2ui5_cl_test_integration_test.
-    DATA lv_response TYPE string.
     DATA lo_data TYPE REF TO data.
     FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_response TYPE string.
     DATA lv_assign TYPE string.
     CREATE OBJECT lo_test TYPE z2ui5_cl_test_integration_test.
+    
+    
 
     z2ui5_cl_test_integration_test=>sv_state = `TEST_ONE_WAY`.
     
@@ -107,11 +107,11 @@ CLASS ltcl_integration_test IMPLEMENTATION.
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
 
-    
+
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    
+
     UNASSIGN <val>.
     
     lv_assign = `OVIEWMODEL->QUANTITY->*`.
@@ -123,9 +123,9 @@ CLASS ltcl_integration_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_bind_two_way.
-    DATA lv_response TYPE string.
     DATA lo_data TYPE REF TO data.
     FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_response TYPE string.
     DATA lv_assign TYPE string.
 
     z2ui5_cl_test_integration_test=>sv_state = ``.
@@ -133,11 +133,11 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
-    
+
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    
+
     UNASSIGN <val>.
     
     lv_assign = `OVIEWMODEL->EDIT->QUANTITY->*`.
@@ -149,9 +149,9 @@ CLASS ltcl_integration_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_message_box.
-    DATA lv_response TYPE string.
     DATA lo_data TYPE REF TO data.
     FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_response TYPE string.
     DATA lv_assign TYPE string.
 
     z2ui5_cl_test_integration_test=>sv_state = `TEST_MESSAGE_BOX`.
@@ -159,11 +159,11 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
-    
+
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    
+
 
     UNASSIGN <val>.
     
@@ -184,9 +184,9 @@ CLASS ltcl_integration_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_message_toast.
-    DATA lv_response TYPE string.
     DATA lo_data TYPE REF TO data.
     FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_response TYPE string.
     DATA lv_assign TYPE string.
 
     z2ui5_cl_test_integration_test=>sv_state = `TEST_MESSAGE_TOAST`.
@@ -194,11 +194,11 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
-    
+
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    
+
 
     UNASSIGN <val>.
     
@@ -213,9 +213,9 @@ CLASS ltcl_integration_test IMPLEMENTATION.
 
 
   METHOD test_xml_popup.
-    DATA lv_response TYPE string.
     DATA lo_data TYPE REF TO data.
     FIELD-SYMBOLS <val> TYPE any.
+    DATA lv_response TYPE string.
     DATA lv_assign TYPE string.
 
     z2ui5_cl_test_integration_test=>sv_state = `TEST_POPUP`.
@@ -223,11 +223,11 @@ CLASS ltcl_integration_test IMPLEMENTATION.
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
-    
+
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
-    
+
     UNASSIGN <val>.
     
     lv_assign = `PARAMS->S_POPUP->XML->*`.
@@ -241,188 +241,75 @@ CLASS ltcl_integration_test IMPLEMENTATION.
 
   METHOD test_landing_page.
 
-*    DATA(lv_response) = z2ui5_cl_fw_http_handler=>http_post(
-*       `{ "OLOCATION" : { "SEARCH" : ""}}` ).
-*
-*    DATA lo_data TYPE REF TO data.
-*    /ui2/cl_json=>deserialize( EXPORTING json = lv_response
-*                               CHANGING  data = lo_data ).
-*
-*    FIELD-SYMBOLS <val> TYPE any.
-*    UNASSIGN <val>.
-*    DATA(lv_assign) = `PARAMS->S_VIEW->XML->*`.
-*    ASSIGN lo_data->(lv_assign) TO <val>.
-*    <val> = shift_left( <val> ).
-*    IF <val> NS `Step 4`.
-*      cl_abap_unit_assert=>fail( msg  = 'landing page - not started when no app'
-*                                 quit = 5 ).
-*    ENDIF.
+
   ENDMETHOD.
 
   METHOD test_scroll_cursor.
-    DATA lv_response TYPE string.
     DATA lo_data TYPE REF TO data.
+    DATA lv_response TYPE string.
 
     z2ui5_cl_test_integration_test=>sv_state = `TEST_SCROLL_CURSOR`.
     
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
-    
+
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
   ENDMETHOD.
 
   METHOD test_startup_path.
-    DATA lv_response TYPE string.
     DATA lo_data TYPE REF TO data.
+    DATA lv_response TYPE string.
 
     z2ui5_cl_test_integration_test=>sv_state = `TEST_NAVIGATE`.
     
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
       `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
-    
+
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
   ENDMETHOD.
 
   METHOD test_navigate.
-    DATA lv_response TYPE string.
     DATA lo_data TYPE REF TO data.
+    DATA lv_response TYPE string.
 
     z2ui5_cl_test_integration_test=>sv_state = `TEST_NAVIGATE`.
     
     lv_response = z2ui5_cl_fw_http_handler=>http_post(
        `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
-    
+
     /ui2/cl_json=>deserialize( EXPORTING json = lv_response
                                CHANGING  data = lo_data ).
 
   ENDMETHOD.
 
 
-  METHOD test_app_change_value.
-
-*    DATA(lv_response) = z2ui5_cl_fw_http_handler=>http_post(  `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
-*
-*    DATA lo_data TYPE REF TO data.
-*    /ui2/cl_json=>deserialize(
-*      EXPORTING
-*         json            = lv_response
-*      CHANGING
-*        data             = lo_data ).
-*
-*    FIELD-SYMBOLS <val> TYPE any.
-*
-*    UNASSIGN <val>.
-*    DATA(lv_assign) = `ID->*`.
-*    ASSIGN lo_data->(lv_assign) TO <val>.
-*    IF <val> IS INITIAL.
-*      cl_abap_unit_assert=>fail( msg = 'id - initial value is initial' quit = 5 ).
-*    ENDIF.
-*    DATA(lv_id) = CONV string( <val> ).
-*
-*    DATA(lv_request) = `{ "VIEWNAME": "MAIN" , "EDIT":{"QUANTITY":"600"},"ID": "` && lv_id && `" ,"ARGUMENTS":[{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}]}`.
-*    lv_response = z2ui5_cl_fw_http_handler=>http_post( lv_request ).
-*
-*    CLEAR lo_data.
-*    /ui2/cl_json=>deserialize(
-*      EXPORTING
-*         json            = lv_response
-*      CHANGING
-*        data             = lo_data ).
-*
-*    UNASSIGN <val>.
-*    lv_assign = `OVIEWMODEL->EDIT->QUANTITY->*`.
-*    ASSIGN lo_data->(lv_assign) TO <val>.
-*
-*    cl_abap_unit_assert=>assert_equals(
-*        act                  =  <val>
-*        exp                  =  `600`
-*     ).
-
-*    IF <val> <> `600`.
-*      cl_abap_unit_assert=>fail( msg = 'data binding - frontend updated value wrong after roundtrip' quit = 5 ).
-*    ENDIF.
-
-
-  ENDMETHOD.
-
-  METHOD test_app_event.
-
-*    z2ui5_cl_test_integration_test=>sv_state = ``.
-*    DATA(lv_response) = z2ui5_cl_fw_http_handler=>http_post(  `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
-*
-*    DATA lo_data TYPE REF TO data.
-*    /ui2/cl_json=>deserialize(
-*      EXPORTING
-*         json            = lv_response
-*      CHANGING
-*        data             = lo_data ).
-*
-*    FIELD-SYMBOLS <val> TYPE any.
-*
-*    UNASSIGN <val>.
-*    DATA(lv_assign) = `ID->*`.
-*    ASSIGN lo_data->(lv_assign) TO <val>.
-*    cl_abap_unit_assert=>assert_not_initial( <val> ).
-*
-*
-*    DATA(lv_id) = CONV string( <val> ).
-*    DATA(lv_request) = `{"EDIT":{"QUANTITY":"700"},"ID": "` && lv_id && `" ,"ARGUMENTS": [{"EVENT":"BUTTON_POST","METHOD":"UPDATE"}], "VIEWNAME" : "MAIN"}`.
-*    lv_response = z2ui5_cl_fw_http_handler=>http_post( lv_request ).
-*
-*    CLEAR lo_data.
-*    /ui2/cl_json=>deserialize(
-*      EXPORTING
-*         json            = lv_response
-*      CHANGING
-*        data             = lo_data ).
-*
-*    UNASSIGN <val>.
-*    ASSIGN (`LO_DATA->PARAMS->*`) TO <val>.
-*    ASSIGN (`<VAL>-S_MSG_TOAST->*`) TO <val>.
-*    ASSIGN (`<VAL>-TEXT->*`) TO <val>.
-*    cl_abap_unit_assert=>assert_not_initial( <val> ).
-
-*    cl_abap_unit_assert=>assert_equals(
-*        act                  = <val>
-*        exp                  = `tomato 700 - send to the server` ).
-
-  ENDMETHOD.
-
   METHOD test_app_dump.
-    DATA lv_response TYPE string.
+
     DATA lo_data TYPE REF TO data.
     FIELD-SYMBOLS <val> TYPE any.
-    DATA lv_text TYPE string .
+    DATA lv_response TYPE string.
 
     z2ui5_cl_test_integration_test=>sv_state = `ERROR`.
     
     lv_response = z2ui5_cl_fw_http_handler=>http_post( `{ "OLOCATION" : { "SEARCH" : "app_start=z2ui5_cl_test_integration_test"}}` ).
 
-    
+
     /ui2/cl_json=>deserialize(
       EXPORTING
-         json            = lv_response
+         json = lv_response
       CHANGING
-        data             = lo_data ).
+        data  = lo_data ).
 
-    
-    
     UNASSIGN <val>.
     ASSIGN (`LO_DATA->PARAMS->S_VIEW->XML->*`) TO <val>.
     cl_abap_unit_assert=>assert_not_initial( <val> ).
-
-*    lv_text = <val>.
-*    lv_text = shift_left( lv_text ).
-*    IF lv_text NS `An exception with the type CX_SY_ZERODIVIDE was raised`.
-*      cl_abap_unit_assert=>fail( msg = 'system app error - not shown by exception' quit = 5 ).
-*    ENDIF.
 
   ENDMETHOD.
 

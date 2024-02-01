@@ -74,21 +74,22 @@ CLASS z2ui5_cl_popup_get_range IMPLEMENTATION.
     DATA item TYPE REF TO z2ui5_cl_xml_view.
     DATA grid TYPE REF TO z2ui5_cl_xml_view.
     DATA temp2 TYPE string_table.
-    lo_popup = z2ui5_cl_xml_view=>factory_popup( client ).
+    lo_popup = z2ui5_cl_xml_view=>factory_popup( ).
 
     lo_popup = lo_popup->dialog(
-    afterclose = client->_event( 'BUTTON_CANCEL' )
-    contentheight = `50%`
-    contentwidth = `50%`
-        title = 'Define Filter Conditons' ).
+      afterclose    = client->_event( 'BUTTON_CANCEL' )
+      contentheight = `50%`
+      contentwidth  = `50%`
+        title       = 'Define Filter Conditons' ).
 
     
-    vbox = lo_popup->vbox( height = `100%` justifycontent = 'SpaceBetween' ).
+    vbox = lo_popup->vbox( height         = `100%`
+                                 justifycontent = 'SpaceBetween' ).
 
     
     item = vbox->list(
            "   headertext = `Product`
-              nodata = `no conditions defined`
+              nodata         = `no conditions defined`
              items           = client->_bind_edit( mt_filter )
              selectionchange = client->_event( 'SELCHANGE' )
                 )->custom_list_item( ).
@@ -103,17 +104,26 @@ CLASS z2ui5_cl_popup_get_range IMPLEMENTATION.
                  selectedkey = `{OPTION}`
                  items       = client->_bind_local( z2ui5_cl_util_func=>filter_get_token_range_mapping( ) )
              )->item(
-                     key = '{N}'
+                     key  = '{N}'
                      text = '{N}'
              )->get_parent(
-             )->input( value = `{LOW}` submit = client->_event( 'BUTTON_CONFIRM' )
-             )->input( value = `{HIGH}`  visible = `{= ${OPTION} === 'BT' }` submit = client->_event( 'BUTTON_CONFIRM' )
-             )->button( icon = 'sap-icon://decline' type = `Transparent` press = client->_event( val = `POPUP_DELETE` t_arg = temp2 )
-             ).
+             )->input( value  = `{LOW}`
+                       submit = client->_event( 'BUTTON_CONFIRM' )
+             )->input( value   = `{HIGH}`
+                       visible = `{= ${OPTION} === 'BT' }`
+                       submit  = client->_event( 'BUTTON_CONFIRM' )
+             )->button( icon  = 'sap-icon://decline'
+                        type  = `Transparent`
+                        press = client->_event( val = `POPUP_DELETE` t_arg = temp2 ) ).
 
     lo_popup->footer( )->overflow_toolbar(
-        )->button( text = `Delete All` icon = 'sap-icon://delete' type = `Transparent` press = client->_event( val = `POPUP_DELETE_ALL` )
-        )->button( text = `Add Item`   icon = `sap-icon://add` press = client->_event( val = `POPUP_ADD` )
+        )->button( text  = `Delete All`
+                   icon  = 'sap-icon://delete'
+                   type  = `Transparent`
+                   press = client->_event( val = `POPUP_DELETE_ALL` )
+        )->button( text  = `Add Item`
+                   icon  = `sap-icon://add`
+                   press = client->_event( val = `POPUP_ADD` )
         )->toolbar_spacer(
        )->button(
             text  = 'Cancel'
@@ -121,8 +131,7 @@ CLASS z2ui5_cl_popup_get_range IMPLEMENTATION.
        )->button(
             text  = 'OK'
             press = client->_event( 'BUTTON_CONFIRM' )
-            type  = 'Emphasized'
-       ).
+            type  = 'Emphasized' ).
 
     client->popup_display( lo_popup->stringify( ) ).
 

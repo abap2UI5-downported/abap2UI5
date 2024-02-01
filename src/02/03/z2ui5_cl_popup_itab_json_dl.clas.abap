@@ -28,10 +28,10 @@ CLASS z2ui5_cl_popup_itab_json_dl DEFINITION
 
     DATA title TYPE string.
     DATA icon TYPE string.
-*    DATA question_text TYPE string.
+
     DATA button_text_confirm TYPE string.
     DATA button_text_cancel TYPE string.
-*    DATA check_initialized TYPE abap_bool.
+
     DATA check_result_confirmed TYPE abap_bool.
 
   PRIVATE SECTION.
@@ -46,10 +46,10 @@ CLASS Z2UI5_CL_POPUP_ITAB_JSON_DL IMPLEMENTATION.
 
     CREATE OBJECT r_result.
     r_result->mr_itab = z2ui5_cl_util_func=>conv_copy_ref_data( itab ).
-*    r_result->z2ui5_if_app~id = z2ui5_cl_util_func=>func_get_uuid_22( ).
+
     r_result->title = i_title.
     r_result->icon = i_icon.
-*    r_result->question_text = i_question_text.
+
     r_result->button_text_confirm = i_button_text_confirm.
     r_result->button_text_cancel = i_button_text_cancel.
 
@@ -64,10 +64,10 @@ CLASS Z2UI5_CL_POPUP_ITAB_JSON_DL IMPLEMENTATION.
 
 
   METHOD z2ui5_if_app~main.
+    DATA app TYPE REF TO object.
           DATA lv_link TYPE string.
           DATA lv_text TYPE string.
           DATA lx TYPE REF TO Z2UI5_CX_UTIL_ERROR.
-          DATA app TYPE REF TO object.
           DATA temp1 TYPE REF TO z2ui5_if_app.
         DATA x TYPE REF TO cx_root.
 
@@ -89,7 +89,7 @@ CLASS Z2UI5_CL_POPUP_ITAB_JSON_DL IMPLEMENTATION.
 
         ELSE.
 
-          
+
           CALL METHOD ('Z2UI5_DBT_CL_APP_03')=>('FACTORY_POPUP_BY_ITAB')
             EXPORTING
               itab   = mr_itab

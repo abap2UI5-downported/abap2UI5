@@ -12,7 +12,7 @@ CLASS z2ui5_cl_popup_pdf DEFINITION
         i_title               TYPE string DEFAULT `PDF Viewer`
         i_button_text_confirm TYPE string DEFAULT `OK`
         i_button_text_cancel  TYPE string DEFAULT `Cancel`
-        i_pdf type string
+        i_pdf TYPE string
       RETURNING
         VALUE(r_result)       TYPE REF TO z2ui5_cl_popup_pdf.
 
@@ -23,7 +23,7 @@ CLASS z2ui5_cl_popup_pdf DEFINITION
       END OF ty_s_result.
     DATA ms_result TYPE ty_s_result.
 
-    data mv_pdf type string.
+    DATA mv_pdf TYPE string.
 
     METHODS result
       RETURNING
@@ -82,17 +82,17 @@ CLASS Z2UI5_CL_POPUP_PDF IMPLEMENTATION.
     temp2-v = `99%`.
     INSERT temp2 INTO TABLE temp1.
     
-    popup = z2ui5_cl_xml_view=>factory_popup(  )->dialog(
-                  title = title
-                  icon = icon
-                  stretch = abap_true
+    popup = z2ui5_cl_xml_view=>factory_popup( )->dialog(
+                  title      = title
+                  icon       = icon
+                  stretch    = abap_true
                   afterclose = client->_event( 'BUTTON_CANCEL' )
               )->content(
                   )->vbox( 'sapUiMediumMargin'
-                  )->label( text  = question_text
+                  )->label( question_text
                   )->_generic(
-                        ns = `html`
-                        name = `iframe`
+                        ns     = `html`
+                        name   = `iframe`
                         t_prop = temp1
               )->get_parent( )->get_parent( )->get_parent(
               )->footer( )->overflow_toolbar(

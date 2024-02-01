@@ -146,12 +146,13 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     DATA temp2 TYPE string.
       DATA temp3 TYPE string.
     lv_name = `MO_APP->` && bind->name.
+    
     ASSIGN (lv_name) TO <attri>.
     IF sy-subrc <> 0.
       RETURN.
     ENDIF.
 
-    
+
     GET REFERENCE OF <attri> INTO lr_ref.
 
     IF mr_data <> lr_ref.
@@ -236,7 +237,7 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
       DATA lt_attri TYPE z2ui5_cl_fw_binding=>ty_t_attri.
     LOOP AT mt_attri REFERENCE INTO lr_bind
         WHERE type_kind = cl_abap_classdescr=>typekind_dref
-        AND   check_dissolved = abap_false.
+        AND check_dissolved = abap_false.
 
       
       lt_attri = get_t_attri_by_dref( lr_bind->name ).
@@ -267,12 +268,12 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
       DATA temp7 LIKE LINE OF lt_attri.
       DATA lr_attri LIKE REF TO temp7.
     LOOP AT mt_attri REFERENCE INTO lr_bind
-      WHERE type_kind = cl_abap_classdescr=>typekind_oref
-      AND   check_dissolved = abap_false
-      AND   depth < 5.
+        WHERE type_kind = cl_abap_classdescr=>typekind_oref
+        AND check_dissolved = abap_false
+        AND depth < 5.
 
       
-      lt_attri = get_t_attri_by_oref( val = lr_bind->name ).
+      lt_attri = get_t_attri_by_oref( lr_bind->name ).
       IF lt_attri IS INITIAL.
         CONTINUE.
       ENDIF.
@@ -295,8 +296,8 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
       DATA lt_attri TYPE z2ui5_cl_fw_binding=>ty_t_attri.
     LOOP AT mt_attri REFERENCE INTO lr_attri
         WHERE ( type_kind = cl_abap_classdescr=>typekind_struct1
-        OR    type_kind = cl_abap_classdescr=>typekind_struct2 )
-        AND   check_dissolved = abap_false.
+        OR type_kind = cl_abap_classdescr=>typekind_struct2 )
+        AND check_dissolved = abap_false.
 
       lr_attri->check_dissolved = abap_true.
       lr_attri->check_ready     = abap_true.
@@ -475,12 +476,13 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
       lv_element = lv_attri && lr_comp->name.
 
       IF lr_comp->as_include = abap_true
-      OR lr_comp->type->type_kind = cl_abap_classdescr=>typekind_struct2
-      OR lr_comp->type->type_kind = cl_abap_classdescr=>typekind_struct1.
+          OR lr_comp->type->type_kind = cl_abap_classdescr=>typekind_struct2
+          OR lr_comp->type->type_kind = cl_abap_classdescr=>typekind_struct1.
 
         IF lr_comp->name IS INITIAL.
           
-          lt_attri = me->get_t_attri_by_include( type = lr_comp->type attri = lv_attri ).
+          lt_attri = me->get_t_attri_by_include( type  = lr_comp->type
+                                                       attri = lv_attri ).
         ELSE.
           lt_attri = get_t_attri_by_struc( lv_element ).
         ENDIF.
@@ -490,7 +492,8 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
       ELSE.
 
         
-        lv_type_name = substring_after( val = lr_comp->type->absolute_name sub = '\TYPE=').
+        lv_type_name = substring_after( val = lr_comp->type->absolute_name
+                                              sub = '\TYPE=').
         IF z2ui5_cl_util_func=>boolean_check_by_name( lv_type_name ) IS NOT INITIAL.
 
           
@@ -523,11 +526,11 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     dissolve_init( ).
 
     IF mv_type = cs_bind_type-one_time.
-      result = bind_local(  ).
+      result = bind_local( ).
       RETURN.
     ENDIF.
 
-    result = search_binding(  ).
+    result = search_binding( ).
     IF result IS NOT INITIAL.
       RETURN.
     ENDIF.
@@ -547,7 +550,7 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     "step 7 / MO_APP->MO_OBJ->MR_STRUC->COMP
     dissolve_struc( ).
 
-    result = search_binding(  ).
+    result = search_binding( ).
     IF result IS NOT INITIAL.
       RETURN.
     ENDIF.
@@ -561,9 +564,18 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
 
   METHOD name_front_create.
 
-    result = replace( val = val    sub = `*` with = `_` occ = 0 ).
-    result = replace( val = result sub = `>` with = `_` occ = 0 ).
-    result = replace( val = result sub = `-` with = `_` occ = 0 ).
+    result = replace( val  = val
+                      sub  = `*`
+                      with = `_`
+                      occ  = 0 ).
+    result = replace( val  = result
+                      sub  = `>`
+                      with = `_`
+                      occ  = 0 ).
+    result = replace( val  = result
+                      sub  = `-`
+                      with = `_`
+                      occ  = 0 ).
 
     IF mv_pretty_name = abap_true.
       REPLACE ALL OCCURRENCES OF `_` IN result WITH ``.
@@ -596,19 +608,19 @@ set_attri_ready( temp18 ).
 
   METHOD set_attri_ready.
 
-    LOOP AT t_attri->*  REFERENCE INTO  result
-      WHERE check_ready = abap_false AND
+    LOOP AT t_attri->* REFERENCE INTO result
+        WHERE check_ready = abap_false AND
             bind_type <> cs_bind_type-one_time.
 
       CASE result->type_kind.
         WHEN cl_abap_classdescr=>typekind_iref
-          OR cl_abap_classdescr=>typekind_intf.
+            OR cl_abap_classdescr=>typekind_intf.
           DELETE t_attri->*.
 
         WHEN cl_abap_classdescr=>typekind_oref
-          OR cl_abap_classdescr=>typekind_dref
-          OR cl_abap_classdescr=>typekind_struct2
-          OR cl_abap_classdescr=>typekind_struct1.
+            OR cl_abap_classdescr=>typekind_dref
+            OR cl_abap_classdescr=>typekind_struct2
+            OR cl_abap_classdescr=>typekind_struct1.
 
         WHEN OTHERS.
           result->check_ready = abap_true.

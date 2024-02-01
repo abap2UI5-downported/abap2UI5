@@ -1,6 +1,6 @@
 CLASS ltcl_unit_test DEFINITION FINAL FOR TESTING
-  DURATION short
-  RISK LEVEL dangerous.
+  DURATION SHORT
+  RISK LEVEL DANGEROUS.
 
   PRIVATE SECTION.
     METHODS first_test FOR TESTING RAISING cx_static_check.
@@ -13,7 +13,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
   METHOD first_test.
 
     DATA lo_app TYPE REF TO z2ui5_cl_fw_app_startup.
-    lo_app = Z2UI5_CL_FW_APP_STARTUP=>factory( ) ##NEEDED.
+    lo_app = z2ui5_cl_fw_app_startup=>factory( ) ##NEEDED.
 
   ENDMETHOD.
 

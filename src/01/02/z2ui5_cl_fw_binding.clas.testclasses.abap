@@ -3,8 +3,8 @@ CLASS ltcl_test_dissolve DEFINITION DEFERRED.
 CLASS z2ui5_cl_fw_binding DEFINITION LOCAL FRIENDS ltcl_test_dissolve.
 
 CLASS ltcl_test_dissolve DEFINITION FINAL FOR TESTING
-  DURATION short
-  RISK LEVEL dangerous.
+  DURATION SHORT
+  RISK LEVEL DANGEROUS.
 
   PUBLIC SECTION.
 
@@ -383,7 +383,7 @@ CLASS z2ui5_cl_fw_binding DEFINITION LOCAL FRIENDS ltcl_test_bind.
 
 CLASS ltcl_test_bind DEFINITION FINAL FOR TESTING
   DURATION MEDIUM
-  RISK LEVEL dangerous.
+  RISK LEVEL DANGEROUS.
 
   PUBLIC SECTION.
 
@@ -448,8 +448,8 @@ DATA lv_result TYPE string.
 lv_result = lo_bind->bind( temp73 ).
 
     cl_abap_unit_assert=>assert_equals(
-     act                  = lv_result
-     exp                  = `/MV_VALUE` ).
+      act = lv_result
+      exp = `/MV_VALUE` ).
 
   ENDMETHOD.
 
@@ -481,8 +481,8 @@ DATA lv_result TYPE string.
 lv_result = lo_bind->bind( temp75 ).
 
     cl_abap_unit_assert=>assert_equals(
-     act                  = lv_result
-     exp                  = `/MS_STRUC_S_02_S_03_S_04_INPUT` ).
+      act = lv_result
+      exp = `/MS_STRUC_S_02_S_03_S_04_INPUT` ).
 
   ENDMETHOD.
 
@@ -519,8 +519,8 @@ DATA lv_result TYPE string.
 lv_result = lo_bind->bind( temp77 ).
 
     cl_abap_unit_assert=>assert_equals(
-     act                  = lv_result
-     exp                  = `/MR_VALUE___` ).
+      act = lv_result
+      exp = `/MR_VALUE___` ).
 
   ENDMETHOD.
 
@@ -556,8 +556,8 @@ DATA lv_result TYPE string.
 lv_result = lo_bind->bind( temp79 ).
 
     cl_abap_unit_assert=>assert_equals(
-     act                  = lv_result
-     exp                  = `/MR_STRUC__INPUT` ).
+      act = lv_result
+      exp = `/MR_STRUC__INPUT` ).
 
   ENDMETHOD.
 
@@ -589,8 +589,8 @@ DATA lv_result TYPE string.
 lv_result = lo_bind->bind( temp81 ).
 
     cl_abap_unit_assert=>assert_equals(
-     act                  = lv_result
-     exp                  = `/MO_APP__MV_VALUE` ).
+      act = lv_result
+      exp = `/MO_APP__MV_VALUE` ).
 
   ENDMETHOD.
 
@@ -622,26 +622,27 @@ DATA lv_result TYPE string.
 lv_result = lo_bind->bind( temp83 ).
 
     cl_abap_unit_assert=>assert_equals(
-     act                  = lv_result
-     exp                  = `/MO_APP__MS_STRUC_INPUT` ).
+      act = lv_result
+      exp = `/MO_APP__MS_STRUC_INPUT` ).
 
   ENDMETHOD.
 
   METHOD test_oref_dref_val.
 
     DATA lo_app TYPE REF TO ltcl_test_bind.
-    DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     FIELD-SYMBOLS <any> TYPE any.
+    DATA lo_bind TYPE REF TO z2ui5_cl_fw_binding.
     DATA temp84 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
     DATA ls_attri LIKE temp84.
     DATA temp85 LIKE REF TO ls_attri.
 DATA lv_result TYPE string.
     CREATE OBJECT lo_app TYPE ltcl_test_bind.
+    
     CREATE OBJECT lo_app->mo_app.
     
     CREATE OBJECT lo_bind TYPE z2ui5_cl_fw_binding.
 
-    
+
     CREATE DATA lo_app->mo_app->mr_value TYPE string.
     ASSIGN lo_app->mo_app->mr_value->* TO <any>.
 
@@ -660,8 +661,8 @@ DATA lv_result TYPE string.
 lv_result = lo_bind->bind( temp85 ).
 
     cl_abap_unit_assert=>assert_equals(
-     act                  = lv_result
-     exp                  = `/MO_APP__MR_VALUE___` ).
+      act = lv_result
+      exp = `/MO_APP__MR_VALUE___` ).
 
   ENDMETHOD.
 
@@ -688,8 +689,8 @@ lv_result = lo_bind->bind( temp85 ).
 ENDCLASS.
 
 CLASS ltcl_test_main_value DEFINITION FINAL FOR TESTING
-  DURATION medium
-  RISK LEVEL dangerous.
+  DURATION MEDIUM
+  RISK LEVEL DANGEROUS.
 
   PUBLIC SECTION.
 
@@ -725,11 +726,10 @@ CLASS ltcl_test_main_value IMPLEMENTATION.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
-        app      = lo_app
-        attri    = lt_attri
-        type     = z2ui5_cl_fw_binding=>cs_bind_type-one_way
-        data     = lo_app->mv_value
-    ).
+        app   = lo_app
+        attri = lt_attri
+        type  = z2ui5_cl_fw_binding=>cs_bind_type-one_way
+        data  = lo_app->mv_value ).
 
     
     lv_result = lo_bind->main( ).
@@ -757,18 +757,17 @@ CLASS ltcl_test_main_value IMPLEMENTATION.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
-        app      = lo_app
-        attri    = lt_attri
-        type     = z2ui5_cl_fw_binding=>cs_bind_type-two_way
-        data     = lo_app->mv_value
-    ).
+        app   = lo_app
+        attri = lt_attri
+        type  = z2ui5_cl_fw_binding=>cs_bind_type-two_way
+        data  = lo_app->mv_value ).
 
     
     lv_result = lo_bind->main( ).
 
     cl_abap_unit_assert=>assert_equals(
-        act                  = lv_result
-        exp                  = `/` && z2ui5_cl_fw_binding=>cv_model_edit_name && `/MV_VALUE` ).
+        act = lv_result
+        exp = `/` && z2ui5_cl_fw_binding=>cv_model_edit_name && `/MV_VALUE` ).
 
   ENDMETHOD.
 
@@ -791,11 +790,10 @@ CLASS ltcl_test_main_value IMPLEMENTATION.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
-        app      = lo_app
-        attri    = lt_attri
-        type     = z2ui5_cl_fw_binding=>cs_bind_type-one_way
-        data     = lo_app->mv_value
-    ).
+        app   = lo_app
+        attri = lt_attri
+        type  = z2ui5_cl_fw_binding=>cs_bind_type-one_way
+        data  = lo_app->mv_value ).
 
     lo_bind->main( ).
 
@@ -831,29 +829,27 @@ CLASS ltcl_test_main_value IMPLEMENTATION.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
-        app      = lo_app
-        attri    = lt_attri
-        type     = z2ui5_cl_fw_binding=>cs_bind_type-two_way
-        data     = lo_app->mv_value
-    ).
+        app   = lo_app
+        attri = lt_attri
+        type  = z2ui5_cl_fw_binding=>cs_bind_type-two_way
+        data  = lo_app->mv_value ).
 
     
     lv_result = lo_bind->main( ).
 
     
     lo_bind2 = z2ui5_cl_fw_binding=>factory(
-        app      = lo_app
-        attri    = lt_attri
-        type     = z2ui5_cl_fw_binding=>cs_bind_type-two_way
-        data     = lo_app->mv_value
-    ).
+        app   = lo_app
+        attri = lt_attri
+        type  = z2ui5_cl_fw_binding=>cs_bind_type-two_way
+        data  = lo_app->mv_value ).
 
     
     lv_result2 = lo_bind2->main( ).
 
     cl_abap_unit_assert=>assert_equals(
-        act                  = lv_result
-        exp                  = lv_result2 ).
+        act = lv_result
+        exp = lv_result2 ).
 
   ENDMETHOD.
 
@@ -874,21 +870,19 @@ CLASS ltcl_test_main_value IMPLEMENTATION.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
-        app      = lo_app
-        attri    = lt_attri
-        type     = z2ui5_cl_fw_binding=>cs_bind_type-one_way
-        data     = lo_app->mv_value
-    ).
+        app   = lo_app
+        attri = lt_attri
+        type  = z2ui5_cl_fw_binding=>cs_bind_type-one_way
+        data  = lo_app->mv_value ).
 
     lo_bind->main( ).
 
     
     lo_bind2 = z2ui5_cl_fw_binding=>factory(
-        app      = lo_app
-        attri    = lo_bind->mt_attri
-        type     = z2ui5_cl_fw_binding=>cs_bind_type-two_way
-        data     = lo_app->mv_value
-    ).
+        app   = lo_app
+        attri = lo_bind->mt_attri
+        type  = z2ui5_cl_fw_binding=>cs_bind_type-two_way
+        data  = lo_app->mv_value ).
 
     TRY.
 
@@ -903,8 +897,8 @@ CLASS ltcl_test_main_value IMPLEMENTATION.
 ENDCLASS.
 
 CLASS ltcl_test_main_structure DEFINITION FINAL FOR TESTING
-  DURATION medium
-  RISK LEVEL dangerous.
+  DURATION MEDIUM
+  RISK LEVEL DANGEROUS.
 
   PUBLIC SECTION.
 
@@ -954,18 +948,17 @@ CLASS ltcl_test_main_structure IMPLEMENTATION.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
-        app      = lo_app
-        attri    = lt_attri
-        type     = z2ui5_cl_fw_binding=>cs_bind_type-one_way
-        data     = lo_app->ms_struc-input
-    ).
+        app   = lo_app
+        attri = lt_attri
+        type  = z2ui5_cl_fw_binding=>cs_bind_type-one_way
+        data  = lo_app->ms_struc-input ).
 
     
     lv_result = lo_bind->main( ).
 
     cl_abap_unit_assert=>assert_equals(
-        act                  = lv_result
-        exp                  = `/MS_STRUC_INPUT` ).
+        act = lv_result
+        exp = `/MS_STRUC_INPUT` ).
 
   ENDMETHOD.
 
@@ -986,18 +979,17 @@ CLASS ltcl_test_main_structure IMPLEMENTATION.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
-        app      = lo_app
-        attri    = lt_attri
-        type     = z2ui5_cl_fw_binding=>cs_bind_type-one_way
-        data     = lo_app->ms_struc-s_02-input
-    ).
+        app   = lo_app
+        attri = lt_attri
+        type  = z2ui5_cl_fw_binding=>cs_bind_type-one_way
+        data  = lo_app->ms_struc-s_02-input ).
 
     
     lv_result = lo_bind->main( ).
 
     cl_abap_unit_assert=>assert_equals(
-        act                  = lv_result
-        exp                  = `/MS_STRUC_S_02_INPUT` ).
+        act = lv_result
+        exp = `/MS_STRUC_S_02_INPUT` ).
 
   ENDMETHOD.
 
@@ -1018,18 +1010,17 @@ CLASS ltcl_test_main_structure IMPLEMENTATION.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
-        app      = lo_app
-        attri    = lt_attri
-        type     = z2ui5_cl_fw_binding=>cs_bind_type-one_way
-        data     = lo_app->ms_struc-s_02-s_03-input
-    ).
+        app   = lo_app
+        attri = lt_attri
+        type  = z2ui5_cl_fw_binding=>cs_bind_type-one_way
+        data  = lo_app->ms_struc-s_02-s_03-input ).
 
     
     lv_result = lo_bind->main( ).
 
     cl_abap_unit_assert=>assert_equals(
-        act                  = lv_result
-        exp                  = `/MS_STRUC_S_02_S_03_INPUT` ).
+        act = lv_result
+        exp = `/MS_STRUC_S_02_S_03_INPUT` ).
 
   ENDMETHOD.
 
@@ -1053,11 +1044,10 @@ CLASS ltcl_test_main_structure IMPLEMENTATION.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
-        app      = lo_app
-        attri    = lt_attri
-        type     = z2ui5_cl_fw_binding=>cs_bind_type-one_way
-        data     = lo_app->ms_struc-s_02-s_03-s_04-input
-    ).
+        app   = lo_app
+        attri = lt_attri
+        type  = z2ui5_cl_fw_binding=>cs_bind_type-one_way
+        data  = lo_app->ms_struc-s_02-s_03-s_04-input ).
 
     
     lv_result = lo_bind->main( ).
@@ -1074,8 +1064,8 @@ CLASS ltcl_test_main_structure IMPLEMENTATION.
     ls_attri = temp3.
 
     cl_abap_unit_assert=>assert_equals(
-        act                  = lv_result
-        exp                  = `/` && ls_attri-name_front ).
+        act = lv_result
+        exp = `/` && ls_attri-name_front ).
 
   ENDMETHOD.
 
@@ -1083,16 +1073,11 @@ ENDCLASS.
 
 CLASS ltcl_test_main_data_ref DEFINITION FINAL FOR TESTING
   DURATION MEDIUM
-  RISK LEVEL dangerous.
+  RISK LEVEL DANGEROUS.
 
   PUBLIC SECTION.
 
-*    TYPES:
-*      BEGIN OF ty_s_01,
-*        input    TYPE string,
-*        input_02 TYPE string,
-*        input_03 TYPE string,
-*      END OF ty_s_01.
+
 
     DATA mr_value TYPE REF TO data ##NEEDED.
     DATA mr_struc TYPE REF TO data ##NEEDED.
@@ -1109,53 +1094,13 @@ CLASS ltcl_test_main_data_ref IMPLEMENTATION.
 
   METHOD test_one_way_value.
 
-*    DATA(lo_app) = NEW ltcl_test_main_data_ref( ).
-*
-*    FIELD-SYMBOLS <field> TYPE any.
-*    CREATE DATA lo_app->mr_value TYPE string.
-*    ASSIGN (`LO_APP->MR_VALUE->*`) TO <field>.
-*    <field> = `my value`.
-*
-*    DATA(lt_attri) = VALUE z2ui5_cl_fw_binding=>ty_t_attri( ).
-*
-*    DATA(lo_bind) = z2ui5_cl_fw_binding=>factory(
-*        app      = lo_app
-*        attri    = lt_attri
-*        type     = z2ui5_cl_fw_binding=>cs_bind_type-one_way
-*        data     = <field>
-*    ).
-*
-*    DATA(lv_result) = lo_bind->main( ).
-*
-*    cl_abap_unit_assert=>assert_equals(
-*        act                  = lv_result
-*        exp                  = `/MR_VALUE___` ).
+
 
   ENDMETHOD.
 
   METHOD test_one_way_struc.
 
-*    DATA(lo_app) = NEW ltcl_test_main_data_ref( ).
-*
-*    CREATE DATA lo_app->mr_struc TYPE ty_s_01.
-*    FIELD-SYMBOLS <field> TYPE any.
-*    ASSIGN (`LO_APP->MR_STRUC->INPUT`) TO <field>.
-*    <field> = `my value`.
-*
-*    DATA(lt_attri) = VALUE z2ui5_cl_fw_binding=>ty_t_attri( ).
-*
-*    DATA(lo_bind) = z2ui5_cl_fw_binding=>factory(
-*        app      = lo_app
-*        attri    = lt_attri
-*        type     = z2ui5_cl_fw_binding=>cs_bind_type-one_way
-*        data     = <field>
-*    ).
-*
-*    DATA(lv_result) = lo_bind->main( ).
-*
-*    cl_abap_unit_assert=>assert_equals(
-*        act                  = lv_result
-*        exp                  = `/MR_STRUC__INPUT` ).
+
 
   ENDMETHOD.
 
@@ -1163,7 +1108,7 @@ ENDCLASS.
 
 CLASS ltcl_test_main_object DEFINITION FINAL FOR TESTING
   DURATION MEDIUM
-  RISK LEVEL dangerous.
+  RISK LEVEL DANGEROUS.
 
   PUBLIC SECTION.
 
@@ -1208,18 +1153,17 @@ CLASS ltcl_test_main_object IMPLEMENTATION.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
-        app      = lo_app
-        attri    = lt_attri
-        type     = z2ui5_cl_fw_binding=>cs_bind_type-one_way
-        data     = lo_app->mo_obj->mv_value
-    ).
+        app   = lo_app
+        attri = lt_attri
+        type  = z2ui5_cl_fw_binding=>cs_bind_type-one_way
+        data  = lo_app->mo_obj->mv_value ).
 
     
     lv_result = lo_bind->main( ).
 
     cl_abap_unit_assert=>assert_equals(
-        act                  = lv_result
-        exp                  = `/MO_OBJ__MV_VALUE` ).
+        act = lv_result
+        exp = `/MO_OBJ__MV_VALUE` ).
 
   ENDMETHOD.
 
@@ -1241,18 +1185,17 @@ CLASS ltcl_test_main_object IMPLEMENTATION.
 
     
     lo_bind = z2ui5_cl_fw_binding=>factory(
-        app      = lo_app
-        attri    = lt_attri
-        type     = z2ui5_cl_fw_binding=>cs_bind_type-one_way
-        data     = lo_app->mo_obj->ms_struc-input
-    ).
+        app   = lo_app
+        attri = lt_attri
+        type  = z2ui5_cl_fw_binding=>cs_bind_type-one_way
+        data  = lo_app->mo_obj->ms_struc-input ).
 
     
     lv_result = lo_bind->main( ).
 
     cl_abap_unit_assert=>assert_equals(
-        act                  = lv_result
-        exp                  = `/MO_OBJ__MS_STRUC_INPUT` ).
+        act = lv_result
+        exp = `/MO_OBJ__MS_STRUC_INPUT` ).
 
   ENDMETHOD.
 
@@ -1280,7 +1223,7 @@ ENDCLASS.
 
 CLASS ltcl_test_main_object_ref DEFINITION FINAL FOR TESTING
   DURATION MEDIUM
-  RISK LEVEL dangerous.
+  RISK LEVEL DANGEROUS.
 
   PUBLIC SECTION.
 
@@ -1298,81 +1241,19 @@ CLASS ltcl_test_main_object_ref IMPLEMENTATION.
 
   METHOD test_one_way_value.
 
-*    DATA(lo_app) = NEW ltcl_test_main_object_ref( ).
-*    lo_app->mo_obj = NEW #( ).
-*    CREATE DATA lo_app->mo_obj->mr_value TYPE string.
-*
-*    FIELD-SYMBOLS <any> TYPE any.
-*    ASSIGN ('LO_APP->MO_OBJ->MR_VALUE->*') TO <any>.
-*    <any> = `my value`.
-*
-*    DATA(lt_attri) = VALUE z2ui5_cl_fw_binding=>ty_t_attri( ).
-*
-*    DATA(lo_bind) = z2ui5_cl_fw_binding=>factory(
-*        app      = lo_app
-*        attri    = lt_attri
-*        type     = z2ui5_cl_fw_binding=>cs_bind_type-one_way
-*        data     = <any>
-*    ).
-*
-*    DATA(lv_result) = lo_bind->main( ).
-*
-*    cl_abap_unit_assert=>assert_equals(
-*        act                  = lv_result
-*        exp                  = `/MO_OBJ__MR_VALUE___` ).
+
 
   ENDMETHOD.
 
   METHOD test_one_way_struc.
 
-*    DATA(lo_app) = NEW ltcl_test_main_object_ref( ).
-*    lo_app->mo_obj = NEW #( ).
-*    CREATE DATA lo_app->mo_obj->mr_struc TYPE ltcl_test_main_object_ref_app=>ty_s_01.
-*
-*    FIELD-SYMBOLS <any> TYPE any.
-*    ASSIGN ('LO_APP->MO_OBJ->MR_STRUC->INPUT') TO <any>.
-*
-*    <any> = `my value`.
-*
-*    DATA(lt_attri) = VALUE z2ui5_cl_fw_binding=>ty_t_attri( ).
-*
-*    DATA(lo_bind) = z2ui5_cl_fw_binding=>factory(
-*        app      = lo_app
-*        attri    = lt_attri
-*        type     = z2ui5_cl_fw_binding=>cs_bind_type-one_way
-*        data     = <any>
-*    ).
-*
-*    DATA(lv_result) = lo_bind->main( ).
-*
-*    cl_abap_unit_assert=>assert_equals(
-*        act                  = lv_result
-*        exp                  = `/MO_OBJ__MR_STRUC__INPUT` ).
+
 
   ENDMETHOD.
 
   METHOD test_one_way_tab.
 
-*    DATA(lo_app) = NEW ltcl_test_main_object_ref( ).
-*    lo_app->mo_obj = NEW #( ).
-*    CREATE DATA lo_app->mo_obj->mr_tab TYPE  ltcl_test_main_object_ref_app=>ty_t_01.
-*
-*    FIELD-SYMBOLS <any> TYPE  ltcl_test_main_object_ref_app=>ty_t_01.
-*    ASSIGN ('LO_APP->MO_OBJ->MR_TAB->*') TO <any>.
-*
-*    <any> = VALUE #( (  input = 'test' ) ).
-*
-*    DATA(lo_bind) = z2ui5_cl_fw_binding=>factory(
-*        app      = lo_app
-*        type     = z2ui5_cl_fw_binding=>cs_bind_type-one_way
-*        data     = <any>
-*    ).
-*
-*    DATA(lv_result) = lo_bind->main( ).
-*
-*    cl_abap_unit_assert=>assert_equals(
-*        act                  = lv_result
-*        exp                  = `/MO_OBJ__MR_TAB___` ).
+
 
   ENDMETHOD.
 

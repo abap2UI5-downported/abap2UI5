@@ -59,10 +59,10 @@ CLASS Z2UI5_CL_POPUP_LAYOUT IMPLEMENTATION.
     DATA ls_comp2 LIKE LINE OF lt_comp.
       DATA col TYPE REF TO z2ui5_cl_xml_view.
     DATA ls_comp LIKE LINE OF lt_comp.
-    popup = z2ui5_cl_xml_view=>factory_popup( client )->dialog(
+    popup = z2ui5_cl_xml_view=>factory_popup( )->dialog(
               afterclose = client->_event( 'BUTTON_CONFIRM' )
-              stretch = abap_true
-              title = 'Layout View'
+              stretch    = abap_true
+              title      = 'Layout View'
           )->content( ).
 
     
@@ -83,13 +83,13 @@ CLASS Z2UI5_CL_POPUP_LAYOUT IMPLEMENTATION.
     LOOP AT lt_comp INTO ls_comp2.
       
       col = columns->column( width = '8rem' )->header( ns = `` ).
-      col->text( text = ls_comp2-name  ).
+      col->text( text = ls_comp2-name ).
     ENDLOOP.
 
     
     LOOP AT lt_comp INTO ls_comp.
       IF ls_comp-name = 'NAME'.
-        cells->text(  `{` && ls_comp-name && `}` ).
+        cells->text( `{` && ls_comp-name && `}` ).
       ELSE.
         cells->checkbox( `{` && ls_comp-name && `}` ).
       ENDIF.
@@ -128,7 +128,8 @@ CLASS Z2UI5_CL_POPUP_LAYOUT IMPLEMENTATION.
         temp2-name = lr_comp->name.
         temp2-visible = abap_true.
         temp2-mergeduplicates = abap_false.
-        INSERT temp2 INTO TABLE r_result->ms_result-t_layout.
+        INSERT temp2
+          INTO TABLE r_result->ms_result-t_layout.
       ENDLOOP.
 
     ELSE.

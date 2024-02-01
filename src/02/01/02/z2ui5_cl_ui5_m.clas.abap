@@ -78,7 +78,7 @@ CLASS z2ui5_cl_ui5_m DEFINITION
                   PREFERRED PARAMETER text
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_ui5_m.
 
-  METHODS bar
+    METHODS bar
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_ui5_m .
 
@@ -87,7 +87,7 @@ CLASS z2ui5_cl_ui5_m DEFINITION
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_ui5_m .
 
-   METHODS panel
+    METHODS panel
       IMPORTING
         !expandable   TYPE clike OPTIONAL
         !expanded     TYPE clike OPTIONAL
@@ -283,13 +283,15 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
     temp2-n = `headerText`.
     temp2-v = headertext.
     INSERT temp2 INTO TABLE temp1.
-    result = _add( n = `Panel` ns = `sap.m`
+    result = _add( n   = `Panel`
+                   ns  = `sap.m`
                    t_p = temp1 )->_ns_m( ).
 
   ENDMETHOD.
 
   METHOD additionalcontent.
-    result = _add( ns = `sap.m` n = `additionalContent` )->_ns_m( ).
+    result = _add( ns = `sap.m`
+                   n  = `additionalContent` )->_ns_m( ).
   ENDMETHOD.
 
 
@@ -317,10 +319,12 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
     temp4-n = `title`.
     temp4-v = title.
     INSERT temp4 INTO TABLE temp3.
-    result = _add( ns = `sap.m`
-                    n  = `IllustratedMessage`
+    result = _add( ns      = `sap.m`
+                    n      = `IllustratedMessage`
                        t_p = temp3 )->_ns_m( ).
   ENDMETHOD.
+
+
   METHOD toolbarspacer.
     result = me.
     _add( n  = `ToolbarSpacer`
@@ -328,7 +332,8 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD overflowtoolbar.
-    result = _add( n = `OverflowToolbar`  ns = `sap.m` )->_ns_m( ).
+    result = _add( n  = `OverflowToolbar`
+                   ns = `sap.m` )->_ns_m( ).
   ENDMETHOD.
 
   METHOD overflowtoolbarbutton.
@@ -428,11 +433,13 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD suggestionitems.
-    result = _add( ns = `sap.m` n = `suggestionItems` )->_ns_m( ).
+    result = _add( ns = `sap.m`
+                   n  = `suggestionItems` )->_ns_m( ).
   ENDMETHOD.
 
   METHOD items.
-    result = _add( n = `items`  ns = `sap.m` )->_ns_m( ).
+    result = _add( n  = `items`
+                   ns = `sap.m` )->_ns_m( ).
   ENDMETHOD.
 
   METHOD flexbox.
@@ -503,8 +510,8 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
     temp14-n = `class`.
     temp14-v = class.
     INSERT temp14 INTO TABLE temp13.
-    _add( n   = `MessageStrip`
-          ns  = `sap.m`
+    _add( n       = `MessageStrip`
+          ns      = `sap.m`
               t_p = temp13 ).
   ENDMETHOD.
 
@@ -683,7 +690,8 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD layoutdata.
-    result = _add(  n = `layoutData` ns = `sap.m`
+    result = _add( n  = `layoutData`
+                   ns = `sap.m`
                        )->_ns_m( ).
   ENDMETHOD.
 
@@ -818,15 +826,18 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD shell.
-    result = _add( n = `Shell` ns = `sap.m` )->_ns_m( ).
+    result = _add( n  = `Shell`
+                   ns = `sap.m` )->_ns_m( ).
   ENDMETHOD.
 
   METHOD bar.
-    result = _add( n = `Bar` ns = `sap.m` )->_ns_m( ).
+    result = _add( n  = `Bar`
+                   ns = `sap.m` )->_ns_m( ).
   ENDMETHOD.
 
-    METHOD content_middle.
-    result = _add( n = `contentMiddle` ns = `sap.m` )->_ns_m( ).
+  METHOD content_middle.
+    result = _add( n  = `contentMiddle`
+                   ns = `sap.m` )->_ns_m( ).
   ENDMETHOD.
 
 

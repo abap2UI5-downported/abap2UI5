@@ -21,9 +21,9 @@ CLASS z2ui5_cl_popup_file_download DEFINITION
     DATA mv_type TYPE string VALUE `data:text/csv;base64,`.
     DATA mv_size TYPE string.
 
-*    DATA mv_path TYPE string.
+
     DATA mv_value TYPE string.
-*    DATA check_confirm_enabled TYPE abap_bool.
+
     DATA mv_check_download TYPE abap_bool.
 
     METHODS result
@@ -53,7 +53,7 @@ CLASS Z2UI5_CL_POPUP_FILE_DOWNLOAD IMPLEMENTATION.
 
     CREATE OBJECT r_result.
     r_result->title = i_title.
-*    r_result->icon = i_icon.
+
     r_result->question_text = i_text.
     r_result->button_text_confirm = i_button_text_confirm.
     r_result->button_text_cancel = i_button_text_cancel.
@@ -78,9 +78,9 @@ CLASS Z2UI5_CL_POPUP_FILE_DOWNLOAD IMPLEMENTATION.
       DATA lv_base64 TYPE xstring.
       DATA temp2 TYPE z2ui5_if_client=>ty_t_name_value.
       DATA temp3 LIKE LINE OF temp2.
-    popup = z2ui5_cl_xml_view=>factory_popup(  )->dialog(
-                  title = title
-                  icon = icon
+    popup = z2ui5_cl_xml_view=>factory_popup( )->dialog(
+                  title       = title
+                  icon        = icon
                    afterclose = client->_event( 'BUTTON_CANCEL' )
               )->content( ).
 
@@ -96,26 +96,31 @@ CLASS Z2UI5_CL_POPUP_FILE_DOWNLOAD IMPLEMENTATION.
       temp3-n = `hidden`.
       temp3-v = `hidden`.
       INSERT temp3 INTO TABLE temp2.
-      popup->_generic( ns = `html` name = `iframe` t_prop = temp2 ).
+      popup->_generic( ns     = `html`
+                       name   = `iframe`
+                       t_prop = temp2 ).
 
-      popup->_z2ui5( )->timer( finished = client->_event( `CALLBACK_DOWNLOAD` ) ).
+      popup->_z2ui5( )->timer( client->_event( `CALLBACK_DOWNLOAD` ) ).
 
     ENDIF.
 
     popup->vbox( 'sapUiMediumMargin'
-    )->label( `Name`
-    )->input( value = mv_name enabled = abap_false
-    )->label( `Type`
-     )->input( value = mv_type enabled = abap_false
-    )->label( `Size`
-     )->input( value = mv_size enabled = abap_false
-)->get_parent( )->get_parent(
-)->footer( )->overflow_toolbar(
-    )->toolbar_spacer(
-    )->button(
+      )->label( `Name`
+      )->input( value   = mv_name
+                enabled = abap_false
+      )->label( `Type`
+      )->input( value   = mv_type
+                enabled = abap_false
+      )->label( `Size`
+      )->input( value   = mv_size
+                enabled = abap_false
+      )->get_parent( )->get_parent(
+      )->footer( )->overflow_toolbar(
+      )->toolbar_spacer(
+      )->button(
         text  = button_text_cancel
         press = client->_event( 'BUTTON_CANCEL' )
-    )->button(
+      )->button(
         text  = `Download`
         press = client->_event( 'BUTTON_CONFIRM' )
         type  = 'Emphasized' ).

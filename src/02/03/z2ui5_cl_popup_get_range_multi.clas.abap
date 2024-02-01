@@ -54,7 +54,7 @@ CLASS z2ui5_cl_popup_get_range_multi IMPLEMENTATION.
     DATA temp1 TYPE string_table.
     DATA temp3 TYPE string_table.
     DATA temp5 TYPE string_table.
-    lo_popup = z2ui5_cl_xml_view=>factory_popup( client ).
+    lo_popup = z2ui5_cl_xml_view=>factory_popup( ).
     lo_popup = lo_popup->dialog( afterclose    = client->_event( 'BUTTON_CANCEL' )
                                  contentheight = `50%`
                                  contentwidth  = `50%`
@@ -78,7 +78,7 @@ CLASS z2ui5_cl_popup_get_range_multi IMPLEMENTATION.
     CLEAR temp1.
     INSERT `${NAME}` INTO TABLE temp1.
     grid->multi_input( tokens = `{T_TOKEN}`
-        enabled = abap_false
+        enabled               = abap_false
              valuehelprequest = client->_event( val = `LIST_OPEN` t_arg = temp1 )
             )->tokens(
                  )->token( key      = `{KEY}`
@@ -90,11 +90,15 @@ CLASS z2ui5_cl_popup_get_range_multi IMPLEMENTATION.
     
     CLEAR temp3.
     INSERT `${NAME}` INTO TABLE temp3.
-    grid->button( text = `Select` press = client->_event( val = `LIST_OPEN` t_arg = temp3 ) ).
+    grid->button( text  = `Select`
+                  press = client->_event( val = `LIST_OPEN` t_arg = temp3 ) ).
     
     CLEAR temp5.
     INSERT `${NAME}` INTO TABLE temp5.
-    grid->button( icon =  'sap-icon://delete' type = `Transparent` text = `Clear` press = client->_event( val = `LIST_DELETE` t_arg = temp5 ) ).
+    grid->button( icon  = 'sap-icon://delete'
+                  type  = `Transparent`
+                  text  = `Clear`
+                  press = client->_event( val = `LIST_DELETE` t_arg = temp5 ) ).
 
     lo_popup->footer( )->overflow_toolbar(
         )->button( text  = `Clear All`

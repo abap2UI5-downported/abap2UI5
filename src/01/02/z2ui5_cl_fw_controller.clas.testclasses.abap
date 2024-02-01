@@ -9,7 +9,7 @@ CLASS ltcl_unit_test DEFINITION FINAL FOR TESTING
 
 ENDCLASS.
 
-class z2ui5_cl_fw_controller definition local friends ltcl_unit_test.
+CLASS z2ui5_cl_fw_controller DEFINITION LOCAL FRIENDS ltcl_unit_test.
 
 CLASS ltcl_unit_test IMPLEMENTATION.
 
@@ -74,11 +74,10 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     CREATE OBJECT temp3 TYPE z2ui5_cl_fw_client EXPORTING HANDLER = lo_handler.
     temp7->main( temp3 ).
 
-
     
     lv_resp = lo_handler->request_end( ).
 
-    IF lv_resp NS `QUANTITY`.
+    IF lv_resp NS `NAME`.
       cl_abap_unit_assert=>fail( ).
     ENDIF.
 

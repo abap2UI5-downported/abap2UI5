@@ -39,7 +39,8 @@ CLASS z2ui5_cl_fw_app_error IMPLEMENTATION.
     DATA temp1 TYPE string_table.
     DATA temp2 TYPE string_table.
     DATA view TYPE REF TO z2ui5_cl_ui5_m.
-    lv_url = shift_left( val = client->get( )-s_config-origin && client->get( )-s_config-pathname sub = ` ` ).
+    lv_url = shift_left( val = client->get( )-s_config-origin && client->get( )-s_config-pathname
+                               sub = ` ` ).
     
     lv_url_app = lv_url && client->get( )-s_config-search.
 
