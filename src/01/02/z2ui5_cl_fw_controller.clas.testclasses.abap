@@ -60,7 +60,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     DATA lv_body TYPE string.
     DATA lo_handler TYPE REF TO z2ui5_cl_fw_controller.
     DATA temp7 TYPE REF TO z2ui5_if_app.
-    DATA temp3 TYPE REF TO z2ui5_cl_fw_client.
+    DATA temp2 TYPE REF TO z2ui5_cl_fw_client.
     DATA lv_resp TYPE string.
     lv_body = `{"OLOCATION":{"ORIGIN":"https://url.abap-web.us10.hana.ondemand.com","PATHNAME":"/sap/bc/http/sap/z_http_service_for_ui","SEARCH":"?sap-client=100&app_start=z2ui5_cl_app_hello_world","VERSION":"c` &&
           `om.sap.ui5.dist:sapui5-sdk-dist:1.115.0:war"}}`.
@@ -71,8 +71,8 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     
     temp7 ?= lo_handler->ms_db-app.
     
-    CREATE OBJECT temp3 TYPE z2ui5_cl_fw_client EXPORTING HANDLER = lo_handler.
-    temp7->main( temp3 ).
+    CREATE OBJECT temp2 TYPE z2ui5_cl_fw_client EXPORTING HANDLER = lo_handler.
+    temp7->main( temp2 ).
 
     
     lv_resp = lo_handler->request_end( ).

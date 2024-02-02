@@ -414,7 +414,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_UTIL_FUNC IMPLEMENTATION.
+CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
 
   METHOD app_get_url.
@@ -1005,7 +1005,7 @@ DATA lt_db TYPE temp5.
     DATA temp15 TYPE abap_component_tab.
     DATA temp8 LIKE LINE OF temp15.
     DATA lr_comp LIKE REF TO temp8.
-    data lr_row type ref to data.
+    DATA lr_row TYPE REF TO data.
       DATA lv_index TYPE i.
         FIELD-SYMBOLS <row> TYPE any.
         FIELD-SYMBOLS <field> TYPE any.
@@ -1541,6 +1541,10 @@ DATA lt_impl TYPE temp8.
 
   METHOD trans_json_2_any.
 
+*    IF z2ui5_cl_fw_controller=>cv_check_ajson = abap_true.
+*      ASSERT 1 = 0.
+*    ENDIF.
+
     DATA temp31 TYPE string.
     temp31 = val.
     /ui2/cl_json=>deserialize(
@@ -1555,6 +1559,10 @@ DATA lt_impl TYPE temp8.
 
   METHOD trans_json_by_any.
         DATA lo_json TYPE REF TO z2ui5_cl_util_ui2_json.
+
+*    IF z2ui5_cl_fw_controller=>cv_check_ajson = abap_true.
+*      ASSERT 1 = 0.
+*    ENDIF.
 
     CASE compress_mode.
 
@@ -1798,14 +1806,14 @@ DATA lt_impl TYPE temp8.
 
                       " support for ISO8601 => https://en.wikipedia.org/wiki/ISO_8601
                       REPLACE FIRST OCCURRENCE OF REGEX `^(\d{4})-(\d{2})-(\d{2})` IN <ls_data_ui5> WITH `$1$2$3`
-                        REPLACEMENT LENGTH match.             "#EC NOTEXT
+                        REPLACEMENT LENGTH match.           "#EC NOTEXT
                       <comp> = <ls_data_ui5>.
 
                     WHEN `\TYPE=T`.
 
                       " support for ISO8601 => https://en.wikipedia.org/wiki/ISO_8601
                       REPLACE FIRST OCCURRENCE OF REGEX `^(\d{2}):(\d{2}):(\d{2})` IN <ls_data_ui5> WITH `$1$2$3`
-                        REPLACEMENT LENGTH match.             "#EC NOTEXT
+                        REPLACEMENT LENGTH match.           "#EC NOTEXT
                       <comp> = <ls_data_ui5>.
 
                     WHEN OTHERS.

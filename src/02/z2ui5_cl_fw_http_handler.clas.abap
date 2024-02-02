@@ -6,9 +6,10 @@ CLASS z2ui5_cl_fw_http_handler DEFINITION
 
     CLASS-METHODS http_post
       IMPORTING
-        body          TYPE string
+        body           TYPE string
+        check_old_json TYPE abap_bool DEFAULT abap_true
       RETURNING
-        VALUE(result) TYPE string.
+        VALUE(result)  TYPE string.
 
     CLASS-METHODS http_get
       IMPORTING
@@ -46,6 +47,10 @@ CLASS z2ui5_cl_fw_http_handler IMPLEMENTATION.
 
 
   METHOD http_post.
+
+    DATA temp1 TYPE xsdboolean.
+    temp1 = boolc( check_old_json = abap_false ).
+    z2ui5_cl_fw_controller=>cv_check_ajson = temp1.
 
     result = z2ui5_cl_fw_controller=>main( body ).
 

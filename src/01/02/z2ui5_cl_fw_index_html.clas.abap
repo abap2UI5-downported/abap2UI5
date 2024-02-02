@@ -60,7 +60,7 @@ CLASS Z2UI5_CL_FW_INDEX_HTML IMPLEMENTATION.
       CLEAR temp1.
       
       temp2-n = `src`.
-      temp2-v = `https://sdk.openui5.org/resources/sap-ui-cachebuster/sap-ui-core.js`.
+      temp2-v = `https://ui5.sap.com/1.120.0/resources/sap-ui-core.js`.
       INSERT temp2 INTO TABLE temp1.
       temp2-n = `data-sap-ui-theme`.
       temp2-v = `sap_horizon`.
@@ -201,7 +201,6 @@ CLASS Z2UI5_CL_FW_INDEX_HTML IMPLEMENTATION.
                `            const oFragment = await Fragment.load({` && |\n|  &&
                `                definition: xml,` && |\n|  &&
                `                controller: sap.z2ui5.oControllerPopup,` && |\n|  &&
-               `                id: "popupId"` && |\n|  &&
                `            });` && |\n|  &&
                `            let oview_model = new JSONModel(sap.z2ui5.oResponse.OVIEWMODEL);` && |\n|  &&
                `            oview_model.setSizeLimit(sap.z2ui5.JSON_MODEL_LIMIT);` && |\n|  &&
@@ -218,7 +217,6 @@ CLASS Z2UI5_CL_FW_INDEX_HTML IMPLEMENTATION.
                `            const oFragment = await Fragment.load({` && |\n|  &&
                `                definition: xml,` && |\n|  &&
                `                controller: sap.z2ui5.oControllerPopover,` && |\n|  &&
-               `                id: "popoverId"` && |\n|  &&
                `            });` && |\n|  &&
                `            let oview_model = new JSONModel(sap.z2ui5.oResponse.OVIEWMODEL);` && |\n|  &&
                `            oview_model.setSizeLimit(sap.z2ui5.JSON_MODEL_LIMIT);` && |\n|  &&
@@ -376,11 +374,6 @@ CLASS Z2UI5_CL_FW_INDEX_HTML IMPLEMENTATION.
                `            case 'NEST2_NAV_CONTAINER_TO':` && |\n|  &&
                `                navCon = sap.z2ui5.oViewNest2.byId(args[1]);` && |\n|  &&
                `                navConTo = sap.z2ui5.oViewNest2.byId(args[2]);` && |\n|  &&
-               `                navCon.to(navConTo);` && |\n|  &&
-               `                break;` && |\n|  &&
-               `            case 'POPUP_NAV_CONTAINER_TO':` && |\n|  &&
-               `                navCon = Fragment.byId("popupId",args[1]);` && |\n|  &&
-               `                navConTo = Fragment.byId("popupId",args[2]);` && |\n|  &&
                `                navCon.to(navConTo);` && |\n|  &&
                `                break;` && |\n|  &&
                `            }` && |\n|  &&
