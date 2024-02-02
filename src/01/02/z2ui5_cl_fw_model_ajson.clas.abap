@@ -68,12 +68,12 @@ CLASS z2ui5_cl_fw_model_ajson IMPLEMENTATION.
         DATA ajson_result LIKE temp1.
         DATA temp2 LIKE LINE OF t_attri.
         DATA lr_attri LIKE REF TO temp2.
-              DATA temp3 TYPE REF TO z2ui5_if_ajson.
-              DATA ajson LIKE temp3.
+            DATA temp3 TYPE REF TO z2ui5_if_ajson.
+            DATA ajson LIKE temp3.
+            DATA temp4 TYPE REF TO z2ui5_if_ajson.
             DATA lv_name_back TYPE string.
             FIELD-SYMBOLS <attribute> TYPE any.
               DATA lv_path LIKE lr_attri->name_front.
-            DATA li_filter TYPE REF TO z2ui5_if_ajson_filter.
         DATA x TYPE REF TO cx_root.
     TRY.
 
@@ -88,20 +88,27 @@ CLASS z2ui5_cl_fw_model_ajson IMPLEMENTATION.
 
 
           "(1) set pretty mode
-          CASE lr_attri->pretty_name.
-
-            WHEN z2ui5_if_client=>cs_pretty_mode-none.
-              
-              temp3 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_upper_case( ) ).
-              
-              ajson = temp3.
-
-            WHEN z2ui5_if_client=>cs_pretty_mode-camel_case.
-              ajson  = z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_camel_case( iv_first_json_upper = abap_false ) ).
-
-            WHEN OTHERS.
-              ASSERT `` = `ERROR_UNKNOWN_PRETTY_MODE`.
-          ENDCASE.
+          IF lr_attri->custom_mapper IS BOUND.
+            
+            temp3 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = lr_attri->custom_mapper ).
+            
+            ajson = temp3.
+          ELSE.
+            
+            temp4 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_upper_case( ) ).
+            ajson = temp4.
+          ENDIF.
+*          CASE lr_attri->pretty_name.
+*
+*            WHEN z2ui5_if_client=>cs_pretty_mode-none.
+*              DATA(ajson) = CAST z2ui5_if_ajson( z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_upper_case( ) ) ).
+*
+*            WHEN z2ui5_if_client=>cs_pretty_mode-camel_case.
+*              ajson  = z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_camel_case( iv_first_json_upper = abap_false ) ).
+*
+*            WHEN OTHERS.
+*              ASSERT `` = `ERROR_UNKNOWN_PRETTY_MODE`.
+*          ENDCASE.
 
 
           "(2) read attribute of end-user app
@@ -138,25 +145,30 @@ CLASS z2ui5_cl_fw_model_ajson IMPLEMENTATION.
 
           "(4) set compress mode
           "todo performance - add and filter in a single loop
-          IF lr_attri->compress_custom IS NOT INITIAL.
-            
-            CREATE OBJECT li_filter TYPE (lr_attri->compress_custom).
-            ajson =  ajson->filter( li_filter ).
-
-          ELSEIF lr_attri->compress = z2ui5_if_client=>cs_compress_mode-full.
-            "obsolete - is this still needed? use compress_custom instead
-            ASSERT `` = `OBSOLET_COMPRESS_MODE_USE_CUSTOM_INSTEAD`.
-
-          ELSEIF lr_attri->compress = z2ui5_if_client=>cs_compress_mode-standard.
-            ajson =  ajson->filter( z2ui5_cl_ajson_filter_lib=>create_empty_filter( ) ).
-
-          ELSEIF lr_attri->compress = z2ui5_if_client=>cs_compress_mode-none.
-            "obsolete - is this still needed? use compress_custom instead
-            ASSERT `` = `OBSOLET_COMPRESS_MODE_USE_CUSTOM_INSTEAD`.
-
+          IF lr_attri->custom_filter IS BOUND.
+            ajson =  ajson->filter( lr_attri->custom_filter ).
           ELSE.
-            ASSERT `` = `ERROR_UNKNOW_COMPRESS_MODE`.
+            ajson =  ajson->filter( z2ui5_cl_ajson_filter_lib=>create_empty_filter( ) ).
           ENDIF.
+*          IF lr_attri->compress_custom IS NOT INITIAL.
+*            DATA li_filter TYPE REF TO z2ui5_if_ajson_filter.
+*            CREATE OBJECT li_filter TYPE (lr_attri->compress_custom).
+*            ajson =  ajson->filter( li_filter ).
+*
+*          ELSEIF lr_attri->compress = z2ui5_if_client=>cs_compress_mode-full.
+*            "obsolete - is this still needed? use compress_custom instead
+*            ASSERT `` = `OBSOLET_COMPRESS_MODE_USE_CUSTOM_INSTEAD`.
+*
+*          ELSEIF lr_attri->compress = z2ui5_if_client=>cs_compress_mode-standard.
+*            ajson =  ajson->filter( z2ui5_cl_ajson_filter_lib=>create_empty_filter( ) ).
+*
+*          ELSEIF lr_attri->compress = z2ui5_if_client=>cs_compress_mode-none.
+*            "obsolete - is this still needed? use compress_custom instead
+*            ASSERT `` = `OBSOLET_COMPRESS_MODE_USE_CUSTOM_INSTEAD`.
+*
+*          ELSE.
+*            ASSERT `` = `ERROR_UNKNOW_COMPRESS_MODE`.
+*          ENDIF.
 
 
           "(5) write into result
@@ -178,8 +190,8 @@ CLASS z2ui5_cl_fw_model_ajson IMPLEMENTATION.
 
 
     DATA ajson TYPE REF TO z2ui5_if_ajson.
-    DATA temp4 LIKE LINE OF t_attri.
-    DATA lr_attri LIKE REF TO temp4.
+    DATA temp5 LIKE LINE OF t_attri.
+    DATA lr_attri LIKE REF TO temp5.
           DATA lv_name_back TYPE string.
           FIELD-SYMBOLS <backend> TYPE any.
           DATA ajson_val TYPE REF TO z2ui5_if_ajson.
