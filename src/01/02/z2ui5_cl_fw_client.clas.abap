@@ -344,8 +344,7 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
 
       
       lv_name_struc = z2ui5_if_client~_bind_edit( val         = struc
-                                                        path        = abap_true
-                                                        pretty_mode = pretty_mode ).
+                                                        path        = abap_true ).
       result = bind_struc_comp(
             iv_name = lv_name_struc
             i_struc = struc
@@ -362,9 +361,6 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
                         check_attri = mo_handler->ms_db-check_attri
                         type        = z2ui5_cl_fw_binding=>cs_bind_type-one_way
                         data        = val
-                        pretty_name = pretty_mode
-                        compress    = compress_mode
-*                        compress_custom  = compress_custom
                         custom_mapper  = custom_mapper
                         custom_filter   = custom_filter
                          ).
@@ -422,8 +418,7 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
 
       
       lv_name = z2ui5_if_client~_bind_edit( val         = tab
-                                                  path        = abap_true
-                                                  pretty_mode = pretty_mode ).
+                                                  path        = abap_true ).
       result = bind_tab_cell(
             iv_name     = lv_name
             i_tab_index = tab_index
@@ -438,8 +433,7 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
 
       
       lv_name_struc = z2ui5_if_client~_bind_edit( val         = struc
-                                                        path        = abap_true
-                                                        pretty_mode = pretty_mode ).
+                                                        path        = abap_true ).
       result = bind_struc_comp(
             iv_name = lv_name_struc
             i_struc = struc
@@ -457,9 +451,6 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
                         type        = z2ui5_cl_fw_binding=>cs_bind_type-two_way
                         data        = val
                         view        = view
-                        pretty_name = pretty_mode
-                        compress    = compress_mode
-*                        compress_custom = compress_custom
                         custom_mapper  = custom_mapper
                         custom_filter   = custom_filter
                         ).
@@ -484,10 +475,7 @@ CLASS z2ui5_cl_fw_client IMPLEMENTATION.
                         check_attri = mo_handler->ms_db-check_attri
                         type        = z2ui5_cl_fw_binding=>cs_bind_type-one_time
                         data        = val
-                        pretty_name = pretty_mode
-                        compress    = compress_mode
-*                        compress_custom = compress_custom
-                         custom_mapper  = custom_mapper
+                        custom_mapper  = custom_mapper
                         custom_filter   = custom_filter
                         ).
 

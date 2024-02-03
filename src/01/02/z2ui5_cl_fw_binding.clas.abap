@@ -33,7 +33,7 @@ CLASS z2ui5_cl_fw_binding DEFINITION
         depth           TYPE i,
         ajson_local     TYPE REF TO z2ui5_if_ajson,
         custom_filter   TYPE REF TO z2ui5_if_ajson_filter,
-        custom_mapper  TYPE REF TO z2ui5_if_ajson_mapping,
+        custom_mapper   TYPE REF TO z2ui5_if_ajson_mapping,
       END OF ty_s_attri.
     TYPES ty_t_attri TYPE SORTED TABLE OF ty_s_attri WITH UNIQUE KEY name.
 
@@ -45,9 +45,6 @@ CLASS z2ui5_cl_fw_binding DEFINITION
         data            TYPE data           OPTIONAL
         check_attri     TYPE data           OPTIONAL
         view            TYPE clike          OPTIONAL
-        pretty_name     TYPE clike          OPTIONAL
-        compress        TYPE clike          OPTIONAL
-*        compress_custom TYPE clike          OPTIONAL
         custom_filter   TYPE REF TO z2ui5_if_ajson_filter  OPTIONAL
         custom_mapper   TYPE REF TO z2ui5_if_ajson_mapping OPTIONAL
       RETURNING
@@ -132,12 +129,6 @@ CLASS z2ui5_cl_fw_binding DEFINITION
       RETURNING
         VALUE(result) TYPE REF TO ty_s_attri.
 
-    METHODS name_front_create
-      IMPORTING
-        val           TYPE clike
-      RETURNING
-        VALUE(result) TYPE string.
-
   PRIVATE SECTION.
 
 ENDCLASS.
@@ -153,9 +144,7 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     DATA lv_name TYPE string.
     DATA lr_ref TYPE REF TO data.
       DATA temp1 TYPE string.
-      DATA temp2 TYPE string.
-        DATA temp3 TYPE string.
-      DATA temp4 TYPE string.
+    DATA temp2 TYPE string.
     lv_name = `MO_APP->` && bind->name.
     
     ASSIGN (lv_name) TO <attri>.
@@ -198,41 +187,16 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     bind->viewname    = mv_view.
     bind->custom_filter = mo_custom_filter.
     bind->custom_mapper = mo_custom_mapper.
-*    bind->compress_custom    = mv_compress_custom.
 
-    IF z2ui5_cl_fw_controller=>cv_check_ajson = abap_false.
-
-      bind->name_front  = name_front_create( bind->name ).
-      
-      IF mv_type = cs_bind_type-two_way.
-        temp2 = `/` && cv_model_edit_name && `/`.
-      ELSE.
-        temp2 = `/`.
-      ENDIF.
-      result = temp2 && bind->name_front.
-      IF strlen( result ) > 30.
-        bind->name_front = z2ui5_cl_util_func=>uuid_get_c22( ).
-        
-        IF mv_type = cs_bind_type-two_way.
-          temp3 = `/` && cv_model_edit_name && `/`.
-        ELSE.
-          temp3 = `/`.
-        ENDIF.
-        result = temp3 && bind->name_front.
-      ENDIF.
-
+    bind->name_front  = replace( val = bind->name sub = `-` with = `/` ).
+    bind->name_front = replace( val = bind->name_front sub = `>` with = `` ).
+    
+    IF mv_type = cs_bind_type-two_way.
+      temp2 = cv_model_edit_name && `/`.
     ELSE.
-
-      bind->name_front  = replace( val = bind->name sub = `-` with = `/` ).
-      bind->name_front = replace( val = bind->name_front sub = `>` with = `` ).
-      
-      IF mv_type = cs_bind_type-two_way.
-        temp4 = cv_model_edit_name && `/`.
-      ELSE.
-        CLEAR temp4.
-      ENDIF.
-      result = `/` && temp4 && bind->name_front.
+      CLEAR temp2.
     ENDIF.
+    result = `/` && temp2 && bind->name_front.
 
   ENDMETHOD.
 
@@ -240,10 +204,10 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
   METHOD bind_local.
         FIELD-SYMBOLS <any> TYPE any.
         DATA lv_id TYPE string.
-          DATA temp5 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
-              DATA temp6 TYPE REF TO z2ui5_if_ajson.
-              DATA ajson LIKE temp6.
-          DATA temp7 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
+          DATA temp3 TYPE REF TO z2ui5_if_ajson.
+          DATA ajson LIKE temp3.
+          DATA temp4 TYPE REF TO z2ui5_if_ajson.
+        DATA temp5 TYPE z2ui5_cl_fw_binding=>ty_s_attri.
         DATA x TYPE REF TO cx_root.
     TRY.
 
@@ -252,46 +216,33 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
         
         lv_id = to_upper( z2ui5_cl_util_func=>uuid_get_c22( ) ).
 
-        IF z2ui5_cl_fw_controller=>cv_check_ajson = abap_false.
-
+        IF mo_custom_mapper IS BOUND.
           
-          CLEAR temp5.
-          temp5-name = lv_id.
-          temp5-data_stringify = z2ui5_cl_util_func=>trans_json_by_any( any = mr_data compress_mode = me->mv_compress ).
-          temp5-bind_type = cs_bind_type-one_time.
-          INSERT temp5
-                 INTO TABLE mt_attri.
-
+          temp3 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = mo_custom_mapper ).
+          
+          ajson = temp3.
         ELSE.
-
-          "(1) set pretty mode
-          CASE mv_pretty_name.
-
-            WHEN z2ui5_if_client=>cs_pretty_mode-none.
-              
-              temp6 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_upper_case( ) ).
-              
-              ajson = temp6.
-
-            WHEN z2ui5_if_client=>cs_pretty_mode-camel_case.
-              ajson  = z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_camel_case( iv_first_json_upper = abap_false ) ).
-
-            WHEN OTHERS.
-              ASSERT `` = `ERROR_UNKNOWN_PRETTY_MODE`.
-          ENDCASE.
-
           
-          CLEAR temp7.
-          temp7-name_front = lv_id.
-          temp7-name = lv_id.
-          temp7-ajson_local = ajson->set( iv_path = `/` iv_val = <any> ).
-          temp7-bind_type = cs_bind_type-one_time.
-          temp7-pretty_name = mv_pretty_name.
-          temp7-compress = mv_compress.
-          INSERT temp7
-                    INTO TABLE mt_attri.
-
+          temp4 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_upper_case( ) ).
+          ajson = temp4.
         ENDIF.
+
+        IF mo_custom_filter IS BOUND.
+          ajson = ajson->filter( mo_custom_filter ).
+        ELSE.
+          ajson =  ajson->filter( z2ui5_cl_ajson_filter_lib=>create_empty_filter( ) ).
+        ENDIF.
+
+        
+        CLEAR temp5.
+        temp5-name_front = lv_id.
+        temp5-name = lv_id.
+        temp5-ajson_local = ajson->set( iv_path = `/` iv_val = <any> ).
+        temp5-bind_type = cs_bind_type-one_time.
+        temp5-pretty_name = mv_pretty_name.
+        temp5-compress = mv_compress.
+        INSERT temp5
+                  INTO TABLE mt_attri.
 
         result = |/{ lv_id }|.
 
@@ -304,8 +255,8 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
 
   METHOD dissolve_dref.
 
-    DATA temp8 LIKE LINE OF mt_attri.
-    DATA lr_bind LIKE REF TO temp8.
+    DATA temp6 LIKE LINE OF mt_attri.
+    DATA lr_bind LIKE REF TO temp6.
       DATA lt_attri TYPE z2ui5_cl_fw_binding=>ty_t_attri.
     LOOP AT mt_attri REFERENCE INTO lr_bind
         WHERE type_kind = cl_abap_classdescr=>typekind_dref
@@ -334,11 +285,11 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
 
   METHOD dissolve_oref.
 
-    DATA temp9 LIKE LINE OF mt_attri.
-    DATA lr_bind LIKE REF TO temp9.
+    DATA temp7 LIKE LINE OF mt_attri.
+    DATA lr_bind LIKE REF TO temp7.
       DATA lt_attri TYPE z2ui5_cl_fw_binding=>ty_t_attri.
-      DATA temp10 LIKE LINE OF lt_attri.
-      DATA lr_attri LIKE REF TO temp10.
+      DATA temp8 LIKE LINE OF lt_attri.
+      DATA lr_attri LIKE REF TO temp8.
     LOOP AT mt_attri REFERENCE INTO lr_bind
         WHERE type_kind = cl_abap_classdescr=>typekind_oref
         AND check_dissolved = abap_false
@@ -363,8 +314,8 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
 
   METHOD dissolve_struc.
 
-    DATA temp11 LIKE LINE OF mt_attri.
-    DATA lr_attri LIKE REF TO temp11.
+    DATA temp9 LIKE LINE OF mt_attri.
+    DATA lr_attri LIKE REF TO temp9.
       DATA lt_attri TYPE z2ui5_cl_fw_binding=>ty_t_attri.
     LOOP AT mt_attri REFERENCE INTO lr_attri
         WHERE ( type_kind = cl_abap_classdescr=>typekind_struct1
@@ -389,8 +340,6 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     r_result->mv_type = type.
     r_result->mv_check_attri = check_attri.
     r_result->mv_view = view.
-    r_result->mv_pretty_name = pretty_name.
-    r_result->mv_compress = compress.
     r_result->mo_custom_filter = custom_filter.
     r_result->mo_custom_mapper = custom_mapper.
 
@@ -409,8 +358,8 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     DATA lv_name TYPE string.
     FIELD-SYMBOLS <data> TYPE any.
     DATA lo_descr TYPE REF TO cl_abap_typedescr.
-    DATA temp12 TYPE ty_s_attri.
-    DATA ls_new_bind LIKE temp12.
+    DATA temp10 TYPE ty_s_attri.
+    DATA ls_new_bind LIKE temp10.
     lv_name = `MO_APP->` && val && `->*`.
     
     ASSIGN (lv_name) TO <data>.
@@ -422,14 +371,14 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     lo_descr = cl_abap_datadescr=>describe_by_data( <data> ).
 
     
-    CLEAR temp12.
-    temp12-name = val && `->*`.
-    temp12-type_kind = lo_descr->type_kind.
-    temp12-type = lo_descr->get_relative_name( ).
-    temp12-check_ready = abap_true.
-    temp12-check_temp = abap_true.
+    CLEAR temp10.
+    temp10-name = val && `->*`.
+    temp10-type_kind = lo_descr->type_kind.
+    temp10-type = lo_descr->get_relative_name( ).
+    temp10-check_ready = abap_true.
+    temp10-check_temp = abap_true.
     
-    ls_new_bind = temp12.
+    ls_new_bind = temp10.
 
     INSERT ls_new_bind INTO TABLE result.
 
@@ -438,16 +387,16 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
 
   METHOD get_t_attri_by_include.
 
-    DATA temp13 TYPE REF TO cl_abap_structdescr.
-    DATA sdescr LIKE temp13.
-    DATA temp14 LIKE LINE OF sdescr->components.
-    DATA lr_comp LIKE REF TO temp14.
+    DATA temp11 TYPE REF TO cl_abap_structdescr.
+    DATA sdescr LIKE temp11.
+    DATA temp12 LIKE LINE OF sdescr->components.
+    DATA lr_comp LIKE REF TO temp12.
       DATA lv_element TYPE string.
-      DATA temp15 TYPE ty_s_attri.
-      DATA ls_attri LIKE temp15.
-    temp13 ?= cl_abap_typedescr=>describe_by_name( type->absolute_name ).
+      DATA temp13 TYPE ty_s_attri.
+      DATA ls_attri LIKE temp13.
+    temp11 ?= cl_abap_typedescr=>describe_by_name( type->absolute_name ).
     
-    sdescr = temp13.
+    sdescr = temp11.
 
     
     
@@ -457,11 +406,11 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
       lv_element = attri && lr_comp->name.
 
       
-      CLEAR temp15.
-      temp15-name = lv_element.
-      temp15-type_kind = lr_comp->type_kind.
+      CLEAR temp13.
+      temp13-name = lv_element.
+      temp13-type_kind = lr_comp->type_kind.
       
-      ls_attri = temp15.
+      ls_attri = temp13.
       INSERT ls_attri INTO TABLE result.
 
     ENDLOOP.
@@ -472,20 +421,20 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
 
   METHOD get_t_attri_by_oref.
 
-    DATA temp16 TYPE string.
-    DATA lv_name LIKE temp16.
+    DATA temp14 TYPE string.
+    DATA lv_name LIKE temp14.
     FIELD-SYMBOLS <obj> TYPE any.
     DATA lt_attri2 TYPE abap_attrdescr_tab.
     DATA ls_attri2 LIKE LINE OF lt_attri2.
-      DATA temp17 TYPE ty_s_attri.
-      DATA ls_attri LIKE temp17.
+      DATA temp15 TYPE ty_s_attri.
+      DATA ls_attri LIKE temp15.
     IF val IS NOT INITIAL.
-      temp16 = `MO_APP` && `->` && val.
+      temp14 = `MO_APP` && `->` && val.
     ELSE.
-      temp16 = `MO_APP`.
+      temp14 = `MO_APP`.
     ENDIF.
     
-    lv_name = temp16.
+    lv_name = temp14.
     
     ASSIGN (lv_name) TO <obj>.
     IF sy-subrc <> 0 OR <obj> IS NOT BOUND.
@@ -500,10 +449,10 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
         WHERE visibility = cl_abap_classdescr=>public
            AND is_interface = abap_false.
       
-      CLEAR temp17.
-      MOVE-CORRESPONDING ls_attri2 TO temp17.
+      CLEAR temp15.
+      MOVE-CORRESPONDING ls_attri2 TO temp15.
       
-      ls_attri = temp17.
+      ls_attri = temp15.
       IF val IS NOT INITIAL.
         ls_attri-name = val && `->` && ls_attri-name.
         ls_attri-check_temp = abap_true.
@@ -521,14 +470,14 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
     DATA temp1 TYPE xsdboolean.
     DATA lt_comp TYPE abap_component_tab.
     DATA lv_attri TYPE string.
-    DATA temp18 LIKE LINE OF lt_comp.
-    DATA lr_comp LIKE REF TO temp18.
+    DATA temp16 LIKE LINE OF lt_comp.
+    DATA lr_comp LIKE REF TO temp16.
       DATA lv_element TYPE string.
           DATA lt_attri TYPE z2ui5_cl_fw_binding=>ty_t_attri.
         DATA lv_type_name TYPE string.
-          DATA temp19 TYPE ty_s_attri.
-          DATA ls_attri LIKE temp19.
-          DATA temp20 TYPE ty_s_attri.
+          DATA temp17 TYPE ty_s_attri.
+          DATA ls_attri LIKE temp17.
+          DATA temp18 TYPE ty_s_attri.
     lv_name = `MO_APP->` && val.
     
     ASSIGN (lv_name) TO <attribute>.
@@ -570,20 +519,20 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
         IF z2ui5_cl_util_func=>boolean_check_by_name( lv_type_name ) IS NOT INITIAL.
 
           
-          CLEAR temp19.
-          temp19-name = lv_element.
-          temp19-type = 'ABAP_BOOL'.
-          temp19-type_kind = lr_comp->type->type_kind.
+          CLEAR temp17.
+          temp17-name = lv_element.
+          temp17-type = 'ABAP_BOOL'.
+          temp17-type_kind = lr_comp->type->type_kind.
           
-          ls_attri = temp19.
+          ls_attri = temp17.
 
         ELSE.
 
           
-          CLEAR temp20.
-          temp20-name = lv_element.
-          temp20-type_kind = lr_comp->type->type_kind.
-          ls_attri = temp20.
+          CLEAR temp18.
+          temp18-name = lv_element.
+          temp18-type_kind = lr_comp->type->type_kind.
+          ls_attri = temp18.
 
         ENDIF.
         INSERT ls_attri INTO TABLE result.
@@ -634,36 +583,13 @@ CLASS z2ui5_cl_fw_binding IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-  METHOD name_front_create.
-
-    result = replace( val  = val
-                      sub  = `*`
-                      with = `_`
-                      occ  = 0 ).
-    result = replace( val  = result
-                      sub  = `>`
-                      with = `_`
-                      occ  = 0 ).
-    result = replace( val  = result
-                      sub  = `-`
-                      with = `_`
-                      occ  = 0 ).
-
-    IF mv_pretty_name = abap_true.
-      REPLACE ALL OCCURRENCES OF `_` IN result WITH ``.
-    ENDIF.
-
-  ENDMETHOD.
-
-
   METHOD search_binding.
 
-    DATA temp21 LIKE REF TO mt_attri.
-    DATA temp22 LIKE LINE OF mt_attri.
-    DATA lr_bind LIKE REF TO temp22.
-    GET REFERENCE OF mt_attri INTO temp21.
-set_attri_ready( temp21 ).
+    DATA temp19 LIKE REF TO mt_attri.
+    DATA temp20 LIKE LINE OF mt_attri.
+    DATA lr_bind LIKE REF TO temp20.
+    GET REFERENCE OF mt_attri INTO temp19.
+set_attri_ready( temp19 ).
 
     
     

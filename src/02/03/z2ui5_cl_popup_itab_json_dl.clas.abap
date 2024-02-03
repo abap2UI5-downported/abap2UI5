@@ -67,7 +67,7 @@ CLASS Z2UI5_CL_POPUP_ITAB_JSON_DL IMPLEMENTATION.
     DATA app TYPE REF TO object.
           DATA lv_link TYPE string.
           DATA lv_text TYPE string.
-          DATA lx TYPE REF TO Z2UI5_CX_UTIL_ERROR.
+          DATA lx TYPE REF TO z2ui5_cx_util_error.
           DATA temp1 TYPE REF TO z2ui5_if_app.
         DATA x TYPE REF TO cx_root.
 

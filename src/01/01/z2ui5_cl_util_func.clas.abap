@@ -159,11 +159,9 @@ CLASS z2ui5_cl_util_func DEFINITION
 
     CLASS-METHODS trans_json_by_any
       IMPORTING
-        !any           TYPE any
-        !pretty_mode   TYPE clike DEFAULT z2ui5_if_client=>cs_pretty_mode-none
-        !compress_mode TYPE clike DEFAULT z2ui5_if_client=>cs_compress_mode-standard
+        !any          TYPE any
       RETURNING
-        VALUE(result)  TYPE string.
+        VALUE(result) TYPE string.
 
     CLASS-METHODS trans_xml_2_any
       IMPORTING
@@ -1540,55 +1538,36 @@ DATA lt_impl TYPE temp8.
 
 
   METHOD trans_json_2_any.
+        DATA x TYPE REF TO z2ui5_cx_ajson_error.
+    TRY.
 
-*    IF z2ui5_cl_fw_controller=>cv_check_ajson = abap_true.
-*      ASSERT 1 = 0.
-*    ENDIF.
+          z2ui5_cl_ajson=>parse( val )->to_abap(
+            IMPORTING
+              ev_container = data ).
 
-    DATA temp31 TYPE string.
-    temp31 = val.
-    /ui2/cl_json=>deserialize(
-        EXPORTING
-            json         = temp31
-            assoc_arrays = abap_true
-        CHANGING
-            data         = data ).
-
+        
+      CATCH z2ui5_cx_ajson_error INTO x.
+        ASSERT x IS NOT BOUND.
+    ENDTRY.
   ENDMETHOD.
 
 
   METHOD trans_json_by_any.
-        DATA lo_json TYPE REF TO z2ui5_cl_util_ui2_json.
-
-*    IF z2ui5_cl_fw_controller=>cv_check_ajson = abap_true.
-*      ASSERT 1 = 0.
-*    ENDIF.
-
-    CASE compress_mode.
-
-      WHEN z2ui5_if_client=>cs_compress_mode-full.
-
-        result = /ui2/cl_json=>serialize(
-          data        = any
-          compress    = abap_true
-          pretty_name = pretty_mode ).
-
-      WHEN z2ui5_if_client=>cs_compress_mode-none.
-
-        result = /ui2/cl_json=>serialize(
-          data        = any
-          compress    = abap_false
-          pretty_name = pretty_mode ).
-
-      WHEN OTHERS.
+        DATA temp31 TYPE REF TO z2ui5_if_ajson.
+        DATA li_ajson LIKE temp31.
+        DATA x TYPE REF TO z2ui5_cx_ajson_error.
+    TRY.
 
         
-        CREATE OBJECT lo_json TYPE z2ui5_cl_util_ui2_json EXPORTING compress = abap_true pretty_name = pretty_mode.
+        temp31 ?= z2ui5_cl_ajson=>create_empty( ).
+        
+        li_ajson = temp31.
+        result = li_ajson->set( iv_path = `/` iv_val = any )->stringify( ).
 
-        result = lo_json->serialize_int( any ).
-
-    ENDCASE.
-
+        
+      CATCH z2ui5_cx_ajson_error INTO x.
+        ASSERT x IS NOT BOUND.
+    ENDTRY.
   ENDMETHOD.
 
 
