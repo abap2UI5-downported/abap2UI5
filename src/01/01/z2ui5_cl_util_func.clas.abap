@@ -201,20 +201,6 @@ CLASS z2ui5_cl_util_func DEFINITION
       CHANGING
         !data TYPE any.
 
-    CLASS-METHODS trans_ref_tab_2_tab
-      IMPORTING
-        !ir_tab_from TYPE REF TO data
-        pretty_name  TYPE abap_bool DEFAULT abap_false
-      EXPORTING
-        !t_result    TYPE STANDARD TABLE.
-
-    CLASS-METHODS trans_ref_struc_2_struc
-      IMPORTING
-        !ir_struc_from TYPE REF TO data
-        pretty_name    TYPE abap_bool DEFAULT abap_false
-      EXPORTING
-        !r_result      TYPE data.
-
     CLASS-METHODS c_trim_upper
       IMPORTING
         !val          TYPE clike
@@ -698,8 +684,7 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
   METHOD db_load_by_handle.
 
-    TYPES temp3 TYPE STANDARD TABLE OF z2ui5_t_fw_02 WITH DEFAULT KEY.
-DATA lt_db TYPE temp3.
+    DATA lt_db TYPE STANDARD TABLE OF z2ui5_t_fw_02 WITH DEFAULT KEY.
     DATA ls_db LIKE LINE OF lt_db.
     DATA temp1 LIKE LINE OF lt_db.
     DATA temp2 LIKE sy-tabix.
@@ -735,8 +720,7 @@ DATA lt_db TYPE temp3.
 
   METHOD db_load_by_id.
 
-    TYPES temp5 TYPE STANDARD TABLE OF z2ui5_t_fw_02 WITH DEFAULT KEY.
-DATA lt_db TYPE temp5.
+    DATA lt_db TYPE STANDARD TABLE OF z2ui5_t_fw_02 WITH DEFAULT KEY.
     DATA ls_db LIKE LINE OF lt_db.
     DATA temp3 LIKE LINE OF lt_db.
     DATA temp4 LIKE sy-tabix.
@@ -1059,10 +1043,8 @@ DATA lt_db TYPE temp5.
     FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
     DATA lr_row TYPE REF TO data.
 
-    TYPES temp6 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-DATA lt_rows TYPE temp6.
-    TYPES temp7 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-DATA lt_cols TYPE temp7.
+    DATA lt_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA lt_cols TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
     DATA temp9 LIKE LINE OF lt_rows.
     DATA temp10 LIKE sy-tabix.
     DATA temp16 LIKE LINE OF lt_cols.
@@ -1078,7 +1060,6 @@ DATA lt_cols TYPE temp7.
         FIELD-SYMBOLS <field> TYPE any.
     SPLIT val AT cl_abap_char_utilities=>newline INTO TABLE lt_rows.
     
-
     
     
     temp10 = sy-tabix.
@@ -1199,8 +1180,7 @@ DATA lt_cols TYPE temp7.
     TYPES clsname TYPE c LENGTH 30.
     TYPES refclsname TYPE c LENGTH 30.
     TYPES END OF ty_s_impl.
-    TYPES temp8 TYPE STANDARD TABLE OF ty_s_impl WITH DEFAULT KEY.
-DATA lt_impl TYPE temp8.
+    DATA lt_impl TYPE STANDARD TABLE OF ty_s_impl WITH DEFAULT KEY.
     TYPES BEGIN OF ty_s_key.
     TYPES intkey TYPE c LENGTH 30.
     TYPES END OF ty_s_key.
@@ -1570,258 +1550,14 @@ DATA lt_impl TYPE temp8.
     ENDTRY.
   ENDMETHOD.
 
-
-  METHOD trans_ref_struc_2_struc.
-
-    FIELD-SYMBOLS <ls_from> TYPE any.
-    FIELD-SYMBOLS <comp_from_deref> TYPE any.
-    DATA temp2 TYPE xsdboolean.
-    DATA temp32 TYPE REF TO cl_abap_structdescr.
-    DATA lo_struc LIKE temp32.
-    DATA lt_components TYPE abap_component_tab.
-    DATA ls_comp LIKE LINE OF lt_components.
-      DATA lv_from LIKE ls_comp-name.
-      FIELD-SYMBOLS <comp_from> TYPE any.
-      FIELD-SYMBOLS <comp_to> TYPE any.
-      DATA lv_type_kind TYPE string.
-
-    ASSIGN ir_struc_from->* TO <ls_from>.
-    
-    temp2 = boolc( sy-subrc <> 0 ).
-    x_check_raise( temp2 ).
-    CLEAR r_result.
-
-    
-    temp32 ?= cl_abap_datadescr=>describe_by_data( r_result ).
-    
-    lo_struc = temp32.
-    
-    lt_components = lo_struc->get_components( ).
-    
-    LOOP AT lt_components INTO ls_comp.
-
-      
-      lv_from = ls_comp-name.
-      IF pretty_name = abap_true.
-        REPLACE ALL OCCURRENCES OF `_` IN lv_from WITH ``.
-      ENDIF.
-      
-      ASSIGN COMPONENT lv_from OF STRUCTURE <ls_from> TO <comp_from>.
-      IF sy-subrc <> 0.
-        CONTINUE.
-      ENDIF.
-      
-      ASSIGN COMPONENT ls_comp-name OF STRUCTURE r_result TO <comp_to>.
-      IF sy-subrc <> 0.
-        CONTINUE.
-      ENDIF.
-
-      ASSIGN <comp_from>->* TO <comp_from_deref>.
-      
-      lv_type_kind = rtti_get_type_kind( <comp_to> ).
-
-      IF <comp_from_deref> IS INITIAL.
-        CONTINUE.
-      ENDIF.
-
-      CASE lv_type_kind.
-
-        WHEN cl_abap_typedescr=>typekind_table.
-          trans_ref_tab_2_tab(
-            EXPORTING
-             ir_tab_from = <comp_from>
-             pretty_name = pretty_name
-            IMPORTING
-             t_result    = <comp_to> ).
-
-        WHEN cl_abap_typedescr=>typekind_struct1 OR cl_abap_typedescr=>typekind_struct2.
-          trans_ref_struc_2_struc(
-            EXPORTING
-                ir_struc_from = <comp_from>
-                pretty_name   = pretty_name
-            IMPORTING
-                r_result      = <comp_to> ).
-
-        WHEN OTHERS.
-          <comp_to> = <comp_from_deref>.
-      ENDCASE.
-
-    ENDLOOP.
-
-  ENDMETHOD.
-
-
-  METHOD trans_ref_tab_2_tab.
-
-    TYPES ty_t_ref TYPE STANDARD TABLE OF REF TO data.
-    FIELD-SYMBOLS <lt_from> TYPE ty_t_ref.
-    DATA lr_row TYPE REF TO data.
-    FIELD-SYMBOLS <comp> TYPE data.
-    FIELD-SYMBOLS <comp_ui5> TYPE data.
-    DATA match TYPE i.
-    DATA temp3 TYPE xsdboolean.
-    DATA temp33 TYPE REF TO cl_abap_tabledescr.
-    DATA lo_tab LIKE temp33.
-      DATA lr_string LIKE LINE OF <lt_from>.
-        FIELD-SYMBOLS <row_string> TYPE any.
-    DATA temp34 TYPE REF TO cl_abap_structdescr.
-    DATA lo_struc LIKE temp34.
-    DATA lt_components TYPE abap_component_tab.
-    DATA lr_from LIKE LINE OF <lt_from>.
-      FIELD-SYMBOLS <row> TYPE any.
-      FIELD-SYMBOLS <row_ui5> TYPE any.
-      DATA temp4 TYPE xsdboolean.
-      DATA lt_components_dissolved LIKE lt_components.
-      DATA ls_comp LIKE LINE OF lt_components.
-          DATA temp35 TYPE REF TO cl_abap_structdescr.
-          DATA struct LIKE temp35.
-            FIELD-SYMBOLS <ls_data_ui5> TYPE any.
-
-    ASSIGN ir_tab_from->* TO <lt_from>.
-    
-    temp3 = boolc( sy-subrc <> 0 ).
-    x_check_raise( temp3 ).
-    CLEAR t_result.
-
-    
-    temp33 ?= cl_abap_datadescr=>describe_by_data( t_result ).
-    
-    lo_tab = temp33.
-    IF lo_tab->absolute_name = `\TYPE=STRING_TABLE`.
-      
-      LOOP AT <lt_from> INTO lr_string.
-        
-        ASSIGN lr_string->* TO <row_string>.
-        INSERT <row_string> INTO TABLE t_result.
-      ENDLOOP.
-      RETURN.
-    ENDIF.
-    
-    temp34 ?= lo_tab->get_table_line_type( ).
-    
-    lo_struc = temp34.
-    
-    lt_components = lo_struc->get_components( ).
-
-    
-    LOOP AT <lt_from> INTO lr_from.
-
-
-      CREATE DATA lr_row TYPE HANDLE lo_struc.
-      
-      ASSIGN lr_row->* TO <row>.
-
-      IF sy-subrc <> 0.
-        EXIT.
-      ENDIF.
-
-      
-      ASSIGN lr_from->* TO <row_ui5>.
-      
-      temp4 = boolc( sy-subrc <> 0 ).
-      x_check_raise( temp4 ).
-
-      
-      lt_components_dissolved = lt_components.
-      CLEAR lt_components_dissolved.
-
-      
-      LOOP AT lt_components INTO ls_comp.
-
-        IF ls_comp-as_include = abap_false.
-          APPEND ls_comp TO lt_components_dissolved.
-        ELSE.
-          
-          temp35 ?= ls_comp-type.
-          
-          struct = temp35.
-          APPEND LINES OF struct->get_components( ) TO lt_components_dissolved.
-
-        ENDIF.
-      ENDLOOP.
-
-      LOOP AT lt_components_dissolved INTO ls_comp.
-        TRY.
-
-
-            ASSIGN COMPONENT ls_comp-name OF STRUCTURE <row> TO <comp>.
-
-            IF sy-subrc <> 0.
-              CONTINUE.
-            ENDIF.
-
-
-            IF pretty_name = abap_true.
-              REPLACE ALL OCCURRENCES OF `_` IN ls_comp-name  WITH ``.
-            ENDIF.
-            ASSIGN COMPONENT ls_comp-name OF STRUCTURE <row_ui5> TO <comp_ui5>.
-
-            IF sy-subrc <> 0.
-              CONTINUE.
-            ENDIF.
-
-            
-            ASSIGN <comp_ui5>->* TO <ls_data_ui5>.
-
-            IF sy-subrc = 0.
-              CASE ls_comp-type->kind.
-                WHEN cl_abap_typedescr=>kind_table.
-                  trans_ref_tab_2_tab(
-                    EXPORTING
-                        ir_tab_from = <comp_ui5>
-                        pretty_name = pretty_name
-                    IMPORTING
-                        t_result    = <comp> ).
-                WHEN cl_abap_typedescr=>kind_struct.
-                  trans_ref_struc_2_struc(
-                    EXPORTING
-                        ir_struc_from = <comp_ui5>
-                        pretty_name   = pretty_name
-                    IMPORTING
-                        r_result      = <comp> ).
-                WHEN cl_abap_typedescr=>kind_elem.
-                  CASE ls_comp-type->absolute_name.
-                    WHEN `\TYPE=D`.
-
-                      " support for ISO8601 => https://en.wikipedia.org/wiki/ISO_8601
-                      REPLACE FIRST OCCURRENCE OF REGEX `^(\d{4})-(\d{2})-(\d{2})` IN <ls_data_ui5> WITH `$1$2$3`
-                        REPLACEMENT LENGTH match.           "#EC NOTEXT
-                      <comp> = <ls_data_ui5>.
-
-                    WHEN `\TYPE=T`.
-
-                      " support for ISO8601 => https://en.wikipedia.org/wiki/ISO_8601
-                      REPLACE FIRST OCCURRENCE OF REGEX `^(\d{2}):(\d{2}):(\d{2})` IN <ls_data_ui5> WITH `$1$2$3`
-                        REPLACEMENT LENGTH match.           "#EC NOTEXT
-                      <comp> = <ls_data_ui5>.
-
-                    WHEN OTHERS.
-                      <comp> = <ls_data_ui5>.
-                  ENDCASE.
-                WHEN OTHERS.
-                  <comp> = <ls_data_ui5>.
-              ENDCASE.
-            ENDIF.
-
-          CATCH cx_root.
-        ENDTRY.
-      ENDLOOP.
-
-      INSERT <row> INTO TABLE t_result.
-    ENDLOOP.
-
-  ENDMETHOD.
-
-
   METHOD trans_srtti_xml_2_data.
+
     DATA srtti TYPE REF TO object.
     DATA rtti_type TYPE REF TO cl_abap_typedescr.
     DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
       DATA lv_link TYPE string.
       DATA lv_text TYPE string.
     FIELD-SYMBOLS <variable> TYPE any.
-
-
 
     IF rtti_check_class_exists( 'ZCL_SRTTI_TYPEDESCR' ) = abap_false.
 
@@ -1837,14 +1573,11 @@ DATA lt_impl TYPE temp8.
 
     ENDIF.
 
-
     CALL TRANSFORMATION id SOURCE XML rtti_data RESULT srtti = srtti.
-
 
     CALL METHOD srtti->('GET_RTTI')
       RECEIVING
         rtti = rtti_type.
-
 
     lo_datadescr ?= rtti_type.
 
@@ -1852,8 +1585,6 @@ DATA lt_impl TYPE temp8.
     
     ASSIGN e_data->* TO <variable>.
     CALL TRANSFORMATION id SOURCE XML rtti_data RESULT dobj = <variable>.
-
-
 
   ENDMETHOD.
 
@@ -1929,19 +1660,19 @@ DATA lt_impl TYPE temp8.
 
     DATA lt_params TYPE z2ui5_if_client=>ty_t_name_value.
     DATA lv_val TYPE string.
-    DATA temp36 TYPE string.
-    DATA temp37 TYPE z2ui5_if_client=>ty_s_name_value.
+    DATA temp32 TYPE string.
+    DATA temp33 TYPE z2ui5_if_client=>ty_s_name_value.
     lt_params = url_param_get_tab( url ).
     
     lv_val = c_trim_lower( val ).
     
-    CLEAR temp36.
+    CLEAR temp32.
     
-    READ TABLE lt_params INTO temp37 WITH KEY n = lv_val.
+    READ TABLE lt_params INTO temp33 WITH KEY n = lv_val.
     IF sy-subrc = 0.
-      temp36 = temp37-v.
+      temp32 = temp33-v.
     ENDIF.
-    result = temp36.
+    result = temp32.
 
   ENDMETHOD.
 
@@ -1950,14 +1681,13 @@ DATA lt_impl TYPE temp8.
 
     DATA lv_search TYPE string.
     DATA lv_search2 TYPE string.
-    DATA temp38 TYPE string.
-    TYPES temp9 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-DATA lt_param TYPE temp9.
-    DATA temp39 LIKE LINE OF lt_param.
-    DATA lr_param LIKE REF TO temp39.
+    DATA temp34 TYPE string.
+    DATA lt_param TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA temp35 LIKE LINE OF lt_param.
+    DATA lr_param LIKE REF TO temp35.
       DATA lv_name TYPE string.
       DATA lv_value TYPE string.
-      DATA temp40 TYPE z2ui5_if_client=>ty_s_name_value.
+      DATA temp36 TYPE z2ui5_if_client=>ty_s_name_value.
     lv_search = replace( val  = i_val
                                sub  = `%3D`
                                with = '='
@@ -1971,11 +1701,11 @@ DATA lt_param TYPE temp9.
                                         sub = `&sap-startup-params=` ).
     
     IF lv_search2 IS NOT INITIAL.
-      temp38 = lv_search2.
+      temp34 = lv_search2.
     ELSE.
-      temp38 = lv_search.
+      temp34 = lv_search.
     ENDIF.
-    lv_search = temp38.
+    lv_search = temp34.
 
     lv_search2 = substring_after( val = c_trim_lower( lv_search )
                                   sub = `?` ).
@@ -1984,7 +1714,6 @@ DATA lt_param TYPE temp9.
     ENDIF.
 
     
-
     SPLIT lv_search AT `&` INTO TABLE lt_param.
 
     
@@ -1994,10 +1723,10 @@ DATA lt_param TYPE temp9.
       
       SPLIT lr_param->* AT `=` INTO lv_name lv_value.
       
-      CLEAR temp40.
-      temp40-n = c_trim_lower( lv_name ).
-      temp40-v = c_trim_lower( lv_value ).
-      INSERT temp40 INTO TABLE rt_params.
+      CLEAR temp36.
+      temp36-n = c_trim_lower( lv_name ).
+      temp36-v = c_trim_lower( lv_value ).
+      INSERT temp36 INTO TABLE rt_params.
     ENDLOOP.
 
   ENDMETHOD.
@@ -2007,9 +1736,9 @@ DATA lt_param TYPE temp9.
 
     DATA lt_params TYPE z2ui5_if_client=>ty_t_name_value.
     DATA lv_n TYPE string.
-    DATA temp41 LIKE LINE OF lt_params.
-    DATA lr_params LIKE REF TO temp41.
-      DATA temp42 TYPE z2ui5_if_client=>ty_s_name_value.
+    DATA temp37 LIKE LINE OF lt_params.
+    DATA lr_params LIKE REF TO temp37.
+      DATA temp38 TYPE z2ui5_if_client=>ty_s_name_value.
     lt_params = url_param_get_tab( url ).
     
     lv_n = c_trim_lower( name ).
@@ -2022,10 +1751,10 @@ DATA lt_param TYPE temp9.
     ENDLOOP.
     IF sy-subrc <> 0.
       
-      CLEAR temp42.
-      temp42-n = lv_n.
-      temp42-v = c_trim_lower( value ).
-      INSERT temp42 INTO TABLE lt_params.
+      CLEAR temp38.
+      temp38-n = lv_n.
+      temp38-v = c_trim_lower( value ).
+      INSERT temp38 INTO TABLE lt_params.
     ENDIF.
 
     result = url_param_create_url( lt_params ).
@@ -2147,11 +1876,11 @@ DATA lt_param TYPE temp9.
         scrtext_l TYPE string,
       END OF ddic,
       exists TYPE abap_bool.
-        DATA temp43 TYPE REF TO cl_abap_structdescr.
-        DATA struct_desrc LIKE temp43.
+        DATA temp39 TYPE REF TO cl_abap_structdescr.
+        DATA struct_desrc LIKE temp39.
         FIELD-SYMBOLS <ddic> TYPE any.
-        DATA temp44 TYPE REF TO cl_abap_datadescr.
-        DATA data_descr LIKE temp44.
+        DATA temp40 TYPE REF TO cl_abap_datadescr.
+        DATA data_descr LIKE temp40.
 
     data_element_name = i_data_element_name.
 
@@ -2159,9 +1888,9 @@ DATA lt_param TYPE temp9.
         cl_abap_typedescr=>describe_by_name( 'T100' ).
 
         
-        temp43 ?= cl_abap_structdescr=>describe_by_name( 'DFIES' ).
+        temp39 ?= cl_abap_structdescr=>describe_by_name( 'DFIES' ).
         
-        struct_desrc = temp43.
+        struct_desrc = temp39.
 
         CREATE DATA ddic_ref TYPE HANDLE struct_desrc.
         
@@ -2169,9 +1898,9 @@ DATA lt_param TYPE temp9.
         ASSERT sy-subrc = 0.
 
         
-        temp44 ?= cl_abap_elemdescr=>describe_by_name( data_element_name ).
+        temp40 ?= cl_abap_elemdescr=>describe_by_name( data_element_name ).
         
-        data_descr = temp44.
+        data_descr = temp40.
 
         CALL METHOD data_descr->('GET_DDIC_FIELD')
           RECEIVING
