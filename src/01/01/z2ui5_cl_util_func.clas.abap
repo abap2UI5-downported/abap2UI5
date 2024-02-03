@@ -1521,9 +1521,9 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
         DATA x TYPE REF TO z2ui5_cx_ajson_error.
     TRY.
 
-          z2ui5_cl_ajson=>parse( val )->to_abap(
-            IMPORTING
-              ev_container = data ).
+        z2ui5_cl_ajson=>parse( val )->to_abap(
+          IMPORTING
+            ev_container = data ).
 
         
       CATCH z2ui5_cx_ajson_error INTO x.
@@ -1593,6 +1593,7 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
     DATA srtti TYPE REF TO object.
       DATA lv_link TYPE string.
       DATA lv_text TYPE string.
+    DATA lv_classname TYPE c LENGTH 19.
 
 
 
@@ -1610,17 +1611,15 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
     ENDIF.
 
-
-
-    CALL METHOD ('ZCL_SRTTI_TYPEDESCR')=>('CREATE_BY_DATA_OBJECT')
+    
+    lv_classname = 'ZCL_SRTTI_TYPEDESCR'.
+    CALL METHOD (lv_classname)=>('CREATE_BY_DATA_OBJECT')
       EXPORTING
         data_object = data
       RECEIVING
         srtti       = srtti.
 
     CALL TRANSFORMATION id SOURCE srtti = srtti dobj = data RESULT XML result.
-
-
 
   ENDMETHOD.
 
@@ -1768,14 +1767,17 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
 
   METHOD uuid_get_c22.
+
     DATA uuid TYPE c LENGTH 22.
+            DATA lv_classname TYPE string.
             DATA lv_fm TYPE string.
 
     TRY.
 
-
         TRY.
-            CALL METHOD (`CL_SYSTEM_UUID`)=>if_system_uuid_static~create_uuid_c22
+            
+            lv_classname = `CL_SYSTEM_UUID`.
+            CALL METHOD (lv_classname)=>if_system_uuid_static~create_uuid_c22
               RECEIVING
                 uuid = uuid.
 
@@ -1817,13 +1819,15 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
   METHOD uuid_get_c32.
     DATA uuid TYPE c LENGTH 32.
+            DATA lv_classname TYPE string.
             DATA lv_fm TYPE string.
 
     TRY.
 
-
         TRY.
-            CALL METHOD (`CL_SYSTEM_UUID`)=>if_system_uuid_static~create_uuid_c32
+            
+            lv_classname = `CL_SYSTEM_UUID`.
+            CALL METHOD (lv_classname)=>if_system_uuid_static~create_uuid_c32
               RECEIVING
                 uuid = uuid.
 

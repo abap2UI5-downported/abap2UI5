@@ -314,7 +314,7 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
         DATA x TYPE REF TO cx_root.
     TRY.
 
-        so_body_ajson->slice( `/OLOCATION`  )->to_abap(
+        so_body_ajson->slice( `/OLOCATION` )->to_abap(
             IMPORTING
             ev_container     = ss_config
         ).
@@ -394,11 +394,11 @@ CLASS z2ui5_cl_fw_controller IMPLEMENTATION.
           result->ms_actual-check_on_navigated = abap_false.
         ENDIF.
 
-        result->ms_db-check_attri = abap_false.
-
         IF ss_config-search CS `scenario=LAUNCHPAD`.
           result->ms_actual-check_launchpad_active = abap_true.
         ENDIF.
+
+        result->ms_db-check_attri = abap_false.
 
         
       CATCH cx_root INTO x.
