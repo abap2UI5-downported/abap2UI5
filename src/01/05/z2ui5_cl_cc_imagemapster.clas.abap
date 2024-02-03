@@ -3297,11 +3297,12 @@ CLASS z2ui5_cl_cc_imagemapster IMPLEMENTATION.
     IF is_config IS NOT INITIAL.
       
       json_config = ``.
-      json_config =  /ui2/cl_json=>serialize(
-                          data             = is_config
-                          compress         = abap_true
-                          pretty_name      = 'X'
-                        ).
+*      json_config =  /ui2/cl_json=>serialize(
+*                          data             = is_config
+*                          compress         = abap_true
+*                          pretty_name      = 'X'
+*                        ).
+
       TRY.
           
           temp1 ?= z2ui5_cl_ajson=>create_empty( ).
