@@ -11,18 +11,10 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   METHOD first_test.
 
-    DATA lo_handler TYPE REF TO z2ui5_cl_fw_controller.
-    DATA lo_client TYPE REF TO z2ui5_cl_fw_client.
-    DATA temp7 TYPE REF TO z2ui5_if_client.
-    DATA li_client LIKE temp7.
-    CREATE OBJECT lo_handler TYPE z2ui5_cl_fw_controller.
-    
-    CREATE OBJECT lo_client TYPE z2ui5_cl_fw_client EXPORTING HANDLER = lo_handler.
-
-    
-    temp7 ?= lo_client.
-    
-    li_client = temp7.
+*    DATA(lo_handler) = NEW z2ui5_cl_fw_controller( ).
+*    DATA(lo_client) = NEW z2ui5_cl_fw_client( lo_handler ).
+*
+*    DATA(li_client) = CAST z2ui5_if_client( lo_client ) ##NEEDED.
 
   ENDMETHOD.
 
