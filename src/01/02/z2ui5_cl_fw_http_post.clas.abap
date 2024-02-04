@@ -5,7 +5,7 @@ CLASS z2ui5_cl_fw_http_post DEFINITION
 
   PUBLIC SECTION.
 
-    DATA mv_request_plain  TYPE string.
+    DATA mv_request_json  TYPE string.
     DATA ms_request        TYPE z2ui5_if_client=>ty_s_http_request_post.
     DATA ms_response       TYPE z2ui5_if_client=>ty_s_http_response_post.
 
@@ -41,7 +41,7 @@ CLASS z2ui5_cl_fw_http_post IMPLEMENTATION.
   METHOD factory.
 
     CREATE OBJECT result.
-    result->mv_request_plain = val.
+    result->mv_request_json = val.
     CREATE OBJECT mo_http_mapper TYPE z2ui5_cl_fw_http_mapper.
     CREATE OBJECT result->mo_app TYPE z2ui5_cl_fw_app EXPORTING VAL = result.
 
@@ -51,7 +51,7 @@ CLASS z2ui5_cl_fw_http_post IMPLEMENTATION.
   METHOD main_begin.
         DATA x TYPE REF TO cx_root.
 
-    ms_request = mo_http_mapper->request_json_to_abap( mv_request_plain ).
+    ms_request = mo_http_mapper->request_json_to_abap( mv_request_json ).
 
     TRY.
         IF ms_request-s_frontend-id IS NOT INITIAL.
@@ -69,20 +69,20 @@ CLASS z2ui5_cl_fw_http_post IMPLEMENTATION.
 
 
   METHOD main_end.
-        DATA lo_ajson TYPE REF TO z2ui5_if_ajson.
         DATA temp1 TYPE REF TO z2ui5_cl_fw_http_mapper.
         DATA x TYPE REF TO cx_root.
     TRY.
-        
+        z2ui5_cl_fw_draft=>create( id = mo_app->ms_db-id db = mo_app->ms_db ).
+
         
         CREATE OBJECT temp1 TYPE z2ui5_cl_fw_http_mapper.
-        lo_ajson = temp1->model_back_to_front(
+        ms_response-o_model = temp1->model_back_to_front(
                 app     = mo_app->ms_db-app
-              t_attri = mo_app->ms_db-t_attri ).
-        z2ui5_cl_fw_draft=>create( id = mo_app->ms_db-id db = mo_app->ms_db ).
+                t_attri = mo_app->ms_db-t_attri ).
+
         ms_response-s_frontend-params = mo_app->ms_next-s_set.
         ms_response-s_frontend-id = mo_app->ms_db-id.
-        ms_response-oviewmodel = lo_ajson.
+
         
       CATCH cx_root INTO x.
         ASSERT x IS NOT BOUND.
@@ -95,17 +95,17 @@ CLASS z2ui5_cl_fw_http_post IMPLEMENTATION.
 
   METHOD main_process.
         DATA li_client TYPE REF TO z2ui5_cl_fw_client.
-        DATA temp1 TYPE REF TO z2ui5_if_app.
-        DATA li_app LIKE temp1.
+        DATA temp2 TYPE REF TO z2ui5_if_app.
+        DATA li_app LIKE temp2.
         DATA x TYPE REF TO cx_root.
     TRY.
 
         
         CREATE OBJECT li_client TYPE z2ui5_cl_fw_client EXPORTING HANDLER = mo_app.
         
-        temp1 ?= mo_app->ms_db-app.
+        temp2 ?= mo_app->ms_db-app.
         
-        li_app = temp1.
+        li_app = temp2.
 
         ROLLBACK WORK.
         li_app->main( li_client ).
