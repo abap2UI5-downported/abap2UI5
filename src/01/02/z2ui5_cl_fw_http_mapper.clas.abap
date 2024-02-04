@@ -23,7 +23,7 @@ CLASS z2ui5_cl_fw_http_mapper DEFINITION
         app      TYPE REF TO object
         viewname TYPE string
         t_attri  TYPE  z2ui5_cl_fw_binding=>ty_t_attri
-        ajson_in TYPE REF TO z2ui5_if_ajson ##NEEDED.
+        model    TYPE REF TO z2ui5_if_ajson ##NEEDED.
 
     METHODS model_back_to_front
       IMPORTING
@@ -64,7 +64,6 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
         
         LOOP AT t_attri REFERENCE INTO lr_attri WHERE bind_type <> ``.
 
-
           "(1) set pretty mode
           IF lr_attri->custom_mapper IS BOUND.
             
@@ -77,7 +76,6 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
             ajson = temp4.
           ENDIF.
 
-
           "(2) read attribute of end-user app
           IF lr_attri->bind_type = z2ui5_cl_fw_binding=>cs_bind_type-one_way
           OR lr_attri->bind_type = z2ui5_cl_fw_binding=>cs_bind_type-two_way.
@@ -88,8 +86,7 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
             ASSERT sy-subrc = 0.
           ENDIF.
 
-
-          "(3) write into json
+          "(3) write to json
           CASE lr_attri->bind_type.
 
             WHEN z2ui5_cl_fw_binding=>cs_bind_type-one_time.
@@ -108,7 +105,6 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
             WHEN OTHERS.
               ASSERT `` = `ERROR_UNKNOWN_BIND_MODE`.
           ENDCASE.
-
 
           "(4) set compress mode
           "todo performance - add and filter in a single loop
@@ -129,7 +125,6 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
       CATCH cx_root INTO x.
         ASSERT x IS NOT BOUND.
     ENDTRY.
-
   ENDMETHOD.
 
 
@@ -139,7 +134,7 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
     DATA lr_attri LIKE REF TO temp5.
           DATA lv_name_back TYPE string.
           FIELD-SYMBOLS <backend> TYPE any.
-          DATA ajson_val TYPE REF TO z2ui5_if_ajson.
+          DATA lo_val_front TYPE REF TO z2ui5_if_ajson.
           DATA x TYPE REF TO cx_root.
     LOOP AT t_attri REFERENCE INTO lr_attri
     WHERE bind_type = z2ui5_cl_fw_binding=>cs_bind_type-two_way
@@ -153,13 +148,13 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
           ASSERT sy-subrc = 0.
 
           
-          ajson_val = ajson_in->slice( `/` && lr_attri->name_front ).
+          lo_val_front = model->slice( `/` && lr_attri->name_front ).
 
           IF lr_attri->custom_mapper_back IS BOUND.
-            ajson_val = ajson_val->map( lr_attri->custom_mapper_back ).
+            lo_val_front = lo_val_front->map( lr_attri->custom_mapper_back ).
           ENDIF.
 
-          ajson_val->to_abap(
+          lo_val_front->to_abap(
             IMPORTING
               ev_container = <backend> ).
 
@@ -194,22 +189,16 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
             IMPORTING
                 ev_container     = result-s_frontend ).
 
-
-        """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
         
         temp1 = boolc( result-s_frontend-search CS `scenario=LAUNCHPAD` ).
         result-s_control-check_launchpad = temp1.
-
         IF result-s_frontend-id IS NOT INITIAL.
           RETURN.
         ENDIF.
-
         result-s_control-app_start = z2ui5_cl_util_func=>c_trim_upper( result-s_frontend-app_start ).
         IF result-s_control-app_start IS NOT INITIAL.
           RETURN.
         ENDIF.
-
         result-s_control-app_start = z2ui5_cl_util_func=>c_trim_upper(
             z2ui5_cl_util_func=>url_param_get( val = `app_start` url = result-s_frontend-search ) ).
 
@@ -224,6 +213,9 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
         DATA temp7 TYPE REF TO z2ui5_if_ajson.
         DATA ajson_result LIKE temp7.
         DATA temp8 TYPE REF TO z2ui5_cl_fw_http_mapper.
+        DATA lv_frontend TYPE string.
+        DATA lv_model TYPE string.
+        DATA temp9 TYPE string.
         DATA x TYPE REF TO cx_root.
     TRY.
 
@@ -236,10 +228,20 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
         
         CREATE OBJECT temp8 TYPE z2ui5_cl_fw_http_mapper.
         ajson_result = ajson_result->filter( temp8 ).
+        
+        lv_frontend =  ajson_result->stringify( ).
+        
+        lv_model = val-o_model->stringify( ).
 
+        
+        IF lv_model IS INITIAL.
+          temp9 = `{}`.
+        ELSE.
+          temp9 = lv_model.
+        ENDIF.
         result = `{` &&
-            |"S_FRONTEND" : { ajson_result->stringify( ) },| &&
-            |"MODEL"      : { val-o_model->stringify( )  }| &&
+            |"S_FRONTEND":{ lv_frontend },| &&
+            |"MODEL":{ temp9 }| &&
           `}`.
 
         
@@ -253,10 +255,9 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
 
     rv_keep = abap_true.
 
-
     CASE iv_visit.
 
-      WHEN  z2ui5_if_ajson_filter=>visit_type-value.
+      WHEN z2ui5_if_ajson_filter=>visit_type-value.
 
         CASE is_node-type.
           WHEN z2ui5_if_ajson_types=>node_type-boolean.
@@ -273,7 +274,7 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
             ENDIF.
         ENDCASE.
 
-      WHEN  z2ui5_if_ajson_filter=>visit_type-close.
+      WHEN z2ui5_if_ajson_filter=>visit_type-close.
 
         IF is_node-children = 0.
           rv_keep = abap_false.

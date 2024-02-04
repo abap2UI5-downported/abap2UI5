@@ -14,14 +14,12 @@ CLASS z2ui5_cl_fw_client DEFINITION
         handler TYPE REF TO z2ui5_cl_fw_app.
 
   PROTECTED SECTION.
-
-
   PRIVATE SECTION.
 ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_FW_CLIENT IMPLEMENTATION.
+CLASS z2ui5_cl_fw_client IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -282,7 +280,7 @@ CLASS Z2UI5_CL_FW_CLIENT IMPLEMENTATION.
 
   METHOD z2ui5_if_client~_bind_edit.
       DATA lv_name TYPE string.
-      DATA lo_binder TYPE REF TO z2ui5_cl_fw_binding.
+    DATA lo_binder TYPE REF TO z2ui5_cl_fw_binding.
 
     IF tab IS NOT INITIAL.
 
@@ -293,30 +291,28 @@ CLASS Z2UI5_CL_FW_CLIENT IMPLEMENTATION.
             i_tab_index = tab_index
             i_tab       = tab
             i_val       = val ).
+      RETURN.
+    ENDIF.
 
-    ELSE.
+    
+    lo_binder = z2ui5_cl_fw_binding=>factory(
+                        app         = mo_app->ms_db-app
+                        attri       = mo_app->ms_db-t_attri
+                        check_attri = mo_app->ms_db-check_attri
+                        type        = z2ui5_cl_fw_binding=>cs_bind_type-two_way
+                        data        = val
+                        view        = view
+                        custom_mapper  = custom_mapper
+                        custom_mapper_back  = custom_mapper_back
+                        custom_filter   = custom_filter
+                        ).
 
-      
-      lo_binder = z2ui5_cl_fw_binding=>factory(
-                          app         = mo_app->ms_db-app
-                          attri       = mo_app->ms_db-t_attri
-                          check_attri = mo_app->ms_db-check_attri
-                          type        = z2ui5_cl_fw_binding=>cs_bind_type-two_way
-                          data        = val
-                          view        = view
-                          custom_mapper  = custom_mapper
-                          custom_mapper_back  = custom_mapper_back
-                          custom_filter   = custom_filter
-                          ).
+    result = lo_binder->main( ).
+    mo_app->ms_db-t_attri = lo_binder->mt_attri.
+    mo_app->ms_db-check_attri = lo_binder->mv_check_attri.
 
-      result = lo_binder->main( ).
-      mo_app->ms_db-t_attri = lo_binder->mt_attri.
-      mo_app->ms_db-check_attri = lo_binder->mv_check_attri.
-
-      IF path = abap_false.
-        result = `{` && result && `}`.
-      ENDIF.
-
+    IF path = abap_false.
+      result = `{` && result && `}`.
     ENDIF.
 
   ENDMETHOD.

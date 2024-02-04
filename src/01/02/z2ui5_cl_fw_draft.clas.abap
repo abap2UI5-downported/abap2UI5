@@ -5,7 +5,6 @@ CLASS z2ui5_cl_fw_draft DEFINITION
 
   PUBLIC SECTION.
 
-
     TYPES ty_s_db2 TYPE z2ui5_t_fw_01.
 
     TYPES:
@@ -51,20 +50,15 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_FW_DRAFT IMPLEMENTATION.
+CLASS z2ui5_cl_fw_draft IMPLEMENTATION.
 
 
   METHOD cleanup.
 
-    DATA lv_time TYPE timestampl.
     DATA lv_four_hours_ago TYPE timestampl.
-    lv_time = z2ui5_cl_util_func=>time_get_timestampl( ).
-
-
-    
     lv_four_hours_ago = z2ui5_cl_util_func=>time_substract_seconds(
-                                time    = lv_time
-                                seconds = 60 * 60 * 4 ).
+        time = z2ui5_cl_util_func=>time_get_timestampl( )
+        seconds = 60 * 60 * 4 ).
 
     DELETE FROM z2ui5_t_fw_01 WHERE timestampl < lv_four_hours_ago.
     COMMIT WORK.
@@ -132,7 +126,6 @@ CLASS Z2UI5_CL_FW_DRAFT IMPLEMENTATION.
         WHERE data_rtti IS NOT INITIAL
           AND type_kind = cl_abap_classdescr=>typekind_dref.
 
-
       
       lv_assign = 'LO_APP->' && lr_attri->name.
       ASSIGN (lv_assign) TO <ref>.
@@ -182,6 +175,7 @@ CLASS Z2UI5_CL_FW_DRAFT IMPLEMENTATION.
 
 
   METHOD trans_any_2_xml.
+
     FIELD-SYMBOLS <attri> TYPE any.
     FIELD-SYMBOLS <deref_attri> TYPE any.
         DATA x TYPE REF TO cx_xslt_serialization_error.
@@ -231,7 +225,6 @@ CLASS Z2UI5_CL_FW_DRAFT IMPLEMENTATION.
               
               lv_assign = 'LO_APP->' && lr_attri->name.
 
-
               UNASSIGN <deref_attri>.
               UNASSIGN <attri>.
               ASSIGN (lv_assign) TO <attri>.
@@ -257,7 +250,7 @@ CLASS Z2UI5_CL_FW_DRAFT IMPLEMENTATION.
 
             RAISE EXCEPTION TYPE z2ui5_cx_util_error
               EXPORTING
-              val = `<p>` && x->previous->get_text( ) && `<p>` && x2->get_text( ) && `<p> Please check if all generic data references are public attributes of your class`.
+                val = `<p>` && x->previous->get_text( ) && `<p>` && x2->get_text( ) && `<p> Please check if all generic data references are public attributes of your class`.
 
         ENDTRY.
     ENDTRY.
