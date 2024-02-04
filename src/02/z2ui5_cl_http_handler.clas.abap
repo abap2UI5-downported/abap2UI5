@@ -28,7 +28,7 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
   METHOD http_get.
 
     DATA lo_get TYPE REF TO z2ui5_cl_fw_http_get.
-    lo_get = z2ui5_cl_fw_http_get=>factory( val ).
+    CREATE OBJECT lo_get TYPE z2ui5_cl_fw_http_get EXPORTING VAL = val.
     result = lo_get->main( ).
 
   ENDMETHOD.
@@ -37,7 +37,7 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
   METHOD http_post.
 
     DATA lo_post TYPE REF TO z2ui5_cl_fw_http_post.
-    lo_post = z2ui5_cl_fw_http_post=>factory( val ).
+    CREATE OBJECT lo_post TYPE z2ui5_cl_fw_http_post EXPORTING VAL = val.
     result = lo_post->main( ).
 
   ENDMETHOD.
