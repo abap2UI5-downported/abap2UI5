@@ -37,7 +37,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_FW_HTTP_POST IMPLEMENTATION.
+CLASS z2ui5_cl_fw_http_post IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -64,17 +64,21 @@ CLASS Z2UI5_CL_FW_HTTP_POST IMPLEMENTATION.
 
   METHOD main_begin.
         DATA x TYPE REF TO cx_root.
-
-    ms_request = mo_http_mapper->request_json_to_abap( mv_request_json ).
-
     TRY.
+
+        ms_request = mo_http_mapper->request_json_to_abap( mv_request_json ).
+
         IF ms_request-s_frontend-id IS NOT INITIAL.
           mo_app = mo_app->factory_by_frontend( ).
+
         ELSEIF ms_request-s_control-app_start IS NOT INITIAL.
           mo_app = mo_app->factory_first_start( ).
+
         ELSE.
           mo_app = mo_app->factory_system_startup( ).
+
         ENDIF.
+
         
       CATCH cx_root INTO x.
         mo_app = mo_app->factory_system_error( x ).
@@ -97,13 +101,12 @@ CLASS Z2UI5_CL_FW_HTTP_POST IMPLEMENTATION.
         ms_response-s_frontend-params = mo_app->ms_next-s_set.
         ms_response-s_frontend-id = mo_app->ms_db-id.
 
+        result = mo_http_mapper->response_abap_to_json( ms_response ).
+
         
       CATCH cx_root INTO x.
         ASSERT x IS NOT BOUND.
     ENDTRY.
-
-    result = mo_http_mapper->response_abap_to_json( ms_response ).
-
   ENDMETHOD.
 
 

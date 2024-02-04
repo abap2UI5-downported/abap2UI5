@@ -208,7 +208,9 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
 
         
       CATCH cx_root INTO x.
-        ASSERT x IS NOT BOUND.
+        RAISE EXCEPTION TYPE z2ui5_cx_util_error
+          EXPORTING
+            val = x.
     ENDTRY.
   ENDMETHOD.
 

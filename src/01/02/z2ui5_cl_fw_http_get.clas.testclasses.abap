@@ -1,4 +1,4 @@
-CLASS ltcl_unit_test DEFINITION FINAL FOR TESTING
+CLASS ltcl_index_html_test DEFINITION FINAL FOR TESTING
   DURATION MEDIUM
   RISK LEVEL HARMLESS.
 
@@ -6,20 +6,20 @@ CLASS ltcl_unit_test DEFINITION FINAL FOR TESTING
   PROTECTED SECTION.
 
   PRIVATE SECTION.
-    METHODS test_index_html FOR TESTING RAISING cx_static_check.
-    METHODS test_launchpad_compatibility FOR TESTING RAISING cx_static_check.
-    METHODS test_path FOR TESTING RAISING cx_static_check.
-    METHODS test_avoid_debugger FOR TESTING RAISING cx_static_check.
-    METHODS test_avoid_sap_ui_get_core FOR TESTING RAISING cx_static_check.
-    METHODS test_avoid_window FOR TESTING RAISING cx_static_check.
-    METHODS test_avoid_document FOR TESTING RAISING cx_static_check.
-    METHODS test_avoid_jquery FOR TESTING RAISING cx_static_check.
+    METHODS file_not_initial FOR TESTING RAISING cx_static_check.
+    METHODS launchpad_compatibility FOR TESTING RAISING cx_static_check.
+    METHODS path_setup FOR TESTING RAISING cx_static_check.
+    METHODS js_no_debugger FOR TESTING RAISING cx_static_check.
+    METHODS js_no_sap_ui_get_core FOR TESTING RAISING cx_static_check.
+    METHODS js_no_window FOR TESTING RAISING cx_static_check.
+    METHODS js_no_document FOR TESTING RAISING cx_static_check.
+    METHODS js_no_jquery FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 
-CLASS ltcl_unit_test IMPLEMENTATION.
+CLASS ltcl_index_html_test IMPLEMENTATION.
 
-  METHOD test_index_html.
+  METHOD file_not_initial.
 
     DATA lo_get TYPE REF TO z2ui5_cl_fw_http_get.
     DATA lv_index_html TYPE string.
@@ -33,7 +33,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD test_launchpad_compatibility.
+  METHOD launchpad_compatibility.
 
     DATA lo_get TYPE REF TO z2ui5_cl_fw_http_get.
     DATA lv_index_html TYPE string.
@@ -47,7 +47,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD test_path.
+  METHOD path_setup.
 
     DATA lo_get TYPE REF TO z2ui5_cl_fw_http_get.
     DATA lv_index_html TYPE string.
@@ -64,7 +64,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD test_avoid_debugger.
+  METHOD js_no_debugger.
 
     DATA lo_get TYPE REF TO z2ui5_cl_fw_http_get.
     DATA lv_index_html TYPE string.
@@ -77,7 +77,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD test_avoid_sap_ui_get_core.
+  METHOD js_no_sap_ui_get_core.
 
     DATA lo_get TYPE REF TO z2ui5_cl_fw_http_get.
     DATA lv_index_html TYPE string.
@@ -90,7 +90,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD test_avoid_jquery.
+  METHOD js_no_jquery.
 
     DATA lo_get TYPE REF TO z2ui5_cl_fw_http_get.
     DATA lv_index_html TYPE string.
@@ -103,7 +103,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD test_avoid_window.
+  METHOD js_no_window.
 
     DATA lo_get TYPE REF TO z2ui5_cl_fw_http_get.
     DATA lv_index_html TYPE string.
@@ -116,7 +116,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD test_avoid_document.
+  METHOD js_no_document.
 
     DATA lo_get TYPE REF TO z2ui5_cl_fw_http_get.
     DATA lv_index_html TYPE string.
