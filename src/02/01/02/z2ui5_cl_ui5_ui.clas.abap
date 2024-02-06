@@ -68,7 +68,7 @@ ENDCLASS.
 CLASS z2ui5_cl_ui5_ui IMPLEMENTATION.
 
   METHOD listitem.
-    DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp2 LIKE LINE OF temp1.
     result = me.
     
@@ -98,7 +98,7 @@ CLASS z2ui5_cl_ui5_ui IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD codeeditor.
-    DATA temp3 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp3 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp4 LIKE LINE OF temp3.
     result = me.
     
@@ -125,7 +125,7 @@ CLASS z2ui5_cl_ui5_ui IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD griddata.
-    DATA temp5 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp5 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp6 LIKE LINE OF temp5.
     result = me.
     
@@ -140,7 +140,7 @@ CLASS z2ui5_cl_ui5_ui IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD grid.
-    DATA temp7 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp7 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp8 LIKE LINE OF temp7.
     CLEAR temp7.
     
@@ -156,7 +156,7 @@ CLASS z2ui5_cl_ui5_ui IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD tab.
-    DATA temp9 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp9 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp10 LIKE LINE OF temp9.
     CLEAR temp9.
     
@@ -182,7 +182,7 @@ CLASS z2ui5_cl_ui5_ui IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD simpleform.
-    DATA temp11 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp11 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp12 LIKE LINE OF temp11.
     CLEAR temp11.
     

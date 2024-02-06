@@ -369,7 +369,7 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
   METHOD view_action_sheet.
 
     DATA action_sheet_view TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp10 TYPE z2ui5_if_client=>ty_s_name_value.
+    DATA temp10 TYPE z2ui5_if_types=>ty_s_name_value.
     action_sheet_view = z2ui5_cl_xml_view=>factory_popup( ).
 
     

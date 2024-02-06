@@ -156,9 +156,10 @@ CLASS Z2UI5_CL_FW_APP_STARTUP IMPLEMENTATION.
 
 
     simple_form2->toolbar( )->title( `System Information` ).
-    simple_form2->label( `abap2UI5 Version` ).
+*    simple_form2->label( `abap2UI5 Version` ).
+    simple_form2->label( `abap2UI5 Version ` ).
     simple_form2->text( z2ui5_if_app=>version ).
-    simple_form2->label( `UI5 Version` ).
+    simple_form2->label( `UI5 Version`).
     simple_form2->text( client->_bind( mv_ui5_version ) ).
     simple_form2->label( `ABAP for Cloud` ).
     simple_form2->checkbox( enabled = abap_false selected = z2ui5_cl_util_func=>rtti_check_lang_version_cloud( ) ).
@@ -174,7 +175,7 @@ CLASS Z2UI5_CL_FW_APP_STARTUP IMPLEMENTATION.
 
 
 
-    simple_form2->label( `Development` ).
+    simple_form2->label( `Start Developing` ).
     
     CLEAR temp1.
     
@@ -186,11 +187,9 @@ CLASS Z2UI5_CL_FW_APP_STARTUP IMPLEMENTATION.
                                                          t_arg = temp1 )
           width = `70%` ).
 
-    simple_form2->toolbar( )->title( `` ).
+*    simple_form2->toolbar( )->title( `Contribution` ).
     simple_form2->label( `` ).
-    simple_form2->label( `` ).
-
-    simple_form2->toolbar( )->title( `Contribution` ).
+    simple_form2->text( `` ).
     simple_form2->label( `Open an issue` ).
     simple_form2->link( text = `You have problems, comments or wishes?`
                  target      = `_blank`
@@ -201,8 +200,11 @@ CLASS Z2UI5_CL_FW_APP_STARTUP IMPLEMENTATION.
                target        = `_blank`
                href          = `https://github.com/abap2UI5/abap2UI5/pulls` ).
 
-    simple_form2->toolbar( )->title( `Links & More` ).
-    simple_form2->label( ).
+  simple_form2->label( `` ).
+    simple_form2->text( `` ).
+
+*    simple_form2->toolbar( )->title( `Links & More` ).
+    simple_form2->label( `Links & More` ).
     simple_form2->link( text   = `Repository on GitHub`
                         target = `_blank`
                         href   = `https://github.com/abap2UI5/abap2UI5` ).

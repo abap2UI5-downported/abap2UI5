@@ -46,7 +46,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
   METHOD test_add.
 
     DATA lo_tree TYPE REF TO z2ui5_cl_ui5.
-    DATA temp11 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp11 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp12 LIKE LINE OF temp11.
     DATA lv_result TYPE string.
     lo_tree = z2ui5_cl_ui5=>_factory( ).

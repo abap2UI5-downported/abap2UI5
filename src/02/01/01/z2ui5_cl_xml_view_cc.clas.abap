@@ -190,7 +190,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
 
   METHOD bwip_js.
-    DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp2 LIKE LINE OF temp1.
 
     result = mo_view.
@@ -217,7 +217,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
 
   METHOD camera_picture.
-    DATA temp3 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp3 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp4 LIKE LINE OF temp3.
 
     result = mo_view.
@@ -247,7 +247,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
 
   METHOD chartjs.
-    DATA temp5 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp5 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp6 LIKE LINE OF temp5.
     result = mo_view.
     
@@ -300,7 +300,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
 
   METHOD favicon.
-    DATA temp7 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp7 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp8 LIKE LINE OF temp7.
 
     result = mo_view.
@@ -318,7 +318,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
 
   METHOD file_uploader.
-    DATA temp9 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp9 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp10 LIKE LINE OF temp9.
 
     result = mo_view.
@@ -364,7 +364,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
 
   METHOD focus.
-    DATA temp11 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp11 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp12 LIKE LINE OF temp11.
 
     result = mo_view.
@@ -391,7 +391,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
 
   METHOD geolocation.
-    DATA temp13 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp13 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp14 LIKE LINE OF temp13.
 
     result = mo_view.
@@ -436,7 +436,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
 
   METHOD history.
-    DATA temp15 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp15 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp16 LIKE LINE OF temp15.
 
     result = mo_view.
@@ -454,7 +454,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
 
   METHOD info_frontend.
-    DATA temp17 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp17 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp18 LIKE LINE OF temp17.
 
     result = mo_view.
@@ -490,7 +490,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
 
   METHOD messaging.
-    DATA temp19 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp19 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp20 LIKE LINE OF temp19.
 
     result = mo_view.
@@ -508,7 +508,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
 
   METHOD multiinput.
-    DATA temp21 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp21 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp22 LIKE LINE OF temp21.
 
     result = mo_view.
@@ -567,7 +567,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
 
   METHOD multiinput_ext.
-    DATA temp23 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp23 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp24 LIKE LINE OF temp23.
 
     result = mo_view.
@@ -594,7 +594,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
 
   METHOD scrolling.
-    DATA temp25 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp25 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp26 LIKE LINE OF temp25.
 
     result = mo_view.
@@ -615,7 +615,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
 
   METHOD spreadsheet_export.
-    DATA temp27 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp27 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp28 LIKE LINE OF temp27.
 
     result = mo_view.
@@ -642,7 +642,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
 
   METHOD timer.
-    DATA temp29 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp29 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp30 LIKE LINE OF temp29.
 
     result = mo_view.
@@ -669,7 +669,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
 
   METHOD title.
-    DATA temp31 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp31 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp32 LIKE LINE OF temp31.
 
     result = mo_view.
@@ -688,7 +688,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
   METHOD uitableext.
 
-    DATA temp33 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp33 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp34 LIKE LINE OF temp33.
     CLEAR temp33.
     

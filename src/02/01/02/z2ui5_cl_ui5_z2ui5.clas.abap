@@ -38,7 +38,7 @@ ENDCLASS.
 CLASS z2ui5_cl_ui5_z2ui5 IMPLEMENTATION.
 
   METHOD timer.
-    DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp2 LIKE LINE OF temp1.
 
     result = me.
@@ -61,7 +61,7 @@ CLASS z2ui5_cl_ui5_z2ui5 IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD file_uploader.
-    DATA temp3 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp3 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp4 LIKE LINE OF temp3.
 
     result = me.

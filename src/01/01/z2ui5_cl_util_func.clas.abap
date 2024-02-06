@@ -61,6 +61,22 @@ CLASS z2ui5_cl_util_func DEFINITION
       RETURNING
         VALUE(result) TYPE string.
 
+    CLASS-METHODS bind_tab_cell
+      IMPORTING
+        iv_name         TYPE string
+        i_tab_index     TYPE i
+        i_tab           TYPE STANDARD TABLE
+        i_val           TYPE data
+      RETURNING
+        VALUE(r_result) TYPE string.
+
+    CLASS-METHODS bind_struc_comp
+      IMPORTING
+        i_struc         TYPE data
+        i_val           TYPE data
+      RETURNING
+        VALUE(r_result) TYPE string.
+
     CLASS-METHODS db_load_by_id
       IMPORTING
         id            TYPE clike OPTIONAL
@@ -117,7 +133,7 @@ CLASS z2ui5_cl_util_func DEFINITION
 
     CLASS-METHODS url_param_create_url
       IMPORTING
-        !t_params     TYPE z2ui5_if_client=>ty_t_name_value
+        !t_params     TYPE z2ui5_if_types=>ty_t_name_value
       RETURNING
         VALUE(result) TYPE string.
 
@@ -246,7 +262,7 @@ CLASS z2ui5_cl_util_func DEFINITION
       IMPORTING
         !i_val           TYPE clike
       RETURNING
-        VALUE(rt_params) TYPE z2ui5_if_client=>ty_t_name_value.
+        VALUE(rt_params) TYPE z2ui5_if_types=>ty_t_name_value.
 
     CLASS-METHODS rtti_get_t_attri_by_object
       IMPORTING
@@ -326,7 +342,7 @@ CLASS z2ui5_cl_util_func DEFINITION
 
     CLASS-METHODS filter_get_token_range_mapping
       RETURNING
-        VALUE(result) TYPE z2ui5_if_client=>ty_t_name_value.
+        VALUE(result) TYPE z2ui5_if_types=>ty_t_name_value.
 
     CLASS-METHODS itab_filter_by_val
       IMPORTING
@@ -392,54 +408,22 @@ CLASS z2ui5_cl_util_func DEFINITION
       RETURNING
         VALUE(result)       TYPE ty_data_element_texts.
 
-    CLASS-METHODS ui5_set_arg_string
-      IMPORTING
-        val           TYPE string_table
-      RETURNING
-        VALUE(result) TYPE string.
-
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
 
 
 
-CLASS z2ui5_cl_util_func IMPLEMENTATION.
+CLASS Z2UI5_CL_UTIL_FUNC IMPLEMENTATION.
 
-  METHOD ui5_set_arg_string.
-      DATA temp1 LIKE LINE OF val.
-      DATA lr_arg LIKE REF TO temp1.
-        DATA lv_new TYPE string.
-
-    IF val IS NOT INITIAL.
-
-      
-      
-      LOOP AT val REFERENCE INTO lr_arg.
-        
-        lv_new = lr_arg->*.
-        IF lv_new IS INITIAL.
-          CONTINUE.
-        ENDIF.
-        IF lv_new(1) <> `$` AND lv_new(1) <> `{`.
-          lv_new = `"` && lv_new && `"`.
-        ENDIF.
-        result = result && `, ` && lv_new.
-      ENDLOOP.
-
-    ENDIF.
-
-    result = result && `)`.
-
-  ENDMETHOD.
 
   METHOD app_get_url.
     DATA lv_url TYPE string.
-    DATA lt_param TYPE z2ui5_if_client=>ty_t_name_value.
-    DATA temp2 TYPE z2ui5_if_client=>ty_s_name_value.
+    DATA lt_param TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp1 TYPE z2ui5_if_types=>ty_s_name_value.
 
     IF classname IS INITIAL.
-      classname = rtti_get_classname_by_ref( client->get( )-s_draft-app ).
+      classname = rtti_get_classname_by_ref( client->get_app( ) ).
     ENDIF.
 
     
@@ -448,10 +432,10 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
     lt_param = url_param_get_tab( client->get( )-s_config-search ).
     DELETE lt_param WHERE n = `app_start`.
     
-    CLEAR temp2.
-    temp2-n = `app_start`.
-    temp2-v = to_lower( classname ).
-    INSERT temp2 INTO TABLE lt_param.
+    CLEAR temp1.
+    temp1-n = `app_start`.
+    temp1-v = to_lower( classname ).
+    INSERT temp1 INTO TABLE lt_param.
 
     result = lv_url && url_param_create_url( lt_param ).
 
@@ -460,14 +444,82 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
   METHOD app_get_url_source_code.
 
-    DATA ls_draft TYPE z2ui5_if_client=>ty_s_draft.
-    DATA ls_config TYPE z2ui5_if_client=>ty_s_config.
-    ls_draft = client->get( )-s_draft.
-    
+    DATA ls_config TYPE z2ui5_if_types=>ty_s_config.
     ls_config = client->get( )-s_config.
-
     result = ls_config-origin && `/sap/bc/adt/oo/classes/`
-       && rtti_get_classname_by_ref( ls_draft-app ) && `/source/main`.
+       && rtti_get_classname_by_ref( client->get_app( ) ) && `/source/main`.
+
+  ENDMETHOD.
+
+
+  METHOD bind_struc_comp.
+
+    FIELD-SYMBOLS <ele>  TYPE any.
+    FIELD-SYMBOLS <row>  TYPE any.
+    DATA lr_ref_in TYPE REF TO data.
+    DATA lr_ref TYPE REF TO data.
+    DATA lt_attri TYPE abap_component_tab.
+    FIELD-SYMBOLS <comp> LIKE LINE OF lt_attri.
+
+    ASSIGN i_struc TO <row>.
+    
+    lt_attri = rtti_get_t_comp_by_data( i_struc ).
+
+    
+    LOOP AT lt_attri ASSIGNING <comp>.
+
+      ASSIGN COMPONENT <comp>-name OF STRUCTURE <row> TO <ele>.
+      GET REFERENCE OF <ele> INTO lr_ref_in.
+
+      GET REFERENCE OF i_val INTO lr_ref.
+      IF lr_ref = lr_ref_in.
+*        r_result = `{` && iv_name && '/' && <comp>-name && `}`.
+        r_result = <comp>-name.
+        RETURN.
+      ENDIF.
+
+    ENDLOOP.
+
+*    RAISE EXCEPTION TYPE z2ui5_cx_util_error
+*      EXPORTING
+*        val = `BINDING_ERROR - No class attribute for binding found - Please check if the binded values are public attributes of your class`.
+
+  ENDMETHOD.
+
+
+  METHOD bind_tab_cell.
+
+    FIELD-SYMBOLS <ele>  TYPE any.
+    FIELD-SYMBOLS <row>  TYPE any.
+    DATA lr_ref_in TYPE REF TO data.
+    DATA lr_ref TYPE REF TO data.
+    DATA lt_attri TYPE abap_component_tab.
+    FIELD-SYMBOLS <comp> LIKE LINE OF lt_attri.
+        DATA temp2 TYPE string.
+
+    READ TABLE i_tab INDEX i_tab_index ASSIGNING <row>.
+    
+    lt_attri = rtti_get_t_comp_by_data( <row> ).
+
+    
+    LOOP AT lt_attri ASSIGNING <comp>.
+
+      ASSIGN COMPONENT <comp>-name OF STRUCTURE <row> TO <ele>.
+      GET REFERENCE OF <ele> INTO lr_ref_in.
+
+      GET REFERENCE OF i_val INTO lr_ref.
+      IF lr_ref = lr_ref_in.
+        
+        temp2 = i_tab_index - 1.
+        r_result = `{` && iv_name && '/' && shift_right( temp2 ) && '/' && <comp>-name && `}`.
+        RETURN.
+      ENDIF.
+
+    ENDLOOP.
+
+    RAISE EXCEPTION TYPE z2ui5_cx_util_error
+      EXPORTING
+        val = `BINDING_ERROR - No class attribute for binding found - Please check if the binded values are public attributes of your class`.
 
   ENDMETHOD.
 
@@ -900,7 +952,7 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
   METHOD filter_get_token_range_mapping.
 
-    DATA temp10 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp10 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp11 LIKE LINE OF temp10.
     CLEAR temp10.
     
@@ -941,10 +993,10 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
   METHOD filter_get_token_t_by_range_t.
 
-    DATA lt_mapping TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA lt_mapping TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp12 LIKE LINE OF val.
     DATA lr_row LIKE REF TO temp12.
-      DATA lv_value TYPE z2ui5_if_client=>ty_s_name_value-v.
+      DATA lv_value TYPE z2ui5_if_types=>ty_s_name_value-v.
       DATA temp6 LIKE LINE OF lt_mapping.
       DATA temp7 LIKE sy-tabix.
       DATA temp13 TYPE z2ui5_cl_util_func=>ty_s_token.
@@ -1296,6 +1348,103 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD rtti_get_data_element_texts.
+
+    DATA:
+      data_element_name TYPE c LENGTH 30,
+      ddic_ref          TYPE REF TO data,
+      data_element      TYPE REF TO object,
+      content           TYPE REF TO object,
+      BEGIN OF ddic,
+        reptext   TYPE string,
+        scrtext_s TYPE string,
+        scrtext_m TYPE string,
+        scrtext_l TYPE string,
+      END OF ddic,
+      exists TYPE abap_bool.
+        DATA temp23 TYPE REF TO cl_abap_structdescr.
+        DATA struct_desrc LIKE temp23.
+        FIELD-SYMBOLS <ddic> TYPE any.
+        DATA temp24 TYPE REF TO cl_abap_datadescr.
+        DATA data_descr LIKE temp24.
+
+    data_element_name = i_data_element_name.
+
+    TRY.
+        cl_abap_typedescr=>describe_by_name( 'T100' ).
+
+        
+        temp23 ?= cl_abap_structdescr=>describe_by_name( 'DFIES' ).
+        
+        struct_desrc = temp23.
+
+        CREATE DATA ddic_ref TYPE HANDLE struct_desrc.
+        
+        ASSIGN ddic_ref->* TO <ddic>.
+        ASSERT sy-subrc = 0.
+
+        
+        temp24 ?= cl_abap_elemdescr=>describe_by_name( data_element_name ).
+        
+        data_descr = temp24.
+
+        CALL METHOD data_descr->('GET_DDIC_FIELD')
+          RECEIVING
+            p_flddescr   = <ddic>
+          EXCEPTIONS
+            not_found    = 1
+            no_ddic_type = 2
+            OTHERS       = 3.
+        IF sy-subrc <> 0.
+          RETURN.
+        ENDIF.
+
+        MOVE-CORRESPONDING <ddic> TO ddic.
+        result-header = ddic-reptext.
+        result-short  = ddic-scrtext_s.
+        result-medium = ddic-scrtext_m.
+        result-long   = ddic-scrtext_l.
+
+      CATCH cx_root.
+        CALL METHOD ('XCO_CP_ABAP_DICTIONARY')=>('DATA_ELEMENT')
+          EXPORTING
+            iv_name         = data_element_name
+          RECEIVING
+            ro_data_element = data_element.
+
+        CALL METHOD data_element->('IF_XCO_AD_DATA_ELEMENT~EXISTS')
+          RECEIVING
+            rv_exists = exists.
+
+        IF exists = abap_false.
+          RETURN.
+        ENDIF.
+
+        CALL METHOD data_element->('IF_XCO_AD_DATA_ELEMENT~CONTENT')
+          RECEIVING
+            ro_content = content.
+
+        CALL METHOD content->('IF_XCO_DTEL_CONTENT~GET_HEADING_FIELD_LABEL')
+          RECEIVING
+            rs_heading_field_label = result-header.
+
+        CALL METHOD content->('IF_XCO_DTEL_CONTENT~GET_SHORT_FIELD_LABEL')
+          RECEIVING
+            rs_short_field_label = result-short.
+
+        CALL METHOD content->('IF_XCO_DTEL_CONTENT~GET_MEDIUM_FIELD_LABEL')
+          RECEIVING
+            rs_medium_field_label = result-medium.
+
+        CALL METHOD content->('IF_XCO_DTEL_CONTENT~GET_LONG_FIELD_LABEL')
+          RECEIVING
+            rs_long_field_label = result-long.
+
+    ENDTRY.
+
+  ENDMETHOD.
+
+
   METHOD rtti_get_type_kind.
 
     result = cl_abap_datadescr=>get_data_type_kind( val ).
@@ -1306,13 +1455,13 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
   METHOD rtti_get_type_name.
 
     DATA lo_descr TYPE REF TO cl_abap_typedescr.
-    DATA temp23 TYPE REF TO cl_abap_elemdescr.
-    DATA lo_ele LIKE temp23.
+    DATA temp25 TYPE REF TO cl_abap_elemdescr.
+    DATA lo_ele LIKE temp25.
     lo_descr = cl_abap_elemdescr=>describe_by_data( val ).
     
-    temp23 ?= lo_descr.
+    temp25 ?= lo_descr.
     
-    lo_ele = temp23.
+    lo_ele = temp25.
     result  = lo_ele->get_relative_name( ).
 
   ENDMETHOD.
@@ -1321,57 +1470,57 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
   METHOD rtti_get_t_attri_by_object.
 
     DATA lo_obj_ref TYPE REF TO cl_abap_typedescr.
-    DATA temp24 TYPE REF TO cl_abap_classdescr.
+    DATA temp26 TYPE REF TO cl_abap_classdescr.
     lo_obj_ref = cl_abap_objectdescr=>describe_by_object_ref( val ).
     
-    temp24 ?= lo_obj_ref.
-    result   = temp24->attributes.
+    temp26 ?= lo_obj_ref.
+    result   = temp26->attributes.
 
   ENDMETHOD.
 
 
   METHOD rtti_get_t_comp_by_data.
         DATA lo_type TYPE REF TO cl_abap_typedescr.
-        DATA temp25 TYPE REF TO cl_abap_structdescr.
-        DATA lo_struct LIKE temp25.
-            DATA temp26 TYPE REF TO cl_abap_tabledescr.
-            DATA lo_tab LIKE temp26.
-            DATA temp27 TYPE REF TO cl_abap_structdescr.
+        DATA temp27 TYPE REF TO cl_abap_structdescr.
+        DATA lo_struct LIKE temp27.
+            DATA temp28 TYPE REF TO cl_abap_tabledescr.
+            DATA lo_tab LIKE temp28.
+            DATA temp29 TYPE REF TO cl_abap_structdescr.
                 DATA lo_ref TYPE REF TO cl_abap_typedescr.
-                DATA temp28 TYPE REF TO cl_abap_structdescr.
-                DATA temp29 TYPE REF TO cl_abap_tabledescr.
                 DATA temp30 TYPE REF TO cl_abap_structdescr.
+                DATA temp31 TYPE REF TO cl_abap_tabledescr.
+                DATA temp32 TYPE REF TO cl_abap_structdescr.
 
     TRY.
         
         lo_type = cl_abap_typedescr=>describe_by_data( val ).
         
-        temp25 ?= lo_type.
+        temp27 ?= lo_type.
         
-        lo_struct = temp25.
+        lo_struct = temp27.
       CATCH cx_root.
         TRY.
             
-            temp26 ?= lo_type.
+            temp28 ?= lo_type.
             
-            lo_tab = temp26.
+            lo_tab = temp28.
             
-            temp27 ?= lo_tab->get_table_line_type( ).
-            lo_struct = temp27.
+            temp29 ?= lo_tab->get_table_line_type( ).
+            lo_struct = temp29.
           CATCH cx_root.
             TRY.
                 
                 lo_ref = cl_abap_typedescr=>describe_by_data_ref( val ).
                 
-                temp28 ?= lo_ref.
-                lo_struct = temp28.
+                temp30 ?= lo_ref.
+                lo_struct = temp30.
               CATCH cx_root.
                 
-                temp29 ?= lo_ref.
-                lo_tab = temp29.
+                temp31 ?= lo_ref.
+                lo_tab = temp31.
                 
-                temp30 ?= lo_tab->get_table_line_type( ).
-                lo_struct = temp30.
+                temp32 ?= lo_tab->get_table_line_type( ).
+                lo_struct = temp32.
             ENDTRY.
         ENDTRY.
     ENDTRY.
@@ -1503,13 +1652,13 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
   METHOD sql_get_by_string.
 
-    DATA temp31 TYPE string.
-    DATA lv_sql LIKE temp31.
+    DATA temp33 TYPE string.
+    DATA lv_sql LIKE temp33.
     DATA lv_dummy TYPE string.
     DATA lv_tab TYPE string.
-    temp31 = val.
+    temp33 = val.
     
-    lv_sql = temp31.
+    lv_sql = temp33.
     REPLACE ALL OCCURRENCES OF ` ` IN lv_sql  WITH ``.
     lv_sql = to_upper( lv_sql ).
     
@@ -1565,15 +1714,15 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
 
   METHOD trans_json_by_any.
-        DATA temp32 TYPE REF TO z2ui5_if_ajson.
-        DATA li_ajson LIKE temp32.
+        DATA temp34 TYPE REF TO z2ui5_if_ajson.
+        DATA li_ajson LIKE temp34.
         DATA x TYPE REF TO z2ui5_cx_ajson_error.
     TRY.
 
         
-        temp32 ?= z2ui5_cl_ajson=>create_empty( ).
+        temp34 ?= z2ui5_cl_ajson=>create_empty( ).
         
-        li_ajson = temp32.
+        li_ajson = temp34.
         result = li_ajson->set( iv_path = `/` iv_val = any )->stringify( ).
 
         
@@ -1581,6 +1730,7 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
         ASSERT x IS NOT BOUND.
     ENDTRY.
   ENDMETHOD.
+
 
   METHOD trans_srtti_xml_2_data.
 
@@ -1675,6 +1825,8 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
   ENDMETHOD.
 
 
+
+
   METHOD url_param_create_url.
 
     DATA ls_param LIKE LINE OF t_params.
@@ -1689,21 +1841,21 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
   METHOD url_param_get.
 
-    DATA lt_params TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA lt_params TYPE z2ui5_if_types=>ty_t_name_value.
     DATA lv_val TYPE string.
-    DATA temp33 TYPE string.
-    DATA temp34 TYPE z2ui5_if_client=>ty_s_name_value.
+    DATA temp35 TYPE string.
+    DATA temp36 TYPE z2ui5_if_types=>ty_s_name_value.
     lt_params = url_param_get_tab( url ).
     
     lv_val = c_trim_lower( val ).
     
-    CLEAR temp33.
+    CLEAR temp35.
     
-    READ TABLE lt_params INTO temp34 WITH KEY n = lv_val.
+    READ TABLE lt_params INTO temp36 WITH KEY n = lv_val.
     IF sy-subrc = 0.
-      temp33 = temp34-v.
+      temp35 = temp36-v.
     ENDIF.
-    result = temp33.
+    result = temp35.
 
   ENDMETHOD.
 
@@ -1712,13 +1864,13 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
     DATA lv_search TYPE string.
     DATA lv_search2 TYPE string.
-    DATA temp35 TYPE string.
+    DATA temp37 TYPE string.
     DATA lt_param TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-    DATA temp36 LIKE LINE OF lt_param.
-    DATA lr_param LIKE REF TO temp36.
+    DATA temp38 LIKE LINE OF lt_param.
+    DATA lr_param LIKE REF TO temp38.
       DATA lv_name TYPE string.
       DATA lv_value TYPE string.
-      DATA temp37 TYPE z2ui5_if_client=>ty_s_name_value.
+      DATA temp39 TYPE z2ui5_if_types=>ty_s_name_value.
     lv_search = replace( val  = i_val
                                sub  = `%3D`
                                with = '='
@@ -1732,11 +1884,11 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
                                         sub = `&sap-startup-params=` ).
     
     IF lv_search2 IS NOT INITIAL.
-      temp35 = lv_search2.
+      temp37 = lv_search2.
     ELSE.
-      temp35 = lv_search.
+      temp37 = lv_search.
     ENDIF.
-    lv_search = temp35.
+    lv_search = temp37.
 
     lv_search2 = substring_after( val = c_trim_lower( lv_search )
                                   sub = `?` ).
@@ -1754,10 +1906,10 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
       
       SPLIT lr_param->* AT `=` INTO lv_name lv_value.
       
-      CLEAR temp37.
-      temp37-n = c_trim_lower( lv_name ).
-      temp37-v = c_trim_lower( lv_value ).
-      INSERT temp37 INTO TABLE rt_params.
+      CLEAR temp39.
+      temp39-n = c_trim_lower( lv_name ).
+      temp39-v = c_trim_lower( lv_value ).
+      INSERT temp39 INTO TABLE rt_params.
     ENDLOOP.
 
   ENDMETHOD.
@@ -1765,11 +1917,11 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
 
   METHOD url_param_set.
 
-    DATA lt_params TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA lt_params TYPE z2ui5_if_types=>ty_t_name_value.
     DATA lv_n TYPE string.
-    DATA temp38 LIKE LINE OF lt_params.
-    DATA lr_params LIKE REF TO temp38.
-      DATA temp39 TYPE z2ui5_if_client=>ty_s_name_value.
+    DATA temp40 LIKE LINE OF lt_params.
+    DATA lr_params LIKE REF TO temp40.
+      DATA temp41 TYPE z2ui5_if_types=>ty_s_name_value.
     lt_params = url_param_get_tab( url ).
     
     lv_n = c_trim_lower( name ).
@@ -1782,10 +1934,10 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
     ENDLOOP.
     IF sy-subrc <> 0.
       
-      CLEAR temp39.
-      temp39-n = lv_n.
-      temp39-v = c_trim_lower( value ).
-      INSERT temp39 INTO TABLE lt_params.
+      CLEAR temp41.
+      temp41-n = lv_n.
+      temp41-v = c_trim_lower( value ).
+      INSERT temp41 INTO TABLE lt_params.
     ENDIF.
 
     result = url_param_create_url( lt_params ).
@@ -1894,103 +2046,6 @@ CLASS z2ui5_cl_util_func IMPLEMENTATION.
   METHOD x_raise.
 
     RAISE EXCEPTION TYPE z2ui5_cx_util_error EXPORTING val = v.
-
-  ENDMETHOD.
-
-
-  METHOD rtti_get_data_element_texts.
-
-    DATA:
-      data_element_name TYPE c LENGTH 30,
-      ddic_ref          TYPE REF TO data,
-      data_element      TYPE REF TO object,
-      content           TYPE REF TO object,
-      BEGIN OF ddic,
-        reptext   TYPE string,
-        scrtext_s TYPE string,
-        scrtext_m TYPE string,
-        scrtext_l TYPE string,
-      END OF ddic,
-      exists TYPE abap_bool.
-        DATA temp40 TYPE REF TO cl_abap_structdescr.
-        DATA struct_desrc LIKE temp40.
-        FIELD-SYMBOLS <ddic> TYPE any.
-        DATA temp41 TYPE REF TO cl_abap_datadescr.
-        DATA data_descr LIKE temp41.
-
-    data_element_name = i_data_element_name.
-
-    TRY.
-        cl_abap_typedescr=>describe_by_name( 'T100' ).
-
-        
-        temp40 ?= cl_abap_structdescr=>describe_by_name( 'DFIES' ).
-        
-        struct_desrc = temp40.
-
-        CREATE DATA ddic_ref TYPE HANDLE struct_desrc.
-        
-        ASSIGN ddic_ref->* TO <ddic>.
-        ASSERT sy-subrc = 0.
-
-        
-        temp41 ?= cl_abap_elemdescr=>describe_by_name( data_element_name ).
-        
-        data_descr = temp41.
-
-        CALL METHOD data_descr->('GET_DDIC_FIELD')
-          RECEIVING
-            p_flddescr   = <ddic>
-          EXCEPTIONS
-            not_found    = 1
-            no_ddic_type = 2
-            OTHERS       = 3.
-        IF sy-subrc <> 0.
-          RETURN.
-        ENDIF.
-
-        MOVE-CORRESPONDING <ddic> TO ddic.
-        result-header = ddic-reptext.
-        result-short  = ddic-scrtext_s.
-        result-medium = ddic-scrtext_m.
-        result-long   = ddic-scrtext_l.
-
-      CATCH cx_root.
-        CALL METHOD ('XCO_CP_ABAP_DICTIONARY')=>('DATA_ELEMENT')
-          EXPORTING
-            iv_name         = data_element_name
-          RECEIVING
-            ro_data_element = data_element.
-
-        CALL METHOD data_element->('IF_XCO_AD_DATA_ELEMENT~EXISTS')
-          RECEIVING
-            rv_exists = exists.
-
-        IF exists = abap_false.
-          RETURN.
-        ENDIF.
-
-        CALL METHOD data_element->('IF_XCO_AD_DATA_ELEMENT~CONTENT')
-          RECEIVING
-            ro_content = content.
-
-        CALL METHOD content->('IF_XCO_DTEL_CONTENT~GET_HEADING_FIELD_LABEL')
-          RECEIVING
-            rs_heading_field_label = result-header.
-
-        CALL METHOD content->('IF_XCO_DTEL_CONTENT~GET_SHORT_FIELD_LABEL')
-          RECEIVING
-            rs_short_field_label = result-short.
-
-        CALL METHOD content->('IF_XCO_DTEL_CONTENT~GET_MEDIUM_FIELD_LABEL')
-          RECEIVING
-            rs_medium_field_label = result-medium.
-
-        CALL METHOD content->('IF_XCO_DTEL_CONTENT~GET_LONG_FIELD_LABEL')
-          RECEIVING
-            rs_long_field_label = result-long.
-
-    ENDTRY.
 
   ENDMETHOD.
 ENDCLASS.

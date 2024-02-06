@@ -19,7 +19,7 @@ CLASS z2ui5_cl_ui5 DEFINITION
     METHODS _add
       IMPORTING n             TYPE clike
                 ns            TYPE clike
-                t_p           TYPE z2ui5_if_client=>ty_t_name_value OPTIONAL
+                t_p           TYPE z2ui5_if_types=>ty_t_name_value OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_ui5.
 
     METHODS _add_p
@@ -92,8 +92,8 @@ CLASS z2ui5_cl_ui5 IMPLEMENTATION.
 
   METHOD _2xml.
 
-    DATA lt_prop TYPE z2ui5_if_client=>ty_t_name_value.
-    DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA lt_prop TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp2 LIKE LINE OF temp1.
       DATA lv_ns_tmp LIKE LINE OF obj->_node->mt_ns.
             DATA ls_prop LIKE LINE OF lt_prop.
@@ -102,10 +102,10 @@ CLASS z2ui5_cl_ui5 IMPLEMENTATION.
             DATA temp3 TYPE string.
             DATA temp4 TYPE string.
             DATA lv_text LIKE temp4.
-    DATA lv_ns TYPE z2ui5_if_client=>ty_s_name_value-n.
+    DATA lv_ns TYPE z2ui5_if_types=>ty_s_name_value-n.
     DATA temp9 LIKE LINE OF lt_prop.
     DATA temp10 LIKE sy-tabix.
-    DATA temp5 TYPE z2ui5_if_client=>ty_s_name_value-n.
+    DATA temp5 TYPE z2ui5_if_types=>ty_s_name_value-n.
     DATA lv_element LIKE obj->_node->mv_name.
     DATA temp6 TYPE string.
     DATA val TYPE string.
@@ -353,7 +353,7 @@ CLASS z2ui5_cl_ui5 IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD _add_p.
-    DATA temp8 TYPE z2ui5_if_client=>ty_s_name_value.
+    DATA temp8 TYPE z2ui5_if_types=>ty_s_name_value.
     CLEAR temp8.
     temp8-n = n.
     temp8-v = v.

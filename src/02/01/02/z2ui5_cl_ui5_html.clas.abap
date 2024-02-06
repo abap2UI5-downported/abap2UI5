@@ -26,7 +26,7 @@ ENDCLASS.
 CLASS z2ui5_cl_ui5_html IMPLEMENTATION.
 
   METHOD zz_plain.
-    DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp2 LIKE LINE OF temp1.
     result = me.
     
@@ -41,7 +41,7 @@ CLASS z2ui5_cl_ui5_html IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD script.
-    DATA temp3 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp3 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp4 LIKE LINE OF temp3.
     CLEAR temp3.
     

@@ -20,7 +20,7 @@ ENDCLASS.
 
 CLASS z2ui5_cl_ui5_ndc IMPLEMENTATION.
   METHOD barcodescannerbutton.
-    DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp2 LIKE LINE OF temp1.
     CLEAR temp1.
     

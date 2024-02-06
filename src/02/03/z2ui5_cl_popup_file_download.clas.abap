@@ -76,7 +76,7 @@ CLASS Z2UI5_CL_POPUP_FILE_DOWNLOAD IMPLEMENTATION.
 
     DATA popup TYPE REF TO z2ui5_cl_xml_view.
       DATA lv_base64 TYPE xstring.
-      DATA temp2 TYPE z2ui5_if_client=>ty_t_name_value.
+      DATA temp2 TYPE z2ui5_if_types=>ty_t_name_value.
       DATA temp3 LIKE LINE OF temp2.
     popup = z2ui5_cl_xml_view=>factory_popup( )->dialog(
                   title       = title

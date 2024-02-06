@@ -1,4 +1,4 @@
-CLASS z2ui5_cl_fw_http_mapper DEFINITION
+CLASS z2ui5_cl_fw_hlp_json_mapper DEFINITION
   PUBLIC
   FINAL
   CREATE PUBLIC .
@@ -10,27 +10,25 @@ CLASS z2ui5_cl_fw_http_mapper DEFINITION
       IMPORTING
         val           TYPE string
       RETURNING
-        VALUE(result) TYPE z2ui5_if_client=>ty_s_http_request_post.
+        VALUE(result) TYPE z2ui5_if_fw_types=>ty_s_http_request_post.
 
     METHODS response_abap_to_json
       IMPORTING
-        val           TYPE z2ui5_if_client=>ty_s_http_response_post
+        val           TYPE z2ui5_if_fw_types=>ty_s_http_response_post
       RETURNING
         VALUE(result) TYPE string.
 
-    METHODS model_front_to_back
+    METHODS model_client_to_server
       IMPORTING
-        app      TYPE REF TO object
-        viewname TYPE string
-        t_attri  TYPE  z2ui5_cl_fw_binding=>ty_t_attri
-        model    TYPE REF TO z2ui5_if_ajson ##NEEDED.
+        view    TYPE string
+        t_attri TYPE  REF TO z2ui5_if_fw_types=>ty_t_attri
+        model   TYPE REF TO z2ui5_if_ajson.
 
-    METHODS model_back_to_front
+    METHODS model_server_to_client
       IMPORTING
-        app           TYPE REF TO object
-        t_attri       TYPE  z2ui5_cl_fw_binding=>ty_t_attri
+        t_attri       TYPE  z2ui5_if_fw_types=>ty_t_attri
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_if_ajson ##NEEDED.
+        VALUE(result) TYPE string.
 
   PROTECTED SECTION.
   PRIVATE SECTION.
@@ -38,10 +36,10 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
+CLASS z2ui5_cl_fw_hlp_json_mapper IMPLEMENTATION.
 
 
-  METHOD model_back_to_front.
+  METHOD model_server_to_client.
         DATA temp1 TYPE REF TO z2ui5_if_ajson.
         DATA ajson_result LIKE temp1.
         DATA temp2 LIKE LINE OF t_attri.
@@ -49,9 +47,8 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
             DATA temp3 TYPE REF TO z2ui5_if_ajson.
             DATA ajson LIKE temp3.
             DATA temp4 TYPE REF TO z2ui5_if_ajson.
-            DATA lv_name_back TYPE string.
-            FIELD-SYMBOLS <attribute> TYPE any.
-              DATA lv_path LIKE lr_attri->name_front.
+              FIELD-SYMBOLS <attribute> TYPE any.
+        DATA temp5 TYPE string.
         DATA x TYPE REF TO cx_root.
     TRY.
 
@@ -76,31 +73,18 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
             ajson = temp4.
           ENDIF.
 
-          "(2) read attribute of end-user app
-          IF lr_attri->bind_type = z2ui5_cl_fw_binding=>cs_bind_type-one_way
-          OR lr_attri->bind_type = z2ui5_cl_fw_binding=>cs_bind_type-two_way.
-            
-            lv_name_back = `APP->` && lr_attri->name.
-            
-            ASSIGN (lv_name_back) TO <attribute>.
-            ASSERT sy-subrc = 0.
-          ENDIF.
-
-          "(3) write to json
+          "(2) read attribute of end-user app & write to json
           CASE lr_attri->bind_type.
+            WHEN z2ui5_if_fw_types=>cs_bind_type-one_way
+            OR z2ui5_if_fw_types=>cs_bind_type-two_way.
 
-            WHEN z2ui5_cl_fw_binding=>cs_bind_type-one_time.
               
-              lv_path = lr_attri->name_front.
+              ASSIGN lr_attri->r_ref->* TO <attribute>.
+              ASSERT sy-subrc = 0.
+              ajson->set( iv_ignore_empty = abap_false iv_path = `/` iv_val =  <attribute> ).
+
+            WHEN z2ui5_if_fw_types=>cs_bind_type-one_time.
               ajson->set( iv_ignore_empty = abap_false iv_path = `/` iv_val = lr_attri->json_bind_local ).
-
-            WHEN z2ui5_cl_fw_binding=>cs_bind_type-one_way.
-              lv_path = lr_attri->name_front.
-              ajson->set( iv_ignore_empty = abap_false iv_path = `/` iv_val =  <attribute> ).
-
-            WHEN z2ui5_cl_fw_binding=>cs_bind_type-two_way.
-              lv_path = `EDIT/` && lr_attri->name_front.
-              ajson->set( iv_ignore_empty = abap_false iv_path = `/` iv_val =  <attribute> ).
 
             WHEN OTHERS.
               ASSERT `` = `ERROR_UNKNOWN_BIND_MODE`.
@@ -109,17 +93,24 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
           "(4) set compress mode
           "todo performance - add and filter in a single loop
           IF lr_attri->custom_filter IS BOUND.
-            ajson =  ajson->filter( lr_attri->custom_filter ).
+            ajson = ajson->filter( lr_attri->custom_filter ).
           ELSE.
-            ajson =  ajson->filter( z2ui5_cl_ajson_filter_lib=>create_empty_filter( ) ).
+            ajson = ajson->filter( z2ui5_cl_ajson_filter_lib=>create_empty_filter( ) ).
           ENDIF.
 
           "(5) write into result
           "todo performance - write directly into result
-          ajson_result->set( iv_path = `/` && lv_path iv_val = ajson ).
+          ajson_result->set( iv_path = lr_attri->name_client iv_val = ajson ).
         ENDLOOP.
 
-        result = ajson_result.
+        result = ajson_result->stringify( ).
+        
+        IF result IS INITIAL.
+          temp5 = `{}`.
+        ELSE.
+          temp5 = result.
+        ENDIF.
+        result = temp5.
 
         
       CATCH cx_root INTO x.
@@ -128,27 +119,23 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD model_front_to_back.
+  METHOD model_client_to_server.
 
-    DATA temp5 LIKE LINE OF t_attri.
-    DATA lr_attri LIKE REF TO temp5.
-          DATA lv_name_back TYPE string.
-          FIELD-SYMBOLS <backend> TYPE any.
+    DATA temp6 LIKE LINE OF t_attri->*.
+    DATA lr_attri LIKE REF TO temp6.
           DATA lo_val_front TYPE REF TO z2ui5_if_ajson.
+          FIELD-SYMBOLS <val> TYPE any.
           DATA x TYPE REF TO cx_root.
-    LOOP AT t_attri REFERENCE INTO lr_attri
-    WHERE bind_type = z2ui5_cl_fw_binding=>cs_bind_type-two_way
-    AND  viewname  = viewname.
+    LOOP AT t_attri->* REFERENCE INTO lr_attri
+    WHERE bind_type = z2ui5_if_fw_types=>cs_bind_type-two_way
+    AND  view  = view.
       TRY.
 
           
-          lv_name_back = `APP->` && lr_attri->name.
-          
-          ASSIGN (lv_name_back) TO <backend>.
-          ASSERT sy-subrc = 0.
-
-          
-          lo_val_front = model->slice( `/` && lr_attri->name_front ).
+          lo_val_front = model->slice( lr_attri->name_client ).
+          IF lo_val_front IS NOT BOUND.
+            CONTINUE.
+          ENDIF.
 
           IF lr_attri->custom_mapper_back IS BOUND.
             lo_val_front = lo_val_front->map( lr_attri->custom_mapper_back ).
@@ -158,9 +145,11 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
             lo_val_front = lo_val_front->filter( lr_attri->custom_filter_back ).
           ENDIF.
 
+          
+          ASSIGN lr_attri->r_ref->* TO <val>.
           lo_val_front->to_abap(
             IMPORTING
-              ev_container = <backend> ).
+              ev_container = <val> ).
 
           
         CATCH cx_root INTO x.
@@ -172,18 +161,22 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
 
 
   METHOD request_json_to_abap.
-        DATA temp6 TYPE REF TO z2ui5_if_ajson.
-        DATA lo_ajson LIKE temp6.
+        DATA temp7 TYPE REF TO z2ui5_if_ajson.
+        DATA lo_ajson LIKE temp7.
+        DATA lo_model TYPE REF TO z2ui5_if_ajson.
         DATA temp1 TYPE xsdboolean.
         DATA x TYPE REF TO cx_root.
     TRY.
 
         
-        temp6 ?= z2ui5_cl_ajson=>parse( val ).
+        temp7 ?= z2ui5_cl_ajson=>parse( val ).
         
-        lo_ajson = temp6.
+        lo_ajson = temp7.
 
-        result-o_model = lo_ajson->slice( `/EDIT` ).
+        result-o_model = z2ui5_cl_ajson=>create_empty( ).
+        
+        lo_model = lo_ajson->slice( `/EDIT` ).
+        result-o_model->set( iv_path = `/EDIT` iv_val = lo_model ).
         lo_ajson->delete( `/EDIT` ).
 
         lo_ajson = lo_ajson->slice( `/S_FRONTEND`).
@@ -216,38 +209,28 @@ CLASS z2ui5_cl_fw_http_mapper IMPLEMENTATION.
 
 
   METHOD response_abap_to_json.
-        DATA temp7 TYPE REF TO z2ui5_if_ajson.
-        DATA ajson_result LIKE temp7.
-        DATA temp8 TYPE REF TO z2ui5_cl_fw_http_mapper.
+        DATA temp8 TYPE REF TO z2ui5_if_ajson.
+        DATA ajson_result LIKE temp8.
+        DATA temp9 TYPE REF TO z2ui5_cl_fw_hlp_json_mapper.
         DATA lv_frontend TYPE string.
-        DATA lv_model TYPE string.
-        DATA temp9 TYPE string.
         DATA x TYPE REF TO cx_root.
     TRY.
 
         
-        temp7 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_upper_case( ) ).
+        temp8 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_upper_case( ) ).
         
-        ajson_result = temp7.
+        ajson_result = temp8.
 
         ajson_result->set( iv_path = `/` iv_val = val-s_frontend ).
         
-        CREATE OBJECT temp8 TYPE z2ui5_cl_fw_http_mapper.
-        ajson_result = ajson_result->filter( temp8 ).
+        CREATE OBJECT temp9 TYPE z2ui5_cl_fw_hlp_json_mapper.
+        ajson_result = ajson_result->filter( temp9 ).
         
         lv_frontend =  ajson_result->stringify( ).
-        
-        lv_model = val-o_model->stringify( ).
 
-        
-        IF lv_model IS INITIAL.
-          temp9 = `{}`.
-        ELSE.
-          temp9 = lv_model.
-        ENDIF.
         result = `{` &&
             |"S_FRONTEND":{ lv_frontend },| &&
-            |"MODEL":{ temp9 }| &&
+            |"MODEL":{ val-model }| &&
           `}`.
 
         

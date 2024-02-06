@@ -5,12 +5,12 @@ CLASS z2ui5_cl_fw_http_get DEFINITION
 
   PUBLIC SECTION.
 
-    DATA ms_request TYPE z2ui5_if_client=>ty_s_http_request_get .
+    DATA ms_request TYPE z2ui5_if_types=>ty_s_http_request_get.
     DATA mv_response TYPE string .
 
     METHODS constructor
       IMPORTING
-        val TYPE z2ui5_if_client=>ty_s_http_request_get OPTIONAL.
+        val TYPE z2ui5_if_types=>ty_s_http_request_get OPTIONAL.
 
     METHODS main
       RETURNING
@@ -451,7 +451,7 @@ CLASS Z2UI5_CL_FW_HTTP_GET IMPLEMENTATION.
                `                ORIGIN: sap.z2ui5.oBody.OLOCATION.ORIGIN,` && |\n|  &&
                `                PATHNAME: sap.z2ui5.oBody.OLOCATION.PATHNAME,` && |\n|  &&
                `                SEARCH: sap.z2ui5.oBody.OLOCATION.SEARCH,` && |\n|  &&
-               `                VIEWNAME: sap.z2ui5.oBody.VIEWNAME,` && |\n|  &&
+               `                VIEW: sap.z2ui5.oBody.VIEWNAME,` && |\n|  &&
                `                T_STARTUP_PARAMETERS: sap.z2ui5.oBody.OLOCATION.T_STARTUP_PARAMETERS,` && |\n|  &&
            `                   EVENT:  event(sap.z2ui5.oBody?.ARGUMENTS),` && |\n|  &&
                `            };` && |\n|  &&
@@ -515,13 +515,14 @@ CLASS Z2UI5_CL_FW_HTTP_GET IMPLEMENTATION.
   METHOD main.
 
     DATA lt_config LIKE ms_request-t_config.
-      DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
+      DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
       DATA temp2 LIKE LINE OF temp1.
       DATA lv_sec_policy TYPE string.
     DATA temp3 LIKE LINE OF lt_config.
     DATA lr_config LIKE REF TO temp3.
     DATA lv_add_js TYPE string.
-    DATA temp4 TYPE z2ui5_if_client=>ty_s_http_request_get-json_model_limit.
+    DATA temp4 TYPE z2ui5_if_types=>ty_s_http_request_get-json_model_limit.
+    DATA temp5 TYPE REF TO z2ui5_cl_fw_hlp_db.
     lt_config = ms_request-t_config.
     IF lt_config IS INITIAL.
       
@@ -610,7 +611,9 @@ CLASS Z2UI5_CL_FW_HTTP_GET IMPLEMENTATION.
                  `</script>` && |\n| &&
                  `<abc/></body></html>`.
 
-    z2ui5_cl_fw_draft=>cleanup( ).
+    
+    CREATE OBJECT temp5 TYPE z2ui5_cl_fw_hlp_db.
+    temp5->cleanup( ).
 
     result = mv_response.
   ENDMETHOD.

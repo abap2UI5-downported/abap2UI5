@@ -31,7 +31,7 @@ ENDCLASS.
 
 CLASS z2ui5_cl_ui5_suite IMPLEMENTATION.
   METHOD interactdonutchartsegment.
-    DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp2 LIKE LINE OF temp1.
     CLEAR temp1.
     
@@ -58,7 +58,7 @@ CLASS z2ui5_cl_ui5_suite IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD interactdonutchart.
-    DATA temp3 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp3 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp4 LIKE LINE OF temp3.
     CLEAR temp3.
     

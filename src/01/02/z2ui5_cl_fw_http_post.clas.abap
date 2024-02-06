@@ -5,9 +5,10 @@ CLASS z2ui5_cl_fw_http_post DEFINITION
 
   PUBLIC SECTION.
 
-    DATA mv_request_json  TYPE string.
-    DATA ms_request       TYPE z2ui5_if_client=>ty_s_http_request_post.
-    DATA ms_response      TYPE z2ui5_if_client=>ty_s_http_response_post.
+    DATA mo_action       TYPE REF TO z2ui5_cl_fw_action.
+    DATA mv_request_json TYPE string.
+    DATA ms_request      TYPE z2ui5_if_fw_types=>ty_s_http_request_post.
+    DATA ms_response     TYPE z2ui5_if_fw_types=>ty_s_http_response_post.
 
     METHODS constructor
       IMPORTING
@@ -19,14 +20,11 @@ CLASS z2ui5_cl_fw_http_post DEFINITION
 
   PROTECTED SECTION.
 
-    DATA mo_http_mapper TYPE REF TO z2ui5_cl_fw_http_mapper.
-    DATA mo_app         TYPE REF TO z2ui5_cl_fw_app.
-
     METHODS main_begin.
 
     METHODS main_process
       RETURNING
-        VALUE(check_go_frontend) TYPE abap_bool.
+        VALUE(check_go_client) TYPE abap_bool.
 
     METHODS main_end
       RETURNING
@@ -43,8 +41,7 @@ CLASS z2ui5_cl_fw_http_post IMPLEMENTATION.
   METHOD constructor.
 
     mv_request_json = val.
-    CREATE OBJECT mo_http_mapper TYPE z2ui5_cl_fw_http_mapper.
-    CREATE OBJECT mo_app TYPE z2ui5_cl_fw_app EXPORTING VAL = me.
+    CREATE OBJECT mo_action TYPE z2ui5_cl_fw_action EXPORTING VAL = me.
 
   ENDMETHOD.
 
@@ -63,82 +60,84 @@ CLASS z2ui5_cl_fw_http_post IMPLEMENTATION.
 
 
   METHOD main_begin.
+        DATA lo_json_mapper TYPE REF TO z2ui5_cl_fw_hlp_json_mapper.
         DATA x TYPE REF TO cx_root.
     TRY.
 
-        ms_request = mo_http_mapper->request_json_to_abap( mv_request_json ).
+        
+        CREATE OBJECT lo_json_mapper TYPE z2ui5_cl_fw_hlp_json_mapper.
+        ms_request = lo_json_mapper->request_json_to_abap( mv_request_json ).
 
         IF ms_request-s_frontend-id IS NOT INITIAL.
-          mo_app = mo_app->factory_by_frontend( ).
+          mo_action = mo_action->factory_by_frontend( ).
 
         ELSEIF ms_request-s_control-app_start IS NOT INITIAL.
-          mo_app = mo_app->factory_first_start( ).
+          mo_action = mo_action->factory_first_start( ).
 
         ELSE.
-          mo_app = mo_app->factory_system_startup( ).
-
+          mo_action = mo_action->factory_system_startup( ).
         ENDIF.
 
         
       CATCH cx_root INTO x.
-        mo_app = mo_app->factory_system_error( x ).
+        mo_action = mo_action->factory_system_error( x ).
     ENDTRY.
   ENDMETHOD.
 
 
   METHOD main_end.
-        DATA temp1 TYPE REF TO z2ui5_cl_fw_http_mapper.
-        DATA x TYPE REF TO cx_root.
-    TRY.
-        z2ui5_cl_fw_draft=>create( id = mo_app->ms_db-id db = mo_app->ms_db ).
+        DATA lo_json_mapper TYPE REF TO z2ui5_cl_fw_hlp_json_mapper.
+*    TRY.
+
+        CLEAR ms_response.
+        ms_response-s_frontend-params = mo_action->ms_next-s_set.
+        ms_response-s_frontend-id = mo_action->mo_app->ms_draft-id.
+        ms_response-model = mo_action->mo_app->model_json_stringify( ).
 
         
-        CREATE OBJECT temp1 TYPE z2ui5_cl_fw_http_mapper.
-        ms_response-o_model = temp1->model_back_to_front(
-                app     = mo_app->ms_db-app
-                t_attri = mo_app->ms_db-t_attri ).
+        CREATE OBJECT lo_json_mapper TYPE z2ui5_cl_fw_hlp_json_mapper.
+        result = lo_json_mapper->response_abap_to_json( ms_response ).
 
-        ms_response-s_frontend-params = mo_app->ms_next-s_set.
-        ms_response-s_frontend-id = mo_app->ms_db-id.
+        CLEAR mo_action->ms_next.
+        mo_action->mo_app->db_save( ).
 
-        result = mo_http_mapper->response_abap_to_json( ms_response ).
-
-        
-      CATCH cx_root INTO x.
-        ASSERT x IS NOT BOUND.
-    ENDTRY.
+*      CATCH cx_root INTO DATA(x).
+*        ASSERT x IS NOT BOUND.
+*    ENDTRY.
   ENDMETHOD.
 
 
   METHOD main_process.
         DATA li_client TYPE REF TO z2ui5_cl_fw_client.
-        DATA temp2 TYPE REF TO z2ui5_if_app.
-        DATA li_app LIKE temp2.
+        DATA temp1 TYPE REF TO z2ui5_if_app.
+        DATA li_app LIKE temp1.
         DATA x TYPE REF TO cx_root.
     TRY.
 
         
-        CREATE OBJECT li_client TYPE z2ui5_cl_fw_client EXPORTING HANDLER = mo_app.
+        CREATE OBJECT li_client TYPE z2ui5_cl_fw_client EXPORTING ACTION = mo_action.
         
-        temp2 ?= mo_app->ms_db-app.
+        temp1 ?= mo_action->mo_app->mo_app.
         
-        li_app = temp2.
+        li_app = temp1.
 
         ROLLBACK WORK.
         li_app->main( li_client ).
         ROLLBACK WORK.
 
-        IF mo_app->ms_next-o_app_leave IS NOT INITIAL.
-          mo_app = mo_app->factory_app_leave( ).
-        ELSEIF mo_app->ms_next-o_app_call IS NOT INITIAL.
-          mo_app = mo_app->factory_app_call( ).
+        IF mo_action->ms_next-o_app_leave IS NOT INITIAL.
+          mo_action = mo_action->factory_stack_leave( ).
+
+        ELSEIF mo_action->ms_next-o_app_call IS NOT INITIAL.
+          mo_action = mo_action->factory_stack_call( ).
+
         ELSE.
-          check_go_frontend = abap_true.
+          check_go_client = abap_true.
         ENDIF.
 
         
       CATCH cx_root INTO x.
-        mo_app = mo_app->factory_system_error( x ).
+        mo_action = mo_action->factory_system_error( x ).
     ENDTRY.
   ENDMETHOD.
 ENDCLASS.

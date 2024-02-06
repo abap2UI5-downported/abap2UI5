@@ -264,7 +264,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
 
   METHOD panel.
 
-    DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp2 LIKE LINE OF temp1.
     CLEAR temp1.
     
@@ -297,7 +297,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
 
   METHOD illustratedmessage.
 
-    DATA temp3 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp3 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp4 LIKE LINE OF temp3.
     CLEAR temp3.
     
@@ -337,7 +337,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD overflowtoolbarbutton.
-    DATA temp5 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp5 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp6 LIKE LINE OF temp5.
     result = me.
     
@@ -367,7 +367,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD overflowtoolbarmenubutton.
-    DATA temp7 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp7 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp8 LIKE LINE OF temp7.
     CLEAR temp7.
     
@@ -398,7 +398,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD overflowtoolbartogglebutton.
-    DATA temp9 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp9 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp10 LIKE LINE OF temp9.
     result = me.
     
@@ -443,7 +443,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD flexbox.
-    DATA temp11 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp11 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp12 LIKE LINE OF temp11.
     CLEAR temp11.
     
@@ -492,7 +492,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD messagestrip.
-    DATA temp13 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp13 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp14 LIKE LINE OF temp13.
     result = me.
     
@@ -516,7 +516,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD text.
-    DATA temp15 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp15 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp16 LIKE LINE OF temp15.
     result = me.
     
@@ -566,7 +566,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD link.
-    DATA temp17 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp17 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp18 LIKE LINE OF temp17.
     result = me.
 
@@ -630,7 +630,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD button.
-    DATA temp19 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp19 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp20 LIKE LINE OF temp19.
     result = me.
     
@@ -696,7 +696,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD label.
-    DATA temp21 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp21 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp22 LIKE LINE OF temp21.
     result = me.
     
@@ -750,7 +750,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD title.
-    DATA temp23 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp23 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp24 LIKE LINE OF temp23.
     result = me.
     
@@ -771,7 +771,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD page.
-    DATA temp25 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp25 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp26 LIKE LINE OF temp25.
     CLEAR temp25.
     
@@ -842,7 +842,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
 
 
   METHOD input.
-    DATA temp27 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp27 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp28 LIKE LINE OF temp27.
     result = me.
     

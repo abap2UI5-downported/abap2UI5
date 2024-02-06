@@ -56,7 +56,7 @@ CLASS Z2UI5_CL_UI5_UI_WEBC IMPLEMENTATION.
 
   METHOD bar.
 
-    DATA temp1 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp2 LIKE LINE OF temp1.
     CLEAR temp1.
     
@@ -74,7 +74,7 @@ CLASS Z2UI5_CL_UI5_UI_WEBC IMPLEMENTATION.
 
 
   METHOD button.
-    DATA temp3 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp3 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp4 LIKE LINE OF temp3.
 
     result = me.
@@ -108,7 +108,7 @@ CLASS Z2UI5_CL_UI5_UI_WEBC IMPLEMENTATION.
 
   METHOD header.
 
-    DATA temp5 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp5 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp6 LIKE LINE OF temp5.
     CLEAR temp5.
     
@@ -123,7 +123,7 @@ CLASS Z2UI5_CL_UI5_UI_WEBC IMPLEMENTATION.
 
 
   METHOD input.
-    DATA temp7 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp7 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp8 LIKE LINE OF temp7.
 
     result = me.
@@ -153,7 +153,7 @@ CLASS Z2UI5_CL_UI5_UI_WEBC IMPLEMENTATION.
 
 
   METHOD label.
-    DATA temp9 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp9 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp10 LIKE LINE OF temp9.
 
     result = me.
@@ -175,7 +175,7 @@ CLASS Z2UI5_CL_UI5_UI_WEBC IMPLEMENTATION.
 
   METHOD panel.
 
-    DATA temp11 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp11 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp12 LIKE LINE OF temp11.
     CLEAR temp11.
     
@@ -190,7 +190,7 @@ CLASS Z2UI5_CL_UI5_UI_WEBC IMPLEMENTATION.
 
 
   METHOD toast.
-    DATA temp13 TYPE z2ui5_if_client=>ty_t_name_value.
+    DATA temp13 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp14 LIKE LINE OF temp13.
 
     result = me.
