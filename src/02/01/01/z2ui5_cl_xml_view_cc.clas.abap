@@ -237,7 +237,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp4-v = onphoto.
     INSERT temp4 INTO TABLE temp3.
     temp4-n = `autoplay`.
-    temp4-v = z2ui5_cl_util_func=>boolean_abap_2_json( autoplay ).
+    temp4-v = z2ui5_cl_util=>boolean_abap_2_json( autoplay ).
     INSERT temp4 INTO TABLE temp3.
     mo_view->_generic( name = `CameraPicture`
               ns            = `z2ui5`
@@ -338,10 +338,10 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp10-v = value.
     INSERT temp10 INTO TABLE temp9.
     temp10-n = `iconOnly`.
-    temp10-v = z2ui5_cl_util_func=>boolean_abap_2_json( icononly ).
+    temp10-v = z2ui5_cl_util=>boolean_abap_2_json( icononly ).
     INSERT temp10 INTO TABLE temp9.
     temp10-n = `buttonOnly`.
-    temp10-v = z2ui5_cl_util_func=>boolean_abap_2_json( buttononly ).
+    temp10-v = z2ui5_cl_util=>boolean_abap_2_json( buttononly ).
     INSERT temp10 INTO TABLE temp9.
     temp10-n = `buttonText`.
     temp10-v = buttontext.
@@ -353,7 +353,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp10-v = filetype.
     INSERT temp10 INTO TABLE temp9.
     temp10-n = `checkDirectUpload`.
-    temp10-v = z2ui5_cl_util_func=>boolean_abap_2_json( checkdirectupload ).
+    temp10-v = z2ui5_cl_util=>boolean_abap_2_json( checkdirectupload ).
     INSERT temp10 INTO TABLE temp9.
     mo_view->_generic( name = `FileUploader`
               ns            = `z2ui5`
@@ -423,7 +423,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp14-v = heading.
     INSERT temp14 INTO TABLE temp13.
     temp14-n = `enableHighAccuracy`.
-    temp14-v = z2ui5_cl_util_func=>boolean_abap_2_json( enablehighaccuracy ).
+    temp14-v = z2ui5_cl_util=>boolean_abap_2_json( enablehighaccuracy ).
     INSERT temp14 INTO TABLE temp13.
     temp14-n = `timeout`.
     temp14-v = timeout.
@@ -519,13 +519,13 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp22-v = tokens.
     INSERT temp22 INTO TABLE temp21.
     temp22-n = `showClearIcon`.
-    temp22-v = z2ui5_cl_util_func=>boolean_abap_2_json( showclearicon ).
+    temp22-v = z2ui5_cl_util=>boolean_abap_2_json( showclearicon ).
     INSERT temp22 INTO TABLE temp21.
     temp22-n = `showValueHelp`.
-    temp22-v = z2ui5_cl_util_func=>boolean_abap_2_json( showvaluehelp ).
+    temp22-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluehelp ).
     INSERT temp22 INTO TABLE temp21.
     temp22-n = `enabled`.
-    temp22-v = z2ui5_cl_util_func=>boolean_abap_2_json( enabled ).
+    temp22-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
     INSERT temp22 INTO TABLE temp21.
     temp22-n = `suggestionItems`.
     temp22-v = suggestionitems.
@@ -656,10 +656,10 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp30-v = finished.
     INSERT temp30 INTO TABLE temp29.
     temp30-n = `checkActive`.
-    temp30-v = z2ui5_cl_util_func=>boolean_abap_2_json( checkactive ).
+    temp30-v = z2ui5_cl_util=>boolean_abap_2_json( checkactive ).
     INSERT temp30 INTO TABLE temp29.
     temp30-n = `checkRepeat`.
-    temp30-v = z2ui5_cl_util_func=>boolean_abap_2_json( checkrepeat ).
+    temp30-v = z2ui5_cl_util=>boolean_abap_2_json( checkrepeat ).
     INSERT temp30 INTO TABLE temp29.
     mo_view->_generic( name = `Timer`
               ns            = `z2ui5`

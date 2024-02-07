@@ -269,13 +269,13 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
     CLEAR temp1.
     
     temp2-n = `expandable`.
-    temp2-v = z2ui5_cl_util_func=>boolean_abap_2_json( expandable ).
+    temp2-v = z2ui5_cl_util=>boolean_abap_2_json( expandable ).
     INSERT temp2 INTO TABLE temp1.
     temp2-n = `expanded`.
-    temp2-v = z2ui5_cl_util_func=>boolean_abap_2_json( expanded ).
+    temp2-v = z2ui5_cl_util=>boolean_abap_2_json( expanded ).
     INSERT temp2 INTO TABLE temp1.
     temp2-n = `stickyHeader`.
-    temp2-v = z2ui5_cl_util_func=>boolean_abap_2_json( stickyheader ).
+    temp2-v = z2ui5_cl_util=>boolean_abap_2_json( stickyheader ).
     INSERT temp2 INTO TABLE temp1.
     temp2-n = `height`.
     temp2-v = height.
@@ -308,7 +308,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
     temp4-v = illustrationtype.
     INSERT temp4 INTO TABLE temp3.
     temp4-n = `enableFormattedText`.
-    temp4-v = z2ui5_cl_util_func=>boolean_abap_2_json( enableformattedtext ).
+    temp4-v = z2ui5_cl_util=>boolean_abap_2_json( enableformattedtext ).
     INSERT temp4 INTO TABLE temp3.
     temp4-n = `illustrationSize`.
     temp4-v = illustrationsize.
@@ -350,7 +350,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
     temp6-v = text.
     INSERT temp6 INTO TABLE temp5.
     temp6-n = `enabled`.
-    temp6-v = z2ui5_cl_util_func=>boolean_abap_2_json( enabled ).
+    temp6-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
     INSERT temp6 INTO TABLE temp5.
     temp6-n = `icon`.
     temp6-v = icon.
@@ -381,7 +381,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
     temp8-v = text.
     INSERT temp8 INTO TABLE temp7.
     temp8-n = `enabled`.
-    temp8-v = z2ui5_cl_util_func=>boolean_abap_2_json( enabled ).
+    temp8-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
     INSERT temp8 INTO TABLE temp7.
     temp8-n = `icon`.
     temp8-v = icon.
@@ -411,7 +411,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
     temp10-v = text.
     INSERT temp10 INTO TABLE temp9.
     temp10-n = `enabled`.
-    temp10-v = z2ui5_cl_util_func=>boolean_abap_2_json( enabled ).
+    temp10-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
     INSERT temp10 INTO TABLE temp9.
     temp10-n = `icon`.
     temp10-v = icon.
@@ -463,7 +463,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
     temp12-v = alignitems.
     INSERT temp12 INTO TABLE temp11.
     temp12-n = `fitContainer`.
-    temp12-v = z2ui5_cl_util_func=>boolean_abap_2_json( fitcontainer ).
+    temp12-v = z2ui5_cl_util=>boolean_abap_2_json( fitcontainer ).
     INSERT temp12 INTO TABLE temp11.
     temp12-n = `justifyContent`.
     temp12-v = justifycontent.
@@ -481,7 +481,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
     temp12-v = backgrounddesign.
     INSERT temp12 INTO TABLE temp11.
     temp12-n = `displayInline`.
-    temp12-v = z2ui5_cl_util_func=>boolean_abap_2_json( displayinline ).
+    temp12-v = z2ui5_cl_util=>boolean_abap_2_json( displayinline ).
     INSERT temp12 INTO TABLE temp11.
     temp12-n = `visible`.
     temp12-v = visible.
@@ -505,7 +505,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
     temp14-v = type.
     INSERT temp14 INTO TABLE temp13.
     temp14-n = `showIcon`.
-    temp14-v = z2ui5_cl_util_func=>boolean_abap_2_json( showicon ).
+    temp14-v = z2ui5_cl_util=>boolean_abap_2_json( showicon ).
     INSERT temp14 INTO TABLE temp13.
     temp14-n = `class`.
     temp14-v = class.
@@ -547,7 +547,7 @@ CLASS z2ui5_cl_ui5_m IMPLEMENTATION.
     temp16-v = id.
     INSERT temp16 INTO TABLE temp15.
     temp16-n = `wrapping`.
-    temp16-v = z2ui5_cl_util_func=>boolean_abap_2_json( wrapping ).
+    temp16-v = z2ui5_cl_util=>boolean_abap_2_json( wrapping ).
     INSERT temp16 INTO TABLE temp15.
     temp16-n = `wrappingType`.
     temp16-v = wrappingtype.

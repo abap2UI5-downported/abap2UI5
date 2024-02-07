@@ -78,9 +78,9 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
     DATA ls_comp LIKE LINE OF lt_comp.
     DATA columns TYPE REF TO z2ui5_cl_xml_view.
       DATA temp3 TYPE REF TO cl_abap_elemdescr.
-      DATA temp5 TYPE z2ui5_cl_util_func=>ty_data_element_texts-medium.
+      DATA temp5 TYPE z2ui5_cl_util_stmpncfctn=>ty_data_element_texts-medium.
       DATA data_element_name TYPE string.
-      DATA medium_label TYPE z2ui5_cl_util_func=>ty_data_element_texts-medium.
+      DATA medium_label TYPE z2ui5_cl_util_stmpncfctn=>ty_data_element_texts-medium.
       DATA text LIKE temp5.
     ASSIGN mr_tab_popup->* TO <tab_out>.
 
@@ -98,7 +98,7 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
               items              =  `{path:'`
                                 && client->_bind_edit( val = <tab_out> path = abap_true )
                                 && `', sorter : { path : '` && to_upper( sort_field ) && `', descending : `
-                                && z2ui5_cl_util_func=>boolean_abap_2_json( me->descending )
+                                && z2ui5_cl_util=>boolean_abap_2_json( me->descending )
                                 && ` } }`
               cancel             = client->_event( 'CANCEL' )
               search             = client->_event( val = 'SEARCH'  t_arg = temp1 )
@@ -108,7 +108,7 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
             ).
 
     
-    lt_comp = z2ui5_cl_util_func=>rtti_get_t_comp_by_data( <tab_out> ).
+    lt_comp = z2ui5_cl_util=>rtti_get_t_comp_by_data( <tab_out> ).
     DELETE lt_comp WHERE name = 'ZZSELKZ'.
 
     
@@ -131,7 +131,7 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
       
       data_element_name = substring_after( val = temp3->absolute_name sub = '\TYPE=' ).
       
-      medium_label = z2ui5_cl_util_func=>rtti_get_data_element_texts( data_element_name )-medium.
+      medium_label = z2ui5_cl_util=>rtti_get_data_element_texts( data_element_name )-medium.
       IF medium_label IS NOT INITIAL.
         temp5 = medium_label.
       ELSE.

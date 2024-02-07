@@ -20,10 +20,7 @@ CLASS z2ui5_cl_popup_file_download DEFINITION
     DATA mv_name TYPE string.
     DATA mv_type TYPE string VALUE `data:text/csv;base64,`.
     DATA mv_size TYPE string.
-
-
     DATA mv_value TYPE string.
-
     DATA mv_check_download TYPE abap_bool.
 
     METHODS result
@@ -86,7 +83,7 @@ CLASS Z2UI5_CL_POPUP_FILE_DOWNLOAD IMPLEMENTATION.
 
     IF mv_check_download = abap_true.
       
-      lv_base64 = z2ui5_cl_util_func=>conv_decode_x_base64( mv_value ).
+      lv_base64 = z2ui5_cl_util=>conv_decode_x_base64( mv_value ).
       
       CLEAR temp2.
       

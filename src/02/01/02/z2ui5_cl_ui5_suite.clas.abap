@@ -66,7 +66,7 @@ CLASS z2ui5_cl_ui5_suite IMPLEMENTATION.
     temp4-v = selectionchanged.
     INSERT temp4 INTO TABLE temp3.
     temp4-n = `showError`.
-    temp4-v = z2ui5_cl_util_func=>boolean_abap_2_json( showerror ).
+    temp4-v = z2ui5_cl_util=>boolean_abap_2_json( showerror ).
     INSERT temp4 INTO TABLE temp3.
     temp4-n = `errorMessageTitle`.
     temp4-v = errormessagetitle.

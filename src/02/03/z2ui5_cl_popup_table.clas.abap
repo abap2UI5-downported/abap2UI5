@@ -71,7 +71,7 @@ CLASS z2ui5_cl_popup_table IMPLEMENTATION.
 *            )->get_parent( )->get_parent( ).
 
     
-    lt_comp = z2ui5_cl_util_func=>rtti_get_t_comp_by_data( <tab_out> ).
+    lt_comp = z2ui5_cl_util=>rtti_get_t_comp_by_data( <tab_out> ).
 
     
     list = tab->column_list_item( valign = `Top` ).

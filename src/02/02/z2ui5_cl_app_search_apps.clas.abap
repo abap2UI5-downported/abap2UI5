@@ -63,7 +63,7 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
     IF check_initialized = abap_false.
       check_initialized = abap_true.
 
-      z2ui5_cl_util_func=>db_load_by_handle(
+      z2ui5_cl_util=>db_load_by_handle(
         EXPORTING
           uname  = sy-uname
           handle = 'z2ui5_cl_app_search_apps'
@@ -73,7 +73,7 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
       
       CLEAR temp1.
       
-      temp4 = z2ui5_cl_util_func=>rtti_get_classes_impl_intf( `Z2UI5_IF_APP` ).
+      temp4 = z2ui5_cl_util=>rtti_get_classes_impl_intf( `Z2UI5_IF_APP` ).
       
       LOOP AT temp4 INTO row.
         
@@ -115,7 +115,7 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
         INSERT temp3 INTO TABLE mt_favs.
 
 
-        z2ui5_cl_util_func=>db_save(
+        z2ui5_cl_util=>db_save(
             uname  = sy-uname
             handle = 'z2ui5_cl_app_search_apps'
             data   = mt_favs ).

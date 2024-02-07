@@ -114,7 +114,7 @@ CLASS lcl_github IMPLEMENTATION.
       
       LOOP AT lr_repo->t_app REFERENCE INTO lr_app.
 
-        IF z2ui5_cl_util_func=>rtti_check_class_exists( lr_app->classname ) IS NOT INITIAL.
+        IF z2ui5_cl_util=>rtti_check_class_exists( lr_app->classname ) IS NOT INITIAL.
           lr_repo->check_installed = abap_true.
         ENDIF.
         EXIT.
