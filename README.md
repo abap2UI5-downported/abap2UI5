@@ -4,9 +4,9 @@
 * use this version for NW 7.40 (use the main repository for NW 7.50 and higher) and switch to the branch v_702 for NW 7.02
 * your questions, wishes and bugs are welcome, use the [**abap2UI5 repository**](https://github.com/ABAP2UI5/ABAP2UI5) and create an issue
 
-#### This code is automatically downported and tested with [abaplint](https://abaplint.org/). Thank you for this excellent tool!
+##### This code is automatically downported and tested with [abaplint](https://abaplint.org/). Thank you for this excellent tool!
 
-##### Handler Implentation:
+###### Handler Implementation:
 ```abap
   METHOD if_http_extension~handle_request.
 
