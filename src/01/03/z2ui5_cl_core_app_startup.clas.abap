@@ -1,4 +1,4 @@
-CLASS z2ui5_cl_fw_app_startup DEFINITION
+CLASS z2ui5_cl_core_app_startup DEFINITION
   PUBLIC
   FINAL
   CREATE PROTECTED .
@@ -24,7 +24,7 @@ CLASS z2ui5_cl_fw_app_startup DEFINITION
     DATA mv_ui5_version TYPE string.
     CLASS-METHODS factory
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_fw_app_startup.
+        VALUE(result) TYPE REF TO z2ui5_cl_core_app_startup.
 
     METHODS z2ui5_on_init.
     METHODS z2ui5_on_event.
@@ -37,7 +37,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_FW_APP_STARTUP IMPLEMENTATION.
+CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
 
 
   METHOD factory.
@@ -175,7 +175,10 @@ CLASS Z2UI5_CL_FW_APP_STARTUP IMPLEMENTATION.
 
 
 
-    simple_form2->label( `Start Developing` ).
+
+
+    if z2ui5_cl_util=>rtti_check_class_exists( `z2ui5_cl_demo_app_000`) IS NOT INITIAL.
+     simple_form2->label( `Start Developing` ).
     
     CLEAR temp1.
     
@@ -183,9 +186,16 @@ CLASS Z2UI5_CL_FW_APP_STARTUP IMPLEMENTATION.
     INSERT temp2 INTO TABLE temp1.
     simple_form2->button(
       text      = `Check out the samples`
-      press     = client->_event_client( val                   = client->cs_event-open_new_tab
-                                                         t_arg = temp1 )
+      press     = client->_event_client( val = client->cs_event-open_new_tab
+                                         t_arg = temp1 )
           width = `70%` ).
+
+     else.
+      simple_form2->label( `Install the sample repository` ).
+         simple_form2->link( text = `And explore more than 100 demo apps...`
+                 target      = `_blank`
+                 href        = `https://github.com/abap2UI5/abap2UI5-samples` ).
+     endif.
 
 *    simple_form2->toolbar( )->title( `Contribution` ).
     simple_form2->label( `` ).
@@ -263,7 +273,6 @@ CLASS Z2UI5_CL_FW_APP_STARTUP IMPLEMENTATION.
 
 
   METHOD z2ui5_on_event.
-    DATA li_app TYPE REF TO z2ui5_if_app.
 
     CASE client->get( )-event.
 
@@ -280,17 +289,6 @@ CLASS Z2UI5_CL_FW_APP_STARTUP IMPLEMENTATION.
       WHEN 'VALUE_HELP'.
         mt_classes = z2ui5_cl_util=>rtti_get_classes_impl_intf( `Z2UI5_IF_APP` ).
         client->nav_app_call( z2ui5_cl_popup_to_select=>factory( mt_classes ) ).
-
-      WHEN `DEMOS`.
-
-
-        TRY.
-            CREATE OBJECT li_app TYPE (`Z2UI5_CL_DEMO_APP_000`).
-            mv_check_demo = abap_true.
-            client->nav_app_call( li_app ).
-          CATCH cx_root.
-            mv_check_demo = abap_false.
-        ENDTRY.
 
     ENDCASE.
 

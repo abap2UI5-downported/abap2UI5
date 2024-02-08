@@ -239,22 +239,19 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_bind.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp5 LIKE REF TO tab.
-DATA temp1 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp5 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    GET REFERENCE OF tab INTO temp5.
-
-CLEAR temp1.
-temp1-path_only = path.
-temp1-custom_filter = custom_filter.
-temp1-custom_mapper = custom_mapper.
-temp1-tab = temp5.
-temp1-tab_index = tab_index.
-result = lo_bind->main(
-      val    = val
+    CLEAR temp5.
+    temp5-path_only = path.
+    temp5-custom_filter = custom_filter.
+    temp5-custom_mapper = custom_mapper.
+    temp5-tab = tab.
+    temp5-tab_index = tab_index.
+    result = lo_bind->main(
+      val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
       type   = z2ui5_if_core_types=>cs_bind_type-one_way
-      config = temp1 ).
+      config = temp5 ).
 
   ENDMETHOD.
 
@@ -271,24 +268,21 @@ result = lo_bind->main(
   METHOD z2ui5_if_client~_bind_edit.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp6 LIKE REF TO tab.
-DATA temp2 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp6 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    GET REFERENCE OF tab INTO temp6.
-
-CLEAR temp2.
-temp2-path_only = path.
-temp2-custom_filter = custom_filter.
-temp2-custom_filter_back = custom_filter_back.
-temp2-custom_mapper = custom_mapper.
-temp2-custom_mapper_back = custom_mapper_back.
-temp2-tab = temp6.
-temp2-tab_index = tab_index.
-result = lo_bind->main(
-      val    = val
+    CLEAR temp6.
+    temp6-path_only = path.
+    temp6-custom_filter = custom_filter.
+    temp6-custom_filter_back = custom_filter_back.
+    temp6-custom_mapper = custom_mapper.
+    temp6-custom_mapper_back = custom_mapper_back.
+    temp6-tab = tab.
+    temp6-tab_index = tab_index.
+    result = lo_bind->main(
+      val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
       type   = z2ui5_if_core_types=>cs_bind_type-two_way
-      config = temp2 ).
+      config = temp6 ).
 
   ENDMETHOD.
 

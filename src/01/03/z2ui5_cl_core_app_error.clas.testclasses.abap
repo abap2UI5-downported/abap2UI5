@@ -13,10 +13,10 @@ CLASS ltcl_app_error_test IMPLEMENTATION.
   METHOD first_test.
 
     DATA lx TYPE REF TO z2ui5_cx_util_error.
-    DATA lo_app TYPE REF TO z2ui5_cl_fw_app_error.
+    DATA lo_app TYPE REF TO z2ui5_cl_core_app_error.
     CREATE OBJECT lx TYPE z2ui5_cx_util_error.
     
-    lo_app = z2ui5_cl_fw_app_error=>factory( lx ) ##NEEDED.
+    lo_app = z2ui5_cl_core_app_error=>factory( lx ) ##NEEDED.
 
   ENDMETHOD.
 

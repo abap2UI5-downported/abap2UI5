@@ -164,10 +164,12 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
     DATA temp7 LIKE LINE OF mt_apps.
     DATA lr_app LIKE REF TO temp7.
       DATA lv_tabix LIKE sy-tabix.
-      DATA temp8 TYPE string_table.
+      DATA temp8 LIKE REF TO mt_apps.
+DATA temp9 LIKE REF TO mt_apps.
+DATA temp1 TYPE string_table.
     DATA page_online TYPE REF TO z2ui5_cl_xml_view.
     DATA lt_repos TYPE lcl_github=>ty_t_repo.
-    DATA temp9 TYPE REF TO lcl_github.
+    DATA temp10 TYPE REF TO lcl_github.
     DATA item TYPE REF TO z2ui5_cl_xml_view.
     DATA row TYPE REF TO z2ui5_cl_xml_view.
     page = z2ui5_cl_xml_view=>factory(
@@ -259,15 +261,19 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
       
       lv_tabix = sy-tabix.
       
-      CLEAR temp8.
-      INSERT `${$source>/header}` INTO TABLE temp8.
-      INSERT `${$source>/id}` INTO TABLE temp8.
-      page_all->generic_tile(
+      GET REFERENCE OF mt_apps INTO temp8.
+
+GET REFERENCE OF mt_apps INTO temp9.
+
+CLEAR temp1.
+INSERT `${$source>/header}` INTO TABLE temp1.
+INSERT `${$source>/id}` INTO TABLE temp1.
+page_all->generic_tile(
         id      = lr_app->name
         class   = 'sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout'
-        press   = client->_event( val = `ON_PRESS`   t_arg = temp8 )
-        header  = client->_bind( val = lr_app->name    tab = mt_apps tab_index = lv_tabix )
-        visible = client->_bind( val = lr_app->visible tab = mt_apps tab_index = lv_tabix ) ).
+        press   = client->_event( val = `ON_PRESS`   t_arg = temp1 )
+        header  = client->_bind( val = lr_app->name    tab = temp9 tab_index = lv_tabix )
+        visible = client->_bind( val = lr_app->visible tab = temp8 tab_index = lv_tabix ) ).
     ENDLOOP.
 
 
@@ -305,8 +311,8 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
 
     
     
-    CREATE OBJECT temp9 TYPE lcl_github.
-    lt_repos = temp9->get_repositories( ).
+    CREATE OBJECT temp10 TYPE lcl_github.
+    lt_repos = temp10->get_repositories( ).
 
 
     
@@ -369,14 +375,14 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
   METHOD view_action_sheet.
 
     DATA action_sheet_view TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp10 TYPE z2ui5_if_types=>ty_s_name_value.
+    DATA temp9 TYPE z2ui5_if_types=>ty_s_name_value.
     action_sheet_view = z2ui5_cl_xml_view=>factory_popup( ).
 
     
-    CLEAR temp10.
-    temp10-n = `core:require`.
-    temp10-v = `{ MessageToast: 'sap/m/MessageToast' }`.
-    action_sheet_view->_generic_property( temp10 ).
+    CLEAR temp9.
+    temp9-n = `core:require`.
+    temp9-v = `{ MessageToast: 'sap/m/MessageToast' }`.
+    action_sheet_view->_generic_property( temp9 ).
 
     action_sheet_view->action_sheet( placement        = `Botton`
                                      showcancelbutton = abap_true
@@ -407,10 +413,11 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
   METHOD view_nest_display.
 
     DATA lo_view_nested TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp11 LIKE LINE OF mt_favs.
-    DATA lr_app LIKE REF TO temp11.
+    DATA temp10 LIKE LINE OF mt_favs.
+    DATA lr_app LIKE REF TO temp10.
       DATA lv_tabix LIKE sy-tabix.
-      DATA temp12 TYPE string_table.
+      DATA temp11 LIKE REF TO mt_favs.
+DATA temp12 TYPE string_table.
     lo_view_nested = z2ui5_cl_xml_view=>factory( ).
 
     
@@ -420,13 +427,15 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
       
       lv_tabix = sy-tabix.
       
-      CLEAR temp12.
-      INSERT `${$source>/header}` INTO TABLE temp12.
-      lo_view_nested->generic_tile(
+      GET REFERENCE OF mt_favs INTO temp11.
+
+CLEAR temp12.
+INSERT `${$source>/header}` INTO TABLE temp12.
+lo_view_nested->generic_tile(
 *      page_favs->generic_tile(
         class  = 'sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout'
         press  = client->_event( val = `ON_PRESS` t_arg = temp12 )
-        header = client->_bind( val = lr_app->name    tab = mt_favs tab_index = lv_tabix ) ).
+        header = client->_bind( val = lr_app->name    tab = temp11 tab_index = lv_tabix ) ).
 *        visible = client->_bind( val = lr_app->check_fav tab = mt_apps tab_index = lv_tabix ) ).
     ENDLOOP.
 

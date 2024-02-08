@@ -38,6 +38,24 @@ CLASS  z2ui5_cl_util_api DEFINITION
       RETURNING
         VALUE(result) TYPE string.
 
+    CLASS-METHODS check_bound_a_not_inital
+      IMPORTING
+        val           TYPE REF TO data
+      RETURNING
+        VALUE(result) TYPE abap_bool.
+
+    CLASS-METHODS check_unassign_inital
+      IMPORTING
+        val           TYPE REF TO data
+      RETURNING
+        VALUE(result) TYPE abap_bool.
+
+    CLASS-METHODS conv_get_as_data_ref
+      IMPORTING
+        val           TYPE data
+      RETURNING
+        VALUE(result) TYPE REF TO data.
+
     CLASS-METHODS source_method_to_file
       IMPORTING
         it_source     TYPE string_table
@@ -321,31 +339,8 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_util_api IMPLEMENTATION.
+CLASS Z2UI5_CL_UTIL_API IMPLEMENTATION.
 
-  METHOD source_get_method.
-
-    DATA lt_source TYPE string_table.
-    lt_source =  method_get_source(
-         iv_classname  = iv_classname
-         iv_methodname = iv_methodname
-      ).
-
-    result = source_method_to_file( it_source = lt_source ).
-
-  ENDMETHOD.
-
-  METHOD source_method_to_file.
-
-    DATA lv_source LIKE LINE OF it_source.
-    LOOP AT it_source INTO lv_source.
-      TRY.
-          result = result && lv_source+1 && cl_abap_char_utilities=>newline.
-        CATCH cx_root.
-      ENDTRY.
-    ENDLOOP.
-
-  ENDMETHOD.
 
   METHOD app_get_url.
     DATA lv_url TYPE string.
@@ -380,8 +375,6 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
        && rtti_get_classname_by_ref( client->get_app( ) ) && `/source/main`.
 
   ENDMETHOD.
-
-
 
 
   METHOD boolean_abap_2_json.
@@ -432,6 +425,33 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD check_bound_a_not_inital.
+    DATA temp1 TYPE xsdboolean.
+
+    IF val IS NOT BOUND.
+      result = abap_false.
+      RETURN.
+    ENDIF.
+    
+    temp1 = boolc( check_unassign_inital( val ) = abap_false ).
+    result = temp1.
+
+  ENDMETHOD.
+
+
+  METHOD check_unassign_inital.
+
+    FIELD-SYMBOLS <any> TYPE data.
+    DATA temp2 TYPE xsdboolean.
+    ASSIGN val->* TO <any>.
+
+    
+    temp2 = boolc( <any> IS INITIAL ).
+    result = temp2.
+
+  ENDMETHOD.
+
+
   METHOD conv_copy_ref_data.
 
     FIELD-SYMBOLS <from> TYPE data.
@@ -450,9 +470,11 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD conv_get_as_data_ref.
 
+    GET REFERENCE OF val INTO result.
 
-
+  ENDMETHOD.
 
 
   METHOD c_replace_assign_struc.
@@ -507,6 +529,7 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
     result = to_upper( c_trim( temp5 ) ).
 
   ENDMETHOD.
+
 
   METHOD filter_get_multi_by_data.
 
@@ -776,8 +799,10 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
     FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
     DATA lr_row TYPE REF TO data.
 
-    DATA lt_rows TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-    DATA lt_cols TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    TYPES temp1 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lt_rows TYPE temp1.
+    TYPES temp2 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lt_cols TYPE temp2.
     DATA temp5 LIKE LINE OF lt_rows.
     DATA temp6 LIKE sy-tabix.
     DATA temp15 LIKE LINE OF lt_cols.
@@ -793,6 +818,7 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
         FIELD-SYMBOLS <field> TYPE any.
     SPLIT val AT cl_abap_char_utilities=>newline INTO TABLE lt_rows.
     
+
     
     
     temp6 = sy-tabix.
@@ -930,14 +956,13 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
   METHOD rtti_check_type_kind_dref.
 
     DATA lv_type_kind TYPE abap_typekind.
-    DATA temp1 TYPE xsdboolean.
+    DATA temp3 TYPE xsdboolean.
     lv_type_kind = cl_abap_datadescr=>get_data_type_kind( val ).
     
-    temp1 = boolc( lv_type_kind = cl_abap_typedescr=>typekind_dref ).
-    result = temp1.
+    temp3 = boolc( lv_type_kind = cl_abap_typedescr=>typekind_dref ).
+    result = temp3.
 
   ENDMETHOD.
-
 
 
   METHOD rtti_get_classname_by_ref.
@@ -948,8 +973,6 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
                               sub = `\CLASS=` ).
 
   ENDMETHOD.
-
-
 
 
   METHOD rtti_get_type_kind.
@@ -1052,6 +1075,32 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD source_get_method.
+
+    DATA lt_source TYPE string_table.
+    lt_source =  method_get_source(
+         iv_classname  = iv_classname
+         iv_methodname = iv_methodname
+      ).
+
+    result = source_method_to_file( it_source = lt_source ).
+
+  ENDMETHOD.
+
+
+  METHOD source_method_to_file.
+
+    DATA lv_source LIKE LINE OF it_source.
+    LOOP AT it_source INTO lv_source.
+      TRY.
+          result = result && lv_source+1 && cl_abap_char_utilities=>newline.
+        CATCH cx_root.
+      ENDTRY.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
   METHOD sql_get_by_string.
 
     DATA temp28 TYPE string.
@@ -1139,7 +1188,8 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
     DATA lv_search TYPE string.
     DATA lv_search2 TYPE string.
     DATA temp31 TYPE string.
-    DATA lt_param TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    TYPES temp3 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA lt_param TYPE temp3.
     DATA temp32 LIKE LINE OF lt_param.
     DATA lr_param LIKE REF TO temp32.
       DATA lv_name TYPE string.
@@ -1171,6 +1221,7 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
     ENDIF.
 
     
+
     SPLIT lv_search AT `&` INTO TABLE lt_param.
 
     
@@ -1222,7 +1273,6 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
   METHOD user_get_tech.
     result = sy-uname.
   ENDMETHOD.
-
 
 
   METHOD xml_parse.

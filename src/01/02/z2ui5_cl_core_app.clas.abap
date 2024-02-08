@@ -13,7 +13,7 @@ CLASS z2ui5_cl_core_app DEFINITION
 
     METHODS attri_get_by_data
       IMPORTING
-        !val          TYPE data
+        !val          TYPE ref to data
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_if_core_types=>ty_s_attri .
 
@@ -160,18 +160,15 @@ CLASS z2ui5_cl_core_app IMPLEMENTATION.
 
 
   METHOD attri_get_by_data.
-
-    DATA lr_data LIKE REF TO val.
           FIELD-SYMBOLS <temp3> TYPE z2ui5_if_core_types=>ty_s_attri.
       DATA temp4 LIKE REF TO mt_attri.
 DATA lo_dissolver TYPE REF TO z2ui5_cl_core_model_srv.
-    GET REFERENCE OF val INTO lr_data.
 
     DO 3 TIMES.
 
       TRY.
           
-          READ TABLE mt_attri WITH KEY r_ref = lr_data ASSIGNING <temp3>.
+          READ TABLE mt_attri WITH KEY r_ref = val ASSIGNING <temp3>.
 IF sy-subrc <> 0.
   RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
 ENDIF.
