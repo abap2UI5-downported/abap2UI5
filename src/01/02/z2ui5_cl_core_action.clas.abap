@@ -81,6 +81,7 @@ CLASS z2ui5_cl_core_action IMPLEMENTATION.
   METHOD factory_first_start.
         DATA temp1 TYPE REF TO z2ui5_if_app.
         DATA li_app LIKE temp1.
+        DATA x TYPE REF TO cx_root.
 
     TRY.
         CREATE OBJECT result EXPORTING VAL = mo_http_post.
@@ -96,10 +97,12 @@ CLASS z2ui5_cl_core_action IMPLEMENTATION.
 
         result->ms_actual-check_on_navigated = abap_true.
 
-      CATCH cx_root.
+        
+      CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE z2ui5_cx_util_error
           EXPORTING
-            val = `App with name ` && mo_http_post->ms_request-s_control-app_start && ` not found...`.
+            val = `App with name ` && mo_http_post->ms_request-s_control-app_start && ` not found...`
+            previous = x.
     ENDTRY.
 
   ENDMETHOD.

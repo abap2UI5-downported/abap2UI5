@@ -19,9 +19,7 @@ CLASS z2ui5_cl_core_app_startup DEFINITION
       END OF ms_home .
     DATA client TYPE REF TO z2ui5_if_client.
     DATA mv_check_initialized TYPE abap_bool.
-    DATA mv_check_demo TYPE abap_bool.
 
-    DATA mv_ui5_version TYPE string.
     CLASS-METHODS factory
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_core_app_startup.
@@ -78,11 +76,12 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
 
     DATA lv_url TYPE string.
     DATA page2 TYPE REF TO z2ui5_cl_xml_view.
-    DATA simple_form2 TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp3 TYPE xsdboolean.
-    DATA lv_url_samples2 TYPE string.
+    DATA lv_url_info TYPE string.
     DATA temp1 TYPE string_table.
-    DATA temp2 LIKE LINE OF temp1.
+    DATA simple_form2 TYPE REF TO z2ui5_cl_xml_view.
+    DATA temp2 TYPE xsdboolean.
+    DATA lv_url_samples2 TYPE string.
+    DATA temp3 TYPE string_table.
     lv_url = z2ui5_cl_util=>app_get_url(
                      client    = client
                      classname = ms_home-classname ).
@@ -91,9 +90,22 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
     page2 = z2ui5_cl_xml_view=>factory( )->shell( )->page(
          shownavbutton = abap_false ).
 
-    page2->header_content( )->title( `abap2UI5 - Developing UI5 Apps Purely in ABAP` )->toolbar_spacer( ).
 
-    page2->_z2ui5( )->info_frontend( ui5_version = client->_bind( mv_ui5_version ) ).
+    
+    lv_url_info = z2ui5_cl_util=>app_get_url(
+                  client    = client
+                  classname = 'z2ui5_cl_core_app_info' ).
+
+    
+    CLEAR temp1.
+    INSERT lv_url_info INTO TABLE temp1.
+    page2->header_content(
+    )->text(
+     )->title( `abap2UI5 - Developing UI5 Apps Purely in ABAP`
+     )->toolbar_spacer(
+     )->button( text = `System` icon = `sap-icon://information`
+        press  = client->_event_client( val = client->cs_event-open_new_tab
+                                     t_arg = temp1 ) ).
 
     
     simple_form2 = page2->simple_form(
@@ -147,24 +159,24 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
                      icon       = ms_home-btn_icon
                      width      = `70%` ).
     
-    temp3 = boolc( ms_home-class_editable = abap_false ).
+    temp2 = boolc( ms_home-class_editable = abap_false ).
     simple_form2->label( `Step 5`
       )->link( text  = `Link to the Application`
              target  = `_blank`
              href    = lv_url
-             enabled = z2ui5_cl_util=>boolean_abap_2_json( temp3 ) ).
+             enabled = z2ui5_cl_util=>boolean_abap_2_json( temp2 ) ).
 
-
-    simple_form2->toolbar( )->title( `System Information` ).
-*    simple_form2->label( `abap2UI5 Version` ).
-    simple_form2->label( `abap2UI5 Version ` ).
-    simple_form2->text( z2ui5_if_app=>version ).
-    simple_form2->label( `UI5 Version`).
-    simple_form2->text( client->_bind( mv_ui5_version ) ).
-    simple_form2->label( `ABAP for Cloud` ).
-    simple_form2->checkbox( enabled = abap_false selected = z2ui5_cl_util=>rtti_check_lang_version_cloud( ) ).
-    simple_form2->label( `Launchpad active` ).
-    simple_form2->checkbox( enabled = abap_false selected = client->get( )-check_launchpad_active ).
+*
+*    simple_form2->toolbar( )->title( `System Information` ).
+**    simple_form2->label( `abap2UI5 Version` ).
+*    simple_form2->label( `abap2UI5 Version ` ).
+*    simple_form2->text( z2ui5_if_app=>version ).
+*    simple_form2->label( `UI5 Version`).
+*    simple_form2->text( client->_bind( mv_ui5_version ) ).
+*    simple_form2->label( `ABAP for Cloud` ).
+*    simple_form2->checkbox( enabled = abap_false selected = z2ui5_cl_util=>rtti_check_lang_version_cloud( ) ).
+*    simple_form2->label( `Launchpad active` ).
+*    simple_form2->checkbox( enabled = abap_false selected = client->get( )-check_launchpad_active ).
 
     
     lv_url_samples2 = z2ui5_cl_util=>app_get_url(
@@ -180,14 +192,12 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
     if z2ui5_cl_util=>rtti_check_class_exists( `z2ui5_cl_demo_app_000`) IS NOT INITIAL.
      simple_form2->label( `Start Developing` ).
     
-    CLEAR temp1.
-    
-    temp2 = `$` && client->_bind_local( lv_url_samples2 ).
-    INSERT temp2 INTO TABLE temp1.
+    CLEAR temp3.
+    INSERT lv_url_samples2 INTO TABLE temp3.
     simple_form2->button(
       text      = `Check out the samples`
       press     = client->_event_client( val = client->cs_event-open_new_tab
-                                         t_arg = temp1 )
+                                         t_arg = temp3 )
           width = `70%` ).
 
      else.
@@ -234,8 +244,8 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
 
   METHOD z2ui5_if_app~main.
     FIELD-SYMBOLS <class> TYPE string.
-          DATA temp3 TYPE REF TO z2ui5_cl_popup_to_select.
-          DATA lo_f4 LIKE temp3.
+          DATA temp5 TYPE REF TO z2ui5_cl_popup_to_select.
+          DATA lo_f4 LIKE temp5.
           DATA ls_result TYPE z2ui5_cl_popup_to_select=>ty_s_result.
 
     me->client = client.
@@ -250,9 +260,9 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
     IF client->get( )-check_on_navigated = abap_true.
       TRY.
           
-          temp3 ?= client->get_app( client->get( )-s_draft-id_prev_app ).
+          temp5 ?= client->get_app( client->get( )-s_draft-id_prev_app ).
           
-          lo_f4 = temp3.
+          lo_f4 = temp5.
           
           ls_result = lo_f4->result( ).
           IF ls_result-check_confirmed = abap_true.
@@ -302,7 +312,6 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
     ms_home-class_editable = abap_true.
     ms_home-btn_icon       = `sap-icon://validate`.
     ms_home-classname      = `Z2UI5_CL_APP_HELLO_WORLD`.
-    mv_check_demo          = abap_true.
 
   ENDMETHOD.
 ENDCLASS.

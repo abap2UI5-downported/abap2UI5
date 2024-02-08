@@ -5,6 +5,10 @@ CLASS z2ui5_cl_core_draft_srv DEFINITION
 
   PUBLIC SECTION.
 
+    METHODS count
+      RETURNING
+        VALUE(result) TYPE i.
+
     METHODS create
       IMPORTING
         !draft     TYPE z2ui5_if_types=>ty_s_draft
@@ -48,7 +52,7 @@ CLASS z2ui5_cl_core_draft_srv IMPLEMENTATION.
         time = z2ui5_cl_util=>time_get_timestampl( )
         seconds = 60 * 60 * 4 ).
 
-    DELETE FROM z2ui5_t_fw_01 WHERE timestampl < lv_four_hours_ago.
+    DELETE FROM z2ui5_t_core_01 WHERE timestampl < lv_four_hours_ago.
     COMMIT WORK.
 
   ENDMETHOD.
@@ -56,7 +60,7 @@ CLASS z2ui5_cl_core_draft_srv IMPLEMENTATION.
 
   METHOD create.
 
-    DATA temp1 TYPE z2ui5_t_fw_01.
+    DATA temp1 TYPE z2ui5_if_core_types=>ty_s_db.
     DATA ls_db LIKE temp1.
     CLEAR temp1.
     temp1-id = draft-id.
@@ -69,7 +73,7 @@ CLASS z2ui5_cl_core_draft_srv IMPLEMENTATION.
     
     ls_db = temp1.
 
-    MODIFY z2ui5_t_fw_01 FROM ls_db.
+    MODIFY z2ui5_t_core_01 FROM ls_db.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE z2ui5_cx_util_error
         EXPORTING
@@ -85,14 +89,14 @@ CLASS z2ui5_cl_core_draft_srv IMPLEMENTATION.
     IF check_load_app = abap_true.
 
       SELECT SINGLE *
-        FROM z2ui5_t_fw_01
+        FROM z2ui5_t_core_01
         WHERE id = id
         INTO result.
 
     ELSE.
 
       SELECT SINGLE id id_prev id_prev_app id_prev_app_stack
-        FROM z2ui5_t_fw_01
+        FROM z2ui5_t_core_01
         WHERE id = id
         INTO CORRESPONDING FIELDS OF result.
 
@@ -117,7 +121,7 @@ CLASS z2ui5_cl_core_draft_srv IMPLEMENTATION.
 
   METHOD read_info.
 
-    DATA ls_db TYPE z2ui5_t_fw_01.
+    DATA ls_db TYPE z2ui5_t_core_01.
     ls_db = read(
       id             = id
       check_load_app = abap_false ).
@@ -125,4 +129,13 @@ CLASS z2ui5_cl_core_draft_srv IMPLEMENTATION.
     MOVE-CORRESPONDING ls_db TO result.
 
   ENDMETHOD.
+  METHOD count.
+
+    SELECT
+    COUNT( * )
+    FROM  z2ui5_t_core_01
+    INTO result.
+
+  ENDMETHOD.
+
 ENDCLASS.

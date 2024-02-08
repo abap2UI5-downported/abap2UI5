@@ -195,7 +195,7 @@ CREATE OBJECT lo_dissolver TYPE z2ui5_cl_core_model_srv EXPORTING attri = temp4 
   METHOD db_load.
 
     DATA lo_db TYPE REF TO z2ui5_cl_core_draft_srv.
-    DATA ls_db TYPE z2ui5_t_fw_01.
+    DATA ls_db TYPE z2ui5_t_core_01.
     CREATE OBJECT lo_db TYPE z2ui5_cl_core_draft_srv.
     
     ls_db = lo_db->read_draft( id ).
