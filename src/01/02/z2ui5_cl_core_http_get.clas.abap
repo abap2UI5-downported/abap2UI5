@@ -6,7 +6,7 @@ CLASS z2ui5_cl_core_http_get DEFINITION
   PUBLIC SECTION.
 
     DATA ms_request TYPE z2ui5_if_types=>ty_s_http_request_get.
-    DATA mv_response TYPE string .
+    DATA mv_response TYPE string.
 
     METHODS constructor
       IMPORTING
@@ -25,6 +25,15 @@ CLASS z2ui5_cl_core_http_get DEFINITION
         VALUE(result) TYPE string.
 
   PROTECTED SECTION.
+
+    METHODS get_default_config
+      RETURNING
+        VALUE(result) TYPE z2ui5_if_types=>ty_s_http_request_get-t_config.
+
+    METHODS get_default_security_policy
+      RETURNING
+        VALUE(result) TYPE string.
+
   PRIVATE SECTION.
 ENDCLASS.
 
@@ -314,9 +323,7 @@ CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
                `            sap.z2ui5.onBeforeRoundtrip.forEach(item=>{` && |\n|  &&
                `                if (item !== undefined) {` && |\n|  &&
                `                    item();` && |\n|  &&
-               `                }` && |\n|  &&
-               `            }` && |\n|  &&
-               `            )` && |\n|  &&
+               `                }})` && |\n|  &&
                `            if (args[0].CHECK_VIEW_DESTROY) {` && |\n|  &&
                `                sap.z2ui5.oController.ViewDestroy();` && |\n|  &&
                `            }` && |\n|  &&
@@ -425,28 +432,25 @@ CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
                `            delete sap.z2ui5.oBody.ID;` && |\n|  &&
                `            delete sap.z2ui5.oBody?.VIEWNAME;` && |\n|  &&
                `            delete sap.z2ui5.oBody?.APP_START;` && |\n|  &&
+               `            delete sap.z2ui5.oBody?.S_FRONTEND.EDIT;` && |\n|  &&
+               `            delete sap.z2ui5.oBody?.ARGUMENTS;` && |\n|  &&
                `           sap.z2ui5.oController.readHttp();` && |\n|  &&
                `        },` && |\n|  &&
                `    })` && |\n|  &&
                `});` && |\n|  &&
-               |\n|  &&
                `sap.ui.require(["z2ui5/Controller", "sap/ui/core/BusyIndicator", "sap/ui/core/mvc/XMLView", "sap/ui/core/Fragment", "sap/m/MessageToast", "sap/m/MessageBox", "sap/ui/model/json/JSONModel"], (Controller,BusyIndicator)=>{` && |\n|  &&
-               |\n|  &&
                `    BusyIndicator.show();` && |\n|  &&
                `    sap.z2ui5.oController = new Controller();` && |\n|  &&
                `    sap.z2ui5.oControllerNest = new Controller();` && |\n|  &&
                `    sap.z2ui5.oControllerNest2 = new Controller();` && |\n|  &&
                `    sap.z2ui5.oControllerPopup = new Controller();` && |\n|  &&
                `    sap.z2ui5.oControllerPopover = new Controller();` && |\n|  &&
-               |\n|  &&
                `    sap.z2ui5.pathname = sap.z2ui5.pathname ||  window.location.pathname;` && |\n|  &&
                `    sap.z2ui5.checkNestAfter = false;` && |\n|  &&
-               |\n|  &&
                `    sap.z2ui5.oBody = {` && |\n|  &&
                `        APP_START: sap.z2ui5.APP_START` && |\n|  &&
                `    };` && |\n|  &&
                `    sap.z2ui5.oController.Roundtrip();` && |\n|  &&
-               |\n|  &&
                `    sap.z2ui5.onBeforeRoundtrip = [];` && |\n|  &&
                `    sap.z2ui5.onAfterRendering = [];` && |\n|  &&
                `    sap.z2ui5.onBeforeEventFrontend = [];` && |\n|  &&
@@ -478,48 +482,31 @@ CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
 
   METHOD main.
 
-    DATA lt_config LIKE ms_request-t_config.
-      DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
-      DATA temp2 LIKE LINE OF temp1.
-      DATA lv_sec_policy TYPE string.
+    DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA lt_config LIKE temp1.
+    DATA temp2 TYPE string.
+    DATA lv_sec_policy LIKE temp2.
     DATA temp3 LIKE LINE OF lt_config.
     DATA lr_config LIKE REF TO temp3.
     DATA lv_add_js TYPE string.
     DATA temp4 TYPE z2ui5_if_types=>ty_s_http_request_get-json_model_limit.
     DATA temp5 TYPE REF TO z2ui5_cl_core_draft_srv.
-    lt_config = ms_request-t_config.
-    IF lt_config IS INITIAL.
-      
-      CLEAR temp1.
-      
-      temp2-n = `src`.
-      temp2-v = `https://sdk.openui5.org/resources/sap-ui-cachebuster/sap-ui-core.js`.
-      INSERT temp2 INTO TABLE temp1.
-      temp2-n = `data-sap-ui-theme`.
-      temp2-v = `sap_horizon`.
-      INSERT temp2 INTO TABLE temp1.
-      temp2-n = `data-sap-ui-async`.
-      temp2-v = `true`.
-      INSERT temp2 INTO TABLE temp1.
-      temp2-n = `data-sap-ui-bindingSyntax`.
-      temp2-v = `complex`.
-      INSERT temp2 INTO TABLE temp1.
-      temp2-n = `data-sap-ui-frameOptions`.
-      temp2-v = `trusted`.
-      INSERT temp2 INTO TABLE temp1.
-      temp2-n = `data-sap-ui-compatVersion`.
-      temp2-v = `edge`.
-      INSERT temp2 INTO TABLE temp1.
-      lt_config = temp1.
-    ENDIF.
-
-    IF ms_request-content_security_policy IS INITIAL.
-      
-      lv_sec_policy = `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: ` &&
-        `ui5.sap.com *.ui5.sap.com sapui5.hana.ondemand.com *.sapui5.hana.ondemand.com sdk.openui5.org *.sdk.openui5.org cdn.jsdelivr.net *.cdn.jsdelivr.net cdnjs.cloudflare.com *.cdnjs.cloudflare.com"/>`.
+    IF ms_request-t_config IS INITIAL.
+      temp1 = get_default_config( ).
     ELSE.
-      lv_sec_policy = ms_request-content_security_policy.
+      temp1 = ms_request-t_config.
     ENDIF.
+    
+    lt_config = temp1.
+
+    
+    IF ms_request-content_security_policy IS INITIAL.
+      temp2 = get_default_security_policy( ).
+    ELSE.
+      temp2 = ms_request-content_security_policy.
+    ENDIF.
+    
+    lv_sec_policy = temp2.
 
     mv_response = `<!DOCTYPE html>` && |\n| &&
                `<html lang="en">` && |\n| &&
@@ -578,7 +565,44 @@ CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
     
     CREATE OBJECT temp5 TYPE z2ui5_cl_core_draft_srv.
     temp5->cleanup( ).
-
     result = mv_response.
+
   ENDMETHOD.
+
+  METHOD get_default_config.
+
+    DATA temp6 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp7 LIKE LINE OF temp6.
+    CLEAR temp6.
+    
+    temp7-n = `src`.
+    temp7-v = `https://sdk.openui5.org/resources/sap-ui-cachebuster/sap-ui-core.js`.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-n = `data-sap-ui-theme`.
+    temp7-v = `sap_horizon`.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-n = `data-sap-ui-async`.
+    temp7-v = `true`.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-n = `data-sap-ui-bindingSyntax`.
+    temp7-v = `complex`.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-n = `data-sap-ui-frameOptions`.
+    temp7-v = `trusted`.
+    INSERT temp7 INTO TABLE temp6.
+    temp7-n = `data-sap-ui-compatVersion`.
+    temp7-v = `edge`.
+    INSERT temp7 INTO TABLE temp6.
+    result = temp6.
+
+  ENDMETHOD.
+
+
+  METHOD get_default_security_policy.
+
+    result  = `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: ` &&
+   `ui5.sap.com *.ui5.sap.com sapui5.hana.ondemand.com *.sapui5.hana.ondemand.com sdk.openui5.org *.sdk.openui5.org cdn.jsdelivr.net *.cdn.jsdelivr.net cdnjs.cloudflare.com *.cdnjs.cloudflare.com"/>`.
+
+  ENDMETHOD.
+
 ENDCLASS.
