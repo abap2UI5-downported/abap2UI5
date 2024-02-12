@@ -35,7 +35,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
+CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
 
 
   METHOD factory.
@@ -79,9 +79,8 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
     DATA lv_url_info TYPE string.
     DATA temp1 TYPE string_table.
     DATA simple_form2 TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp2 TYPE xsdboolean.
     DATA lv_url_samples2 TYPE string.
-    DATA temp3 TYPE string_table.
+      DATA temp3 TYPE string_table.
     lv_url = z2ui5_cl_util=>app_get_url(
                      client    = client
                      classname = ms_home-classname ).
@@ -126,7 +125,6 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
         singlecontainerfullsize = abap_false
       )->content( `form` ).
 
-
     simple_form2->toolbar( )->title( `Quickstart` ).
     simple_form2->label( `Step 1`
       )->text( `Create a new class in your ABAP system`
@@ -143,7 +141,7 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
     IF ms_home-class_editable = abap_true.
 
       simple_form2->input( placeholder = `fill in the class name and press 'check'`
-                      editable         = z2ui5_cl_util=>boolean_abap_2_json( ms_home-class_editable )
+                      enabled         = client->_bind( ms_home-class_editable )
                       value            = client->_bind_edit( ms_home-classname )
                       submit           = client->_event( ms_home-btn_event_id )
                       valuehelprequest = client->_event( 'VALUE_HELP' )
@@ -154,29 +152,16 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
     ENDIF.
 
     simple_form2->label( ).
-    simple_form2->button( press = client->_event( ms_home-btn_event_id )
-                     text       = ms_home-btn_text
-                     icon       = ms_home-btn_icon
+    simple_form2->button( press = client->_event(  ms_home-btn_event_id )
+                     text       = client->_bind( ms_home-btn_text )
+                     icon       = client->_bind( ms_home-btn_icon )
                      width      = `70%` ).
-    
-    temp2 = boolc( ms_home-class_editable = abap_false ).
     simple_form2->label( `Step 5`
       )->link( text  = `Link to the Application`
              target  = `_blank`
              href    = lv_url
-             enabled = z2ui5_cl_util=>boolean_abap_2_json( temp2 ) ).
+             enabled = `{= $` && client->_bind( val = ms_home-class_editable ) && ` === false }`   ).
 
-*
-*    simple_form2->toolbar( )->title( `System Information` ).
-**    simple_form2->label( `abap2UI5 Version` ).
-*    simple_form2->label( `abap2UI5 Version ` ).
-*    simple_form2->text( z2ui5_if_app=>version ).
-*    simple_form2->label( `UI5 Version`).
-*    simple_form2->text( client->_bind( mv_ui5_version ) ).
-*    simple_form2->label( `ABAP for Cloud` ).
-*    simple_form2->checkbox( enabled = abap_false selected = z2ui5_cl_util=>rtti_check_lang_version_cloud( ) ).
-*    simple_form2->label( `Launchpad active` ).
-*    simple_form2->checkbox( enabled = abap_false selected = client->get( )-check_launchpad_active ).
 
     
     lv_url_samples2 = z2ui5_cl_util=>app_get_url(
@@ -185,29 +170,24 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
 
     simple_form2->toolbar( )->title( `What's next?` ).
 
+    IF z2ui5_cl_util=>rtti_check_class_exists( `z2ui5_cl_demo_app_000`) IS NOT INITIAL.
+      simple_form2->label( `Start Developing` ).
+      
+      CLEAR temp3.
+      INSERT lv_url_samples2 INTO TABLE temp3.
+      simple_form2->button(
+        text      = `Check out the samples`
+        press     = client->_event_client( val = client->cs_event-open_new_tab
+                                           t_arg = temp3 )
+            width = `70%` ).
 
-
-
-
-    if z2ui5_cl_util=>rtti_check_class_exists( `z2ui5_cl_demo_app_000`) IS NOT INITIAL.
-     simple_form2->label( `Start Developing` ).
-    
-    CLEAR temp3.
-    INSERT lv_url_samples2 INTO TABLE temp3.
-    simple_form2->button(
-      text      = `Check out the samples`
-      press     = client->_event_client( val = client->cs_event-open_new_tab
-                                         t_arg = temp3 )
-          width = `70%` ).
-
-     else.
+    ELSE.
       simple_form2->label( `Install the sample repository` ).
-         simple_form2->link( text = `And explore more than 100 demo apps...`
-                 target      = `_blank`
-                 href        = `https://github.com/abap2UI5/abap2UI5-samples` ).
-     endif.
+      simple_form2->link( text = `And explore more than 100 demo apps...`
+              target      = `_blank`
+              href        = `https://github.com/abap2UI5/abap2UI5-samples` ).
+    ENDIF.
 
-*    simple_form2->toolbar( )->title( `Contribution` ).
     simple_form2->label( `` ).
     simple_form2->text( `` ).
     simple_form2->label( `Open an issue` ).
@@ -220,7 +200,7 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
                target        = `_blank`
                href          = `https://github.com/abap2UI5/abap2UI5/pulls` ).
 
-  simple_form2->label( `` ).
+    simple_form2->label( `` ).
     simple_form2->text( `` ).
 
 *    simple_form2->toolbar( )->title( `Links & More` ).
@@ -243,10 +223,10 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
 
 
   METHOD z2ui5_if_app~main.
-    FIELD-SYMBOLS <class> TYPE string.
           DATA temp5 TYPE REF TO z2ui5_cl_popup_to_select.
           DATA lo_f4 LIKE temp5.
           DATA ls_result TYPE z2ui5_cl_popup_to_select=>ty_s_result.
+            FIELD-SYMBOLS <class> TYPE any.
 
     me->client = client.
 
@@ -267,6 +247,7 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
           ls_result = lo_f4->result( ).
           IF ls_result-check_confirmed = abap_true.
 
+            
             ASSIGN ls_result-row->* TO <class>.
             ms_home-classname = <class>.
             view_display_start( ).
@@ -277,7 +258,6 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
     ENDIF.
 
     z2ui5_on_event( ).
-    view_display_start( ).
 
   ENDMETHOD.
 
@@ -286,15 +266,16 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
 
     CASE client->get( )-event.
 
-      WHEN `BUTTON_CHANGE`.
-        ms_home-btn_text       = `check`.
-        ms_home-btn_event_id   = `BUTTON_CHECK`.
-        ms_home-btn_icon       = `sap-icon://validate`.
-        ms_home-class_editable = abap_true.
-        client->view_model_update( ).
-
       WHEN `BUTTON_CHECK`.
-        on_event_check( ).
+        IF ms_home-class_editable = abap_false.
+          ms_home-btn_text       = `check`.
+          ms_home-btn_event_id   = `BUTTON_CHECK`.
+          ms_home-btn_icon       = `sap-icon://validate`.
+          ms_home-class_editable = abap_true.
+        ELSE.
+          on_event_check( ).
+        ENDIF.
+        client->view_model_update( ).
 
       WHEN 'VALUE_HELP'.
         mt_classes = z2ui5_cl_util=>rtti_get_classes_impl_intf( `Z2UI5_IF_APP` ).

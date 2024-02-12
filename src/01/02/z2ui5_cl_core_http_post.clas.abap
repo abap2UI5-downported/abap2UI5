@@ -68,7 +68,7 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
         CREATE OBJECT lo_json_mapper TYPE z2ui5_cl_core_json_srv.
         ms_request = lo_json_mapper->request_json_to_abap( mv_request_json ).
 
-        IF ms_request-s_frontend-id IS NOT INITIAL.
+        IF ms_request-s_front-id IS NOT INITIAL.
           mo_action = mo_action->factory_by_frontend( ).
 
         ELSEIF ms_request-s_control-app_start IS NOT INITIAL.
@@ -89,10 +89,10 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
     DATA lo_json_mapper TYPE REF TO z2ui5_cl_core_json_srv.
 
     CLEAR ms_response.
-    ms_response-s_frontend-params = mo_action->ms_next-s_set.
-    ms_response-s_frontend-id = mo_action->mo_app->ms_draft-id.
-    ms_response-s_frontend-app = z2ui5_cl_util=>rtti_get_classname_by_ref( mo_action->mo_app->mo_app ).
-    ms_response-s_frontend-app_start = ms_request-s_control-app_start.
+    ms_response-s_front-params = mo_action->ms_next-s_set.
+    ms_response-s_front-id = mo_action->mo_app->ms_draft-id.
+    ms_response-s_front-app = z2ui5_cl_util=>rtti_get_classname_by_ref( mo_action->mo_app->mo_app ).
+    ms_response-s_front-app_start = ms_request-s_control-app_start.
     ms_response-model = mo_action->mo_app->model_json_stringify( ).
 
     

@@ -61,18 +61,18 @@ CLASS z2ui5_cl_core_action IMPLEMENTATION.
   METHOD factory_by_frontend.
 
     CREATE OBJECT result EXPORTING VAL = mo_http_post.
-    result->mo_app = z2ui5_cl_core_app=>db_load( mo_http_post->ms_request-s_frontend-id ).
+    result->mo_app = z2ui5_cl_core_app=>db_load( mo_http_post->ms_request-s_front-id ).
 
     result->mo_app->ms_draft-id      = z2ui5_cl_util=>uuid_get_c32( ).
-    result->mo_app->ms_draft-id_prev = mo_http_post->ms_request-s_frontend-id.
-    result->ms_actual-view           = mo_http_post->ms_request-s_frontend-view.
+    result->mo_app->ms_draft-id_prev = mo_http_post->ms_request-s_front-id.
+    result->ms_actual-view           = mo_http_post->ms_request-s_front-view.
 
     result->mo_app->model_json_parse(
-        view          = mo_http_post->ms_request-s_frontend-view
+        view          = mo_http_post->ms_request-s_front-view
         io_json_model = mo_http_post->ms_request-o_model ).
 
-    result->ms_actual-event              = mo_http_post->ms_request-s_frontend-event.
-    result->ms_actual-t_event_arg        = mo_http_post->ms_request-s_frontend-t_event_arg.
+    result->ms_actual-event              = mo_http_post->ms_request-s_front-event.
+    result->ms_actual-t_event_arg        = mo_http_post->ms_request-s_front-t_event_arg.
     result->ms_actual-check_on_navigated = abap_false.
 
   ENDMETHOD.
@@ -101,17 +101,20 @@ CLASS z2ui5_cl_core_action IMPLEMENTATION.
       CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE z2ui5_cx_util_error
           EXPORTING
-            val = `App with name ` && mo_http_post->ms_request-s_control-app_start && ` not found...`
+            val      = `App with name ` && mo_http_post->ms_request-s_control-app_start && ` not found...`
             previous = x.
     ENDTRY.
 
   ENDMETHOD.
 
+
   METHOD factory_stack_call.
-
-
     DATA temp2 TYPE string.
         DATA lo_app TYPE REF TO z2ui5_cl_core_app.
+
+    mo_app->db_save( ).
+
+    
     IF ms_next-o_app_call->id_draft IS INITIAL.
       temp2 = z2ui5_cl_util=>uuid_get_c32( ).
     ELSE.
@@ -130,23 +133,25 @@ CLASS z2ui5_cl_core_action IMPLEMENTATION.
     TRY.
         
         lo_app = z2ui5_cl_core_app=>db_load( ms_next-o_app_call->id_draft ).
-        result->mo_app->mo_app   = lo_app->mo_app.
-        result->mo_app->mt_attri = lo_app->mt_attri.
-
+        result->mo_app = lo_app.
+        result->mo_app->mo_app = ms_next-o_app_leave.
       CATCH cx_root.
     ENDTRY.
 
     result->mo_app->ms_draft-id_prev_app_stack = mo_app->ms_draft-id.
-    mo_app->db_save( ).
 
   ENDMETHOD.
 
 
   METHOD factory_stack_leave.
-
     DATA temp3 TYPE string.
-        DATA lo_db TYPE REF TO z2ui5_cl_core_draft_srv.
-        DATA ls_draft TYPE z2ui5_if_types=>ty_s_draft.
+        DATA lo_app TYPE REF TO z2ui5_cl_core_app.
+        DATA temp4 LIKE REF TO result->mo_app->mt_attri.
+DATA lo_model TYPE REF TO z2ui5_cl_core_model_srv.
+
+    mo_app->db_save( ).
+
+    
     IF ms_next-o_app_leave->id_draft IS INITIAL.
       temp3 = z2ui5_cl_util=>uuid_get_c32( ).
     ELSE.
@@ -155,25 +160,30 @@ CLASS z2ui5_cl_core_action IMPLEMENTATION.
     ms_next-o_app_leave->id_draft = temp3.
 
     CREATE OBJECT result EXPORTING VAL = mo_http_post.
-    result->mo_app->mo_app               = ms_next-o_app_leave.
+    result->mo_app->mo_app = ms_next-o_app_leave.
+
+    TRY.
+
+        
+        lo_app = z2ui5_cl_core_app=>db_load( ms_next-o_app_leave->id_draft ).
+        result->mo_app = lo_app.
+        result->mo_app->mo_app = ms_next-o_app_leave.
+
+        
+        GET REFERENCE OF result->mo_app->mt_attri INTO temp4.
+
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_model_srv EXPORTING attri = temp4 app = result->mo_app->mo_app.
+
+        lo_model->attri_refs_update( ).
+
+      CATCH cx_root.
+    ENDTRY.
+
     result->mo_app->ms_draft-id          = ms_next-o_app_leave->id_draft.
     result->mo_app->ms_draft-id_prev     = mo_app->ms_draft-id.
     result->mo_app->ms_draft-id_prev_app = mo_app->ms_draft-id.
     result->ms_actual-check_on_navigated = abap_true.
     result->ms_next-s_set                = ms_next-s_set.
-
-    TRY.
-        
-        CREATE OBJECT lo_db TYPE z2ui5_cl_core_draft_srv.
-        
-        ls_draft = lo_db->read_info( result->mo_app->ms_draft-id ).
-        result->mo_app->ms_draft-id_prev_app_stack = ls_draft-id_prev_app_stack.
-
-      CATCH cx_root.
-        result->mo_app->ms_draft-id_prev_app_stack = mo_app->ms_draft-id_prev_app_stack.
-    ENDTRY.
-
-    mo_app->db_save( ).
 
   ENDMETHOD.
 
@@ -192,8 +202,8 @@ CLASS z2ui5_cl_core_action IMPLEMENTATION.
 
 
   METHOD factory_system_startup.
-    DATA temp4 TYPE REF TO z2ui5_if_app.
-    DATA li_app LIKE temp4.
+    DATA temp5 TYPE REF TO z2ui5_if_app.
+    DATA li_app LIKE temp5.
 
     CREATE OBJECT result EXPORTING VAL = mo_http_post.
 
@@ -202,9 +212,9 @@ CLASS z2ui5_cl_core_action IMPLEMENTATION.
     result->mo_app->mo_app               = z2ui5_cl_core_app_startup=>factory( ).
 
     
-    temp4 ?= result->mo_app->mo_app.
+    temp5 ?= result->mo_app->mo_app.
     
-    li_app = temp4.
+    li_app = temp5.
     li_app->id_draft = result->mo_app->ms_draft-id.
 
   ENDMETHOD.

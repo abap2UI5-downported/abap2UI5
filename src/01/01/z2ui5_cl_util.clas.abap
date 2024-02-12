@@ -5,6 +5,19 @@ CLASS z2ui5_cl_util DEFINITION
 
   PUBLIC SECTION.
 
+    CLASS-METHODS app_get_url_source_code
+      IMPORTING
+        !client       TYPE REF TO z2ui5_if_client
+      RETURNING
+        VALUE(result) TYPE string.
+
+    CLASS-METHODS app_get_url
+      IMPORTING
+        !client          TYPE REF TO z2ui5_if_client
+        VALUE(classname) TYPE string OPTIONAL
+      RETURNING
+        VALUE(result)    TYPE string.
+
     CLASS-METHODS db_save
       IMPORTING
         !uname        TYPE clike OPTIONAL
@@ -38,6 +51,40 @@ ENDCLASS.
 
 
 CLASS z2ui5_cl_util IMPLEMENTATION.
+
+  METHOD app_get_url.
+    DATA lv_url TYPE string.
+    DATA lt_param TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp1 TYPE z2ui5_if_types=>ty_s_name_value.
+
+    IF classname IS INITIAL.
+      classname = rtti_get_classname_by_ref( client->get_app( ) ).
+    ENDIF.
+
+    
+    lv_url = to_lower( client->get( )-s_config-origin && client->get( )-s_config-pathname ) && `?`.
+    
+    lt_param = url_param_get_tab( client->get( )-s_config-search ).
+    DELETE lt_param WHERE n = `app_start`.
+    
+    CLEAR temp1.
+    temp1-n = `app_start`.
+    temp1-v = to_lower( classname ).
+    INSERT temp1 INTO TABLE lt_param.
+
+    result = lv_url && url_param_create_url( lt_param ).
+
+  ENDMETHOD.
+
+
+  METHOD app_get_url_source_code.
+
+    DATA ls_config TYPE z2ui5_if_types=>ty_s_config.
+    ls_config = client->get( )-s_config.
+    result = ls_config-origin && `/sap/bc/adt/oo/classes/`
+       && rtti_get_classname_by_ref( client->get_app( ) ) && `/source/main`.
+
+  ENDMETHOD.
 
 
   METHOD db_load_by_handle.
@@ -110,17 +157,17 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
 
   METHOD db_save.
 
-    DATA temp1 TYPE z2ui5_t_fw_02.
-    DATA ls_db LIKE temp1.
-    CLEAR temp1.
-    temp1-id = uuid_get_c32( ).
-    temp1-uname = uname.
-    temp1-handle = handle.
-    temp1-handle2 = handle2.
-    temp1-handle3 = handle3.
-    temp1-data = xml_stringify( data ).
+    DATA temp2 TYPE z2ui5_t_fw_02.
+    DATA ls_db LIKE temp2.
+    CLEAR temp2.
+    temp2-id = uuid_get_c32( ).
+    temp2-uname = uname.
+    temp2-handle = handle.
+    temp2-handle2 = handle2.
+    temp2-handle3 = handle3.
+    temp2-data = xml_stringify( data ).
     
-    ls_db = temp1.
+    ls_db = temp2.
 
     MODIFY z2ui5_t_fw_02 FROM ls_db.
 

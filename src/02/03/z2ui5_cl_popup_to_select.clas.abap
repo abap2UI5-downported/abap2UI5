@@ -108,7 +108,7 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
             ).
 
     
-    lt_comp = z2ui5_cl_util=>rtti_get_t_comp_by_data( <tab_out> ).
+    lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_struc( <tab_out> ).
     DELETE lt_comp WHERE name = 'ZZSELKZ'.
 
     

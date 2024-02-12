@@ -33,13 +33,17 @@ CLASS z2ui5_cl_core_event_srv DEFINITION
 ENDCLASS.
 
 
-
 CLASS z2ui5_cl_core_event_srv IMPLEMENTATION.
-
 
   METHOD get_event.
 
-    result = `onEvent(  { 'EVENT' : '` && val && `', 'METHOD' : 'UPDATE' , 'CHECK_VIEW_DESTROY' : ` && z2ui5_cl_util=>boolean_abap_2_json( check_view_destroy ) && ` }`.
+    DATA temp1 TYPE string.
+    IF check_view_destroy = abap_true.
+      temp1 = `,true`.
+    ELSE.
+      CLEAR temp1.
+    ENDIF.
+    result = |{ z2ui5_if_core_types=>cs_ui5-event_backend_function }(['{ val }'{ temp1 }]|.
     result = result && get_t_arg( t_arg ).
 
   ENDMETHOD.
@@ -47,14 +51,14 @@ CLASS z2ui5_cl_core_event_srv IMPLEMENTATION.
 
   METHOD get_event_client.
 
-    result = `onEventFrontend( { 'EVENT' : '` && val && `' }` && get_t_arg( t_arg ).
+    result = |{ z2ui5_if_core_types=>cs_ui5-event_frontend_function }('{ val }'|.
+    result = result && get_t_arg( t_arg ).
 
   ENDMETHOD.
 
-
   METHOD get_t_arg.
-      DATA temp1 LIKE LINE OF val.
-      DATA lr_arg LIKE REF TO temp1.
+      DATA temp2 LIKE LINE OF val.
+      DATA lr_arg LIKE REF TO temp2.
         DATA lv_new TYPE string.
 
     IF val IS NOT INITIAL.

@@ -19,21 +19,21 @@ CLASS ltcl_test IMPLEMENTATION.
         selected TYPE abap_bool,
       END OF ty_row.
 
-    DATA temp2 TYPE ty_row.
-    DATA ls_row LIKE temp2.
     DATA temp3 TYPE ty_row.
-    DATA ls_row_result LIKE temp3.
+    DATA ls_row LIKE temp3.
+    DATA temp4 TYPE ty_row.
+    DATA ls_row_result LIKE temp4.
     DATA lv_id TYPE string.
-    CLEAR temp2.
-    temp2-title = `test`.
-    temp2-value = `val`.
-    temp2-selected = abap_true.
-    
-    ls_row = temp2.
-    
     CLEAR temp3.
+    temp3-title = `test`.
+    temp3-value = `val`.
+    temp3-selected = abap_true.
     
-    ls_row_result = temp3.
+    ls_row = temp3.
+    
+    CLEAR temp4.
+    
+    ls_row_result = temp4.
 
     
     lv_id = z2ui5_cl_util=>db_save(
@@ -61,8 +61,7 @@ CLASS ltcl_test IMPLEMENTATION.
         handle2      = `handle2`
         handle3      = `handle3`
       IMPORTING
-        result  = ls_row_result
-    ).
+        result  = ls_row_result ).
 
     cl_abap_unit_assert=>assert_equals(
        act = ls_row_result

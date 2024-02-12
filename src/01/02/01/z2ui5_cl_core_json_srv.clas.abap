@@ -164,6 +164,7 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
   METHOD request_json_to_abap.
         DATA temp7 TYPE REF TO z2ui5_if_ajson.
         DATA lo_ajson LIKE temp7.
+        DATA lv_model_edit_name TYPE string.
         DATA lo_model TYPE REF TO z2ui5_if_ajson.
         DATA temp1 TYPE xsdboolean.
         DATA x TYPE REF TO cx_root.
@@ -174,31 +175,34 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
         
         lo_ajson = temp7.
 
+        
+        lv_model_edit_name = `/` && z2ui5_if_core_types=>cs_ui5-two_way_model.
+
         result-o_model = z2ui5_cl_ajson=>create_empty( ).
         
-        lo_model = lo_ajson->slice( `/EDIT` ).
-        result-o_model->set( iv_path = `/EDIT` iv_val = lo_model ).
-        lo_ajson->delete( `/EDIT` ).
+        lo_model = lo_ajson->slice( lv_model_edit_name ).
+        result-o_model->set( iv_path = lv_model_edit_name iv_val = lo_model ).
+        lo_ajson->delete( lv_model_edit_name ).
 
-        lo_ajson = lo_ajson->slice( `/S_FRONTEND`).
+        lo_ajson = lo_ajson->slice( `/S_FRONT`).
         lo_ajson->to_abap(
             EXPORTING
                iv_corresponding = abap_true
             IMPORTING
-                ev_container     = result-s_frontend ).
+                ev_container     = result-s_front ).
 
         
-        temp1 = boolc( result-s_frontend-search CS `scenario=LAUNCHPAD` ).
+        temp1 = boolc( result-s_front-search CS `scenario=LAUNCHPAD` ).
         result-s_control-check_launchpad = temp1.
-        IF result-s_frontend-id IS NOT INITIAL.
+        IF result-s_front-id IS NOT INITIAL.
           RETURN.
         ENDIF.
-        result-s_control-app_start = z2ui5_cl_util=>c_trim_upper( result-s_frontend-app_start ).
+        result-s_control-app_start = z2ui5_cl_util=>c_trim_upper( result-s_front-app_start ).
         IF result-s_control-app_start IS NOT INITIAL.
           RETURN.
         ENDIF.
         result-s_control-app_start = z2ui5_cl_util=>c_trim_upper(
-            z2ui5_cl_util=>url_param_get( val = `app_start` url = result-s_frontend-search ) ).
+            z2ui5_cl_util=>url_param_get( val = `app_start` url = result-s_front-search ) ).
 
         
       CATCH cx_root INTO x.
@@ -222,7 +226,7 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
         
         ajson_result = temp8.
 
-        ajson_result->set( iv_path = `/` iv_val = val-s_frontend ).
+        ajson_result->set( iv_path = `/` iv_val = val-s_front ).
         
         CREATE OBJECT temp9 TYPE z2ui5_cl_core_json_srv.
         ajson_result = ajson_result->filter( temp9 ).
@@ -230,7 +234,7 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
         lv_frontend =  ajson_result->stringify( ).
 
         result = `{` &&
-            |"S_FRONTEND":{ lv_frontend },| &&
+            |"S_FRONT":{ lv_frontend },| &&
             |"MODEL":{ val-model }| &&
           `}`.
 

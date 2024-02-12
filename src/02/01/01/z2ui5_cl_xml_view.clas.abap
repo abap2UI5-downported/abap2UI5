@@ -13099,13 +13099,13 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
       ELSE.
         temp3 = row-v.
       ENDIF.
-      val = |{ val } { row-n }="{ escape( val = temp3 format = cl_abap_format=>e_xml_attr ) }" \n |.
+      val = |{ val } { row-n }="{ escape( val = temp3 format = cl_abap_format=>e_xml_attr ) }"|.
     ENDLOOP.
     temp420 = val.
     
     lv_tmp3 = temp420.
 
-    result = |{ result } <{ lv_tmp2 }{ mv_name } \n { lv_tmp3 }|.
+    result = |{ result } <{ lv_tmp2 }{ mv_name }{ lv_tmp3 }|.
 
     IF mt_child IS INITIAL.
       result = |{ result }/>|.

@@ -47,7 +47,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     result-t_event_arg = mo_action->ms_actual-t_event_arg.
     MOVE-CORRESPONDING mo_action->mo_app->ms_draft TO result-s_draft.
     result-check_on_navigated = mo_action->ms_actual-check_on_navigated.
-    MOVE-CORRESPONDING mo_action->mo_http_post->ms_request-s_frontend TO result-s_config.
+    MOVE-CORRESPONDING mo_action->mo_http_post->ms_request-s_front TO result-s_config.
 
   ENDMETHOD.
 
@@ -246,7 +246,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     temp5-path_only = path.
     temp5-custom_filter = custom_filter.
     temp5-custom_mapper = custom_mapper.
-    temp5-tab = tab.
+    temp5-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
     temp5-tab_index = tab_index.
     result = lo_bind->main(
       val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
@@ -277,7 +277,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     temp6-custom_filter_back = custom_filter_back.
     temp6-custom_mapper = custom_mapper.
     temp6-custom_mapper_back = custom_mapper_back.
-    temp6-tab = tab.
+    temp6-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
     temp6-tab_index = tab_index.
     result = lo_bind->main(
       val    = z2ui5_cl_util=>conv_get_as_data_ref( val )

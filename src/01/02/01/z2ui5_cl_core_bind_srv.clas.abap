@@ -55,11 +55,8 @@ CLASS z2ui5_cl_core_bind_srv DEFINITION
         VALUE(result) TYPE string.
 
     METHODS update_model_attri.
-
     METHODS check_raise_existing.
-
     METHODS check_raise_new.
-
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -83,7 +80,7 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
     READ TABLE <tab> INDEX ms_config-tab_index ASSIGNING <row>.
 
     
-    lt_attri = z2ui5_cl_util=>rtti_get_t_comp_by_data( ms_config-tab ).
+    lt_attri = z2ui5_cl_util=>rtti_get_t_attri_by_struc( ms_config-tab ).
     
     LOOP AT lt_attri ASSIGNING <comp>.
 
@@ -208,14 +205,15 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
     DATA temp7 TYPE string.
 
     result = replace( val = mr_attri->name sub = `-` with = `/` ).
-    result = replace( val = result sub = `>` with = `*` ).
+    result = replace( val = result sub = `>` with = `` ).
     
     IF mv_type = z2ui5_if_core_types=>cs_bind_type-two_way.
-      temp7 = `/EDIT`.
+      temp7 = `/` && z2ui5_if_core_types=>cs_ui5-two_way_model.
     ELSE.
       CLEAR temp7.
     ENDIF.
-    result = temp7 && `/` &&  result.
+    result = temp7
+        && `/` &&  result.
 
   ENDMETHOD.
 
@@ -243,6 +241,13 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
       check_raise_new( ).
       update_model_attri( ).
       result = mr_attri->name_client.
+    ENDIF.
+
+    IF result = `/` && z2ui5_if_core_types=>cs_ui5-two_way_model.
+      RAISE EXCEPTION TYPE z2ui5_cx_util_error
+        EXPORTING
+          val = `<p>Name of variable not allowed - x is reserved word - use anoter name for your attribute`.
+
     ENDIF.
 
     IF ms_config-path_only = abap_false.
