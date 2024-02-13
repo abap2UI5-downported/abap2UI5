@@ -1516,6 +1516,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !selectionbehavior      TYPE clike DEFAULT 'RowSelector'
         !selectedindex          TYPE clike OPTIONAL
         !id                     TYPE clike OPTIONAL
+        !VISIBLEROWCOUNT        type CLIKE optional
+        !VISIBLEROWCOUNTMODE    type CLIKE optional
       RETURNING
         VALUE(result)           TYPE REF TO z2ui5_cl_xml_view .
     METHODS tree_columns
@@ -12090,6 +12092,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp386 INTO TABLE temp385.
     temp386-n = `selectedIndex`.
     temp386-v = selectedindex.
+    INSERT temp386 INTO TABLE temp385.
+    temp386-n = `visibleRowCount`.
+    temp386-v = visibleRowCount.
+    INSERT temp386 INTO TABLE temp385.
+    temp386-n = `visibleRowCountMode`.
+    temp386-v = visibleRowCountMode.
     INSERT temp386 INTO TABLE temp385.
     result = _generic( name  = `TreeTable`
                       ns     = `table`
