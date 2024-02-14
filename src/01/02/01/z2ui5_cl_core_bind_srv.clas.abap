@@ -219,6 +219,8 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
 
 
   METHOD main.
+    DATA temp8 LIKE REF TO mo_app->mt_attri.
+DATA lo_model TYPE REF TO z2ui5_cl_core_model_srv.
 
     IF z2ui5_cl_util=>check_bound_a_not_inital( config-tab ) IS NOT INITIAL.
 
@@ -232,7 +234,13 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
 
     ms_config = config.
     mv_type   = type.
-    mr_attri  = mo_app->attri_get_by_data( val ).
+
+    
+    GET REFERENCE OF mo_app->mt_attri INTO temp8.
+
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_model_srv EXPORTING attri = temp8 app = mo_app->mo_app.
+
+    mr_attri = lo_model->search_a_dissolve_attribute( val ).
 
     IF mr_attri->bind_type IS NOT INITIAL.
       check_raise_existing( ).
@@ -259,7 +267,7 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
 
   METHOD main_cell.
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp8 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp9 TYPE z2ui5_if_core_types=>ty_s_bind_config.
 
     ms_config = config.
     mv_type   = type.
@@ -267,9 +275,9 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
     
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_app.
     
-    CLEAR temp8.
-    temp8-path_only = abap_true.
-    result = lo_bind->main( val = config-tab type = type config = temp8 ).
+    CLEAR temp9.
+    temp9-path_only = abap_true.
+    result = lo_bind->main( val = config-tab type = type config = temp9 ).
 
     result = bind_tab_cell(
           iv_name     = result
@@ -283,31 +291,29 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
 
 
   METHOD main_local.
-          DATA temp9 TYPE REF TO z2ui5_if_ajson.
-          DATA ajson LIKE temp9.
-          DATA temp10 TYPE REF TO z2ui5_if_ajson.
+        DATA temp10 TYPE REF TO z2ui5_if_ajson.
+        DATA lo_json LIKE temp10.
         DATA lv_id TYPE string.
         DATA temp11 TYPE z2ui5_if_core_types=>ty_s_attri.
         DATA x TYPE REF TO cx_root.
     TRY.
 
+        
+        temp10 ?= z2ui5_cl_ajson=>new( ).
+        
+        lo_json = temp10.
+        lo_json->set( iv_path = `/` iv_val = val ).
+
         IF config-custom_mapper IS BOUND.
-          
-          temp9 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = config-custom_mapper ).
-          
-          ajson = temp9.
+          lo_json = lo_json->map( config-custom_mapper ).
         ELSE.
-          
-          temp10 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_upper_case( ) ).
-          ajson = temp10.
+          lo_json = lo_json->map( z2ui5_cl_ajson_mapping=>create_upper_case( ) ).
         ENDIF.
 
-        ajson->set( iv_path = `/` iv_val = val ).
-
         IF config-custom_filter IS BOUND.
-          ajson = ajson->filter( config-custom_filter ).
+          lo_json = lo_json->filter( config-custom_filter ).
         ELSE.
-          ajson = ajson->filter( z2ui5_cl_ajson_filter_lib=>create_empty_filter( ) ).
+          lo_json = lo_json->filter( z2ui5_cl_ajson_filter_lib=>create_empty_filter( ) ).
         ENDIF.
 
         
@@ -316,7 +322,7 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
         CLEAR temp11.
         temp11-name_client = |/{ lv_id }|.
         temp11-name = lv_id.
-        temp11-json_bind_local = ajson.
+        temp11-json_bind_local = lo_json.
         temp11-bind_type = z2ui5_if_core_types=>cs_bind_type-one_time.
         INSERT temp11
         INTO TABLE mo_app->mt_attri.

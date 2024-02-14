@@ -67,7 +67,7 @@ CLASS  z2ui5_cl_util_api DEFINITION
       IMPORTING
         val           TYPE any
       RETURNING
-        VALUE(result) TYPE REF TO object.
+        VALUE(result) TYPE REF TO data.
 
     CLASS-METHODS conv_get_as_data_ref
       IMPORTING
@@ -459,7 +459,6 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
     result = temp2.
 
   ENDMETHOD.
-
 
   METHOD conv_copy_ref_data.
 
@@ -925,12 +924,21 @@ DATA lt_cols TYPE temp2.
 
 
   METHOD rtti_check_ref_data.
+        DATA lo_typdescr TYPE REF TO cl_abap_typedescr.
+        DATA temp22 TYPE REF TO cl_abap_refdescr.
+        DATA lo_ref LIKE temp22.
 
     TRY.
-        cl_abap_typedescr=>describe_by_data_ref( val ).
+        
+        lo_typdescr = cl_abap_typedescr=>describe_by_data( val ).
+        
+        temp22 ?= lo_typdescr.
+        
+        lo_ref = temp22.
         result = abap_true.
       CATCH cx_root.
     ENDTRY.
+
   ENDMETHOD.
 
 
@@ -966,13 +974,13 @@ DATA lt_cols TYPE temp2.
   METHOD rtti_get_type_name.
 
     DATA lo_descr TYPE REF TO cl_abap_typedescr.
-    DATA temp22 TYPE REF TO cl_abap_elemdescr.
-    DATA lo_ele LIKE temp22.
+    DATA temp23 TYPE REF TO cl_abap_elemdescr.
+    DATA lo_ele LIKE temp23.
     lo_descr = cl_abap_elemdescr=>describe_by_data( val ).
     
-    temp22 ?= lo_descr.
+    temp23 ?= lo_descr.
     
-    lo_ele = temp22.
+    lo_ele = temp23.
     result  = lo_ele->get_relative_name( ).
 
   ENDMETHOD.
@@ -981,60 +989,60 @@ DATA lt_cols TYPE temp2.
   METHOD rtti_get_t_attri_by_oref.
 
     DATA lo_obj_ref TYPE REF TO cl_abap_typedescr.
-    DATA temp23 TYPE REF TO cl_abap_classdescr.
+    DATA temp24 TYPE REF TO cl_abap_classdescr.
     lo_obj_ref = cl_abap_objectdescr=>describe_by_object_ref( val ).
     
-    temp23 ?= lo_obj_ref.
-    result = temp23->attributes.
+    temp24 ?= lo_obj_ref.
+    result = temp24->attributes.
 
   ENDMETHOD.
 
 
   METHOD rtti_get_t_attri_by_struc.
         DATA lo_type TYPE REF TO cl_abap_typedescr.
-        DATA temp24 TYPE REF TO cl_abap_structdescr.
-        DATA lo_struct LIKE temp24.
-            DATA temp25 TYPE REF TO cl_abap_tabledescr.
-            DATA lo_tab LIKE temp25.
-            DATA temp26 TYPE REF TO cl_abap_structdescr.
+        DATA temp25 TYPE REF TO cl_abap_structdescr.
+        DATA lo_struct LIKE temp25.
+            DATA temp26 TYPE REF TO cl_abap_tabledescr.
+            DATA lo_tab LIKE temp26.
+            DATA temp27 TYPE REF TO cl_abap_structdescr.
                 DATA lo_ref TYPE REF TO cl_abap_typedescr.
-                DATA temp27 TYPE REF TO cl_abap_structdescr.
-                DATA temp28 TYPE REF TO cl_abap_tabledescr.
-                DATA temp29 TYPE REF TO cl_abap_structdescr.
-    DATA temp30 LIKE LINE OF result.
-    DATA lr_comp LIKE REF TO temp30.
+                DATA temp28 TYPE REF TO cl_abap_structdescr.
+                DATA temp29 TYPE REF TO cl_abap_tabledescr.
+                DATA temp30 TYPE REF TO cl_abap_structdescr.
+    DATA temp31 LIKE LINE OF result.
+    DATA lr_comp LIKE REF TO temp31.
       DATA lt_attri TYPE abap_component_tab.
 
     TRY.
         
         lo_type = cl_abap_typedescr=>describe_by_data( val ).
         
-        temp24 ?= lo_type.
+        temp25 ?= lo_type.
         
-        lo_struct = temp24.
+        lo_struct = temp25.
       CATCH cx_root.
         TRY.
             
-            temp25 ?= lo_type.
+            temp26 ?= lo_type.
             
-            lo_tab = temp25.
+            lo_tab = temp26.
             
-            temp26 ?= lo_tab->get_table_line_type( ).
-            lo_struct = temp26.
+            temp27 ?= lo_tab->get_table_line_type( ).
+            lo_struct = temp27.
           CATCH cx_root.
             TRY.
                 
                 lo_ref = cl_abap_typedescr=>describe_by_data_ref( val ).
                 
-                temp27 ?= lo_ref.
-                lo_struct = temp27.
+                temp28 ?= lo_ref.
+                lo_struct = temp28.
               CATCH cx_root.
                 
-                temp28 ?= lo_ref.
-                lo_tab = temp28.
+                temp29 ?= lo_ref.
+                lo_tab = temp29.
                 
-                temp29 ?= lo_tab->get_table_line_type( ).
-                lo_struct = temp29.
+                temp30 ?= lo_tab->get_table_line_type( ).
+                lo_struct = temp30.
             ENDTRY.
         ENDTRY.
     ENDTRY.
@@ -1100,13 +1108,13 @@ DATA lt_cols TYPE temp2.
 
   METHOD sql_get_by_string.
 
-    DATA temp31 TYPE string.
-    DATA lv_sql LIKE temp31.
+    DATA temp32 TYPE string.
+    DATA lv_sql LIKE temp32.
     DATA lv_dummy TYPE string.
     DATA lv_tab TYPE string.
-    temp31 = val.
+    temp32 = val.
     
-    lv_sql = temp31.
+    lv_sql = temp32.
     REPLACE ALL OCCURRENCES OF ` ` IN lv_sql  WITH ``.
     lv_sql = to_upper( lv_sql ).
     
@@ -1163,19 +1171,19 @@ DATA lt_cols TYPE temp2.
 
     DATA lt_params TYPE z2ui5_if_types=>ty_t_name_value.
     DATA lv_val TYPE string.
-    DATA temp32 TYPE string.
-    DATA temp33 TYPE z2ui5_if_types=>ty_s_name_value.
+    DATA temp33 TYPE string.
+    DATA temp34 TYPE z2ui5_if_types=>ty_s_name_value.
     lt_params = url_param_get_tab( url ).
     
     lv_val = c_trim_lower( val ).
     
-    CLEAR temp32.
+    CLEAR temp33.
     
-    READ TABLE lt_params INTO temp33 WITH KEY n = lv_val.
+    READ TABLE lt_params INTO temp34 WITH KEY n = lv_val.
     IF sy-subrc = 0.
-      temp32 = temp33-v.
+      temp33 = temp34-v.
     ENDIF.
-    result = temp32.
+    result = temp33.
 
   ENDMETHOD.
 
@@ -1184,14 +1192,14 @@ DATA lt_cols TYPE temp2.
 
     DATA lv_search TYPE string.
     DATA lv_search2 TYPE string.
-    DATA temp34 TYPE string.
+    DATA temp35 TYPE string.
     TYPES temp3 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA lt_param TYPE temp3.
-    DATA temp35 LIKE LINE OF lt_param.
-    DATA lr_param LIKE REF TO temp35.
+    DATA temp36 LIKE LINE OF lt_param.
+    DATA lr_param LIKE REF TO temp36.
       DATA lv_name TYPE string.
       DATA lv_value TYPE string.
-      DATA temp36 TYPE z2ui5_if_types=>ty_s_name_value.
+      DATA temp37 TYPE z2ui5_if_types=>ty_s_name_value.
     lv_search = replace( val  = i_val
                                sub  = `%3D`
                                with = '='
@@ -1205,11 +1213,11 @@ DATA lt_param TYPE temp3.
                                         sub = `&sap-startup-params=` ).
     
     IF lv_search2 IS NOT INITIAL.
-      temp34 = lv_search2.
+      temp35 = lv_search2.
     ELSE.
-      temp34 = lv_search.
+      temp35 = lv_search.
     ENDIF.
-    lv_search = temp34.
+    lv_search = temp35.
 
     lv_search2 = substring_after( val = c_trim_lower( lv_search )
                                   sub = `?` ).
@@ -1228,10 +1236,10 @@ DATA lt_param TYPE temp3.
       
       SPLIT lr_param->* AT `=` INTO lv_name lv_value.
       
-      CLEAR temp36.
-      temp36-n = c_trim_lower( lv_name ).
-      temp36-v = c_trim_lower( lv_value ).
-      INSERT temp36 INTO TABLE rt_params.
+      CLEAR temp37.
+      temp37-n = c_trim_lower( lv_name ).
+      temp37-v = c_trim_lower( lv_value ).
+      INSERT temp37 INTO TABLE rt_params.
     ENDLOOP.
 
   ENDMETHOD.
@@ -1241,9 +1249,9 @@ DATA lt_param TYPE temp3.
 
     DATA lt_params TYPE z2ui5_if_types=>ty_t_name_value.
     DATA lv_n TYPE string.
-    DATA temp37 LIKE LINE OF lt_params.
-    DATA lr_params LIKE REF TO temp37.
-      DATA temp38 TYPE z2ui5_if_types=>ty_s_name_value.
+    DATA temp38 LIKE LINE OF lt_params.
+    DATA lr_params LIKE REF TO temp38.
+      DATA temp39 TYPE z2ui5_if_types=>ty_s_name_value.
     lt_params = url_param_get_tab( url ).
     
     lv_n = c_trim_lower( name ).
@@ -1256,10 +1264,10 @@ DATA lt_param TYPE temp3.
     ENDLOOP.
     IF sy-subrc <> 0.
       
-      CLEAR temp38.
-      temp38-n = lv_n.
-      temp38-v = c_trim_lower( value ).
-      INSERT temp38 INTO TABLE lt_params.
+      CLEAR temp39.
+      temp39-n = lv_n.
+      temp39-v = c_trim_lower( value ).
+      INSERT temp39 INTO TABLE lt_params.
     ENDIF.
 
     result = url_param_create_url( lt_params ).
@@ -1379,29 +1387,19 @@ DATA lt_param TYPE temp3.
   ENDMETHOD.
 
   METHOD rtti_get_type_kind_by_descr.
-        DATA temp39 TYPE REF TO cl_abap_structdescr.
-        DATA lo_test LIKE temp39.
-        DATA temp40 TYPE REF TO cl_abap_objectdescr.
-        DATA lo_test2 LIKE temp40.
-        DATA temp41 TYPE REF TO cl_abap_refdescr.
-        DATA lo_test3 LIKE temp41.
-
-    TRY.
-        
-        temp39 ?= val.
-        
-        lo_test = temp39.
-        result = lo_test->type_kind.
-        RETURN.
-      CATCH cx_sy_move_cast_error.
-    ENDTRY.
+        DATA temp40 TYPE REF TO cl_abap_structdescr.
+        DATA lo_test LIKE temp40.
+        DATA temp41 TYPE REF TO cl_abap_objectdescr.
+        DATA lo_test2 LIKE temp41.
+        DATA temp42 TYPE REF TO cl_abap_refdescr.
+        DATA lo_test3 LIKE temp42.
 
     TRY.
         
         temp40 ?= val.
         
-        lo_test2 = temp40.
-        result = lo_test2->type_kind.
+        lo_test = temp40.
+        result = lo_test->type_kind.
         RETURN.
       CATCH cx_sy_move_cast_error.
     ENDTRY.
@@ -1410,7 +1408,17 @@ DATA lt_param TYPE temp3.
         
         temp41 ?= val.
         
-        lo_test3 = temp41.
+        lo_test2 = temp41.
+        result = lo_test2->type_kind.
+        RETURN.
+      CATCH cx_sy_move_cast_error.
+    ENDTRY.
+
+    TRY.
+        
+        temp42 ?= val.
+        
+        lo_test3 = temp42.
         result = lo_test3->type_kind.
         RETURN.
       CATCH cx_sy_move_cast_error.

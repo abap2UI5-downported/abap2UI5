@@ -76,11 +76,9 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
 
     DATA lv_url TYPE string.
     DATA page2 TYPE REF TO z2ui5_cl_xml_view.
-    DATA lv_url_info TYPE string.
-    DATA temp1 TYPE string_table.
     DATA simple_form2 TYPE REF TO z2ui5_cl_xml_view.
     DATA lv_url_samples2 TYPE string.
-      DATA temp3 TYPE string_table.
+      DATA temp1 TYPE string_table.
     lv_url = z2ui5_cl_util=>app_get_url(
                      client    = client
                      classname = ms_home-classname ).
@@ -90,21 +88,18 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
          shownavbutton = abap_false ).
 
 
-    
-    lv_url_info = z2ui5_cl_util=>app_get_url(
-                  client    = client
-                  classname = 'z2ui5_cl_core_app_info' ).
+*    DATA(lv_url_info) = z2ui5_cl_util=>app_get_url(
+*                  client    = client
+*                  classname = 'z2ui5_cl_core_app_info' ).
 
-    
-    CLEAR temp1.
-    INSERT lv_url_info INTO TABLE temp1.
     page2->header_content(
     )->text(
      )->title( `abap2UI5 - Developing UI5 Apps Purely in ABAP`
      )->toolbar_spacer(
      )->button( text = `System` icon = `sap-icon://information`
-        press  = client->_event_client( val = client->cs_event-open_new_tab
-                                     t_arg = temp1 ) ).
+        press = client->_event( `OPEN_INFO` ) ).
+*        press  = client->_event_client( val = client->cs_event-open_new_tab
+*                                     t_arg = VALUE #( ( lv_url_info ) ) ) ).
 
     
     simple_form2 = page2->simple_form(
@@ -173,12 +168,12 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
     IF z2ui5_cl_util=>rtti_check_class_exists( `z2ui5_cl_demo_app_000`) IS NOT INITIAL.
       simple_form2->label( `Start Developing` ).
       
-      CLEAR temp3.
-      INSERT lv_url_samples2 INTO TABLE temp3.
+      CLEAR temp1.
+      INSERT lv_url_samples2 INTO TABLE temp1.
       simple_form2->button(
         text      = `Check out the samples`
         press     = client->_event_client( val = client->cs_event-open_new_tab
-                                           t_arg = temp3 )
+                                           t_arg = temp1 )
             width = `70%` ).
 
     ELSE.
@@ -223,8 +218,8 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
 
 
   METHOD z2ui5_if_app~main.
-          DATA temp5 TYPE REF TO z2ui5_cl_popup_to_select.
-          DATA lo_f4 LIKE temp5.
+          DATA temp3 TYPE REF TO z2ui5_cl_popup_to_select.
+          DATA lo_f4 LIKE temp3.
           DATA ls_result TYPE z2ui5_cl_popup_to_select=>ty_s_result.
             FIELD-SYMBOLS <class> TYPE any.
 
@@ -240,9 +235,9 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
     IF client->get( )-check_on_navigated = abap_true.
       TRY.
           
-          temp5 ?= client->get_app( client->get( )-s_draft-id_prev_app ).
+          temp3 ?= client->get_app( client->get( )-s_draft-id_prev_app ).
           
-          lo_f4 = temp5.
+          lo_f4 = temp3.
           
           ls_result = lo_f4->result( ).
           IF ls_result-check_confirmed = abap_true.
@@ -265,6 +260,10 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
   METHOD z2ui5_on_event.
 
     CASE client->get( )-event.
+
+      WHEN `OPEN_INFO`.
+        client->nav_app_call( z2ui5_cl_core_app_info=>factory( ) ).
+        RETURN.
 
       WHEN `BUTTON_CHECK`.
         IF ms_home-class_editable = abap_false.

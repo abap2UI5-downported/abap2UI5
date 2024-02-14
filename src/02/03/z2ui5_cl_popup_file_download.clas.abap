@@ -46,7 +46,6 @@ CLASS Z2UI5_CL_POPUP_FILE_DOWNLOAD IMPLEMENTATION.
 
 
   METHOD factory.
-    DATA temp1 TYPE i.
 
     CREATE OBJECT r_result.
     r_result->title = i_title.
@@ -55,9 +54,7 @@ CLASS Z2UI5_CL_POPUP_FILE_DOWNLOAD IMPLEMENTATION.
     r_result->button_text_confirm = i_button_text_confirm.
     r_result->button_text_cancel = i_button_text_cancel.
     r_result->mv_value = i_file.
-    
-    temp1 = strlen( i_file ) / 1000.
-    r_result->mv_size = temp1.
+    r_result->mv_size = strlen( i_file ) / 1000.
 
   ENDMETHOD.
 
@@ -73,8 +70,8 @@ CLASS Z2UI5_CL_POPUP_FILE_DOWNLOAD IMPLEMENTATION.
 
     DATA popup TYPE REF TO z2ui5_cl_xml_view.
       DATA lv_base64 TYPE xstring.
-      DATA temp2 TYPE z2ui5_if_types=>ty_t_name_value.
-      DATA temp3 LIKE LINE OF temp2.
+      DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
+      DATA temp2 LIKE LINE OF temp1.
     popup = z2ui5_cl_xml_view=>factory_popup( )->dialog(
                   title       = title
                   icon        = icon
@@ -85,17 +82,17 @@ CLASS Z2UI5_CL_POPUP_FILE_DOWNLOAD IMPLEMENTATION.
       
       lv_base64 = z2ui5_cl_util=>conv_decode_x_base64( mv_value ).
       
-      CLEAR temp2.
+      CLEAR temp1.
       
-      temp3-n = `src`.
-      temp3-v = mv_type && lv_base64.
-      INSERT temp3 INTO TABLE temp2.
-      temp3-n = `hidden`.
-      temp3-v = `hidden`.
-      INSERT temp3 INTO TABLE temp2.
+      temp2-n = `src`.
+      temp2-v = mv_type && lv_base64.
+      INSERT temp2 INTO TABLE temp1.
+      temp2-n = `hidden`.
+      temp2-v = `hidden`.
+      INSERT temp2 INTO TABLE temp1.
       popup->_generic( ns     = `html`
                        name   = `iframe`
-                       t_prop = temp2 ).
+                       t_prop = temp1 ).
 
       popup->_z2ui5( )->timer( client->_event( `CALLBACK_DOWNLOAD` ) ).
 
