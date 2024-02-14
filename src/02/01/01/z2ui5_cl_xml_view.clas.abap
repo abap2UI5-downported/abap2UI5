@@ -652,7 +652,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
 
     METHODS column_list_item
       IMPORTING
-        !id        TYPE clike OPTIONAL
+        !id            TYPE clike OPTIONAL
         !valign        TYPE clike OPTIONAL
         !selected      TYPE clike OPTIONAL
         !type          TYPE clike OPTIONAL
@@ -1516,8 +1516,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !selectionbehavior      TYPE clike DEFAULT 'RowSelector'
         !selectedindex          TYPE clike OPTIONAL
         !id                     TYPE clike OPTIONAL
-        !VISIBLEROWCOUNT        type CLIKE optional
-        !VISIBLEROWCOUNTMODE    type CLIKE optional
+        !visiblerowcount        TYPE clike OPTIONAL
+        !visiblerowcountmode    TYPE clike OPTIONAL
       RETURNING
         VALUE(result)           TYPE REF TO z2ui5_cl_xml_view .
     METHODS tree_columns
@@ -3404,7 +3404,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
+CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD actions.
@@ -4989,7 +4989,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp68-v = state.
     INSERT temp68 INTO TABLE temp67.
     temp68-n = `titleAlignment`.
-    temp68-v = titleAlignment.
+    temp68-v = titlealignment.
     INSERT temp68 INTO TABLE temp67.
     temp68-n = `type`.
     temp68-v = type.
@@ -5004,7 +5004,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp68-v = contentheight.
     INSERT temp68 INTO TABLE temp67.
     temp68-n = `escapeHandler`.
-    temp68-v = escapeHandler.
+    temp68-v = escapehandler.
     INSERT temp68 INTO TABLE temp67.
     temp68-n = `closeOnNavigation`.
     temp68-v = z2ui5_cl_util=>boolean_abap_2_json( closeonnavigation ).
@@ -5022,13 +5022,13 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp68-v = z2ui5_cl_util=>boolean_abap_2_json( verticalscrolling ).
     INSERT temp68 INTO TABLE temp67.
     temp68-n = `afterOpen`.
-    temp68-v = afterOpen.
+    temp68-v = afteropen.
     INSERT temp68 INTO TABLE temp67.
     temp68-n = `beforeClose`.
-    temp68-v = beforeClose.
+    temp68-v = beforeclose.
     INSERT temp68 INTO TABLE temp67.
     temp68-n = `beforeOpen`.
-    temp68-v = beforeOpen.
+    temp68-v = beforeopen.
     INSERT temp68 INTO TABLE temp67.
     temp68-n = `afterClose`.
     temp68-v = afterclose.
@@ -12094,10 +12094,10 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp386-v = selectedindex.
     INSERT temp386 INTO TABLE temp385.
     temp386-n = `visibleRowCount`.
-    temp386-v = visibleRowCount.
+    temp386-v = visiblerowcount.
     INSERT temp386 INTO TABLE temp385.
     temp386-n = `visibleRowCountMode`.
-    temp386-v = visibleRowCountMode.
+    temp386-v = visiblerowcountmode.
     INSERT temp386 INTO TABLE temp385.
     result = _generic( name  = `TreeTable`
                       ns     = `table`
@@ -12960,12 +12960,10 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
         ENDIF.
         result = temp413-v.
         RETURN.
+      WHEN OTHERS.
     ENDCASE.
 
     IF me = mo_root.
-
-
-
 
       
       CLEAR temp415.

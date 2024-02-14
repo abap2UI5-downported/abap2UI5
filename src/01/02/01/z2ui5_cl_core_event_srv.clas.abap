@@ -56,6 +56,7 @@ CLASS z2ui5_cl_core_event_srv IMPLEMENTATION.
 
   ENDMETHOD.
 
+
   METHOD get_t_arg.
       DATA temp2 LIKE LINE OF val.
       DATA lr_arg LIKE REF TO temp2.

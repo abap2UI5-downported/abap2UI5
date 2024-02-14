@@ -79,8 +79,8 @@ CLASS ltcl_test_bind IMPLEMENTATION.
         
         GET REFERENCE OF lo_app_client->xx INTO temp13.
 lo_bind->main(
-            val    = temp13
-            type   = z2ui5_if_core_types=>cs_bind_type-one_way  ).
+            val  = temp13
+            type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
         cl_abap_unit_assert=>abort( ).
 
@@ -113,8 +113,8 @@ DATA lv_bind TYPE string.
     GET REFERENCE OF lo_app_client->mv_value INTO temp14.
 
 lv_bind = lo_bind->main(
-        val    = temp14
-        type   = z2ui5_if_core_types=>cs_bind_type-one_way  ).
+        val  = temp14
+        type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
     cl_abap_unit_assert=>assert_equals(
        act = lv_bind
@@ -145,15 +145,15 @@ lv_bind = lo_bind->main(
     
     GET REFERENCE OF lo_app_client->mv_value INTO temp15.
 lo_bind->main(
-       val    = temp15
-       type   = z2ui5_if_core_types=>cs_bind_type-one_way  ).
+       val  = temp15
+       type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
     TRY.
         
         GET REFERENCE OF lo_app_client->mv_value INTO temp16.
 lo_bind->main(
-               val    = temp16
-               type   = z2ui5_if_core_types=>cs_bind_type-two_way ).
+               val  = temp16
+               type = z2ui5_if_core_types=>cs_bind_type-two_way ).
 
         cl_abap_unit_assert=>abort( ).
 
@@ -189,15 +189,15 @@ DATA lv_bind2 TYPE string.
     GET REFERENCE OF lo_app_client->mv_value INTO temp17.
 
 lv_bind = lo_bind->main(
-        val    = temp17
-        type   = z2ui5_if_core_types=>cs_bind_type-two_way  ).
+        val  = temp17
+        type = z2ui5_if_core_types=>cs_bind_type-two_way ).
 
     
     GET REFERENCE OF lo_app_client->mv_value INTO temp18.
 
 lv_bind2 = lo_bind->main(
-         val    = temp18
-         type   = z2ui5_if_core_types=>cs_bind_type-two_way  ).
+         val  = temp18
+         type = z2ui5_if_core_types=>cs_bind_type-two_way ).
 
     cl_abap_unit_assert=>assert_equals(
        act = lv_bind
@@ -268,8 +268,8 @@ DATA temp1 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     GET REFERENCE OF lo_test_app->ms_struc-input INTO temp19.
 
 lv_result = lo_bind->main(
-        val    = temp19
-        type   = z2ui5_if_core_types=>cs_bind_type-one_way  ).
+        val  = temp19
+        type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
     cl_abap_unit_assert=>assert_equals(
         act = lv_result
@@ -283,7 +283,7 @@ temp1-path_only = abap_true.
 lv_result = lo_bind->main(
         val    = temp20
         config = temp1
-        type   = z2ui5_if_core_types=>cs_bind_type-one_way  ).
+        type   = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
     cl_abap_unit_assert=>assert_equals(
         act = lv_result
@@ -314,8 +314,8 @@ DATA lv_result TYPE string.
     GET REFERENCE OF lo_test_app->ms_struc-s_02-input INTO temp21.
 
 lv_result = lo_bind->main(
-        val    = temp21
-        type   = z2ui5_if_core_types=>cs_bind_type-one_way  ).
+        val  = temp21
+        type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
     cl_abap_unit_assert=>assert_equals(
         act = lv_result
@@ -346,8 +346,8 @@ DATA lv_result TYPE string.
     GET REFERENCE OF lo_test_app->ms_struc-s_02-s_03-input INTO temp22.
 
 lv_result = lo_bind->main(
-        val    = temp22
-        type   = z2ui5_if_core_types=>cs_bind_type-one_way  ).
+        val  = temp22
+        type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_result
@@ -378,8 +378,8 @@ DATA lv_result TYPE string.
     GET REFERENCE OF lo_test_app->ms_struc-s_02-s_03-s_04-input INTO temp23.
 
 lv_result = lo_bind->main(
-        val    = temp23
-        type   = z2ui5_if_core_types=>cs_bind_type-one_way  ).
+        val  = temp23
+        type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_result
@@ -450,8 +450,8 @@ DATA lv_result TYPE string.
     GET REFERENCE OF lo_test_app->mo_obj->mv_value INTO temp24.
 
 lv_result = lo_bind->main(
-        val    = temp24
-        type   = z2ui5_if_core_types=>cs_bind_type-one_way  ).
+        val  = temp24
+        type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_result
@@ -483,8 +483,8 @@ DATA lv_result TYPE string.
     GET REFERENCE OF lo_test_app->mo_obj->ms_struc-input INTO temp25.
 
 lv_result = lo_bind->main(
-        val    = temp25
-        type   = z2ui5_if_core_types=>cs_bind_type-one_way  ).
+        val  = temp25
+        type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_result

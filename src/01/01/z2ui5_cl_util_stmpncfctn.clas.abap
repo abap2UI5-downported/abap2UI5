@@ -221,6 +221,7 @@ CLASS z2ui5_cl_util_stmpncfctn IMPLEMENTATION.
             ro_class = object.
 
         ASSIGN ('OBJECT->IF_XCO_AO_CLASS~IMPLEMENTATION') TO <any>.
+        ASSERT sy-subrc = 0.
         object = <any>.
 
         CALL METHOD object->('IF_XCO_CLAS_IMPLEMENTATION~METHOD')
@@ -365,10 +366,9 @@ CLASS z2ui5_cl_util_stmpncfctn IMPLEMENTATION.
   METHOD rtti_get_data_element_texts.
 
     DATA:
-      data_element_name TYPE c LENGTH 30,
-      ddic_ref          TYPE REF TO data,
-      data_element      TYPE REF TO object,
-      content           TYPE REF TO object,
+      ddic_ref     TYPE REF TO data,
+      data_element TYPE REF TO object,
+      content      TYPE REF TO object,
       BEGIN OF ddic,
         reptext   TYPE string,
         scrtext_s TYPE string,
@@ -376,13 +376,14 @@ CLASS z2ui5_cl_util_stmpncfctn IMPLEMENTATION.
         scrtext_l TYPE string,
       END OF ddic,
       exists TYPE abap_bool.
+
+    DATA data_element_name LIKE i_data_element_name.
         DATA temp3 TYPE REF TO cl_abap_structdescr.
         DATA struct_desrc LIKE temp3.
         FIELD-SYMBOLS <ddic> TYPE any.
         DATA lo_typedescr TYPE REF TO cl_abap_typedescr.
         DATA temp4 TYPE REF TO cl_abap_datadescr.
         DATA data_descr LIKE temp4.
-
     data_element_name = i_data_element_name.
 
     TRY.
@@ -401,11 +402,11 @@ CLASS z2ui5_cl_util_stmpncfctn IMPLEMENTATION.
         
         cl_abap_elemdescr=>describe_by_name(
            EXPORTING
-             p_name         = data_element_name
+             p_name      = data_element_name
            RECEIVING
-             p_descr_ref    = lo_typedescr
+             p_descr_ref = lo_typedescr
            EXCEPTIONS
-             OTHERS         = 1 ).
+             OTHERS      = 1 ).
         IF sy-subrc <> 0.
           RETURN.
         ENDIF.

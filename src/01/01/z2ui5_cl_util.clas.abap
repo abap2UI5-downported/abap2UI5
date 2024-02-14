@@ -102,6 +102,7 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
         AND handle2 = handle2
         AND handle3 = handle3
       INTO CORRESPONDING FIELDS OF TABLE lt_db.
+    ASSERT sy-subrc = 0.
 
     
     
@@ -134,6 +135,7 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
       FROM z2ui5_t_fw_02
       WHERE id = id
       INTO CORRESPONDING FIELDS OF TABLE lt_db.
+    ASSERT sy-subrc = 0.
 
     
     
@@ -170,6 +172,7 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
     ls_db = temp2.
 
     MODIFY z2ui5_t_fw_02 FROM ls_db.
+    ASSERT sy-subrc = 0.
 
     IF check_commit = abap_true.
       COMMIT WORK AND WAIT.

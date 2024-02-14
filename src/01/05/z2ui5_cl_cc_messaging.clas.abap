@@ -20,14 +20,14 @@ CLASS z2ui5_cl_cc_messaging DEFINITION
 
     CLASS-METHODS get_js
       RETURNING
-      VALUE(result) TYPE string .
+        VALUE(result) TYPE string .
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_CC_MESSAGING IMPLEMENTATION.
+CLASS z2ui5_cl_cc_messaging IMPLEMENTATION.
 
 
   METHOD get_js.

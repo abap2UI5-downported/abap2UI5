@@ -67,7 +67,7 @@ CLASS Z2UI5_CL_POPUP_LAYOUT IMPLEMENTATION.
 
     
     tab = popup->table(
-       items = client->_bind_edit( ms_result-t_layout ) ).
+       client->_bind_edit( ms_result-t_layout ) ).
 
     
     lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_struc( ms_result-t_layout ).
@@ -82,8 +82,8 @@ CLASS Z2UI5_CL_POPUP_LAYOUT IMPLEMENTATION.
     
     LOOP AT lt_comp INTO ls_comp2.
       
-      col = columns->column( width = '8rem' )->header( ns = `` ).
-      col->text( text = ls_comp2-name ).
+      col = columns->column( '8rem' )->header( `` ).
+      col->text( ls_comp2-name ).
     ENDLOOP.
 
     

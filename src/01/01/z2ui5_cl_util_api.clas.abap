@@ -1,4 +1,4 @@
-CLASS  z2ui5_cl_util_api DEFINITION
+CLASS z2ui5_cl_util_api DEFINITION
   PUBLIC
   CREATE PUBLIC
   INHERITING FROM z2ui5_cl_util_stmpncfctn.
@@ -198,9 +198,9 @@ CLASS  z2ui5_cl_util_api DEFINITION
 
     CLASS-METHODS xml_srtti_parse
       IMPORTING
-        !rtti_data TYPE clike
-      EXPORTING
-        !e_data    TYPE REF TO data.
+        !rtti_data    TYPE clike
+      RETURNING
+        VALUE(result) TYPE REF TO data.
 
     CLASS-METHODS time_get_timestampl
       RETURNING
@@ -264,12 +264,6 @@ CLASS  z2ui5_cl_util_api DEFINITION
         !val          TYPE any
       RETURNING
         VALUE(result) TYPE abap_bool.
-
-    CLASS-METHODS rtti_get_type_kind_by_descr
-      IMPORTING
-        !val          TYPE REF TO cl_abap_typedescr
-      RETURNING
-        VALUE(result) TYPE string.
 
     CLASS-METHODS rtti_get_type_kind
       IMPORTING
@@ -354,7 +348,6 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
     DATA sdescr LIKE temp1.
     DATA temp2 LIKE LINE OF sdescr->components.
     DATA lr_comp LIKE REF TO temp2.
-      DATA lv_element TYPE string.
       DATA temp3 TYPE abap_componentdescr.
       DATA ls_attri LIKE temp3.
     temp1 ?= cl_abap_typedescr=>describe_by_name( type->absolute_name ).
@@ -366,19 +359,10 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
     LOOP AT sdescr->components REFERENCE INTO lr_comp.
 
       
-      lv_element = attri && lr_comp->name.
-
-*      DATA(ls_attri) = VALUE z2ui5_if_core_types=>ty_s_attri(
-*        name      = lv_element
-*        type_kind = lr_comp->type_kind ).
-*
-      
       CLEAR temp3.
-      temp3-name = lv_element.
+      temp3-name = attri && lr_comp->name.
       
       ls_attri = temp3.
-      "todo type of field
-
       INSERT ls_attri INTO TABLE result.
 
     ENDLOOP.
@@ -854,6 +838,7 @@ DATA lt_cols TYPE temp2.
         ASSIGN lr_row->* TO <row>.
         
         ASSIGN COMPONENT sy-tabix OF STRUCTURE <row> TO <field>.
+        ASSERT sy-subrc = 0.
         <field> = lr_col->*.
       ENDLOOP.
 
@@ -1055,8 +1040,8 @@ DATA lt_cols TYPE temp2.
         WHERE as_include = abap_true.
 
       
-      lt_attri = rtti_get_t_attri_by_include( type  = lr_comp->type
-                                               attri = lr_comp->name ).
+      lt_attri = rtti_get_t_attri_by_include( type = lr_comp->type
+                                               attri     = lr_comp->name ).
 
       DELETE result.
       INSERT LINES OF lt_attri INTO TABLE result.
@@ -1083,12 +1068,11 @@ DATA lt_cols TYPE temp2.
   METHOD source_get_method.
 
     DATA lt_source TYPE string_table.
-    lt_source =  method_get_source(
+    lt_source = method_get_source(
          iv_classname  = iv_classname
-         iv_methodname = iv_methodname
-      ).
+         iv_methodname = iv_methodname ).
 
-    result = source_method_to_file( it_source = lt_source ).
+    result = source_method_to_file( lt_source ).
 
   ENDMETHOD.
 
@@ -1320,9 +1304,9 @@ DATA lt_param TYPE temp3.
 
     lo_datadescr ?= rtti_type.
 
-    CREATE DATA e_data TYPE HANDLE lo_datadescr.
+    CREATE DATA result TYPE HANDLE lo_datadescr.
     
-    ASSIGN e_data->* TO <variable>.
+    ASSIGN result->* TO <variable>.
     CALL TRANSFORMATION id SOURCE XML rtti_data RESULT dobj = <variable>.
 
   ENDMETHOD.
@@ -1386,51 +1370,11 @@ DATA lt_param TYPE temp3.
 
   ENDMETHOD.
 
-  METHOD rtti_get_type_kind_by_descr.
-        DATA temp40 TYPE REF TO cl_abap_structdescr.
-        DATA lo_test LIKE temp40.
-        DATA temp41 TYPE REF TO cl_abap_objectdescr.
-        DATA lo_test2 LIKE temp41.
-        DATA temp42 TYPE REF TO cl_abap_refdescr.
-        DATA lo_test3 LIKE temp42.
-
-    TRY.
-        
-        temp40 ?= val.
-        
-        lo_test = temp40.
-        result = lo_test->type_kind.
-        RETURN.
-      CATCH cx_sy_move_cast_error.
-    ENDTRY.
-
-    TRY.
-        
-        temp41 ?= val.
-        
-        lo_test2 = temp41.
-        result = lo_test2->type_kind.
-        RETURN.
-      CATCH cx_sy_move_cast_error.
-    ENDTRY.
-
-    TRY.
-        
-        temp42 ?= val.
-        
-        lo_test3 = temp42.
-        result = lo_test3->type_kind.
-        RETURN.
-      CATCH cx_sy_move_cast_error.
-    ENDTRY.
-
-  ENDMETHOD.
-
   METHOD unassign_object.
 
     FIELD-SYMBOLS <unassign> TYPE any.
     ASSIGN val->* TO <unassign>.
-    result =  <unassign>.
+    result = <unassign>.
 
   ENDMETHOD.
 
@@ -1438,7 +1382,7 @@ DATA lt_param TYPE temp3.
 
     FIELD-SYMBOLS <unassign> TYPE any.
     ASSIGN val->* TO <unassign>.
-    result =  <unassign>.
+    result = <unassign>.
 
   ENDMETHOD.
 

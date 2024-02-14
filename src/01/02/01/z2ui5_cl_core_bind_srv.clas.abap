@@ -85,6 +85,7 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
     LOOP AT lt_attri ASSIGNING <comp>.
 
       ASSIGN COMPONENT <comp>-name OF STRUCTURE <row> TO <ele>.
+      ASSERT sy-subrc = 0.
       GET REFERENCE OF <ele> INTO lr_ref_in.
 
       IF i_val = lr_ref_in.
@@ -213,14 +214,14 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
       CLEAR temp7.
     ENDIF.
     result = temp7
-        && `/` &&  result.
+        && `/` && result.
 
   ENDMETHOD.
 
 
   METHOD main.
     DATA temp8 LIKE REF TO mo_app->mt_attri.
-DATA lo_model TYPE REF TO z2ui5_cl_core_model_srv.
+DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
 
     IF z2ui5_cl_util=>check_bound_a_not_inital( config-tab ) IS NOT INITIAL.
 
@@ -238,20 +239,19 @@ DATA lo_model TYPE REF TO z2ui5_cl_core_model_srv.
     
     GET REFERENCE OF mo_app->mt_attri INTO temp8.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_model_srv EXPORTING attri = temp8 app = mo_app->mo_app.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp8 app = mo_app->mo_app.
 
-    mr_attri = lo_model->search_a_dissolve_attribute( val ).
+    mr_attri = lo_model->attri_search_a_dissolve( val ).
 
     IF mr_attri->bind_type IS NOT INITIAL.
       check_raise_existing( ).
-      result = mr_attri->name_client.
     ELSE.
       check_raise_new( ).
       update_model_attri( ).
-      result = mr_attri->name_client.
     ENDIF.
+    result = mr_attri->name_client.
 
-    IF result = `/` && z2ui5_if_core_types=>cs_ui5-two_way_model.
+    IF `/` && z2ui5_if_core_types=>cs_ui5-two_way_model = result.
       RAISE EXCEPTION TYPE z2ui5_cx_util_error
         EXPORTING
           val = `<p>Name of variable not allowed - x is reserved word - use anoter name for your attribute`.
@@ -280,8 +280,8 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_model_srv EXPORTING attri = temp8 app 
     result = lo_bind->main( val = config-tab type = type config = temp9 ).
 
     result = bind_tab_cell(
-          iv_name     = result
-          i_val       = val ).
+          iv_name = result
+          i_val   = val ).
 
     IF ms_config-path_only = abap_false.
       result = `{` && result && `}`.
@@ -325,7 +325,7 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_model_srv EXPORTING attri = temp8 app 
         temp11-json_bind_local = lo_json.
         temp11-bind_type = z2ui5_if_core_types=>cs_bind_type-one_time.
         INSERT temp11
-        INTO TABLE mo_app->mt_attri.
+          INTO TABLE mo_app->mt_attri.
 
         result = |/{ lv_id }|.
 
@@ -355,8 +355,9 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_model_srv EXPORTING attri = temp8 app 
     ELSE.
       temp12 = ms_config-view.
     ENDIF.
-    mr_attri->view         = temp12.
-    mr_attri->name_client    = get_client_name( ).
+    mr_attri->view          = temp12.
+    mr_attri->name_client   = get_client_name( ).
 
   ENDMETHOD.
+
 ENDCLASS.

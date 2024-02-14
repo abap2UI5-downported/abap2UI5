@@ -39,12 +39,12 @@ CLASS lcl_github IMPLEMENTATION.
 
     DATA temp13 TYPE lcl_github=>ty_t_repo.
     DATA temp14 LIKE LINE OF temp13.
-    DATA temp17 TYPE lcl_github=>ty_t_app.
-    DATA temp18 LIKE LINE OF temp17.
-    DATA temp19 TYPE lcl_github=>ty_t_app.
-    DATA temp20 LIKE LINE OF temp19.
-    DATA temp21 TYPE lcl_github=>ty_t_app.
-    DATA temp22 LIKE LINE OF temp21.
+    DATA temp7 TYPE lcl_github=>ty_t_app.
+    DATA temp8 LIKE LINE OF temp7.
+    DATA temp9 TYPE lcl_github=>ty_t_app.
+    DATA temp10 LIKE LINE OF temp9.
+    DATA temp11 TYPE lcl_github=>ty_t_app.
+    DATA temp12 LIKE LINE OF temp11.
     DATA temp15 LIKE LINE OF result.
     DATA lr_repo LIKE REF TO temp15.
       DATA temp16 LIKE LINE OF lr_repo->t_app.
@@ -59,33 +59,33 @@ CLASS lcl_github IMPLEMENTATION.
     temp14-min_release = `750`.
     temp14-link = `https://github.com/oblomov-dev/a2UI5-db_table_loader`.
     
-    CLEAR temp17.
+    CLEAR temp7.
     
-    temp18-name = `Upload JSON`.
-    temp18-descr = `Modify DB Table with JSON Data`.
-    temp18-classname = `z2ui5_dbl_cl_app_01`.
-    INSERT temp18 INTO TABLE temp17.
-    temp18-name = `Download (CSV, JSON)`.
-    temp18-descr = `Download DB Table as JSON and CSV`.
-    temp18-classname = `z2ui5_dbl_cl_app_01`.
-    INSERT temp18 INTO TABLE temp17.
-    temp14-t_app = temp17.
+    temp8-name = `Upload JSON`.
+    temp8-descr = `Modify DB Table with JSON Data`.
+    temp8-classname = `z2ui5_dbl_cl_app_01`.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-name = `Download (CSV, JSON)`.
+    temp8-descr = `Download DB Table as JSON and CSV`.
+    temp8-classname = `z2ui5_dbl_cl_app_01`.
+    INSERT temp8 INTO TABLE temp7.
+    temp14-t_app = temp7.
     INSERT temp14 INTO TABLE temp13.
     temp14-name = `The Quest`.
-    temp14-descr = `A wizard's adventure game based on a fork of the AXAGE game engine (ABAP teXt Adventure Game Engine) and abap2UI5. The game is set in a fantasy world, where the player takes on the role of a wizard's apprentice. The play` && `er explores the wizard's house, interacts with various objects and explores. The Quest is work in progress...`.
+    temp14-descr = `A wizard's adventure game based on a fork of the AXAGE game engine (ABAP teXt Adventure Game Engine) and abap2UI5. The game is set in a fantasy world, where the player ` && `takes on the role of a wizard's apprentice. The player explores the wizard's house, interacts with various objects and explores. The Quest is work in progress...`.
     temp14-check_abap_for_cloud = abap_true.
     temp14-min_release = `750`.
     temp14-link = `https://github.com/nomssi/axage`.
     temp14-author_link = `https://github.com/nomssi`.
     temp14-author_name = `Nomssi`.
     
-    CLEAR temp19.
+    CLEAR temp9.
     
-    temp20-name = `The Quest - Start the Adventure`.
-    temp20-descr = `Adventure Game: The Wizard&amp;apos;s Aspirant Quest`.
-    temp20-classname = `zcl_axage_wizard_ui.clas.abap`.
-    INSERT temp20 INTO TABLE temp19.
-    temp14-t_app = temp19.
+    temp10-name = `The Quest - Start the Adventure`.
+    temp10-descr = `Adventure Game: The Wizard&amp;apos;s Aspirant Quest`.
+    temp10-classname = `zcl_axage_wizard_ui.clas.abap`.
+    INSERT temp10 INTO TABLE temp9.
+    temp14-t_app = temp9.
     INSERT temp14 INTO TABLE temp13.
     temp14-name = `Advent of Code`.
     temp14-descr = `Advent of Code 2023 in ABAP`.
@@ -95,13 +95,13 @@ CLASS lcl_github IMPLEMENTATION.
     temp14-check_abap_for_cloud = abap_true.
     temp14-min_release = `750`.
     
-    CLEAR temp21.
+    CLEAR temp11.
     
-    temp22-name = `Advent of Code 2023 in ABAP`.
-    temp22-descr = `Advent of Code 2023 - ABAP2UI5 app`.
-    temp22-classname = `zcl_advent_2023_a2ui5.clas.abap`.
-    INSERT temp22 INTO TABLE temp21.
-    temp14-t_app = temp21.
+    temp12-name = `Advent of Code 2023 in ABAP`.
+    temp12-descr = `Advent of Code 2023 - ABAP2UI5 app`.
+    temp12-classname = `zcl_advent_2023_a2ui5.clas.abap`.
+    INSERT temp12 INTO TABLE temp11.
+    temp14-t_app = temp11.
     INSERT temp14 INTO TABLE temp13.
     result = temp13.
 

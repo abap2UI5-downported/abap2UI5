@@ -53,8 +53,8 @@ CLASS ltcl_test IMPLEMENTATION.
     lv_string3  = z2ui5_cl_util_stmpncfctn=>conv_get_string_by_xstring( lv_xstring2 ).
 
     cl_abap_unit_assert=>assert_equals(
-        act =   lv_string3
-        exp =   lv_string ).
+        act = lv_string3
+        exp = lv_string ).
 
   ENDMETHOD.
 

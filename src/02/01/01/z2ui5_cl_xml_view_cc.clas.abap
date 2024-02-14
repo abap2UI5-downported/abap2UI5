@@ -310,9 +310,9 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp8-n = `favicon`.
     temp8-v = favicon.
     INSERT temp8 INTO TABLE temp7.
-    mo_view->_generic( name   = `Favicon`
-              ns     = `z2ui5`
-              t_prop = temp7 ).
+    mo_view->_generic( name = `Favicon`
+              ns            = `z2ui5`
+              t_prop        = temp7 ).
 
   ENDMETHOD.
 

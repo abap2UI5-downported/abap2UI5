@@ -31,10 +31,9 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~clear.
 
-    CASE val.
-      WHEN z2ui5_if_client=>cs_clear-view.
-        CLEAR mo_action->ms_next-s_set-s_view.
-    ENDCASE.
+    IF val = z2ui5_if_client=>cs_clear-view.
+      CLEAR mo_action->ms_next-s_set-s_view.
+    ENDIF.
 
   ENDMETHOD.
 
@@ -321,8 +320,8 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     DATA lo_ui5 TYPE REF TO z2ui5_cl_core_event_srv.
     CREATE OBJECT lo_ui5 TYPE z2ui5_cl_core_event_srv.
     result = lo_ui5->get_event_client(
-         val                = val
-         t_arg              = t_arg ).
+         val   = val
+         t_arg = t_arg ).
 
   ENDMETHOD.
 ENDCLASS.

@@ -44,103 +44,15 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
+CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
 
-
-  METHOD z2ui5_if_app~main.
-      DATA temp1 LIKE mt_apps.
-      DATA temp4 TYPE string_table.
-      DATA row LIKE LINE OF temp4.
-        DATA temp2 LIKE LINE OF temp1.
-        DATA lt_arg TYPE string_table.
-        DATA lv_app LIKE LINE OF lt_arg.
-        DATA temp5 LIKE LINE OF lt_arg.
-        DATA temp6 LIKE sy-tabix.
-        DATA temp3 TYPE z2ui5_cl_app_search_apps=>ty_app.
-
-    me->client = client.
-
-    IF check_initialized = abap_false.
-      check_initialized = abap_true.
-
-      z2ui5_cl_util=>db_load_by_handle(
-        EXPORTING
-          uname  = sy-uname
-          handle = 'z2ui5_cl_app_search_apps'
-        IMPORTING
-          result = mt_favs ).
-
-      
-      CLEAR temp1.
-      
-      temp4 = z2ui5_cl_util=>rtti_get_classes_impl_intf( `Z2UI5_IF_APP` ).
-      
-      LOOP AT temp4 INTO row.
-        
-        temp2-name = row.
-        INSERT temp2 INTO TABLE temp1.
-      ENDLOOP.
-      mt_apps = temp1.
-      search( ).
-      view_display( client ).
-      RETURN.
-    ENDIF.
-
-    IF client->get( )-check_on_navigated = abap_true.
-      view_display( client ).
-    ENDIF.
-
-    CASE client->get( )-event.
-
-      WHEN `ON_PRESS`.
-
-        
-        lt_arg = client->get( )-t_event_arg.
-        
-        
-        
-        temp6 = sy-tabix.
-        READ TABLE lt_arg INDEX 1 INTO temp5.
-        sy-tabix = temp6.
-        IF sy-subrc <> 0.
-          RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
-        ENDIF.
-        lv_app = temp5.
-
-
-
-        
-        CLEAR temp3.
-        temp3-name = lv_app.
-        INSERT temp3 INTO TABLE mt_favs.
-
-
-        z2ui5_cl_util=>db_save(
-            uname  = sy-uname
-            handle = 'z2ui5_cl_app_search_apps'
-            data   = mt_favs ).
-
-        view_action_sheet( lv_app ).
-
-        view_nest_display( client ).
-
-      WHEN 'BACK'.
-        client->nav_app_leave( client->get_app( client->get( )-s_draft-id_prev_app_stack ) ).
-
-      WHEN 'ON_SEARCH'.
-        search( ).
-        client->view_model_update( ).
-        client->message_toast_display( |backend search done| ).
-    ENDCASE.
-
-  ENDMETHOD.
 
   METHOD search.
 
 
 
-    DATA temp4 LIKE LINE OF mt_apps.
-    DATA lr_app LIKE REF TO temp4.
+    DATA temp1 LIKE LINE OF mt_apps.
+    DATA lr_app LIKE REF TO temp1.
     LOOP AT mt_apps REFERENCE INTO lr_app.
       lr_app->visible = abap_false.
       IF lr_app->name CS 'DEMO' OR lr_app->name CS `Z2UI5_CL_POPUP`.
@@ -154,20 +66,59 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD view_action_sheet.
+
+    DATA action_sheet_view TYPE REF TO z2ui5_cl_xml_view.
+    DATA temp2 TYPE z2ui5_if_types=>ty_s_name_value.
+    action_sheet_view = z2ui5_cl_xml_view=>factory_popup( ).
+
+    
+    CLEAR temp2.
+    temp2-n = `core:require`.
+    temp2-v = `{ MessageToast: 'sap/m/MessageToast' }`.
+    action_sheet_view->_generic_property( temp2 ).
+
+    action_sheet_view->action_sheet( placement        = `Botton`
+                                     showcancelbutton = abap_true
+                                     title            = `Choose Your Action`
+      )->button( text  = `Accept`
+                 icon  = `sap-icon://accept`
+                 press = `MessageToast.show('selected action is ' + ${$source>/text})`
+      )->button( text  = `Reject`
+                 icon  = `sap-icon://decline`
+                 press = `MessageToast.show('selected action is ' + ${$source>/text})`
+      )->button( text  = `Email`
+                 icon  = `sap-icon://email`
+                 press = `MessageToast.show('selected action is ' + ${$source>/text})`
+      )->button( text  = `Forward`
+                 icon  = `sap-icon://forward`
+                 press = `MessageToast.show('selected action is ' + ${$source>/text})`
+      )->button( text  = `Delete`
+                 icon  = `sap-icon://delete`
+                 press = `MessageToast.show('selected action is ' + ${$source>/text})`
+      )->button( text  = `Other`
+                 press = `MessageToast.show('selected action is ' + ${$source>/text})` ).
+
+    client->popover_display( xml   = action_sheet_view->stringify( )
+                             by_id = val ).
+
+  ENDMETHOD.
+
+
   METHOD view_display.
 
 
     DATA page TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp5 TYPE string_table.
+    DATA temp3 TYPE string_table.
     DATA pages TYPE REF TO z2ui5_cl_xml_view.
     DATA page_all TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp7 LIKE LINE OF mt_apps.
-    DATA lr_app LIKE REF TO temp7.
+    DATA temp5 LIKE LINE OF mt_apps.
+    DATA lr_app LIKE REF TO temp5.
       DATA lv_tabix LIKE sy-tabix.
-      DATA temp8 TYPE string_table.
+      DATA temp6 TYPE string_table.
     DATA page_online TYPE REF TO z2ui5_cl_xml_view.
     DATA lt_repos TYPE lcl_github=>ty_t_repo.
-    DATA temp9 TYPE REF TO lcl_github.
+    DATA temp1 TYPE REF TO lcl_github.
     DATA item TYPE REF TO z2ui5_cl_xml_view.
     DATA row TYPE REF TO z2ui5_cl_xml_view.
     page = z2ui5_cl_xml_view=>factory(
@@ -196,14 +147,18 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
                             )->tool_header( ).
 
     
-    CLEAR temp5.
-    INSERT `NavCon` INTO TABLE temp5.
-    INSERT `${$parameters>/selectedKey}` INTO TABLE temp5.
+    CLEAR temp3.
+    INSERT `NavCon` INTO TABLE temp3.
+    INSERT `${$parameters>/selectedKey}` INTO TABLE temp3.
     
     pages = page->icon_tab_header( selectedkey    = client->_bind_edit( mv_selected_key )
 *                                                  select = client->_event( `OnSelectIconTabBar` )
-*                                                  select = client->_event_client( action = 'NAV_TO' t_arg  = value #( ( `NavCon` ) ( `${$parameters}` ) ) )
-                                                 select = client->_event_client( val = client->cs_event-nav_container_to t_arg  = temp5 )
+*                                                  select = client->_event_client(
+*              action = 'NAV_TO'
+*              t_arg  = value #( ( `NavCon` ) ( `${$parameters}` ) ) )
+                                                 select = client->_event_client(
+                                                    val   = client->cs_event-nav_container_to
+                                                    t_arg = temp3 )
                                                  mode   = `Inline`
                                  )->items(
                                    )->icon_tab_filter( key  = `page_favs`
@@ -259,13 +214,13 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
       
       lv_tabix = sy-tabix.
       
-      CLEAR temp8.
-      INSERT `${$source>/header}` INTO TABLE temp8.
-      INSERT `${$source>/id}` INTO TABLE temp8.
+      CLEAR temp6.
+      INSERT `${$source>/header}` INTO TABLE temp6.
+      INSERT `${$source>/id}` INTO TABLE temp6.
       page_all->generic_tile(
         id      = lr_app->name
         class   = 'sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout'
-        press   = client->_event( val = `ON_PRESS`   t_arg = temp8 )
+        press   = client->_event( val = `ON_PRESS`   t_arg = temp6 )
         header  = client->_bind( val = lr_app->name    tab = mt_apps tab_index = lv_tabix )
         visible = client->_bind( val = lr_app->visible tab = mt_apps tab_index = lv_tabix ) ).
     ENDLOOP.
@@ -305,8 +260,8 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
 
     
     
-    CREATE OBJECT temp9 TYPE lcl_github.
-    lt_repos = temp9->get_repositories( ).
+    CREATE OBJECT temp1 TYPE lcl_github.
+    lt_repos = temp1->get_repositories( ).
 
 
     
@@ -335,7 +290,7 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
     row->text( `{DESCR}` ).
     row->text( ).
     row->checkbox( text     = `ABAP for Cloud`
-      enabled = abap_false
+      enabled               = abap_false
                    selected = `{CHECK_ABAP_FOR_CLOUD}` ).
 
     row = item->grid( ).
@@ -351,67 +306,25 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
 
     row->checkbox( text     = `Installed`
                    selected = `{CHECK_INSTALLED}`
-                   enabled = abap_false
-                   ).
+                   enabled  = abap_false ).
     row->checkbox( text     = `Standard ABAP (Min. {MIN_RELEASE})`
                    selected = `{CHECK_STANDARD_ABAP}`
-                   enabled = abap_false
-                   ).
-     row->text( `{DESCR}` ).
-
-*     page_online
-
+                   enabled  = abap_false ).
+    row->text( `{DESCR}` ).
 
     client->view_display( page->stringify( ) ).
 
   ENDMETHOD.
 
-  METHOD view_action_sheet.
-
-    DATA action_sheet_view TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp10 TYPE z2ui5_if_types=>ty_s_name_value.
-    action_sheet_view = z2ui5_cl_xml_view=>factory_popup( ).
-
-    
-    CLEAR temp10.
-    temp10-n = `core:require`.
-    temp10-v = `{ MessageToast: 'sap/m/MessageToast' }`.
-    action_sheet_view->_generic_property( temp10 ).
-
-    action_sheet_view->action_sheet( placement        = `Botton`
-                                     showcancelbutton = abap_true
-                                     title            = `Choose Your Action`
-      )->button( text  = `Accept`
-                 icon  = `sap-icon://accept`
-                 press = `MessageToast.show('selected action is ' + ${$source>/text})`
-      )->button( text  = `Reject`
-                 icon  = `sap-icon://decline`
-                 press = `MessageToast.show('selected action is ' + ${$source>/text})`
-      )->button( text  = `Email`
-                 icon  = `sap-icon://email`
-                 press = `MessageToast.show('selected action is ' + ${$source>/text})`
-      )->button( text  = `Forward`
-                 icon  = `sap-icon://forward`
-                 press = `MessageToast.show('selected action is ' + ${$source>/text})`
-      )->button( text  = `Delete`
-                 icon  = `sap-icon://delete`
-                 press = `MessageToast.show('selected action is ' + ${$source>/text})`
-      )->button( text  = `Other`
-                 press = `MessageToast.show('selected action is ' + ${$source>/text})` ).
-
-    client->popover_display( xml   = action_sheet_view->stringify( )
-                             by_id = val ).
-
-  ENDMETHOD.
 
   METHOD view_nest_display.
 
     DATA lo_view_nested TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp11 LIKE LINE OF mt_favs.
-    DATA lr_app LIKE REF TO temp11.
+    DATA temp8 LIKE LINE OF mt_favs.
+    DATA lr_app LIKE REF TO temp8.
       DATA lv_tabix LIKE sy-tabix.
-      DATA temp12 LIKE REF TO mt_favs.
-DATA temp10 TYPE string_table.
+      DATA temp9 LIKE REF TO mt_favs.
+DATA temp2 TYPE string_table.
     lo_view_nested = z2ui5_cl_xml_view=>factory( ).
 
     
@@ -421,15 +334,15 @@ DATA temp10 TYPE string_table.
       
       lv_tabix = sy-tabix.
       
-      GET REFERENCE OF mt_favs INTO temp12.
+      GET REFERENCE OF mt_favs INTO temp9.
 
-CLEAR temp10.
-INSERT `${$source>/header}` INTO TABLE temp10.
+CLEAR temp2.
+INSERT `${$source>/header}` INTO TABLE temp2.
 lo_view_nested->generic_tile(
 *      page_favs->generic_tile(
         class  = 'sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout'
-        press  = client->_event( val = `ON_PRESS` t_arg = temp10 )
-        header = client->_bind( val = lr_app->name    tab = temp12 tab_index = lv_tabix ) ).
+        press  = client->_event( val = `ON_PRESS` t_arg = temp2 )
+        header = client->_bind( val = lr_app->name    tab = temp9 tab_index = lv_tabix ) ).
 *        visible = client->_bind( val = lr_app->check_fav tab = mt_apps tab_index = lv_tabix ) ).
     ENDLOOP.
 
@@ -439,4 +352,92 @@ lo_view_nested->generic_tile(
 
   ENDMETHOD.
 
+
+  METHOD z2ui5_if_app~main.
+      DATA temp10 LIKE mt_apps.
+      DATA temp4 TYPE string_table.
+      DATA row LIKE LINE OF temp4.
+        DATA temp11 LIKE LINE OF temp10.
+        DATA lt_arg TYPE string_table.
+        DATA lv_app LIKE LINE OF lt_arg.
+        DATA temp5 LIKE LINE OF lt_arg.
+        DATA temp6 LIKE sy-tabix.
+        DATA temp12 TYPE z2ui5_cl_app_search_apps=>ty_app.
+
+    me->client = client.
+
+    IF check_initialized = abap_false.
+      check_initialized = abap_true.
+
+      z2ui5_cl_util=>db_load_by_handle(
+        EXPORTING
+          uname  = sy-uname
+          handle = 'z2ui5_cl_app_search_apps'
+        IMPORTING
+          result = mt_favs ).
+
+      
+      CLEAR temp10.
+      
+      temp4 = z2ui5_cl_util=>rtti_get_classes_impl_intf( `Z2UI5_IF_APP` ).
+      
+      LOOP AT temp4 INTO row.
+        
+        temp11-name = row.
+        INSERT temp11 INTO TABLE temp10.
+      ENDLOOP.
+      mt_apps = temp10.
+      search( ).
+      view_display( client ).
+      RETURN.
+    ENDIF.
+
+    IF client->get( )-check_on_navigated = abap_true.
+      view_display( client ).
+    ENDIF.
+
+    CASE client->get( )-event.
+
+      WHEN `ON_PRESS`.
+
+        
+        lt_arg = client->get( )-t_event_arg.
+        
+        
+        
+        temp6 = sy-tabix.
+        READ TABLE lt_arg INDEX 1 INTO temp5.
+        sy-tabix = temp6.
+        IF sy-subrc <> 0.
+          RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+        ENDIF.
+        lv_app = temp5.
+
+
+
+        
+        CLEAR temp12.
+        temp12-name = lv_app.
+        INSERT temp12 INTO TABLE mt_favs.
+
+
+        z2ui5_cl_util=>db_save(
+            uname  = sy-uname
+            handle = 'z2ui5_cl_app_search_apps'
+            data   = mt_favs ).
+
+        view_action_sheet( lv_app ).
+
+        view_nest_display( client ).
+
+      WHEN 'BACK'.
+        client->nav_app_leave( client->get_app( client->get( )-s_draft-id_prev_app_stack ) ).
+
+      WHEN 'ON_SEARCH'.
+        search( ).
+        client->view_model_update( ).
+        client->message_toast_display( |backend search done| ).
+    ENDCASE.
+
+  ENDMETHOD.
 ENDCLASS.

@@ -62,7 +62,7 @@ CLASS z2ui5_cl_popup_table IMPLEMENTATION.
 
     
     tab = popup->table(
-       items = client->_bind( <tab_out> ) ).
+       client->_bind( <tab_out> ) ).
 *           )->header_toolbar(
 *             )->overflow_toolbar(
 *                 )->toolbar_spacer(
@@ -80,13 +80,13 @@ CLASS z2ui5_cl_popup_table IMPLEMENTATION.
 
     
     LOOP AT lt_comp INTO ls_comp.
-      cells->text( text = `{` && ls_comp-name && `}` ).
+      cells->text( `{` && ls_comp-name && `}` ).
     ENDLOOP.
 
     
     columns = tab->columns( ).
     LOOP AT lt_comp INTO ls_comp.
-      columns->column( width = '8rem' )->header( ns = `` )->text( text = ls_comp-name ).
+      columns->column( '8rem' )->header( `` )->text( ls_comp-name ).
     ENDLOOP.
 
     popup->get_parent(

@@ -18,7 +18,7 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lv_event TYPE string.
     CREATE OBJECT lo_event TYPE z2ui5_cl_core_event_srv.
     
-    lv_event = lo_event->get_event( `POST`).
+    lv_event = lo_event->get_event( `POST` ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_event

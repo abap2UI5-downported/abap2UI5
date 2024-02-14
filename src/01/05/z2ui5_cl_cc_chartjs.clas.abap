@@ -612,7 +612,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_CC_CHARTJS IMPLEMENTATION.
+CLASS z2ui5_cl_cc_chartjs IMPLEMENTATION.
 
 
   METHOD get_chartjs_local.
@@ -846,7 +846,7 @@ CLASS Z2UI5_CL_CC_CHARTJS IMPLEMENTATION.
               rv_keep = abap_false.
             ENDIF.
           WHEN z2ui5_if_ajson_types=>node_type-number.
-            IF is_node-value = `0` or is_node-value = `0.00`.
+            IF is_node-value = `0` OR is_node-value = `0.00`.
               rv_keep = abap_false.
             ENDIF.
           WHEN z2ui5_if_ajson_types=>node_type-string.
