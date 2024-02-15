@@ -44,7 +44,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
+CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
 
 
   METHOD search.
@@ -369,12 +369,16 @@ lo_view_nested->generic_tile(
     IF check_initialized = abap_false.
       check_initialized = abap_true.
 
-      z2ui5_cl_util=>db_load_by_handle(
-        EXPORTING
-          uname  = sy-uname
-          handle = 'z2ui5_cl_app_search_apps'
-        IMPORTING
-          result = mt_favs ).
+      TRY.
+          z2ui5_cl_util=>db_load_by_handle(
+            EXPORTING
+              uname  = sy-uname
+              handle = 'z2ui5_cl_app_search_apps'
+            IMPORTING
+              result = mt_favs ).
+
+        CATCH cx_root.
+      ENDTRY.
 
       
       CLEAR temp10.

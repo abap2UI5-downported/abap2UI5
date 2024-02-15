@@ -9,6 +9,7 @@ CLASS z2ui5_cl_core_app_startup DEFINITION
 
     DATA:
       BEGIN OF ms_home,
+        url                    TYPE string,
         btn_text               TYPE string,
         btn_event_id           TYPE string,
         btn_icon               TYPE string,
@@ -60,6 +61,10 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
         ms_home-class_value_state = `Success`.
         ms_home-class_editable    = abap_false.
 
+        ms_home-url = z2ui5_cl_util=>app_get_url(
+                   client    = client
+                   classname = ms_home-classname ).
+
         
       CATCH cx_root INTO lx.
         ms_home-class_value_state_text = lx->get_text( ).
@@ -73,16 +78,10 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
 
   METHOD view_display_start.
 
-    DATA lv_url TYPE string.
     DATA page2 TYPE REF TO z2ui5_cl_xml_view.
     DATA simple_form2 TYPE REF TO z2ui5_cl_xml_view.
     DATA lv_url_samples2 TYPE string.
       DATA temp1 TYPE string_table.
-    lv_url = z2ui5_cl_util=>app_get_url(
-                     client    = client
-                     classname = ms_home-classname ).
-
-    
     page2 = z2ui5_cl_xml_view=>factory( )->shell( )->page(
          shownavbutton = abap_false ).
 
@@ -146,7 +145,7 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
     simple_form2->label( `Step 5`
       )->link( text  = `Link to the Application`
              target  = `_blank`
-             href    = lv_url
+             href    = client->_bind( ms_home-url )
              enabled = `{= $` && client->_bind( val = ms_home-class_editable ) && ` === false }` ).
 
 
@@ -263,6 +262,9 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
           ms_home-btn_event_id   = `BUTTON_CHECK`.
           ms_home-btn_icon       = `sap-icon://validate`.
           ms_home-class_editable = abap_true.
+
+
+
         ELSE.
           on_event_check( ).
         ENDIF.

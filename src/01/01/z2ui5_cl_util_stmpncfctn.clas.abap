@@ -290,16 +290,14 @@ CLASS z2ui5_cl_util_stmpncfctn IMPLEMENTATION.
     DATA obj TYPE REF TO object.
     FIELD-SYMBOLS <any> TYPE any.
     DATA lt_implementation_names TYPE string_table.
-
-    TYPES:
-      BEGIN OF ty_s_impl,
-        clsname    TYPE c LENGTH 30,
-        refclsname TYPE c LENGTH 30,
-      END OF ty_s_impl.
+    TYPES BEGIN OF ty_s_impl.
+    TYPES clsname TYPE c LENGTH 30.
+    TYPES refclsname TYPE c LENGTH 30.
+    TYPES END OF ty_s_impl.
     DATA lt_impl TYPE STANDARD TABLE OF ty_s_impl WITH DEFAULT KEY.
-    TYPES: BEGIN OF ty_s_key,
-             intkey TYPE c LENGTH 30,
-           END OF ty_s_key.
+    TYPES BEGIN OF ty_s_key.
+    TYPES intkey TYPE c LENGTH 30.
+    TYPES END OF ty_s_key.
     DATA ls_key TYPE ty_s_key.
         DATA lv_fm TYPE string.
         DATA temp1 LIKE LINE OF lt_impl.
@@ -307,6 +305,7 @@ CLASS z2ui5_cl_util_stmpncfctn IMPLEMENTATION.
           DATA temp2 TYPE string.
 
     TRY.
+
 
         CALL METHOD ('XCO_CP_ABAP')=>interface
           EXPORTING
@@ -326,8 +325,6 @@ CLASS z2ui5_cl_util_stmpncfctn IMPLEMENTATION.
           RAISE EXCEPTION TYPE cx_sy_dyn_call_illegal_class.
         ENDIF.
         obj = <any>.
-
-        CALL METHOD obj->('IF_XCO_INTF_IMPLEMENTATIONS~GET').
 
         CALL METHOD obj->('IF_XCO_INTF_IMPLEMENTATIONS~GET_NAMES')
           RECEIVING
@@ -359,6 +356,7 @@ CLASS z2ui5_cl_util_stmpncfctn IMPLEMENTATION.
         ENDLOOP.
 
     ENDTRY.
+
 
   ENDMETHOD.
 
