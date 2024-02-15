@@ -19,3 +19,62 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+CLASS ltcl_test_db DEFINITION FINAL FOR TESTING
+  DURATION LONG
+  RISK LEVEL HARMLESS.
+
+  PUBLIC SECTION.
+
+    DATA mv_value TYPE string.
+    INTERFACES z2ui5_if_app.
+    METHODS constructor.
+
+    METHODS test_db_save FOR TESTING.
+
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+
+CLASS ltcl_test_db IMPLEMENTATION.
+
+  METHOD constructor.
+
+  ENDMETHOD.
+
+  METHOD test_db_save.
+
+    DATA lo_app_user TYPE REF TO ltcl_test_db.
+    DATA lo_app TYPE REF TO z2ui5_cl_core_app.
+    DATA lo_app_db TYPE REF TO z2ui5_cl_core_app.
+    DATA temp6 TYPE REF TO ltcl_test_db.
+    DATA lo_app_user_db LIKE temp6.
+    CREATE OBJECT lo_app_user TYPE ltcl_test_db.
+    lo_app_user->mv_value = `my value`.
+
+    
+    CREATE OBJECT lo_app TYPE z2ui5_cl_core_app.
+    lo_app->ms_draft-id = `TEST_ID`.
+    lo_app->mo_app = lo_app_user.
+
+    lo_app->db_save( ).
+
+    
+    lo_app_db = z2ui5_cl_core_app=>db_load( `TEST_ID` ).
+    
+    temp6 ?= lo_app_db->mo_app.
+    
+    lo_app_user_db = temp6.
+
+    cl_abap_unit_assert=>assert_equals(
+        act = lo_app_user_db->mv_value
+        exp = lo_app_user->mv_value  ).
+
+  ENDMETHOD.
+
+  METHOD z2ui5_if_app~main.
+
+  ENDMETHOD.
+
+ENDCLASS.

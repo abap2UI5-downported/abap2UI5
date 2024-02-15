@@ -1,256 +1,182 @@
-*
-*CLASS ltcl_test_dissolve DEFINITION DEFERRED.
-*CLASS z2ui5_cl_core_model_srv DEFINITION LOCAL FRIENDS ltcl_test_dissolve.
-*
-*CLASS ltcl_test_dissolve DEFINITION FINAL FOR TESTING
-*  DURATION SHORT
-*  RISK LEVEL HARMLESS.
-*
-*  PUBLIC SECTION.
-*
-*    TYPES:
-*      BEGIN OF s_01,
-*        input TYPE string,
-*        BEGIN OF s_02,
-*          input TYPE string,
-*          BEGIN OF s_03,
-*            input TYPE string,
-*            BEGIN OF s_04,
-*              input TYPE string,
-*            END OF s_04,
-*          END OF s_03,
-*        END OF s_02,
-*      END OF s_01.
-*
-*    DATA ms_struc TYPE s_01 ##NEEDED.
-*    DATA mv_value TYPE string ##NEEDED.
-*    DATA mr_value TYPE REF TO data.
-*    DATA mr_struc TYPE REF TO s_01.
-*    DATA mo_app TYPE REF TO ltcl_test_dissolve.
-*
-*  PRIVATE SECTION.
-*    METHODS test_dissolve_init  FOR TESTING RAISING cx_static_check.
-*    METHODS test_dissolve_struc FOR TESTING RAISING cx_static_check.
-*    METHODS test_dissolve_dref  FOR TESTING RAISING cx_static_check.
-*    METHODS test_dissolve_oref  FOR TESTING RAISING cx_static_check.
-*    METHODS test_ref FOR TESTING RAISING cx_static_check.
-*
-*ENDCLASS.
-*
-*CLASS ltcl_test_dissolve IMPLEMENTATION.
-*
-*
-*  METHOD test_ref.
-*
-*    DATA(lo_app)  = NEW ltcl_test_dissolve( ).
-*
-*    DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
-*    DATA(lo_model) = NEW z2ui5_cl_core_model_srv(
-*      attri = REF #( lt_attri )
-*      app   = lo_app ).
-*
-*    lo_model->dissolve( ).
-*
-*    DATA(ls_attri) = lt_attri[ name = `MV_VALUE` ].
-*    GET REFERENCE OF lo_app->mv_value INTO DATA(lr_ref).
-*
-*    IF ls_attri-r_ref <> lr_ref.
-*      cl_abap_unit_assert=>abort( ).
-*    ENDIF.
-*
-*  ENDMETHOD.
-*
-*  METHOD test_dissolve_init.
-*
-*    DATA(lo_app)  = NEW ltcl_test_dissolve( ).
-*
-*    DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
-*    DATA(lo_model) = NEW z2ui5_cl_core_model_srv(
-*      attri = REF #( lt_attri )
-*      app   = lo_app ).
-*
-*    lo_model->dissolve( ).
-*    lo_model->dissolve( ).
-*    lo_model->dissolve( ).
-*    lo_model->dissolve( ).
-*
-*    cl_abap_unit_assert=>assert_not_initial( VALUE #( lt_attri[ name = `MR_STRUC` ] OPTIONAL ) ).
-*    cl_abap_unit_assert=>assert_not_initial( VALUE #( lt_attri[ name = `MR_VALUE` ] OPTIONAL ) ).
-*    cl_abap_unit_assert=>assert_not_initial( VALUE #( lt_attri[ name = `MS_STRUC` ] OPTIONAL ) ).
-*    cl_abap_unit_assert=>assert_not_initial( VALUE #( lt_attri[ name = `MV_VALUE` ] OPTIONAL ) ).
-*
-*  ENDMETHOD.
-*
-*  METHOD test_dissolve_dref.
-*
-*    DATA(lo_app)    = NEW ltcl_test_dissolve( ).
-*    CREATE DATA lo_app->mr_struc.
-*    CREATE DATA lo_app->mr_value TYPE string.
-*
-*    DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
-*    DATA(lo_model) = NEW z2ui5_cl_core_model_srv(
-*      attri = REF #( lt_attri )
-*      app   = lo_app ).
-*
-*    lo_model->dissolve( ).
-*    lo_model->dissolve( ).
-*    lo_model->dissolve( ).
-*    lo_model->dissolve( ).
-*    lo_model->dissolve( ).
-*
-*    cl_abap_unit_assert=>assert_not_initial( VALUE #( lt_attri[ name = `MR_VALUE->*` ] OPTIONAL ) ).
-*
-*  ENDMETHOD.
-*
-*  METHOD test_dissolve_oref.
-*
-*    DATA(lo_app)    = NEW ltcl_test_dissolve( ).
-*    lo_app->mo_app = NEW #( ).
-*    DATA(lo_app2) = NEW ltcl_test_dissolve( ).
-*    lo_app2->mo_app = lo_app.
-*
-*    CREATE DATA lo_app->mo_app->mr_struc.
-*    CREATE DATA lo_app->mo_app->mr_value TYPE string.
-*
-*    DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
-*    DATA(lo_model) = NEW z2ui5_cl_core_model_srv(
-*      attri = REF #( lt_attri )
-*      app   = lo_app2 ).
-*
-*    lo_model->dissolve( ).
-*    lo_model->dissolve( ).
-*    lo_model->dissolve( ).
-*    lo_model->dissolve( ).
-*
-*    cl_abap_unit_assert=>assert_not_initial( VALUE #( lt_attri[ name = `MO_APP->MV_VALUE` ] OPTIONAL ) ).
-*    cl_abap_unit_assert=>assert_not_initial( VALUE #( lt_attri[ name = `MO_APP->MR_STRUC` ] OPTIONAL ) ).
-*    cl_abap_unit_assert=>assert_not_initial( VALUE #( lt_attri[ name = `MO_APP->MR_VALUE` ] OPTIONAL ) ).
-*    cl_abap_unit_assert=>assert_not_initial( VALUE #( lt_attri[ name = `MO_APP->MS_STRUC` ] OPTIONAL ) ).
-*
-*  ENDMETHOD.
-*
-*  METHOD test_dissolve_struc.
-*
-*    DATA(lo_app)    = NEW ltcl_test_dissolve( ).
-*    DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
-*    DATA(lo_model) = NEW z2ui5_cl_core_model_srv(
-*      attri = REF #( lt_attri )
-*      app   = lo_app ).
-*
-*    lo_model->dissolve( ).
-*    lo_model->dissolve( ).
-*    lo_model->dissolve( ).
-*    lo_model->dissolve( ).
-*    lo_model->dissolve( ).
-*
-*    cl_abap_unit_assert=>assert_not_initial( VALUE #( lt_attri[ name = `MS_STRUC-INPUT` ] OPTIONAL ) ).
-*    cl_abap_unit_assert=>assert_not_initial( VALUE #( lt_attri[ name = `MS_STRUC-S_02-INPUT` ] OPTIONAL ) ).
-*    cl_abap_unit_assert=>assert_not_initial( VALUE #( lt_attri[ name = `MS_STRUC-S_02-S_03-S_04-INPUT` ] OPTIONAL ) ).
-*
-*  ENDMETHOD.
-*
-*ENDCLASS.
-*
-*
-*CLASS ltcl_test_app2 DEFINITION FINAL FOR TESTING
-*  DURATION MEDIUM
-*  RISK LEVEL HARMLESS.
-*
-*  PUBLIC SECTION.
-*
-*    DATA mv_value TYPE string ##NEEDED.
-*    DATA mr_value TYPE REF TO data.
-*    DATA mr_value2 TYPE REF TO data.
-*    DATA mo_app TYPE REF TO ltcl_test_app2.
-*
-*    DATA xx TYPE string ##NEEDED.
-*    METHODS constructor.
-*ENDCLASS.
-*
-*CLASS ltcl_test_app2 IMPLEMENTATION.
-*
-*  METHOD constructor.
-*
-*  ENDMETHOD.
-*
-*ENDCLASS.
-*
-*CLASS ltcl_test_search_attri DEFINITION FINAL FOR TESTING
-*  DURATION SHORT
-*  RISK LEVEL HARMLESS.
-*
-*  PRIVATE SECTION.
-*    METHODS first_test FOR TESTING RAISING cx_static_check.
-*    METHODS second_test FOR TESTING RAISING cx_static_check.
-*    METHODS third_test FOR TESTING RAISING cx_static_check.
-*
-*ENDCLASS.
-*
-*CLASS z2ui5_cl_core_model_srv DEFINITION LOCAL FRIENDS ltcl_test_search_attri.
-*
-*CLASS ltcl_test_search_attri IMPLEMENTATION.
-*
-*  METHOD first_test.
-*
-*    DATA(lo_app_client) = NEW ltcl_test_app2( ).
-*    DATA lr_value TYPE REF TO data.
-*    GET REFERENCE OF lo_app_client->mv_value INTO lr_value.
-*
-*    DATA(lt_attri) = VALUE z2ui5_if_core_types=>ty_t_attri( ( r_ref = lr_value ) ).
-*
-*    DATA(lo_model) = NEW z2ui5_cl_core_model_srv(
-*      attri = REF #( lt_attri )
-*      app   = lo_app_client ).
-*
-*    DATA(lr_attri) = lo_model->attri_search_a_dissolve( REF #( lo_app_client->mv_value ) ).
-*
-*    IF lr_attri->r_ref <> lr_value.
-*      cl_abap_unit_assert=>abort( ).
-*    ENDIF.
-*
-*  ENDMETHOD.
-*
-*  METHOD second_test.
-*
-*    DATA(lo_app_client) = NEW ltcl_test_app2( ).
-*    DATA lr_value TYPE REF TO data.
-*    GET REFERENCE OF lo_app_client->mv_value INTO lr_value.
-*
-*    DATA(lt_attri) = VALUE z2ui5_if_core_types=>ty_t_attri( ( r_ref = REF #( lo_app_client->mv_value ) ) ).
-*
-*    DATA(lo_model) = NEW z2ui5_cl_core_model_srv(
-*      attri = REF #( lt_attri )
-*      app   = lo_app_client ).
-*
-*    DATA(lr_attri) = lo_model->attri_search_a_dissolve( REF #( lo_app_client->mv_value ) ).
-*
-*    IF lr_attri->r_ref <> lr_value.
-*      cl_abap_unit_assert=>abort( ).
-*    ENDIF.
-*
-*  ENDMETHOD.
-*
-*  METHOD third_test.
-*
-*    DATA(lo_app_client) = NEW ltcl_test_app2( ).
-*    DATA lr_value TYPE REF TO data.
-*    GET REFERENCE OF lo_app_client->mv_value INTO lr_value.
-*
-*    lo_app_client->mo_app = NEW #( ).
-*
-*    DATA(lt_attri) = VALUE z2ui5_if_core_types=>ty_t_attri(
-*       ( name = `1` r_ref = REF #( lo_app_client->mr_value ) )
-*       ( name = `4` r_ref = REF #( lo_app_client->mr_value2 ) )
-*       ( name = `2` r_ref = REF #( lo_app_client->mo_app  ) )
-*       ( name = `3` r_ref = REF #( lo_app_client->mv_value ) )
-*        ).
-*
-*    DATA(lr_attri) = REF #( lt_attri[ r_ref = lr_value ] ).
-*    IF lr_attri->r_ref <> lr_value.
-*      cl_abap_unit_assert=>abort( ).
-*    ENDIF.
-*
-*  ENDMETHOD.
-*
-*
-*ENDCLASS.
+
+CLASS ltcl_test_app2 DEFINITION FINAL FOR TESTING
+  DURATION MEDIUM
+  RISK LEVEL HARMLESS.
+
+  PUBLIC SECTION.
+
+    DATA mv_value TYPE string ##NEEDED.
+    DATA mr_value TYPE REF TO data.
+    DATA mr_value2 TYPE REF TO data.
+    DATA mo_app TYPE REF TO ltcl_test_app2.
+
+    DATA xx TYPE string ##NEEDED.
+    METHODS constructor.
+ENDCLASS.
+
+CLASS ltcl_test_app2 IMPLEMENTATION.
+
+  METHOD constructor.
+
+  ENDMETHOD.
+
+ENDCLASS.
+
+CLASS ltcl_test_search_attri DEFINITION FINAL FOR TESTING
+  DURATION SHORT
+  RISK LEVEL HARMLESS.
+
+  PRIVATE SECTION.
+    METHODS first_test FOR TESTING RAISING cx_static_check.
+    METHODS second_test FOR TESTING RAISING cx_static_check.
+    METHODS third_test FOR TESTING RAISING cx_static_check.
+
+ENDCLASS.
+
+CLASS z2ui5_cl_core_attri_srv DEFINITION LOCAL FRIENDS ltcl_test_search_attri.
+
+CLASS ltcl_test_search_attri IMPLEMENTATION.
+
+  METHOD first_test.
+
+    DATA lo_app_client TYPE REF TO ltcl_test_app2.
+    DATA lr_value TYPE REF TO data.
+    DATA temp5 TYPE z2ui5_if_core_types=>ty_t_attri.
+    DATA temp6 LIKE LINE OF temp5.
+    DATA lt_attri LIKE temp5.
+    DATA temp7 LIKE REF TO lt_attri.
+DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
+    DATA temp8 LIKE REF TO lo_app_client->mv_value.
+DATA lr_attri TYPE REF TO z2ui5_if_core_types=>ty_s_attri.
+    CREATE OBJECT lo_app_client TYPE ltcl_test_app2.
+    
+    GET REFERENCE OF lo_app_client->mv_value INTO lr_value.
+
+    
+    CLEAR temp5.
+    
+    temp6-r_ref = lr_value.
+    temp6-o_typedescr = cl_abap_datadescr=>describe_by_data_ref( lr_value ).
+    INSERT temp6 INTO TABLE temp5.
+    
+    lt_attri = temp5.
+
+    
+    GET REFERENCE OF lt_attri INTO temp7.
+
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp7 app = lo_app_client.
+
+    
+    GET REFERENCE OF lo_app_client->mv_value INTO temp8.
+
+lr_attri = lo_model->attri_search_a_dissolve( temp8 ).
+
+    IF lr_attri->r_ref <> lr_value.
+      cl_abap_unit_assert=>abort( ).
+    ENDIF.
+
+  ENDMETHOD.
+
+  METHOD second_test.
+
+    DATA lo_app_client TYPE REF TO ltcl_test_app2.
+    DATA lr_value TYPE REF TO data.
+    DATA temp9 LIKE REF TO lo_app_client->mv_value.
+DATA temp1 TYPE z2ui5_if_core_types=>ty_t_attri.
+DATA temp2 LIKE LINE OF temp1.
+DATA lt_attri LIKE temp1.
+    DATA temp10 LIKE REF TO lt_attri.
+DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
+    DATA temp11 LIKE REF TO lo_app_client->mv_value.
+DATA lr_attri TYPE REF TO z2ui5_if_core_types=>ty_s_attri.
+    CREATE OBJECT lo_app_client TYPE ltcl_test_app2.
+    
+    GET REFERENCE OF lo_app_client->mv_value INTO lr_value.
+
+    
+    GET REFERENCE OF lo_app_client->mv_value INTO temp9.
+
+CLEAR temp1.
+
+temp2-r_ref = temp9.
+temp2-o_typedescr = cl_abap_datadescr=>describe_by_data_ref( lr_value ).
+INSERT temp2 INTO TABLE temp1.
+
+lt_attri = temp1.
+
+    
+    GET REFERENCE OF lt_attri INTO temp10.
+
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp10 app = lo_app_client.
+
+    
+    GET REFERENCE OF lo_app_client->mv_value INTO temp11.
+
+lr_attri = lo_model->attri_search_a_dissolve( temp11 ).
+
+    IF lr_attri->r_ref <> lr_value.
+      cl_abap_unit_assert=>abort( ).
+    ENDIF.
+
+  ENDMETHOD.
+
+  METHOD third_test.
+
+    DATA lo_app_client TYPE REF TO ltcl_test_app2.
+    DATA lr_value TYPE REF TO data.
+    DATA temp12 LIKE REF TO lo_app_client->mv_value.
+DATA temp3 LIKE REF TO lo_app_client->mo_app.
+DATA temp1 LIKE REF TO lo_app_client->mr_value2.
+DATA temp2 LIKE REF TO lo_app_client->mr_value.
+DATA temp4 TYPE z2ui5_if_core_types=>ty_t_attri.
+DATA temp5 LIKE LINE OF temp4.
+DATA lt_attri LIKE temp4.
+    FIELD-SYMBOLS <temp13> TYPE z2ui5_if_core_types=>ty_s_attri.
+DATA lr_attri LIKE REF TO <temp13>.
+    CREATE OBJECT lo_app_client TYPE ltcl_test_app2.
+    
+    GET REFERENCE OF lo_app_client->mv_value INTO lr_value.
+
+    CREATE OBJECT lo_app_client->mo_app.
+
+    
+    GET REFERENCE OF lo_app_client->mv_value INTO temp12.
+
+GET REFERENCE OF lo_app_client->mo_app INTO temp3.
+
+GET REFERENCE OF lo_app_client->mr_value2 INTO temp1.
+
+GET REFERENCE OF lo_app_client->mr_value INTO temp2.
+
+CLEAR temp4.
+
+temp5-name = `1`.
+temp5-r_ref = temp2.
+INSERT temp5 INTO TABLE temp4.
+temp5-name = `4`.
+temp5-r_ref = temp1.
+INSERT temp5 INTO TABLE temp4.
+temp5-name = `2`.
+temp5-r_ref = temp3.
+INSERT temp5 INTO TABLE temp4.
+temp5-name = `3`.
+temp5-r_ref = temp12.
+INSERT temp5 INTO TABLE temp4.
+
+lt_attri = temp4.
+
+    
+    READ TABLE lt_attri WITH KEY r_ref = lr_value ASSIGNING <temp13>.
+IF sy-subrc <> 0.
+  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+ENDIF.
+
+GET REFERENCE OF <temp13> INTO lr_attri.
+    IF lr_attri->r_ref <> lr_value.
+      cl_abap_unit_assert=>abort( ).
+    ENDIF.
+
+  ENDMETHOD.
+
+
+ENDCLASS.

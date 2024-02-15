@@ -50,7 +50,6 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
         DATA lx TYPE REF TO cx_root.
 
     TRY.
-
         ms_home-classname = z2ui5_cl_util=>c_trim_upper( ms_home-classname ).
         CREATE OBJECT li_app_test TYPE (ms_home-classname).
 
@@ -87,19 +86,12 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
     page2 = z2ui5_cl_xml_view=>factory( )->shell( )->page(
          shownavbutton = abap_false ).
 
-
-*    DATA(lv_url_info) = z2ui5_cl_util=>app_get_url(
-*                  client    = client
-*                  classname = 'z2ui5_cl_core_app_info' ).
-
     page2->header_content(
       )->text(
       )->title( `abap2UI5 - Developing UI5 Apps Purely in ABAP`
       )->toolbar_spacer(
       )->button( text = `System` icon = `sap-icon://information`
         press = client->_event( `OPEN_INFO` ) ).
-*        press  = client->_event_client( val = client->cs_event-open_new_tab
-*                                     t_arg = VALUE #( ( lv_url_info ) ) ) ).
 
     
     simple_form2 = page2->simple_form(

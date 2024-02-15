@@ -59,9 +59,12 @@ CLASS z2ui5_cl_core_draft_srv IMPLEMENTATION.
 
 
   METHOD create.
-
     DATA temp1 TYPE z2ui5_if_core_types=>ty_s_db.
     DATA ls_db LIKE temp1.
+
+    ASSERT draft-id IS NOT INITIAL.
+
+    
     CLEAR temp1.
     temp1-id = draft-id.
     temp1-id_prev = draft-id_prev.
