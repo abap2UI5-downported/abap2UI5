@@ -96,21 +96,34 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD attri_search_a_dissolve.
-      DATA lo_dissolve TYPE REF TO z2ui5_cl_core_dissolve_srv.
+    DATA lo_dissolve TYPE REF TO z2ui5_cl_core_dissolve_srv.
+      DATA temp3 LIKE sy-subrc.
 
     result = attri_search( val ).
     IF result IS BOUND.
       RETURN.
     ENDIF.
 
-    DO 5 TIMES.
-      
-      CREATE OBJECT lo_dissolve TYPE z2ui5_cl_core_dissolve_srv EXPORTING attri = mt_attri app = mo_app.
+    
+    CREATE OBJECT lo_dissolve TYPE z2ui5_cl_core_dissolve_srv EXPORTING attri = mt_attri app = mo_app.
+
+    DO 10 TIMES.
+
       lo_dissolve->main( ).
+
       result = attri_search( val ).
       IF result IS BOUND.
         RETURN.
       ENDIF.
+
+      
+      READ TABLE mt_attri->* WITH KEY check_dissolved = abap_false TRANSPORTING NO FIELDS.
+      temp3 = sy-subrc.
+      IF temp3 = 0.
+        CONTINUE.
+      ENDIF.
+
+      EXIT.
     ENDDO.
 
     RAISE EXCEPTION TYPE z2ui5_cx_util_error
@@ -139,8 +152,8 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
 
   METHOD attri_refs_update.
 
-    DATA temp3 LIKE LINE OF mt_attri->*.
-    DATA lr_attri LIKE REF TO temp3.
+    DATA temp4 LIKE LINE OF mt_attri->*.
+    DATA lr_attri LIKE REF TO temp4.
     LOOP AT mt_attri->* REFERENCE INTO lr_attri.
 
       lr_attri->r_ref = attri_get_val_ref( lr_attri->name ).
@@ -159,12 +172,16 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
 
   METHOD attri_search.
 
-    DATA temp4 LIKE LINE OF mt_attri->*.
-    DATA lr_attri LIKE REF TO temp4.
+    DATA temp5 LIKE LINE OF mt_attri->*.
+    DATA lr_attri LIKE REF TO temp5.
     LOOP AT mt_attri->* REFERENCE INTO lr_attri
-         WHERE o_typedescr->kind = cl_abap_typedescr=>kind_elem
-            OR o_typedescr->kind = cl_abap_typedescr=>kind_struct
-            OR o_typedescr->kind = cl_abap_typedescr=>kind_table.
+         WHERE o_typedescr IS BOUND.
+
+      IF lr_attri->o_typedescr->kind <> cl_abap_typedescr=>kind_elem
+         AND lr_attri->o_typedescr->kind <> cl_abap_typedescr=>kind_struct
+         AND lr_attri->o_typedescr->kind <> cl_abap_typedescr=>kind_table.
+        CONTINUE.
+      ENDIF.
 
       IF lr_attri->r_ref = val.
         result = lr_attri.

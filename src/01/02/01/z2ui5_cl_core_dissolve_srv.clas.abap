@@ -46,7 +46,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_CORE_DISSOLVE_SRV IMPLEMENTATION.
+CLASS z2ui5_cl_core_dissolve_srv IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -187,33 +187,40 @@ CLASS Z2UI5_CL_CORE_DISSOLVE_SRV IMPLEMENTATION.
 
 
   METHOD main.
+    DATA temp5 LIKE sy-subrc.
 
     IF mt_attri->* IS INITIAL.
       main_init( ).
       RETURN.
     ENDIF.
-    main_run( ).
+
+    
+    READ TABLE mt_attri->* WITH KEY check_dissolved = abap_false TRANSPORTING NO FIELDS.
+    temp5 = sy-subrc.
+    IF temp5 = 0.
+      main_run( ).
+    ENDIF.
 
   ENDMETHOD.
 
 
   METHOD main_init.
 
-    DATA temp5 LIKE REF TO mo_app.
+    DATA temp6 LIKE REF TO mo_app.
 DATA temp1 TYPE z2ui5_if_core_types=>ty_s_attri.
 DATA ls_attri LIKE temp1.
-    DATA temp6 LIKE REF TO ls_attri.
+    DATA temp7 LIKE REF TO ls_attri.
 DATA lt_init TYPE z2ui5_if_core_types=>ty_t_attri.
-    GET REFERENCE OF mo_app INTO temp5.
+    GET REFERENCE OF mo_app INTO temp6.
 
 CLEAR temp1.
-temp1-r_ref = temp5.
+temp1-r_ref = temp6.
 
 ls_attri = temp1.
     
-    GET REFERENCE OF ls_attri INTO temp6.
+    GET REFERENCE OF ls_attri INTO temp7.
 
-lt_init = diss_oref( temp6 ).
+lt_init = diss_oref( temp7 ).
     INSERT LINES OF lt_init INTO TABLE mt_attri->*.
 
   ENDMETHOD.
@@ -221,16 +228,16 @@ lt_init = diss_oref( temp6 ).
 
   METHOD main_run.
 
-    DATA temp7 TYPE z2ui5_if_core_types=>ty_t_attri.
-    DATA lt_attri_new LIKE temp7.
-    DATA temp8 LIKE LINE OF mt_attri->*.
-    DATA lr_attri LIKE REF TO temp8.
+    DATA temp8 TYPE z2ui5_if_core_types=>ty_t_attri.
+    DATA lt_attri_new LIKE temp8.
+    DATA temp9 LIKE LINE OF mt_attri->*.
+    DATA lr_attri LIKE REF TO temp9.
           DATA lt_attri_struc TYPE z2ui5_if_core_types=>ty_t_attri.
               DATA lt_attri_oref TYPE z2ui5_if_core_types=>ty_t_attri.
               DATA lt_attri_dref TYPE z2ui5_if_core_types=>ty_t_attri.
-    CLEAR temp7.
+    CLEAR temp8.
     
-    lt_attri_new = temp7.
+    lt_attri_new = temp8.
 
     
     
