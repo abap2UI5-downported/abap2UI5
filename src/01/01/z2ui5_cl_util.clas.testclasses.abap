@@ -11,29 +11,34 @@ ENDCLASS.
 CLASS ltcl_test IMPLEMENTATION.
 
   METHOD first_test.
-
-    TYPES:
-      BEGIN OF ty_row,
-        title    TYPE string,
-        value    TYPE string,
-        selected TYPE abap_bool,
-      END OF ty_row.
-
-    DATA temp3 TYPE ty_row.
-    DATA ls_row LIKE temp3.
-    DATA temp4 TYPE ty_row.
-    DATA ls_row_result LIKE temp4.
+TYPES BEGIN OF ty_row.
+TYPES title TYPE string.
+TYPES value TYPE string.
+TYPES selected TYPE abap_bool.
+TYPES END OF ty_row.
+    DATA temp5 TYPE ty_row.
+    DATA ls_row LIKE temp5.
+    DATA temp6 TYPE ty_row.
+    DATA ls_row_result LIKE temp6.
     DATA lv_id TYPE string.
-    CLEAR temp3.
-    temp3-title = `test`.
-    temp3-value = `val`.
-    temp3-selected = abap_true.
+
+    IF sy-sysid = 'ABC'.
+      RETURN.
+    ENDIF.
+
     
-    ls_row = temp3.
+
     
-    CLEAR temp4.
+    CLEAR temp5.
+    temp5-title = `test`.
+    temp5-value = `val`.
+    temp5-selected = abap_true.
     
-    ls_row_result = temp4.
+    ls_row = temp5.
+    
+    CLEAR temp6.
+    
+    ls_row_result = temp6.
 
     
     lv_id = z2ui5_cl_util=>db_save(

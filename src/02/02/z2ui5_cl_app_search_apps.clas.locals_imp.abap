@@ -37,27 +37,27 @@ CLASS lcl_github IMPLEMENTATION.
 
   METHOD get_repositories.
 
-    DATA temp13 TYPE lcl_github=>ty_t_repo.
-    DATA temp14 LIKE LINE OF temp13.
+    DATA temp14 TYPE lcl_github=>ty_t_repo.
+    DATA temp15 LIKE LINE OF temp14.
     DATA temp7 TYPE lcl_github=>ty_t_app.
     DATA temp8 LIKE LINE OF temp7.
     DATA temp9 TYPE lcl_github=>ty_t_app.
     DATA temp10 LIKE LINE OF temp9.
     DATA temp11 TYPE lcl_github=>ty_t_app.
     DATA temp12 LIKE LINE OF temp11.
-    DATA temp15 LIKE LINE OF result.
-    DATA lr_repo LIKE REF TO temp15.
-      DATA temp16 LIKE LINE OF lr_repo->t_app.
-      DATA lr_app LIKE REF TO temp16.
-    CLEAR temp13.
+    DATA temp16 LIKE LINE OF result.
+    DATA lr_repo LIKE REF TO temp16.
+      DATA temp17 LIKE LINE OF lr_repo->t_app.
+      DATA lr_app LIKE REF TO temp17.
+    CLEAR temp14.
     
-    temp14-name = `Table Loader`.
-    temp14-descr = `Upload, Edit & Download Table Content (CSV, JSON)`.
-    temp14-author_link = `https://github.com/oblomov-dev`.
-    temp14-author_name = `oblomov`.
-    temp14-check_abap_for_cloud = abap_true.
-    temp14-min_release = `750`.
-    temp14-link = `https://github.com/oblomov-dev/a2UI5-db_table_loader`.
+    temp15-name = `Table Loader`.
+    temp15-descr = `Upload, Edit & Download Table Content (CSV, JSON)`.
+    temp15-author_link = `https://github.com/oblomov-dev`.
+    temp15-author_name = `oblomov`.
+    temp15-check_abap_for_cloud = abap_true.
+    temp15-min_release = `750`.
+    temp15-link = `https://github.com/oblomov-dev/a2UI5-db_table_loader`.
     
     CLEAR temp7.
     
@@ -69,15 +69,15 @@ CLASS lcl_github IMPLEMENTATION.
     temp8-descr = `Download DB Table as JSON and CSV`.
     temp8-classname = `z2ui5_dbl_cl_app_01`.
     INSERT temp8 INTO TABLE temp7.
-    temp14-t_app = temp7.
-    INSERT temp14 INTO TABLE temp13.
-    temp14-name = `The Quest`.
-    temp14-descr = `A wizard's adventure game based on a fork of the AXAGE game engine (ABAP teXt Adventure Game Engine) and abap2UI5. The game is set in a fantasy world, where the player ` && `takes on the role of a wizard's apprentice. The player explores the wizard's house, interacts with various objects and explores. The Quest is work in progress...`.
-    temp14-check_abap_for_cloud = abap_true.
-    temp14-min_release = `750`.
-    temp14-link = `https://github.com/nomssi/axage`.
-    temp14-author_link = `https://github.com/nomssi`.
-    temp14-author_name = `Nomssi`.
+    temp15-t_app = temp7.
+    INSERT temp15 INTO TABLE temp14.
+    temp15-name = `The Quest`.
+    temp15-descr = `A wizard's adventure game based on a fork of the AXAGE game engine (ABAP teXt Adventure Game Engine) and abap2UI5.`.
+    temp15-check_abap_for_cloud = abap_true.
+    temp15-min_release = `750`.
+    temp15-link = `https://github.com/nomssi/axage`.
+    temp15-author_link = `https://github.com/nomssi`.
+    temp15-author_name = `Nomssi`.
     
     CLEAR temp9.
     
@@ -85,15 +85,15 @@ CLASS lcl_github IMPLEMENTATION.
     temp10-descr = `Adventure Game: The Wizard&amp;apos;s Aspirant Quest`.
     temp10-classname = `zcl_axage_wizard_ui.clas.abap`.
     INSERT temp10 INTO TABLE temp9.
-    temp14-t_app = temp9.
-    INSERT temp14 INTO TABLE temp13.
-    temp14-name = `Advent of Code`.
-    temp14-descr = `Advent of Code 2023 in ABAP`.
-    temp14-author_link = `https://github.com/joltdx`.
-    temp14-author_name = `joltdx`.
-    temp14-link = `https://github.com/joltdx/abap-advent-2023`.
-    temp14-check_abap_for_cloud = abap_true.
-    temp14-min_release = `750`.
+    temp15-t_app = temp9.
+    INSERT temp15 INTO TABLE temp14.
+    temp15-name = `Advent of Code`.
+    temp15-descr = `Template for the Advent of Code 2023 in ABAP`.
+    temp15-author_link = `https://github.com/joltdx`.
+    temp15-author_name = `joltdx`.
+    temp15-link = `https://github.com/joltdx/abap-advent-2023-template`.
+    temp15-check_abap_for_cloud = abap_true.
+    temp15-min_release = `750`.
     
     CLEAR temp11.
     
@@ -101,9 +101,9 @@ CLASS lcl_github IMPLEMENTATION.
     temp12-descr = `Advent of Code 2023 - ABAP2UI5 app`.
     temp12-classname = `zcl_advent_2023_a2ui5.clas.abap`.
     INSERT temp12 INTO TABLE temp11.
-    temp14-t_app = temp11.
-    INSERT temp14 INTO TABLE temp13.
-    result = temp13.
+    temp15-t_app = temp11.
+    INSERT temp15 INTO TABLE temp14.
+    result = temp14.
 
 
     

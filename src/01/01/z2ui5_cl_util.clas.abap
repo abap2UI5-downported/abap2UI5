@@ -163,10 +163,24 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
 
   METHOD db_save.
 
+    DATA lt_db TYPE STANDARD TABLE OF z2ui5_t_fw_02 WITH DEFAULT KEY.
     DATA temp2 TYPE z2ui5_t_fw_02.
     DATA ls_db LIKE temp2.
+        DATA temp3 LIKE LINE OF lt_db.
+        DATA temp4 LIKE sy-tabix.
+
+    SELECT data
+      FROM z2ui5_t_fw_02
+       WHERE
+        uname = uname
+        AND handle = handle
+        AND handle2 = handle2
+        AND handle3 = handle3
+      INTO CORRESPONDING FIELDS OF TABLE lt_db.
+    ASSERT sy-subrc = 0.
+
+    
     CLEAR temp2.
-    temp2-id = uuid_get_c32( ).
     temp2-uname = uname.
     temp2-handle = handle.
     temp2-handle2 = handle2.
@@ -174,6 +188,20 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
     temp2-data = xml_stringify( data ).
     
     ls_db = temp2.
+
+    TRY.
+        
+        
+        temp4 = sy-tabix.
+        READ TABLE lt_db INDEX 1 INTO temp3.
+        sy-tabix = temp4.
+        IF sy-subrc <> 0.
+          RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+        ENDIF.
+        ls_db-id = temp3-id.
+      CATCH cx_root.
+        ls_db-id = uuid_get_c32( ).
+    ENDTRY.
 
     MODIFY z2ui5_t_fw_02 FROM ls_db.
     ASSERT sy-subrc = 0.
