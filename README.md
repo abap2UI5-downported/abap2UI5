@@ -1,12 +1,19 @@
-## Downport of abap2UI5 for v.740 <img src="https://github.com/abap2UI5/abap2UI5/assets/102328295/52ac0bb6-a219-4e9d-9e4f-62698dab3063" width="30">
+## Downport of abap2UI5 for v.702 <img src="https://github.com/abap2UI5/abap2UI5/assets/102328295/52ac0bb6-a219-4e9d-9e4f-62698dab3063" width="30">
 
 * abap2UI5 version with syntax compatible to old R/3 NetWeaver releases
-* use this version for NW 7.40 (use the main repository for NW 7.50 and higher) and switch to the branch v_702 for NW 7.02
+* use this version for NW 7.02 (use the main repository for NW 7.50 and higher)
 * your questions, wishes and bugs are welcome, use the [**abap2UI5 repository**](https://github.com/ABAP2UI5/ABAP2UI5) and create an issue
 
-##### This code is automatically downported and tested with [abaplint](https://abaplint.org/). Thank you for this excellent tool!
+#### _This code is automatically downported and tested with [abaplint](https://abaplint.org/). Thank you for this excellent tool!_
 
-###### Handler Implementation:
+### Manual Steps:
+(1) Replace "RAISE EXCEPTION TYPE cx_sy_itab_line_not_found" with "assert 1 = 0". <br>
+<img width="500" alt="image" src="https://github.com/abap2UI5/abap2UI5-downport/assets/102328295/33d8f0db-a6a0-444e-8ac0-343c3f7c4b98"><br>
+(2) Adjusted ABAP SQL to OpenSQL: Correct Position of where eg. "WHERE id = id."  <br>
+<img width="853" alt="image" src="https://github.com/abap2UI5/abap2UI5-downport/assets/102328295/4f35fe67-1816-4ea7-adb2-b6dc31545806">
+
+
+### Handler Implementation:
 ```abap
   METHOD if_http_extension~handle_request.
 
