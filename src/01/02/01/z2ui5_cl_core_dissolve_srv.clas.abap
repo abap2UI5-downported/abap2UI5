@@ -111,26 +111,17 @@ CLASS z2ui5_cl_core_dissolve_srv IMPLEMENTATION.
 
 
   METHOD diss_oref.
-    DATA temp3 TYPE string.
-    DATA lv_name LIKE temp3.
     DATA lr_ref TYPE REF TO object.
     DATA lt_attri TYPE abap_attrdescr_tab.
-    DATA temp4 LIKE LINE OF lt_attri.
-    DATA lr_attri LIKE REF TO temp4.
+    DATA temp3 LIKE LINE OF lt_attri.
+    DATA lr_attri LIKE REF TO temp3.
+          DATA temp4 TYPE string.
+          DATA lv_name TYPE string.
           DATA ls_new TYPE z2ui5_if_core_types=>ty_s_attri.
 
     IF z2ui5_cl_util=>check_unassign_inital( ir_attri->r_ref ) IS NOT INITIAL.
       RETURN.
     ENDIF.
-
-    
-    IF ir_attri->name IS NOT INITIAL.
-      temp3 = ir_attri->name && `->`.
-    ELSE.
-      CLEAR temp3.
-    ENDIF.
-    
-    lv_name = temp3.
 
     
     lr_ref = z2ui5_cl_util=>unassign_object( ir_attri->r_ref ).
@@ -144,9 +135,16 @@ CLASS z2ui5_cl_core_dissolve_srv IMPLEMENTATION.
         AND is_interface = abap_false
         AND is_constant  = abap_false.
       TRY.
-
           
-          ls_new = create_new_entry( lv_name && lr_attri->name ).
+          IF ir_attri->name IS NOT INITIAL.
+            temp4 = ir_attri->name && `->`.
+          ELSE.
+            CLEAR temp4.
+          ENDIF.
+          
+          lv_name = temp4 && lr_attri->name.
+          
+          ls_new = create_new_entry( lv_name  ).
           INSERT ls_new INTO TABLE result.
 
         CATCH cx_root.
