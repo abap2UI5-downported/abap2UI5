@@ -27,6 +27,7 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
 
   METHOD http_get.
 
+
     DATA lo_get TYPE REF TO z2ui5_cl_core_http_get.
     CREATE OBJECT lo_get TYPE z2ui5_cl_core_http_get EXPORTING VAL = val.
     result = lo_get->main( ).
