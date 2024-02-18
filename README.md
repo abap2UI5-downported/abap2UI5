@@ -24,9 +24,9 @@
     DATA lv_resp TYPE string.
     CASE lv_method.
       WHEN 'GET'.
-        lv_resp = z2ui5_cl_fw_http_handler=>http_get( ).
+        lv_resp = z2ui5_cl_http_handler=>http_get( ).
       WHEN 'POST'.
-        lv_resp = z2ui5_cl_fw_http_handler=>http_post( lv_requ_body ).
+        lv_resp = z2ui5_cl_http_handler=>http_post( lv_requ_body ).
     ENDCASE.
 
     server->response->set_header_field( name = `cache-control` value = `no-cache` ).
