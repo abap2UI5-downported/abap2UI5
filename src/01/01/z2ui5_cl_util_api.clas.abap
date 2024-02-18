@@ -641,7 +641,7 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
       READ TABLE lt_mapping WITH KEY n = lr_row->option INTO temp2.
       sy-tabix = temp3.
       IF sy-subrc <> 0.
-        ASSERT 1 = 0..
+        ASSERT 1 = 0.
       ENDIF.
       lv_value = temp2-v.
       REPLACE `{LOW}`  IN lv_value WITH lr_row->low.
@@ -778,7 +778,7 @@ DATA lt_cols TYPE temp2.
     READ TABLE lt_rows INDEX 1 INTO temp5.
     sy-tabix = temp6.
     IF sy-subrc <> 0.
-      ASSERT 1 = 0..
+      ASSERT 1 = 0.
     ENDIF.
     SPLIT temp5 AT ';' INTO TABLE lt_cols.
 

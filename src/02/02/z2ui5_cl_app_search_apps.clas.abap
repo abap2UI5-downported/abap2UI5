@@ -449,7 +449,7 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
             READ TABLE lt_arg2 INDEX 1 INTO temp3.
             sy-tabix = temp4.
             IF sy-subrc <> 0.
-              ASSERT 1 = 0..
+              ASSERT 1 = 0.
             ENDIF.
             lv_app2 = temp3.
             
@@ -470,7 +470,7 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
         READ TABLE lt_arg INDEX 1 INTO temp5.
         sy-tabix = temp6.
         IF sy-subrc <> 0.
-          ASSERT 1 = 0..
+          ASSERT 1 = 0.
         ENDIF.
         lv_app = temp5.
 

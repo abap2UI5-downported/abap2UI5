@@ -140,7 +140,7 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
     READ TABLE lt_db INDEX 1 INTO temp1.
     sy-tabix = temp2.
     IF sy-subrc <> 0.
-      ASSERT 1 = 0..
+      ASSERT 1 = 0.
     ENDIF.
     ls_db = temp1.
 
@@ -173,7 +173,7 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
     READ TABLE lt_db INDEX 1 INTO temp3.
     sy-tabix = temp4.
     IF sy-subrc <> 0.
-      ASSERT 1 = 0..
+      ASSERT 1 = 0.
     ENDIF.
     ls_db = temp3.
 
@@ -219,7 +219,7 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
         READ TABLE lt_db INDEX 1 INTO temp3.
         sy-tabix = temp4.
         IF sy-subrc <> 0.
-          ASSERT 1 = 0..
+          ASSERT 1 = 0.
         ENDIF.
         ls_db-id = temp3-id.
       CATCH cx_root.
