@@ -81,7 +81,9 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
     DATA page2 TYPE REF TO z2ui5_cl_xml_view.
     DATA simple_form2 TYPE REF TO z2ui5_cl_xml_view.
     DATA lv_url_samples2 TYPE string.
+    DATA lv_url_samples3 TYPE string.
       DATA temp1 TYPE string_table.
+    DATA temp3 TYPE string_table.
     page2 = z2ui5_cl_xml_view=>factory( )->shell( )->page(
          shownavbutton = abap_false ).
 
@@ -154,9 +156,10 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
                   client    = client
                   classname = 'z2ui5_cl_demo_app_000' ).
 
-*    DATA(lv_url_samples3) = z2ui5_cl_util=>app_get_url(
-*                    client    = client
-*                    classname = 'z2ui5_cl_app_search_apps' ).
+    
+    lv_url_samples3 = z2ui5_cl_util=>app_get_url(
+                    client    = client
+                    classname = 'z2ui5_cl_app_search_apps' ).
 
     simple_form2->toolbar( )->title( `What's next?` ).
 
@@ -178,12 +181,15 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
               href             = `https://github.com/abap2UI5/abap2UI5-samples` ).
     ENDIF.
 
-*    simple_form2->label( `App Finder` ).
-*    simple_form2->button(
-*        text      = `Start & Install App`
-*        press     = client->_event_client( val   = client->cs_event-open_new_tab
-*                                           t_arg = VALUE #( ( lv_url_samples3 ) ) )
-*            width = `70%` ).
+    simple_form2->label( `App Finder` ).
+    
+    CLEAR temp3.
+    INSERT lv_url_samples3 INTO TABLE temp3.
+    simple_form2->button(
+        text      = `Start & Install App`
+        press     = client->_event_client( val   = client->cs_event-open_new_tab
+                                           t_arg = temp3 )
+            width = `70%` ).
 
     simple_form2->label( `` ).
     simple_form2->text( `` ).
@@ -220,8 +226,8 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
 
 
   METHOD z2ui5_if_app~main.
-          DATA temp3 TYPE REF TO z2ui5_cl_popup_to_select.
-          DATA lo_f4 LIKE temp3.
+          DATA temp5 TYPE REF TO z2ui5_cl_popup_to_select.
+          DATA lo_f4 LIKE temp5.
           DATA ls_result TYPE z2ui5_cl_popup_to_select=>ty_s_result.
             FIELD-SYMBOLS <class> TYPE any.
 
@@ -237,9 +243,9 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
     IF client->get( )-check_on_navigated = abap_true.
       TRY.
           
-          temp3 ?= client->get_app( client->get( )-s_draft-id_prev_app ).
+          temp5 ?= client->get_app( client->get( )-s_draft-id_prev_app ).
           
-          lo_f4 = temp3.
+          lo_f4 = temp5.
           
           ls_result = lo_f4->result( ).
           IF ls_result-check_confirmed = abap_true.

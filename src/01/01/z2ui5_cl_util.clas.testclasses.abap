@@ -3,14 +3,14 @@ CLASS ltcl_test DEFINITION FINAL FOR TESTING
   RISK LEVEL HARMLESS.
 
   PRIVATE SECTION.
-    METHODS
-      first_test FOR TESTING RAISING cx_static_check.
+    METHODS  test_db_handle FOR TESTING RAISING cx_static_check.
+    METHODS  test_db_handle_read_id FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 
 CLASS ltcl_test IMPLEMENTATION.
 
-  METHOD first_test.
+  METHOD test_db_handle.
 TYPES BEGIN OF ty_row.
 TYPES title TYPE string.
 TYPES value TYPE string.
@@ -71,6 +71,55 @@ TYPES END OF ty_row.
     cl_abap_unit_assert=>assert_equals(
        act = ls_row_result
        exp = ls_row ).
+
+  ENDMETHOD.
+
+  METHOD test_db_handle_read_id.
+TYPES BEGIN OF ty_row.
+TYPES title TYPE string.
+TYPES value TYPE string.
+TYPES selected TYPE abap_bool.
+TYPES END OF ty_row.
+    DATA temp7 TYPE ty_row.
+    DATA ls_row LIKE temp7.
+    DATA lv_id TYPE string.
+    DATA lv_id2 TYPE string.
+
+    IF sy-sysid = 'ABC'.
+      RETURN.
+    ENDIF.
+
+    
+
+    
+    CLEAR temp7.
+    temp7-title = `test`.
+    temp7-value = `val`.
+    temp7-selected = abap_true.
+    
+    ls_row = temp7.
+
+    
+    lv_id = z2ui5_cl_util=>db_save(
+        uname   = `name`
+        handle  = `handle1`
+        handle2 = `handle2`
+        handle3 = `handle3`
+        data    = ls_row ).
+
+    cl_abap_unit_assert=>assert_not_initial( lv_id ).
+
+    
+    lv_id2 = z2ui5_cl_util=>db_save(
+        uname   = `name`
+        handle  = `handle1`
+        handle2 = `handle2`
+        handle3 = `handle3`
+        data    = ls_row ).
+
+    cl_abap_unit_assert=>assert_equals(
+        act = lv_id
+        exp = lv_id2 ).
 
   ENDMETHOD.
 

@@ -19,7 +19,6 @@ CLASS lcl_github DEFINITION.
         author_name          TYPE string,
         check_abap_for_cloud TYPE abap_bool,
         check_standard_abap  TYPE abap_bool,
-        min_release          TYPE string,
         link                 TYPE string,
         t_app                TYPE ty_t_app,
         check_installed      TYPE abap_bool,
@@ -55,8 +54,8 @@ CLASS lcl_github IMPLEMENTATION.
     temp15-descr = `Upload, Edit & Download Table Content (CSV, JSON)`.
     temp15-author_link = `https://github.com/oblomov-dev`.
     temp15-author_name = `oblomov`.
+    temp15-check_standard_abap = abap_true.
     temp15-check_abap_for_cloud = abap_true.
-    temp15-min_release = `750`.
     temp15-link = `https://github.com/oblomov-dev/a2UI5-db_table_loader`.
     
     CLEAR temp7.
@@ -74,7 +73,7 @@ CLASS lcl_github IMPLEMENTATION.
     temp15-name = `The Quest`.
     temp15-descr = `A wizard's adventure game based on a fork of the AXAGE game engine (ABAP teXt Adventure Game Engine) and abap2UI5.`.
     temp15-check_abap_for_cloud = abap_true.
-    temp15-min_release = `750`.
+    temp15-check_standard_abap = abap_true.
     temp15-link = `https://github.com/nomssi/axage`.
     temp15-author_link = `https://github.com/nomssi`.
     temp15-author_name = `Nomssi`.
@@ -93,7 +92,7 @@ CLASS lcl_github IMPLEMENTATION.
     temp15-author_name = `joltdx`.
     temp15-link = `https://github.com/joltdx/abap-advent-2023-template`.
     temp15-check_abap_for_cloud = abap_true.
-    temp15-min_release = `750`.
+    temp15-check_standard_abap = abap_true.
     
     CLEAR temp11.
     
