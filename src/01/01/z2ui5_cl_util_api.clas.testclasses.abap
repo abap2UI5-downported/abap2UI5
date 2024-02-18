@@ -180,7 +180,7 @@ CLASS ltcl_unit_test_abap_api IMPLEMENTATION.
     READ TABLE lt_attri WITH KEY name = `MS_TAB` INTO temp7.
     sy-tabix = temp8.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+      ASSERT 1 = 0..
     ENDIF.
     lv_test = temp7.
     
@@ -189,7 +189,7 @@ CLASS ltcl_unit_test_abap_api IMPLEMENTATION.
     READ TABLE lt_attri WITH KEY name = `MT_TAB` INTO temp45.
     sy-tabix = temp46.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+      ASSERT 1 = 0..
     ENDIF.
     lv_test = temp45.
     
@@ -198,7 +198,7 @@ CLASS ltcl_unit_test_abap_api IMPLEMENTATION.
     READ TABLE lt_attri WITH KEY name = `MV_VAL` INTO temp47.
     sy-tabix = temp48.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+      ASSERT 1 = 0..
     ENDIF.
     lv_test = temp47.
     
@@ -207,7 +207,7 @@ CLASS ltcl_unit_test_abap_api IMPLEMENTATION.
     READ TABLE lt_attri WITH KEY name = `SS_TAB` INTO temp49.
     sy-tabix = temp50.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+      ASSERT 1 = 0..
     ENDIF.
     lv_test = temp49.
     
@@ -216,7 +216,7 @@ CLASS ltcl_unit_test_abap_api IMPLEMENTATION.
     READ TABLE lt_attri WITH KEY name = `ST_TAB` INTO temp51.
     sy-tabix = temp52.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+      ASSERT 1 = 0..
     ENDIF.
     lv_test = temp51.
     
@@ -225,7 +225,7 @@ CLASS ltcl_unit_test_abap_api IMPLEMENTATION.
     READ TABLE lt_attri WITH KEY name = `SV_STATUS` INTO temp53.
     sy-tabix = temp54.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+      ASSERT 1 = 0..
     ENDIF.
     lv_test = temp53.
     
@@ -234,7 +234,7 @@ CLASS ltcl_unit_test_abap_api IMPLEMENTATION.
     READ TABLE lt_attri WITH KEY name = `SV_VAR` INTO temp55.
     sy-tabix = temp56.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+      ASSERT 1 = 0..
     ENDIF.
     lv_test = temp55.
 
@@ -670,7 +670,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     READ TABLE lt_param WITH KEY n = `sap-client` INTO temp59.
     sy-tabix = temp60.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+      ASSERT 1 = 0..
     ENDIF.
     cl_abap_unit_assert=>assert_equals(
           act = temp59-v
@@ -682,7 +682,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     READ TABLE lt_param WITH KEY n = `app_start` INTO temp61.
     sy-tabix = temp62.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+      ASSERT 1 = 0..
     ENDIF.
     cl_abap_unit_assert=>assert_equals(
        act = temp61-v
@@ -894,7 +894,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     READ TABLE lt_comp INDEX 1 INTO temp9.
     sy-tabix = temp10.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+      ASSERT 1 = 0..
     ENDIF.
     ls_title = temp9.
 

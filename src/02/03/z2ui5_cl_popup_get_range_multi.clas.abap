@@ -164,7 +164,7 @@ CLASS z2ui5_cl_popup_get_range_multi IMPLEMENTATION.
         READ TABLE lt_event INDEX 1 INTO temp1.
         sy-tabix = temp2.
         IF sy-subrc <> 0.
-          RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+          ASSERT 1 = 0..
         ENDIF.
         READ TABLE ms_result-t_sql WITH KEY name = temp1 ASSIGNING <tab>.
         CLEAR <tab>-t_token.
@@ -179,7 +179,7 @@ CLASS z2ui5_cl_popup_get_range_multi IMPLEMENTATION.
         READ TABLE lt_event INDEX 1 INTO temp8.
         sy-tabix = temp9.
         IF sy-subrc <> 0.
-          RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+          ASSERT 1 = 0..
         ENDIF.
         mv_popup_name = temp8.
         
@@ -189,7 +189,7 @@ CLASS z2ui5_cl_popup_get_range_multi IMPLEMENTATION.
         READ TABLE ms_result-t_sql WITH KEY name = mv_popup_name INTO temp3.
         sy-tabix = temp4.
         IF sy-subrc <> 0.
-          RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+          ASSERT 1 = 0..
         ENDIF.
         ls_sql = temp3.
         client->nav_app_call( z2ui5_cl_popup_get_range=>factory( ls_sql-t_range ) ).

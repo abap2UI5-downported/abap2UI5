@@ -216,7 +216,7 @@ CLASS z2ui5_cl_popup_get_range IMPLEMENTATION.
         READ TABLE lt_event INDEX 1 INTO temp9.
         sy-tabix = temp10.
         IF sy-subrc <> 0.
-          RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+          ASSERT 1 = 0..
         ENDIF.
         DELETE mt_filter WHERE key = temp9.
         client->popup_model_update( ).

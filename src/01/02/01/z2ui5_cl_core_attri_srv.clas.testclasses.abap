@@ -168,7 +168,7 @@ lt_attri = temp4.
     
     READ TABLE lt_attri WITH KEY r_ref = lr_value ASSIGNING <temp14>.
 IF sy-subrc <> 0.
-  RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+  ASSERT 1 = 0..
 ENDIF.
 
 GET REFERENCE OF <temp14> INTO lr_attri.

@@ -53,7 +53,7 @@ CLASS ltcl_test IMPLEMENTATION.
     READ TABLE lt_tree WITH KEY name = `NAME` INTO temp10.
     sy-tabix = temp11.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+      ASSERT 1 = 0..
     ENDIF.
     cl_abap_unit_assert=>assert_equals(
        act = temp10-value

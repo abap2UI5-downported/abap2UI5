@@ -6263,7 +6263,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     READ TABLE mt_child INDEX index INTO temp118.
     sy-tabix = temp119.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+      ASSERT 1 = 0..
     ENDIF.
     result = temp118.
   ENDMETHOD.
@@ -12956,7 +12956,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
         READ TABLE mt_prop WITH KEY n = `VALUE` INTO temp413.
         sy-tabix = temp414.
         IF sy-subrc <> 0.
-          RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+          ASSERT 1 = 0..
         ENDIF.
         result = temp413-v.
         RETURN.

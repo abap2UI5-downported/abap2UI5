@@ -69,7 +69,7 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_dissolve_srv EXPORTING attri = temp10 
     READ TABLE lt_attri WITH KEY name = `MV_VALUE` INTO temp2.
     sy-tabix = temp3.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+      ASSERT 1 = 0..
     ENDIF.
     ls_attri = temp2.
     

@@ -180,7 +180,7 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
     READ TABLE mo_app->mt_attri WITH KEY name = val ASSIGNING <temp4>.
     sy-tabix = temp5.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+      ASSERT 1 = 0..
     ENDIF.
     <temp4>-check_dissolved = abap_false.
 

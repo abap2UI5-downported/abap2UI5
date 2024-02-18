@@ -232,7 +232,7 @@ CLASS z2ui5_cl_ui5 IMPLEMENTATION.
             READ TABLE lt_prop WITH KEY v = lv_ns_tmp INTO temp7.
             sy-tabix = temp8.
             IF sy-subrc <> 0.
-              RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+              ASSERT 1 = 0..
             ENDIF.
             ls_prop = temp7.
             
@@ -270,7 +270,7 @@ CLASS z2ui5_cl_ui5 IMPLEMENTATION.
     READ TABLE lt_prop WITH KEY v = obj->_node->mv_ns INTO temp9.
     sy-tabix = temp10.
     IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_sy_itab_line_not_found.
+      ASSERT 1 = 0..
     ENDIF.
     lv_ns = temp9-n.
     
