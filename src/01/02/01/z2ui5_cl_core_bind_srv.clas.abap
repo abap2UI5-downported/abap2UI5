@@ -207,7 +207,6 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
 
     result = replace( val = mr_attri->name sub = `-` with = `/` occ = 0 ).
     result = replace( val = result sub = `>` with = `` occ = 0 ).
-*    result = replace( val = result sub = `*` with = `` occ = 0 ).
     
     IF mv_type = z2ui5_if_core_types=>cs_bind_type-two_way.
       temp7 = `/` && z2ui5_if_core_types=>cs_ui5-two_way_model.
