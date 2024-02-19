@@ -48,8 +48,8 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
           FIELD-SYMBOLS <val> TYPE any.
           DATA x TYPE REF TO cx_root.
     LOOP AT t_attri->* REFERENCE INTO lr_attri
-        WHERE bind_type = z2ui5_if_core_types=>cs_bind_type-two_way
-        AND view  = view.
+      WHERE bind_type = z2ui5_if_core_types=>cs_bind_type-two_way
+      AND  view  = view.
       TRY.
 
           
@@ -78,6 +78,7 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
       ENDTRY.
     ENDLOOP.
 
+
   ENDMETHOD.
 
 
@@ -86,10 +87,11 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
         DATA ajson_result LIKE temp2.
         DATA temp3 LIKE LINE OF t_attri.
         DATA lr_attri LIKE REF TO temp3.
-          DATA temp4 TYPE REF TO z2ui5_if_ajson.
-          DATA ajson LIKE temp4.
+            DATA temp4 TYPE REF TO z2ui5_if_ajson.
+            DATA ajson LIKE temp4.
+            DATA temp5 TYPE REF TO z2ui5_if_ajson.
               FIELD-SYMBOLS <attribute> TYPE any.
-        DATA temp5 TYPE string.
+        DATA temp6 TYPE string.
         DATA x TYPE REF TO cx_root.
     TRY.
 
@@ -102,19 +104,27 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
         
         LOOP AT t_attri REFERENCE INTO lr_attri WHERE bind_type <> ``.
 
-          
-          temp4 ?= z2ui5_cl_ajson=>new( ).
-          
-          ajson = temp4.
+          "(1) set pretty mode
+          IF lr_attri->custom_mapper IS BOUND.
+            
+            temp4 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = lr_attri->custom_mapper ).
+            
+            ajson = temp4.
+          ELSE.
+            
+            temp5 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_upper_case( ) ).
+            ajson = temp5.
+          ENDIF.
 
+          "(2) read attribute of end-user app & write to json
           CASE lr_attri->bind_type.
             WHEN z2ui5_if_core_types=>cs_bind_type-one_way
-                OR z2ui5_if_core_types=>cs_bind_type-two_way.
+            OR z2ui5_if_core_types=>cs_bind_type-two_way.
 
               
               ASSIGN lr_attri->r_ref->* TO <attribute>.
               ASSERT sy-subrc = 0.
-              ajson->set( iv_ignore_empty = abap_false iv_path = `/` iv_val = <attribute> ).
+              ajson->set( iv_ignore_empty = abap_false iv_path = `/` iv_val =  <attribute> ).
 
             WHEN z2ui5_if_core_types=>cs_bind_type-one_time.
               ajson->set( iv_ignore_empty = abap_false iv_path = `/` iv_val = lr_attri->json_bind_local ).
@@ -123,29 +133,27 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
               ASSERT `` = `ERROR_UNKNOWN_BIND_MODE`.
           ENDCASE.
 
-          IF lr_attri->custom_mapper IS BOUND.
-            ajson = ajson->map( lr_attri->custom_mapper ).
-          ELSE.
-            ajson = ajson->map( z2ui5_cl_ajson_mapping=>create_upper_case( ) ).
-          ENDIF.
-
+          "(4) set compress mode
+          "todo performance - add and filter in a single loop
           IF lr_attri->custom_filter IS BOUND.
             ajson = ajson->filter( lr_attri->custom_filter ).
           ELSE.
             ajson = ajson->filter( z2ui5_cl_ajson_filter_lib=>create_empty_filter( ) ).
           ENDIF.
 
+          "(5) write into result
+          "todo performance - write directly into result
           ajson_result->set( iv_path = lr_attri->name_client iv_val = ajson ).
         ENDLOOP.
 
         result = ajson_result->stringify( ).
         
         IF result IS INITIAL.
-          temp5 = `{}`.
+          temp6 = `{}`.
         ELSE.
-          temp5 = result.
+          temp6 = result.
         ENDIF.
-        result = temp5.
+        result = temp6.
 
         
       CATCH cx_root INTO x.
@@ -155,8 +163,8 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
 
 
   METHOD request_json_to_abap.
-        DATA temp6 TYPE REF TO z2ui5_if_ajson.
-        DATA lo_ajson LIKE temp6.
+        DATA temp7 TYPE REF TO z2ui5_if_ajson.
+        DATA lo_ajson LIKE temp7.
         DATA lv_model_edit_name TYPE string.
         DATA lo_model TYPE REF TO z2ui5_if_ajson.
         DATA temp1 TYPE xsdboolean.
@@ -164,9 +172,9 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
     TRY.
 
         
-        temp6 ?= z2ui5_cl_ajson=>parse( val ).
+        temp7 ?= z2ui5_cl_ajson=>parse( val ).
         
-        lo_ajson = temp6.
+        lo_ajson = temp7.
 
         
         lv_model_edit_name = `/` && z2ui5_if_core_types=>cs_ui5-two_way_model.
@@ -207,22 +215,22 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
 
 
   METHOD response_abap_to_json.
-        DATA temp7 TYPE REF TO z2ui5_if_ajson.
-        DATA ajson_result LIKE temp7.
-        DATA temp8 TYPE REF TO z2ui5_cl_core_json_srv.
+        DATA temp8 TYPE REF TO z2ui5_if_ajson.
+        DATA ajson_result LIKE temp8.
+        DATA temp9 TYPE REF TO z2ui5_cl_core_json_srv.
         DATA lv_frontend TYPE string.
         DATA x TYPE REF TO cx_root.
     TRY.
 
         
-        temp7 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_upper_case( ) ).
+        temp8 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_upper_case( ) ).
         
-        ajson_result = temp7.
+        ajson_result = temp8.
 
         ajson_result->set( iv_path = `/` iv_val = val-s_front ).
         
-        CREATE OBJECT temp8 TYPE z2ui5_cl_core_json_srv.
-        ajson_result = ajson_result->filter( temp8 ).
+        CREATE OBJECT temp9 TYPE z2ui5_cl_core_json_srv.
+        ajson_result = ajson_result->filter( temp9 ).
         
         lv_frontend = ajson_result->stringify( ).
 

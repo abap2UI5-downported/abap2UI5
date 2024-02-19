@@ -154,6 +154,10 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
       DATA temp7 TYPE string_table.
     DATA page_online TYPE REF TO z2ui5_cl_xml_view.
     DATA temp9 TYPE REF TO lcl_github.
+    DATA temp10 LIKE LINE OF mt_git_repos.
+    DATA lr_repo LIKE REF TO temp10.
+      DATA temp11 LIKE LINE OF lr_repo->t_app.
+      DATA lr_app2 LIKE REF TO temp11.
     DATA item TYPE REF TO z2ui5_cl_xml_view.
     DATA row TYPE REF TO z2ui5_cl_xml_view.
     page = z2ui5_cl_xml_view=>factory(
@@ -311,6 +315,26 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
     CREATE OBJECT temp9 TYPE lcl_github.
     mt_git_repos = temp9->get_repositories( ).
 
+    
+    
+    LOOP AT mt_git_repos REFERENCE INTO lr_repo.
+
+      
+      
+      LOOP AT lr_repo->t_app REFERENCE INTO lr_app2.
+
+        IF z2ui5_cl_util=>rtti_check_class_exists( lr_app2->classname ) IS NOT INITIAL.
+          lr_repo->check_installed = abap_true.
+        ENDIF.
+        EXIT.
+      ENDLOOP.
+
+      lr_repo->number_of_app = lines( lr_repo->t_app ).
+      lr_repo->author_name = shift_left( val = lr_repo->author_link
+                                         sub = `https://github.com/` ).
+    ENDLOOP.
+
+
 
     
     item = page_online->list(
@@ -366,10 +390,10 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
   METHOD view_nest_display.
 
     DATA lo_view_nested TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp10 LIKE LINE OF mt_favs.
-    DATA lr_app LIKE REF TO temp10.
+    DATA temp12 LIKE LINE OF mt_favs.
+    DATA lr_app LIKE REF TO temp12.
       DATA lv_tabix LIKE sy-tabix.
-      DATA temp11 TYPE string_table.
+      DATA temp13 TYPE string_table.
     lo_view_nested = z2ui5_cl_xml_view=>factory( ).
 
     
@@ -379,12 +403,12 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
       
       lv_tabix = sy-tabix.
       
-      CLEAR temp11.
-      INSERT `${$source>/header}` INTO TABLE temp11.
+      CLEAR temp13.
+      INSERT `${$source>/header}` INTO TABLE temp13.
       lo_view_nested->generic_tile(
 *      page_favs->generic_tile(
         class  = 'sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout'
-        press  = client->_event( val = `ON_START`  t_arg = temp11 )
+        press  = client->_event( val = `ON_START`  t_arg = temp13 )
         header = client->_bind( val = lr_app->name tab = mt_favs tab_index = lv_tabix ) ).
 *        visible = client->_bind( val = lr_app->check_fav tab = mt_apps tab_index = lv_tabix ) ).
     ENDLOOP.
@@ -397,10 +421,10 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
 
 
   METHOD z2ui5_if_app~main.
-      DATA temp13 LIKE mt_apps.
+      DATA temp15 LIKE mt_apps.
       DATA temp1 TYPE string_table.
       DATA row LIKE LINE OF temp1.
-        DATA temp14 LIKE LINE OF temp13.
+        DATA temp16 LIKE LINE OF temp15.
             DATA lt_arg2 TYPE string_table.
             DATA lv_app2 LIKE LINE OF lt_arg2.
             DATA temp2 LIKE LINE OF lt_arg2.
@@ -429,16 +453,16 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
       ENDTRY.
 
       
-      CLEAR temp13.
+      CLEAR temp15.
       
       temp1 = z2ui5_cl_util=>rtti_get_classes_impl_intf( `Z2UI5_IF_APP` ).
       
       LOOP AT temp1 INTO row.
         
-        temp14-name = row.
-        INSERT temp14 INTO TABLE temp13.
+        temp16-name = row.
+        INSERT temp16 INTO TABLE temp15.
       ENDLOOP.
-      mt_apps = temp13.
+      mt_apps = temp15.
       search( ).
       view_display( client ).
       RETURN.
