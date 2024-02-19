@@ -34,6 +34,32 @@ CLASS z2ui5_cl_app_search_apps DEFINITION
         number              TYPE string,
       END OF ms_favorites.
 
+    TYPES:
+      BEGIN OF ty_s_app,
+        name       TYPE string,
+        descr      TYPE string,
+        classname  TYPE string,
+        check_hide TYPE abap_bool,
+      END OF ty_s_app.
+    TYPES ty_t_app TYPE STANDARD TABLE OF ty_s_app WITH DEFAULT KEY.
+
+    TYPES:
+      BEGIN OF ty_s_repo,
+        name                 TYPE string,
+        descr                TYPE string,
+        author_link          TYPE string,
+        author_name          TYPE string,
+        check_abap_for_cloud TYPE abap_bool,
+        check_standard_abap  TYPE abap_bool,
+        link                 TYPE string,
+        t_app                TYPE ty_t_app,
+        check_installed      TYPE abap_bool,
+        number_of_app        TYPE i,
+      END OF ty_s_repo.
+    TYPES ty_t_repo TYPE STANDARD TABLE OF ty_s_repo WITH DEFAULT KEY.
+
+    DATA mt_git_repos TYPE ty_t_repo.
+
   PROTECTED SECTION.
     METHODS search.
     METHODS view_display
@@ -50,7 +76,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
+CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
 
 
   METHOD search.
@@ -127,8 +153,7 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
       DATA lv_tabix LIKE sy-tabix.
       DATA temp7 TYPE string_table.
     DATA page_online TYPE REF TO z2ui5_cl_xml_view.
-    DATA lt_repos TYPE lcl_github=>ty_t_repo.
-    DATA temp1 TYPE REF TO lcl_github.
+    DATA temp9 TYPE REF TO lcl_github.
     DATA item TYPE REF TO z2ui5_cl_xml_view.
     DATA row TYPE REF TO z2ui5_cl_xml_view.
     page = z2ui5_cl_xml_view=>factory(
@@ -283,16 +308,15 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
                                      href = `https://github.com/abap2UI5/abap2UI5/blob/main/src/02/02/z2ui5_cl_app_search_apps.clas.locals_imp.abap` ).
 
     
-    
-    CREATE OBJECT temp1 TYPE lcl_github.
-    lt_repos = temp1->get_repositories( ).
+    CREATE OBJECT temp9 TYPE lcl_github.
+    mt_git_repos = temp9->get_repositories( ).
 
 
     
     item = page_online->list(
              "   headertext = `Product`
                 nodata         = `no conditions defined`
-               items           = client->_bind_local( lt_repos )
+               items           = client->_bind( mt_git_repos )
                selectionchange = client->_event( 'SELCHANGE' )
                   )->custom_list_item( ).
 
@@ -342,10 +366,10 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
   METHOD view_nest_display.
 
     DATA lo_view_nested TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp9 LIKE LINE OF mt_favs.
-    DATA lr_app LIKE REF TO temp9.
+    DATA temp10 LIKE LINE OF mt_favs.
+    DATA lr_app LIKE REF TO temp10.
       DATA lv_tabix LIKE sy-tabix.
-      DATA temp10 TYPE string_table.
+      DATA temp11 TYPE string_table.
     lo_view_nested = z2ui5_cl_xml_view=>factory( ).
 
     
@@ -355,12 +379,12 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
       
       lv_tabix = sy-tabix.
       
-      CLEAR temp10.
-      INSERT `${$source>/header}` INTO TABLE temp10.
+      CLEAR temp11.
+      INSERT `${$source>/header}` INTO TABLE temp11.
       lo_view_nested->generic_tile(
 *      page_favs->generic_tile(
         class  = 'sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout'
-        press  = client->_event( val = `ON_START`  t_arg = temp10 )
+        press  = client->_event( val = `ON_START`  t_arg = temp11 )
         header = client->_bind( val = lr_app->name tab = mt_favs tab_index = lv_tabix ) ).
 *        visible = client->_bind( val = lr_app->check_fav tab = mt_apps tab_index = lv_tabix ) ).
     ENDLOOP.
@@ -373,20 +397,20 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
 
 
   METHOD z2ui5_if_app~main.
-      DATA temp12 LIKE mt_apps.
-      DATA temp2 TYPE string_table.
-      DATA row LIKE LINE OF temp2.
-        DATA temp13 LIKE LINE OF temp12.
+      DATA temp13 LIKE mt_apps.
+      DATA temp1 TYPE string_table.
+      DATA row LIKE LINE OF temp1.
+        DATA temp14 LIKE LINE OF temp13.
             DATA lt_arg2 TYPE string_table.
             DATA lv_app2 LIKE LINE OF lt_arg2.
-            DATA temp3 LIKE LINE OF lt_arg2.
-            DATA temp4 LIKE sy-tabix.
+            DATA temp2 LIKE LINE OF lt_arg2.
+            DATA temp3 LIKE sy-tabix.
             DATA li_app TYPE REF TO z2ui5_if_app.
             DATA x TYPE REF TO cx_root.
         DATA lt_arg TYPE string_table.
         DATA lv_app LIKE LINE OF lt_arg.
-        DATA temp5 LIKE LINE OF lt_arg.
-        DATA temp6 LIKE sy-tabix.
+        DATA temp4 LIKE LINE OF lt_arg.
+        DATA temp5 LIKE sy-tabix.
 
     me->client = client.
 
@@ -405,16 +429,16 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
       ENDTRY.
 
       
-      CLEAR temp12.
+      CLEAR temp13.
       
-      temp2 = z2ui5_cl_util=>rtti_get_classes_impl_intf( `Z2UI5_IF_APP` ).
+      temp1 = z2ui5_cl_util=>rtti_get_classes_impl_intf( `Z2UI5_IF_APP` ).
       
-      LOOP AT temp2 INTO row.
+      LOOP AT temp1 INTO row.
         
-        temp13-name = row.
-        INSERT temp13 INTO TABLE temp12.
+        temp14-name = row.
+        INSERT temp14 INTO TABLE temp13.
       ENDLOOP.
-      mt_apps = temp12.
+      mt_apps = temp13.
       search( ).
       view_display( client ).
       RETURN.
@@ -445,13 +469,13 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
             
             
             
-            temp4 = sy-tabix.
-            READ TABLE lt_arg2 INDEX 1 INTO temp3.
-            sy-tabix = temp4.
+            temp3 = sy-tabix.
+            READ TABLE lt_arg2 INDEX 1 INTO temp2.
+            sy-tabix = temp3.
             IF sy-subrc <> 0.
               ASSERT 1 = 0.
             ENDIF.
-            lv_app2 = temp3.
+            lv_app2 = temp2.
             
             CREATE OBJECT li_app TYPE (lv_app2).
             client->nav_app_call( li_app ).
@@ -466,13 +490,13 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
         
         
         
-        temp6 = sy-tabix.
-        READ TABLE lt_arg INDEX 1 INTO temp5.
-        sy-tabix = temp6.
+        temp5 = sy-tabix.
+        READ TABLE lt_arg INDEX 1 INTO temp4.
+        sy-tabix = temp5.
         IF sy-subrc <> 0.
           ASSERT 1 = 0.
         ENDIF.
-        lv_app = temp5.
+        lv_app = temp4.
 
         CLEAR ms_app_sel.
         ms_app_sel-name = lv_app.
@@ -501,8 +525,6 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
         client->message_toast_display( |backend search done| ).
 
       WHEN 'ON_SEARCH_GIT'.
-
-
         search( ).
         client->view_model_update( ).
         client->message_toast_display( |backend search done| ).
