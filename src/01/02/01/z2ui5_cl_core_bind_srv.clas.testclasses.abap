@@ -316,7 +316,7 @@ lv_result = lo_bind->main(
 
     cl_abap_unit_assert=>assert_equals(
         act = lv_result
-        exp = `{/MS_STRUC/S_02-INPUT}` ).
+        exp = `{/MS_STRUC/S_02/INPUT}` ).
 
   ENDMETHOD.
 
@@ -343,7 +343,7 @@ lv_result = lo_bind->main(
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_result
-      exp = `{/MS_STRUC/S_02-S_03-INPUT}` ).
+      exp = `{/MS_STRUC/S_02/S_03/INPUT}` ).
 
   ENDMETHOD.
 
@@ -370,7 +370,7 @@ lv_result = lo_bind->main(
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_result
-      exp = `{/MS_STRUC/S_02-S_03-S_04-INPUT}` ).
+      exp = `{/MS_STRUC/S_02/S_03/S_04/INPUT}` ).
 
   ENDMETHOD.
 
@@ -465,7 +465,7 @@ lv_result = lo_bind->main(
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_result
-      exp = `{/MO_OBJ/MS_STRUC-INPUT}` ).
+      exp = `{/MO_OBJ/MS_STRUC/INPUT}` ).
 
   ENDMETHOD.
 

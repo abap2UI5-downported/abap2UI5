@@ -21,16 +21,25 @@ CLASS ltcl_test_dissolve DEFINITION FINAL FOR TESTING
         END OF s_02,
       END OF s_01.
 
+    TYPES:
+      BEGIN OF ty_s_struc,
+        r_ref TYPE REF TO data,
+        s_01  TYPE s_01,
+      END OF ty_s_struc.
+
     DATA ms_struc TYPE s_01 ##NEEDED.
     DATA mv_value TYPE string ##NEEDED.
     DATA mr_value TYPE REF TO data.
     DATA mr_struc TYPE REF TO s_01.
     DATA mo_app TYPE REF TO ltcl_test_dissolve.
 
+    DATA ms_struc2 TYPE ty_s_struc.
+
   PRIVATE SECTION.
     METHODS test_init  FOR TESTING RAISING cx_static_check.
     METHODS test_struc FOR TESTING RAISING cx_static_check.
     METHODS test_dref  FOR TESTING RAISING cx_static_check.
+    METHODS test_struc_dref  FOR TESTING RAISING cx_static_check.
     METHODS test_oref  FOR TESTING RAISING cx_static_check.
     METHODS test_ref   FOR TESTING RAISING cx_static_check.
     METHODS test_oref_dref_struc   FOR TESTING RAISING cx_static_check.
@@ -450,5 +459,49 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_dissolve_srv EXPORTING attri = temp49 
 
   ENDMETHOD.
 
+
+  METHOD test_struc_dref.
+
+    DATA lo_app TYPE REF TO ltcl_test_dissolve.
+    DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
+    DATA temp56 LIKE REF TO lt_attri.
+DATA lo_model TYPE REF TO z2ui5_cl_core_dissolve_srv.
+    DATA temp57 TYPE z2ui5_if_core_types=>ty_s_attri.
+    DATA temp58 TYPE z2ui5_if_core_types=>ty_s_attri.
+    DATA temp59 TYPE z2ui5_if_core_types=>ty_s_attri.
+    DATA temp60 TYPE z2ui5_if_core_types=>ty_s_attri.
+    CREATE OBJECT lo_app TYPE ltcl_test_dissolve.
+    CREATE OBJECT lo_app->mo_app.
+    CREATE DATA lo_app->mo_app->ms_struc2-r_ref TYPE string.
+
+    
+    
+    GET REFERENCE OF lt_attri INTO temp56.
+
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_dissolve_srv EXPORTING attri = temp56 app = lo_app.
+
+    lo_model->main( ).
+    lo_model->main( ).
+    lo_model->main( ).
+    lo_model->main( ).
+
+    
+    CLEAR temp57.
+    
+    READ TABLE lt_attri INTO temp58 WITH KEY name = `MO_APP->MS_STRUC2-R_REF`.
+    IF sy-subrc = 0.
+      temp57 = temp58.
+    ENDIF.
+    cl_abap_unit_assert=>assert_not_initial( temp57 ).
+    
+    CLEAR temp59.
+    
+    READ TABLE lt_attri INTO temp60 WITH KEY name = `MO_APP->MS_STRUC2-R_REF->*`.
+    IF sy-subrc = 0.
+      temp59 = temp60.
+    ENDIF.
+    cl_abap_unit_assert=>assert_not_initial( temp59 ).
+
+  ENDMETHOD.
 
 ENDCLASS.
