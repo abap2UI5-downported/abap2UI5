@@ -46,7 +46,7 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
 
     DATA temp1 LIKE LINE OF mt_attri->*.
     DATA lr_attri LIKE REF TO temp1.
-        FIELD-SYMBOLS <val> TYPE any.
+        FIELD-SYMBOLS <val> TYPE data.
     LOOP AT mt_attri->* REFERENCE INTO lr_attri.
 
       lr_attri->r_ref = attri_get_val_ref( lr_attri->name ).
@@ -66,8 +66,8 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
 
     DATA temp2 LIKE LINE OF mt_attri->*.
     DATA lr_attri LIKE REF TO temp2.
-      FIELD-SYMBOLS <val_ref> TYPE any.
-      FIELD-SYMBOLS <val> TYPE any.
+      FIELD-SYMBOLS <val_ref> TYPE data.
+      FIELD-SYMBOLS <val> TYPE data.
     LOOP AT mt_attri->* REFERENCE INTO lr_attri.
 
       IF lr_attri->bind_type = z2ui5_if_core_types=>cs_bind_type-one_time.

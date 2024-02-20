@@ -701,7 +701,7 @@ CLASS z2ui5_cl_util_api IMPLEMENTATION.
     DATA lr_comp LIKE REF TO temp4.
     DATA lr_row TYPE REF TO data.
       DATA lv_index TYPE i.
-        FIELD-SYMBOLS <row> TYPE any.
+        FIELD-SYMBOLS <row> TYPE data.
         FIELD-SYMBOLS <field> TYPE any.
     ASSIGN val TO <tab>.
     
@@ -767,7 +767,7 @@ DATA lt_cols TYPE temp2.
     DATA o_table_desc TYPE REF TO cl_abap_tabledescr.
     DATA temp17 LIKE LINE OF lt_rows.
     DATA lr_rows LIKE REF TO temp17.
-        FIELD-SYMBOLS <row> TYPE any.
+        FIELD-SYMBOLS <row> TYPE data.
         FIELD-SYMBOLS <field> TYPE any.
     SPLIT val AT cl_abap_char_utilities=>newline INTO TABLE lt_rows.
     
@@ -1353,7 +1353,7 @@ DATA lt_param TYPE temp3.
     DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
       DATA lv_link TYPE string.
       DATA lv_text TYPE string.
-    FIELD-SYMBOLS <variable> TYPE any.
+    FIELD-SYMBOLS <variable> TYPE data.
 
     IF rtti_check_class_exists( 'ZCL_SRTTI_TYPEDESCR' ) = abap_false.
 

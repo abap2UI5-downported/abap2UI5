@@ -229,7 +229,7 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
           DATA temp5 TYPE REF TO z2ui5_cl_popup_to_select.
           DATA lo_f4 LIKE temp5.
           DATA ls_result TYPE z2ui5_cl_popup_to_select=>ty_s_result.
-            FIELD-SYMBOLS <class> TYPE any.
+            FIELD-SYMBOLS <class> TYPE data.
 
     me->client = client.
 

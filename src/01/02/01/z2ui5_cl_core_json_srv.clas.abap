@@ -45,7 +45,7 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
     DATA temp1 LIKE LINE OF t_attri->*.
     DATA lr_attri LIKE REF TO temp1.
           DATA lo_val_front TYPE REF TO z2ui5_if_ajson.
-          FIELD-SYMBOLS <val> TYPE any.
+          FIELD-SYMBOLS <val> TYPE data.
           DATA x TYPE REF TO cx_root.
     LOOP AT t_attri->* REFERENCE INTO lr_attri
       WHERE bind_type = z2ui5_if_core_types=>cs_bind_type-two_way
@@ -90,7 +90,7 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
             DATA temp4 TYPE REF TO z2ui5_if_ajson.
             DATA ajson LIKE temp4.
             DATA temp5 TYPE REF TO z2ui5_if_ajson.
-              FIELD-SYMBOLS <attribute> TYPE any.
+              FIELD-SYMBOLS <attribute> TYPE data.
         DATA temp6 TYPE string.
         DATA x TYPE REF TO cx_root.
     TRY.

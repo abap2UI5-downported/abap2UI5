@@ -375,7 +375,7 @@ CLASS Z2UI5_CL_UTIL_STMPNCFCTN IMPLEMENTATION.
     DATA data_element_name LIKE i_data_element_name.
         DATA temp3 TYPE REF TO cl_abap_structdescr.
         DATA struct_desrc LIKE temp3.
-        FIELD-SYMBOLS <ddic> TYPE any.
+        FIELD-SYMBOLS <ddic> TYPE data.
         DATA lo_typedescr TYPE REF TO cl_abap_typedescr.
         DATA temp4 TYPE REF TO cl_abap_datadescr.
         DATA data_descr LIKE temp4.

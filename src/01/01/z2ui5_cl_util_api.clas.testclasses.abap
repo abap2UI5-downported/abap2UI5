@@ -473,7 +473,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
     DATA lv_test TYPE string.
     DATA lr_data TYPE REF TO data.
-    DATA lr_test2 TYPE REF TO any.
+    DATA lr_test2 TYPE REF TO data.
     FIELD-SYMBOLS <result> TYPE data.
     lv_test = `test`.
     

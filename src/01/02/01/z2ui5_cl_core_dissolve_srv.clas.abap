@@ -74,7 +74,7 @@ CLASS z2ui5_cl_core_dissolve_srv IMPLEMENTATION.
 
   METHOD diss_dref.
 
-    DATA lr_ref TYPE REF TO any.
+    DATA lr_ref TYPE REF TO data.
     DATA temp2 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA ls_attri2 LIKE temp2.
         DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
@@ -156,7 +156,7 @@ CLASS z2ui5_cl_core_dissolve_srv IMPLEMENTATION.
 
   METHOD diss_struc.
       DATA lv_name TYPE string.
-      DATA lr_ref TYPE REF TO any.
+      DATA lr_ref TYPE REF TO data.
     DATA lt_attri TYPE abap_component_tab.
     DATA ls_attri LIKE LINE OF lt_attri.
       DATA ls_new TYPE z2ui5_if_core_types=>ty_s_attri.
