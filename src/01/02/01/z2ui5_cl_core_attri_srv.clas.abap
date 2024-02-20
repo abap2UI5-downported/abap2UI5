@@ -85,6 +85,7 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
       
       ASSIGN <val_ref>->* TO <val>.
 
+
       lr_attri->srtti_data = z2ui5_cl_util=>xml_srtti_stringify( <val> ).
 
       CLEAR <val>.

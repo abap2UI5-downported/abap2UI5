@@ -261,9 +261,8 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
       
       CLEAR temp7.
       INSERT `${$source>/header}` INTO TABLE temp7.
-      INSERT `${$source>/id}` INTO TABLE temp7.
+      INSERT `${$source>/header}` INTO TABLE temp7.
       page_all->generic_tile(
-        id      = lr_app->name
         class   = 'sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout'
         press   = client->_event( val = `ON_PRESS`   t_arg = temp7 )
         header  = client->_bind( val = lr_app->name    tab = mt_apps tab_index = lv_tabix )
