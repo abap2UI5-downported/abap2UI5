@@ -252,26 +252,26 @@ CLASS z2ui5_cl_popup_layout_v2 IMPLEMENTATION.
       CASE comp->name.
         WHEN 'FNAME'.
           
-          col = columns->column( )->header( ).
+          col = columns->column( )->header(  `` ).
           col->text( 'Row' ).
         WHEN 'VISIBLE'.
-          col = columns->column( )->header( ).
+          col = columns->column( )->header( `` ).
           col->text( 'Visible' ).
         WHEN 'MERGE'.
           CHECK mv_extended_layout = abap_true.
-          col = columns->column( )->header( ).
+          col = columns->column( )->header(  `` ).
           col->text( 'Merge duplicates' ).
         WHEN 'HALIGN'.
           CHECK mv_extended_layout = abap_true.
-          col = columns->column( )->header( ).
+          col = columns->column( )->header(  `` ).
           col->text( 'Align' ).
         WHEN 'IMPORTANCE'.
           CHECK mv_extended_layout = abap_true.
-          col = columns->column( )->header( ).
+          col = columns->column( )->header(  `` ).
           col->text( 'Importance' ).
 *        WHEN 'WIDTH'.
 *          CHECK mv_extended_layout = abap_true.
-*          col = columns->column( )->header(  ).
+*          col = columns->column( )->header( `` ).
 *          col->text( 'Width in px' ).
       ENDCASE.
 
@@ -680,9 +680,8 @@ DATA del TYPE temp2.
     SELECT  * FROM z2ui5_t001
     WHERE classname   = classname
     AND   tab     = tab
-    INTO CORRESPONDING FIELDS OF TABLE result.
-*    User?!
-    ASSERT sy-subrc = 0.
+    INTO CORRESPONDING FIELDS OF TABLE result ##SUBRC_OK.
+
 
   ENDMETHOD.
 
@@ -707,14 +706,14 @@ DATA del TYPE temp2.
       SELECT SINGLE * FROM z2ui5_t001
       WHERE layout = t001-layout
       AND   tab    = t001-tab
-      INTO CORRESPONDING FIELDS OF ms_layout-s_head.
-      ASSERT sy-subrc = 0.
+      INTO CORRESPONDING FIELDS OF ms_layout-s_head ##SUBRC_OK.
+
 
       SELECT * FROM z2ui5_t002
       WHERE layout = t001-layout
       AND   tab    = t001-tab
-      INTO CORRESPONDING FIELDS OF TABLE ms_layout-t_layout.
-      ASSERT sy-subrc = 0.
+      INTO CORRESPONDING FIELDS OF TABLE ms_layout-t_layout ##SUBRC_OK.
+
 
     ENDIF.
 
@@ -741,11 +740,11 @@ TYPES uname TYPE z2ui5_t001-uname.
 TYPES END OF temp13.
     TYPES temp3 TYPE STANDARD TABLE OF temp13 WITH DEFAULT KEY.
 DATA t_t001 TYPE temp3.
-    DATA temp14 LIKE LINE OF t_t001.
-    DATA temp15 TYPE temp13.
-    DATA def LIKE temp14.
-      DATA temp16 LIKE def.
-      DATA temp17 TYPE temp13.
+      DATA temp14 LIKE LINE OF t_t001.
+      DATA temp15 TYPE temp13.
+      DATA def LIKE temp14.
+        DATA temp16 LIKE def.
+        DATA temp17 TYPE temp13.
 TYPES BEGIN OF temp18.
 TYPES mandt TYPE z2ui5_t002-mandt.
 TYPES layout TYPE z2ui5_t002-layout.
@@ -799,31 +798,30 @@ DATA t002 LIKE REF TO <temp20>.
      FROM z2ui5_t001
     WHERE classname   = classname
     AND   tab     = tab_name
-    INTO TABLE t_t001.
-    ASSERT sy-subrc = 0.
+    INTO TABLE t_t001 ##SUBRC_OK.
 
 * DEFAULT USER
-    
-    CLEAR temp14.
-    
-    READ TABLE t_t001 INTO temp15 WITH KEY classname = classname tab = tab_name def = abap_true uname = sy-uname.
-    IF sy-subrc = 0.
-      temp14 = temp15.
-    ENDIF.
-    
-    def = temp14.
-
-    IF def IS INITIAL.
-* DEFAULT
       
-      CLEAR temp16.
+      CLEAR temp14.
       
-      READ TABLE t_t001 INTO temp17 WITH KEY classname = classname tab = tab_name def = abap_true.
+      READ TABLE t_t001 INTO temp15 WITH KEY classname = classname tab = tab_name def = abap_true uname = sy-uname.
       IF sy-subrc = 0.
-        temp16 = temp17.
+        temp14 = temp15.
       ENDIF.
-      def  = temp16.
-    ENDIF.
+      
+      def = temp14.
+
+      IF def IS INITIAL.
+* DEFAULT
+        
+        CLEAR temp16.
+        
+        READ TABLE t_t001 INTO temp17 WITH KEY classname = classname tab = tab_name def = abap_true.
+        IF sy-subrc = 0.
+          temp16 = temp17.
+        ENDIF.
+        def  = temp16.
+      ENDIF.
 
 
     IF def-layout IS NOT INITIAL.
@@ -845,8 +843,8 @@ DATA t002 LIKE REF TO <temp20>.
        FROM z2ui5_t002
       WHERE layout = def-layout
       AND   tab    = def-tab
-      INTO TABLE t_t002.
-      ASSERT sy-subrc = 0.
+      INTO TABLE t_t002 ##SUBRC_OK.
+
 
       
       
