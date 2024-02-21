@@ -3388,6 +3388,46 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING
         VALUE(result)       TYPE REF TO z2ui5_cl_xml_view .
 
+methods WIZARD
+    importing
+      !ID type CLIKE optional
+      !CLASS type CLIKE optional
+      !BACKGROUNDDESIGN type CLIKE optional
+      !BUSY type CLIKE optional
+      !BUSYINDICATORDELAY type CLIKE optional
+      !BUSYINDICATORSIZE type CLIKE optional
+      !ENABLEBRANCHING type CLIKE optional
+      !FIELDGROUPIDS type CLIKE optional
+      !FINISHBUTTONTEXT type CLIKE optional
+      !HEIGHT type CLIKE optional
+      !RENDERMODE type CLIKE optional
+      !SHOWNEXTBUTTON type CLIKE optional
+      !STEPTITLELEVEL type CLIKE optional
+      !VISIBLE type CLIKE optional
+      !WIDTH type CLIKE optional
+      !COMPLETE type CLIKE optional
+      !NAVIGATIONCHANGE type CLIKE optional
+      !STEPACTIVATE type CLIKE optional
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+
+  methods WIZARD_STEP
+    importing
+      !ID type CLIKE optional
+      !BUSY type CLIKE optional
+      !BUSYINDICATORDELAY type CLIKE optional
+      !BUSYINDICATORSIZE type CLIKE optional
+      !FIELDGROUPIDS type CLIKE optional
+      !ICON type CLIKE optional
+      !OPTIONAL type CLIKE optional
+      !TITLE type CLIKE optional
+      !VALIDATED type CLIKE optional
+      !VISIBLE type CLIKE optional
+      !ACTIVATE type CLIKE optional
+      !COMPLETE type CLIKE optional
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+
   PROTECTED SECTION.
     DATA mv_name  TYPE string.
     DATA mv_ns     TYPE string.
@@ -13195,5 +13235,117 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
     CREATE OBJECT result EXPORTING VIEW = me.
 
+  ENDMETHOD.
+
+METHOD wizard.
+    DATA temp426 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp427 LIKE LINE OF temp426.
+    CLEAR temp426.
+    
+    temp427-n = `id`.
+    temp427-v = id.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `class`.
+    temp427-v = class.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `backgroundDesign`.
+    temp427-v = backgrounddesign.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `busy`.
+    temp427-v = z2ui5_cl_util=>boolean_abap_2_json( busy ).
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `busyIndicatorDelay`.
+    temp427-v = busyindicatordelay.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `busyIndicatorSize`.
+    temp427-v = busyindicatorsize.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `enableBranching`.
+    temp427-v = z2ui5_cl_util=>boolean_abap_2_json( enablebranching ).
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `fieldGroupIds`.
+    temp427-v = fieldgroupids.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `finishButtonText`.
+    temp427-v = finishbuttontext.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `height`.
+    temp427-v = height.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `renderMode`.
+    temp427-v = rendermode.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `showNextButton`.
+    temp427-v = z2ui5_cl_util=>boolean_abap_2_json( shownextbutton ).
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `stepTitleLevel`.
+    temp427-v = steptitlelevel.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `visible`.
+    temp427-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `width`.
+    temp427-v = width.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `complete`.
+    temp427-v = complete.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `navigationChange`.
+    temp427-v = navigationchange.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `stepActivate`.
+    temp427-v = stepactivate.
+    INSERT temp427 INTO TABLE temp426.
+    result = _generic( name   = `Wizard`
+                       t_prop = temp426 ).
+
+
+  ENDMETHOD.
+
+
+  METHOD wizard_step.
+
+    DATA temp428 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp429 LIKE LINE OF temp428.
+    CLEAR temp428.
+    
+    temp429-n = `id`.
+    temp429-v = id.
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `busy`.
+    temp429-v = z2ui5_cl_util=>boolean_abap_2_json( busy ).
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `busyIndicatorDelay`.
+    temp429-v = busyindicatordelay.
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `busyIndicatorSize`.
+    temp429-v = busyindicatorsize.
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `fieldGroupIds`.
+    temp429-v = fieldgroupids.
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `icon`.
+    temp429-v = icon.
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `optional`.
+    temp429-v = z2ui5_cl_util=>boolean_abap_2_json( optional ).
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `title`.
+    temp429-v = title.
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `validated`.
+    temp429-v = z2ui5_cl_util=>boolean_abap_2_json( validated ).
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `visible`.
+    temp429-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `activate`.
+    temp429-v = activate.
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `complete`.
+    temp429-v = complete.
+    INSERT temp429 INTO TABLE temp428.
+    result = _generic( name   = `WizardStep`
+                       t_prop = temp428 ).
   ENDMETHOD.
 ENDCLASS.
