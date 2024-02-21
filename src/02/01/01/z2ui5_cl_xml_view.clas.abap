@@ -2464,6 +2464,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !numberunit          TYPE clike OPTIONAL
         !title               TYPE clike OPTIONAL
         !titletextdirection  TYPE clike OPTIONAL
+        !press               TYPE clike OPTIONAL
+        !selected            TYPE clike OPTIONAL
       RETURNING
         VALUE(result)        TYPE REF TO z2ui5_cl_xml_view .
     METHODS detail_box
@@ -8973,6 +8975,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp237 INTO TABLE temp236.
     temp237-n = `iconDensityAware`.
     temp237-v = z2ui5_cl_util=>boolean_abap_2_json( icondensityaware ).
+    INSERT temp237 INTO TABLE temp236.
+    temp237-n = `press`.
+    temp237-v = press.
+    INSERT temp237 INTO TABLE temp236.
+    temp237-n = `selected`.
+    temp237-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
     INSERT temp237 INTO TABLE temp236.
     result = _generic( name   = `ObjectListItem`
                        t_prop = temp236 ).
