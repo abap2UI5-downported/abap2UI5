@@ -59,6 +59,7 @@ CLASS z2ui5_cl_app_search_apps DEFINITION
     TYPES ty_t_repo TYPE STANDARD TABLE OF ty_s_repo WITH DEFAULT KEY.
 
     DATA mt_git_repos TYPE ty_t_repo.
+    DATA mt_git_addons TYPE ty_t_repo.
 
   PROTECTED SECTION.
     METHODS search.
@@ -76,7 +77,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
+CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
 
 
   METHOD search.
@@ -160,27 +161,14 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
       DATA lr_app2 LIKE REF TO temp11.
     DATA item TYPE REF TO z2ui5_cl_xml_view.
     DATA row TYPE REF TO z2ui5_cl_xml_view.
+ DATA page_addon TYPE REF TO z2ui5_cl_xml_view.
+    DATA temp12 TYPE REF TO lcl_github.
     page = z2ui5_cl_xml_view=>factory(
           )->shell(
-*          )->page(
-*                title = 'abap2UI5 - Search Apps'
-*                navbuttonpress = client->_event( 'BACK' )
-*                shownavbutton = xsdbool( client->get( )-s_draft-id_prev_app_stack is not initial )
-*           )->header_content(
-*                )->search_field(
-*          value  = client->_bind_edit( mv_search_value )
-*          search = client->_event( 'ON_SEARCH' )
-*          change = client->_event( 'ON_SEARCH' )
-*          width  = `17.5rem`
-*          id     = `SEARCH`
-*           )->get_parent( ).
       )->tool_page(
-                          )->header( `tnt`
+          )->header( `tnt`
                             )->tool_header(
                             )->title( `abap2UI5 - App Finder`
-*                            )->text( width = `10%`
-*                                  )->link( text = `Visit the abap2UI5 Project`
-*                            )->button( text = `Bak` press = client->_event( 'BACK' )
                               )->get_parent(
                             )->get_parent( )->sub_header( `tnt`
                             )->tool_header( ).
@@ -191,10 +179,6 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
     INSERT `${$parameters>/selectedKey}` INTO TABLE temp4.
     
     pages = page->icon_tab_header( selectedkey    = client->_bind_edit( mv_selected_key )
-*                                                  select = client->_event( `OnSelectIconTabBar` )
-*                                                  select = client->_event_client(
-*              action = 'NAV_TO'
-*              t_arg  = value #( ( `NavCon` ) ( `${$parameters}` ) ) )
                                                  select = client->_event_client(
                                                     val   = client->cs_event-nav_container_to
                                                     t_arg = temp4 )
@@ -205,16 +189,11 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
                                    )->icon_tab_filter( key  = `page_all`
                                                        text = `Local` )->get_parent(
                                    )->icon_tab_filter( key  = `page_online`
-                                                       text = `GitHub`
-*                                      )->items(
-*                                         )->icon_tab_filter( key = `page11` text = `User 1` )->get_parent(
-*                                         )->icon_tab_filter( key = `page32` text = `User 2` )->get_parent(
-*                                         )->icon_tab_filter( key = `page33` text = `User 3`
+                                                       text = `Apps on GitHub` )->get_parent(
+                                   )->icon_tab_filter( key  = `page_addon`
+                                                       text = `Addons`
                                  )->get_parent( )->get_parent( )->get_parent( )->get_parent( )->get_parent(
                                )->main_contents(
-*                                )->button( text = `page1` press = client->_event_client( action = 'NAV_TO' t_arg  = VALUE #( ( `NavCon` ) ( `page1` ) ) )
-*                                )->button( text = `page2` press = client->_event_client( action = 'NAV_TO' t_arg  = VALUE #( ( `NavCon` ) ( `page2` ) ) )
-*                                )->button( text = `page3` press = client->_event_client( action = 'NAV_TO' t_arg  = VALUE #( ( `NavCon` ) ( `page3` ) ) )
                                  )->nav_container( id                    = `NavCon`
                                                    initialpage           = `page_favs`
                                                    defaulttransitionname = `flip`
@@ -225,12 +204,6 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
             id                   = `page_favs`
                 )->header_content(
                 )->button( text = `Clear` press = client->_event( `ON_FAVS_CLEAR` )
-*      )->search_field(
-*      value  = client->_bind_edit( ms_favorites-search_field )
-*      search = client->_event( 'ON_SEARCH_FAVS' )
-*      change = client->_event( 'ON_SEARCH_FAVS' )
-*      width  = `17.5rem`
-*id     = `SEARCH`
       )->get_parent( ).
 
     
@@ -272,9 +245,7 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
     view_nest_display( ).
 
     
-    page_online = pages->page(
-*            title = `Your app is not listed here? Fell free to send a PR and extend this page`
-                   id = `page_online`
+    page_online = pages->page( id = `page_online`
                     )->header_content(
                     )->text(
                     )->link( text = `Install with abapGit` href = `https://abapgit.org/` target = `blank`
@@ -284,23 +255,7 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
                      )->text(
                      )->toolbar_spacer(
                      )->text(
-*                     )->checkbox( text     = `Cloud`
-*                                  selected = client->_bind_edit( ms_git-check_cloud_ready )
-*                     )->checkbox( text     = `On-Premise`
-*                                  selected = client->_bind_edit( ms_git-check_premise_ready )
-*                                  select   = client->_event( `ON_SEARCH_GIT` )
-*                     )->button( text = `sort`
-*      )->search_field(
-*      value  = client->_bind_edit( ms_git-search_field )
-*      search = client->_event( 'ON_SEARCH_GIT' )
-*      change = client->_event( 'ON_SEARCH_GIT' )
-*      width  = `17.5rem`
-      )->get_parent(
-*           )->sub_header(
-*            )->overflow_toolbar(
-*             )->text( `Your open-source app is not listed here? Feel free to send a PR and extend this page`
-*             )->link( target = `_blank` text = `HERE` href = `{AUTHOR_LINK}`
-*            )->get_parent( )->get_parent(
+                     )->get_parent(
             )->content( ).
 
     page_online->message_strip( type = `Warning`
@@ -345,13 +300,6 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
 
     item = item->vbox( ).
 
-*    grid->combobox(
-*                 selectedkey = `{OPTION}`
-*                 items       = client->_bind_local( value string_table( ( `OFFLINE` ) ( `ONLINE` ) ) )
-*             )->item(
-*                     key = '{}'
-*                     text = '{}'
-*             )->get_parent(
     item->text( ).
     
     row = item->grid( ).
@@ -363,8 +311,6 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
                    selected = `{CHECK_ABAP_FOR_CLOUD}` ).
 
     row = item->grid( ).
-*    row = item->hbox( ).
-*    item->text( text = `{DESCR}`
     row->link( target = `_blank`
                text   = `{AUTHOR_NAME}`
                href   = `{AUTHOR_LINK}` ).
@@ -379,7 +325,86 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
     row->checkbox( text     = `Standard ABAP`
                    selected = `{CHECK_STANDARD_ABAP}`
                    enabled  = abap_false ).
-*    row->text( `{DESCR}` ).
+
+
+
+
+ 
+ page_addon = pages->page( id = `page_addon`
+                    )->header_content(
+                    )->text(
+                    )->link( text = `Install with abapGit` href = `https://abapgit.org/` target = `blank`
+                    )->toolbar_spacer(
+                      )->link( text = `More Open Source on dotabap.org...` href = `https://dotabap.org/`  target = `blank`
+                     )->toolbar_spacer(
+                     )->text(
+                     )->toolbar_spacer(
+                     )->text(
+                     )->get_parent(
+            )->content( ).
+
+    page_addon->message_strip( type = `Warning`
+                                text = `Your open-source addon is not listed here? Feel free to send a PR and extend this page`
+                                )->get( )->link(
+                                     text = `here`
+                                     target = `blank`
+                                     href = `https://github.com/abap2UI5/abap2UI5/blob/main/src/02/02/z2ui5_cl_app_search_apps.clas.locals_imp.abap` ).
+
+    
+    CREATE OBJECT temp12 TYPE lcl_github.
+    mt_git_addons = temp12->get_repositories_addons( ).
+
+    LOOP AT mt_git_addons REFERENCE INTO lr_repo.
+
+      LOOP AT lr_repo->t_app REFERENCE INTO lr_app2.
+
+        IF z2ui5_cl_util=>rtti_check_class_exists( lr_app2->classname ) IS NOT INITIAL.
+          lr_repo->check_installed = abap_true.
+        ENDIF.
+        EXIT.
+      ENDLOOP.
+
+      lr_repo->number_of_app = lines( lr_repo->t_app ).
+      lr_repo->author_name = shift_left( val = lr_repo->author_link
+                                         sub = `https://github.com/` ).
+    ENDLOOP.
+
+
+
+    item = page_addon->list(
+             "   headertext = `Product`
+                nodata         = `no conditions defined`
+               items           = client->_bind( mt_git_addons )
+               selectionchange = client->_event( 'SELCHANGE' )
+                  )->custom_list_item( ).
+
+    item = item->vbox( ).
+
+    item->text( ).
+    row = item->grid( ).
+    row->title( `{NAME}` ).
+    row->text( `{DESCR}` ).
+    row->text( ).
+*    row->checkbox( text     = `ABAP for Cloud`
+*      enabled               = abap_false
+*                   selected = `{CHECK_ABAP_FOR_CLOUD}` ).
+
+    row = item->grid( ).
+*    row->link( target = `_blank`
+*               text   = `{AUTHOR_NAME}`
+*               href   = `{AUTHOR_LINK}` ).
+
+    row->link( target = `_blank`
+               text   = `{LINK}`
+               href   = `{LINK}` ).
+
+*    row->checkbox( text     = `Installed`
+*                   selected = `{CHECK_INSTALLED}`
+*                   enabled  = abap_false ).
+*    row->checkbox( text     = `Standard ABAP`
+*                   selected = `{CHECK_STANDARD_ABAP}`
+*                   enabled  = abap_false ).
+
 
     client->view_display( page->stringify( ) ).
 
@@ -389,10 +414,10 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
   METHOD view_nest_display.
 
     DATA lo_view_nested TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp12 LIKE LINE OF mt_favs.
-    DATA lr_app LIKE REF TO temp12.
+    DATA temp13 LIKE LINE OF mt_favs.
+    DATA lr_app LIKE REF TO temp13.
       DATA lv_tabix LIKE sy-tabix.
-      DATA temp13 TYPE string_table.
+      DATA temp14 TYPE string_table.
     lo_view_nested = z2ui5_cl_xml_view=>factory( ).
 
     
@@ -402,12 +427,12 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
       
       lv_tabix = sy-tabix.
       
-      CLEAR temp13.
-      INSERT `${$source>/header}` INTO TABLE temp13.
+      CLEAR temp14.
+      INSERT `${$source>/header}` INTO TABLE temp14.
       lo_view_nested->generic_tile(
 *      page_favs->generic_tile(
         class  = 'sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout'
-        press  = client->_event( val = `ON_START`  t_arg = temp13 )
+        press  = client->_event( val = `ON_START`  t_arg = temp14 )
         header = client->_bind( val = lr_app->name tab = mt_favs tab_index = lv_tabix ) ).
 *        visible = client->_bind( val = lr_app->check_fav tab = mt_apps tab_index = lv_tabix ) ).
     ENDLOOP.
@@ -420,10 +445,10 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
 
 
   METHOD z2ui5_if_app~main.
-      DATA temp15 LIKE mt_apps.
+      DATA temp16 LIKE mt_apps.
       DATA temp1 TYPE string_table.
       DATA row LIKE LINE OF temp1.
-        DATA temp16 LIKE LINE OF temp15.
+        DATA temp17 LIKE LINE OF temp16.
             DATA lt_arg2 TYPE string_table.
             DATA lv_app2 LIKE LINE OF lt_arg2.
             DATA temp2 LIKE LINE OF lt_arg2.
@@ -452,16 +477,16 @@ CLASS z2ui5_cl_app_search_apps IMPLEMENTATION.
       ENDTRY.
 
       
-      CLEAR temp15.
+      CLEAR temp16.
       
       temp1 = z2ui5_cl_util=>rtti_get_classes_impl_intf( `Z2UI5_IF_APP` ).
       
       LOOP AT temp1 INTO row.
         
-        temp16-name = row.
-        INSERT temp16 INTO TABLE temp15.
+        temp17-name = row.
+        INSERT temp17 INTO TABLE temp16.
       ENDLOOP.
-      mt_apps = temp15.
+      mt_apps = temp16.
       search( ).
       view_display( client ).
       RETURN.

@@ -82,8 +82,8 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
     DATA simple_form2 TYPE REF TO z2ui5_cl_xml_view.
     DATA lv_url_samples2 TYPE string.
     DATA lv_url_samples3 TYPE string.
-      DATA temp1 TYPE string_table.
-    DATA temp3 TYPE string_table.
+    DATA temp1 TYPE string_table.
+      DATA temp3 TYPE string_table.
     page2 = z2ui5_cl_xml_view=>factory( )->shell( )->page(
          shownavbutton = abap_false ).
 
@@ -91,6 +91,8 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
       )->text(
       )->title( `abap2UI5 - Developing UI5 Apps Purely in ABAP`
       )->toolbar_spacer(
+      )->button( text = `Debugging Tools` icon = `sap-icon://enablement`
+        press = client->_event( `OPEN_DEBUG` )
       )->button( text = `System` icon = `sap-icon://information`
         press = client->_event( `OPEN_INFO` ) ).
 
@@ -163,15 +165,25 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
 
     simple_form2->toolbar( )->title( `What's next?` ).
 
+    simple_form2->label( `App Finder` ).
+    
+    CLEAR temp1.
+    INSERT lv_url_samples3 INTO TABLE temp1.
+    simple_form2->button(
+        text      = `Start & Install Apps`
+        press     = client->_event_client( val   = client->cs_event-open_new_tab
+                                           t_arg = temp1 )
+            width = `70%` ).
+
     IF z2ui5_cl_util=>rtti_check_class_exists( `z2ui5_cl_demo_app_000` ) IS NOT INITIAL.
       simple_form2->label( `Start Developing` ).
       
-      CLEAR temp1.
-      INSERT lv_url_samples2 INTO TABLE temp1.
+      CLEAR temp3.
+      INSERT lv_url_samples2 INTO TABLE temp3.
       simple_form2->button(
-        text      = `Check Out the Samples`
+        text      = `Explore Code Samples`
         press     = client->_event_client( val   = client->cs_event-open_new_tab
-                                           t_arg = temp1 )
+                                           t_arg = temp3 )
             width = `70%` ).
 
     ELSE.
@@ -181,27 +193,18 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
               href             = `https://github.com/abap2UI5/abap2UI5-samples` ).
     ENDIF.
 
-    simple_form2->label( `App Finder` ).
-    
-    CLEAR temp3.
-    INSERT lv_url_samples3 INTO TABLE temp3.
-    simple_form2->button(
-        text      = `Start & Install App`
-        press     = client->_event_client( val   = client->cs_event-open_new_tab
-                                           t_arg = temp3 )
-            width = `70%` ).
-
     simple_form2->label( `` ).
     simple_form2->text( `` ).
-    simple_form2->label( `Open an issue` ).
-    simple_form2->link( text = `You have problems, comments or wishes?`
-                 target      = `_blank`
-                 href        = `https://github.com/abap2UI5/abap2UI5/issues` ).
 
     simple_form2->label( `Open a Pull Request` ).
     simple_form2->link( text = `You added a new feature or fixed a bug?`
                target        = `_blank`
                href          = `https://github.com/abap2UI5/abap2UI5/pulls` ).
+
+    simple_form2->label( `Open an issue` ).
+    simple_form2->link( text = `You have problems, comments or wishes?`
+                 target      = `_blank`
+                 href        = `https://github.com/abap2UI5/abap2UI5/issues` ).
 
     simple_form2->label( `` ).
     simple_form2->text( `` ).
@@ -269,6 +272,8 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
 
     CASE client->get( )-event.
 
+      when `OPEN_DEBUG`.
+      client->message_box_display( `Press ctrl+F12 to open the debugging tools` ).
       WHEN `OPEN_INFO`.
         client->nav_app_call( z2ui5_cl_core_app_info=>factory( ) ).
         RETURN.

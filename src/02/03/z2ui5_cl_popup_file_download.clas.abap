@@ -14,11 +14,12 @@ CLASS z2ui5_cl_popup_file_download DEFINITION
         i_button_text_confirm TYPE string DEFAULT `OK`
         i_button_text_cancel  TYPE string DEFAULT `Cancel`
         i_file                TYPE string
+        i_type                type string default `data:text/csv;base64,`
       RETURNING
         VALUE(r_result)       TYPE REF TO z2ui5_cl_popup_file_download.
 
     DATA mv_name TYPE string.
-    DATA mv_type TYPE string VALUE `data:text/csv;base64,`.
+    DATA mv_type TYPE string.
     DATA mv_size TYPE string.
     DATA mv_value TYPE string.
     DATA mv_check_download TYPE abap_bool.
@@ -53,6 +54,7 @@ CLASS Z2UI5_CL_POPUP_FILE_DOWNLOAD IMPLEMENTATION.
     r_result->question_text = i_text.
     r_result->button_text_confirm = i_button_text_confirm.
     r_result->button_text_cancel = i_button_text_cancel.
+    r_result->mv_type = i_type.
     r_result->mv_value = i_file.
     r_result->mv_size = strlen( i_file ) / 1000.
 
@@ -69,7 +71,8 @@ CLASS Z2UI5_CL_POPUP_FILE_DOWNLOAD IMPLEMENTATION.
   METHOD view_display.
 
     DATA popup TYPE REF TO z2ui5_cl_xml_view.
-      DATA lv_base64 TYPE xstring.
+      DATA lv_csv_x TYPE xstring.
+      DATA lv_base64 TYPE string.
       DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
       DATA temp2 LIKE LINE OF temp1.
     popup = z2ui5_cl_xml_view=>factory_popup( )->dialog(
@@ -80,7 +83,10 @@ CLASS Z2UI5_CL_POPUP_FILE_DOWNLOAD IMPLEMENTATION.
 
     IF mv_check_download = abap_true.
       
-      lv_base64 = z2ui5_cl_util=>conv_decode_x_base64( mv_value ).
+      lv_csv_x = z2ui5_cl_util=>conv_get_xstring_by_string( mv_value ).
+      
+      lv_base64 = z2ui5_cl_util=>conv_encode_x_base64( lv_csv_x ).
+*      DATA(lv_base64) = z2ui5_cl_util=>conv_decode_x_base64( mv_value ).
       
       CLEAR temp1.
       
