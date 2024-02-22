@@ -53,7 +53,6 @@ CLASS z2ui5_cl_app_search_apps DEFINITION
         check_standard_abap  TYPE abap_bool,
         link                 TYPE string,
         t_app                TYPE ty_t_app,
-        check_installed      TYPE abap_bool,
         number_of_app        TYPE i,
       END OF ty_s_repo.
     TYPES ty_t_repo TYPE STANDARD TABLE OF ty_s_repo WITH DEFAULT KEY.
@@ -129,15 +128,9 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
                                      showcancelbutton = abap_true
                                      title            = `Choose Your Action`
       )->button( text  = `Add to Favorite`
-*                 icon  = `sap-icon://accept`
-                 press = client->_event( `ADD_TO_FAVS` )
-*      )->button( text  = `Add to Favorite as external Link`
-**                 icon  = `sap-icon://decline`
-*                 press = `MessageToast.show('selected action is ' + ${$source>/text})`
-                  ).
+                 press = client->_event( `ADD_TO_FAVS` ) ).
 
-    client->popover_display( xml   = action_sheet_view->stringify( )
-                             by_id = val ).
+    client->popover_display( xml = action_sheet_view->stringify( ) by_id = val ).
 
   ENDMETHOD.
 
@@ -157,12 +150,10 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
     DATA temp9 TYPE REF TO lcl_github.
     DATA temp10 LIKE LINE OF mt_git_repos.
     DATA lr_repo LIKE REF TO temp10.
-      DATA temp11 LIKE LINE OF lr_repo->t_app.
-      DATA lr_app2 LIKE REF TO temp11.
     DATA item TYPE REF TO z2ui5_cl_xml_view.
     DATA row TYPE REF TO z2ui5_cl_xml_view.
  DATA page_addon TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp12 TYPE REF TO lcl_github.
+    DATA temp11 TYPE REF TO lcl_github.
     page = z2ui5_cl_xml_view=>factory(
           )->shell(
       )->tool_page(
@@ -273,22 +264,10 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
     
     LOOP AT mt_git_repos REFERENCE INTO lr_repo.
 
-      
-      
-      LOOP AT lr_repo->t_app REFERENCE INTO lr_app2.
-
-        IF z2ui5_cl_util=>rtti_check_class_exists( lr_app2->classname ) IS NOT INITIAL.
-          lr_repo->check_installed = abap_true.
-        ENDIF.
-        EXIT.
-      ENDLOOP.
-
       lr_repo->number_of_app = lines( lr_repo->t_app ).
       lr_repo->author_name = shift_left( val = lr_repo->author_link
                                          sub = `https://github.com/` ).
     ENDLOOP.
-
-
 
     
     item = page_online->list(
@@ -305,7 +284,7 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
     row = item->grid( ).
     row->title( `{NAME}` ).
     row->text( `{DESCR}` ).
-    row->text( ).
+*    row->text( ).
     row->checkbox( text     = `ABAP for Cloud`
       enabled               = abap_false
                    selected = `{CHECK_ABAP_FOR_CLOUD}` ).
@@ -319,15 +298,9 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
                text   = `{LINK}`
                href   = `{LINK}` ).
 
-    row->checkbox( text     = `Installed`
-                   selected = `{CHECK_INSTALLED}`
-                   enabled  = abap_false ).
     row->checkbox( text     = `Standard ABAP`
                    selected = `{CHECK_STANDARD_ABAP}`
                    enabled  = abap_false ).
-
-
-
 
  
  page_addon = pages->page( id = `page_addon`
@@ -351,25 +324,15 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
                                      href = `https://github.com/abap2UI5/abap2UI5/blob/main/src/02/02/z2ui5_cl_app_search_apps.clas.locals_imp.abap` ).
 
     
-    CREATE OBJECT temp12 TYPE lcl_github.
-    mt_git_addons = temp12->get_repositories_addons( ).
+    CREATE OBJECT temp11 TYPE lcl_github.
+    mt_git_addons = temp11->get_repositories_addons( ).
 
     LOOP AT mt_git_addons REFERENCE INTO lr_repo.
-
-      LOOP AT lr_repo->t_app REFERENCE INTO lr_app2.
-
-        IF z2ui5_cl_util=>rtti_check_class_exists( lr_app2->classname ) IS NOT INITIAL.
-          lr_repo->check_installed = abap_true.
-        ENDIF.
-        EXIT.
-      ENDLOOP.
 
       lr_repo->number_of_app = lines( lr_repo->t_app ).
       lr_repo->author_name = shift_left( val = lr_repo->author_link
                                          sub = `https://github.com/` ).
     ENDLOOP.
-
-
 
     item = page_addon->list(
              "   headertext = `Product`
@@ -385,26 +348,12 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
     row->title( `{NAME}` ).
     row->text( `{DESCR}` ).
     row->text( ).
-*    row->checkbox( text     = `ABAP for Cloud`
-*      enabled               = abap_false
-*                   selected = `{CHECK_ABAP_FOR_CLOUD}` ).
 
     row = item->grid( ).
-*    row->link( target = `_blank`
-*               text   = `{AUTHOR_NAME}`
-*               href   = `{AUTHOR_LINK}` ).
 
     row->link( target = `_blank`
                text   = `{LINK}`
                href   = `{LINK}` ).
-
-*    row->checkbox( text     = `Installed`
-*                   selected = `{CHECK_INSTALLED}`
-*                   enabled  = abap_false ).
-*    row->checkbox( text     = `Standard ABAP`
-*                   selected = `{CHECK_STANDARD_ABAP}`
-*                   enabled  = abap_false ).
-
 
     client->view_display( page->stringify( ) ).
 
@@ -414,27 +363,24 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
   METHOD view_nest_display.
 
     DATA lo_view_nested TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp13 LIKE LINE OF mt_favs.
-    DATA lr_app LIKE REF TO temp13.
+    DATA temp12 LIKE LINE OF mt_favs.
+    DATA lr_app LIKE REF TO temp12.
       DATA lv_tabix LIKE sy-tabix.
-      DATA temp14 TYPE string_table.
+      DATA temp13 TYPE string_table.
     lo_view_nested = z2ui5_cl_xml_view=>factory( ).
 
     
     
     LOOP AT mt_favs REFERENCE INTO lr_app.
-      " WHERE check_fav = abap_true.
       
       lv_tabix = sy-tabix.
       
-      CLEAR temp14.
-      INSERT `${$source>/header}` INTO TABLE temp14.
+      CLEAR temp13.
+      INSERT `${$source>/header}` INTO TABLE temp13.
       lo_view_nested->generic_tile(
-*      page_favs->generic_tile(
         class  = 'sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout'
-        press  = client->_event( val = `ON_START`  t_arg = temp14 )
+        press  = client->_event( val = `ON_START`  t_arg = temp13 )
         header = client->_bind( val = lr_app->name tab = mt_favs tab_index = lv_tabix ) ).
-*        visible = client->_bind( val = lr_app->check_fav tab = mt_apps tab_index = lv_tabix ) ).
     ENDLOOP.
 
     client->nest_view_display( val           = lo_view_nested->stringify( )
@@ -445,10 +391,10 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
 
 
   METHOD z2ui5_if_app~main.
-      DATA temp16 LIKE mt_apps.
+      DATA temp15 LIKE mt_apps.
       DATA temp1 TYPE string_table.
       DATA row LIKE LINE OF temp1.
-        DATA temp17 LIKE LINE OF temp16.
+        DATA temp16 LIKE LINE OF temp15.
             DATA lt_arg2 TYPE string_table.
             DATA lv_app2 LIKE LINE OF lt_arg2.
             DATA temp2 LIKE LINE OF lt_arg2.
@@ -477,16 +423,16 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
       ENDTRY.
 
       
-      CLEAR temp16.
+      CLEAR temp15.
       
       temp1 = z2ui5_cl_util=>rtti_get_classes_impl_intf( `Z2UI5_IF_APP` ).
       
       LOOP AT temp1 INTO row.
         
-        temp17-name = row.
-        INSERT temp17 INTO TABLE temp16.
+        temp16-name = row.
+        INSERT temp16 INTO TABLE temp15.
       ENDLOOP.
-      mt_apps = temp16.
+      mt_apps = temp15.
       search( ).
       view_display( client ).
       RETURN.
@@ -550,8 +496,6 @@ CLASS Z2UI5_CL_APP_SEARCH_APPS IMPLEMENTATION.
         ms_app_sel-name = lv_app.
 
         view_action_sheet( lv_app ).
-
-*        view_nest_display( client ).
 
       WHEN 'BACK'.
         client->nav_app_leave( client->get_app( client->get( )-s_draft-id_prev_app_stack ) ).
