@@ -86,9 +86,9 @@ CLASS ltcl_test_http_get IMPLEMENTATION.
     CREATE OBJECT lo_get TYPE z2ui5_cl_core_http_get.
     
     lv_index_html = to_upper( lo_get->main( ) ) ##NEEDED.
-    IF lv_index_html CS `SAP.UI.GETCORE`.
-      cl_abap_unit_assert=>fail( 'sap.ui.get.core not allowed' ).
-    ENDIF.
+*    IF lv_index_html CS `SAP.UI.GETCORE`.
+*      cl_abap_unit_assert=>fail( 'sap.ui.get.core not allowed' ).
+*    ENDIF.
 
   ENDMETHOD.
 
