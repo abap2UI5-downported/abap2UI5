@@ -12,8 +12,8 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   METHOD first_test.
 
-    DATA lo_app TYPE REF TO z2ui5_cl_app_search_apps.
-    CREATE OBJECT lo_app TYPE z2ui5_cl_app_search_apps.
+    DATA lo_app TYPE REF TO z2ui5_cl_core_app_search.
+    CREATE OBJECT lo_app TYPE z2ui5_cl_core_app_search.
 
   ENDMETHOD.
 

@@ -13,11 +13,11 @@ CLASS lcl_github DEFINITION.
   PUBLIC SECTION.
     METHODS get_repositories
       RETURNING
-        VALUE(result) TYPE z2ui5_cl_app_search_apps=>ty_t_repo.
+        VALUE(result) TYPE z2ui5_cl_core_app_search=>ty_t_repo.
 
     METHODS get_repositories_addons
       RETURNING
-        VALUE(result) TYPE z2ui5_cl_app_search_apps=>ty_t_repo.
+        VALUE(result) TYPE z2ui5_cl_core_app_search=>ty_t_repo.
 
 ENDCLASS.
 
@@ -25,7 +25,7 @@ CLASS lcl_github IMPLEMENTATION.
 
   METHOD get_repositories.
 
-    DATA temp17 TYPE z2ui5_cl_app_search_apps=>ty_t_repo.
+    DATA temp17 TYPE z2ui5_cl_core_app_search=>ty_t_repo.
     DATA temp18 LIKE LINE OF temp17.
     CLEAR temp17.
     
@@ -67,7 +67,7 @@ CLASS lcl_github IMPLEMENTATION.
 
   METHOD get_repositories_addons.
 
-    DATA temp19 TYPE z2ui5_cl_app_search_apps=>ty_t_repo.
+    DATA temp19 TYPE z2ui5_cl_core_app_search=>ty_t_repo.
     DATA temp20 LIKE LINE OF temp19.
     CLEAR temp19.
     
