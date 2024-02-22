@@ -39,12 +39,50 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
+CLASS Z2UI5_CL_CORE_HTTP_GET IMPLEMENTATION.
 
 
   METHOD constructor.
 
     ms_request = val.
+
+  ENDMETHOD.
+
+
+  METHOD get_default_config.
+
+    DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp2 LIKE LINE OF temp1.
+    CLEAR temp1.
+    
+    temp2-n = `src`.
+    temp2-v = `https://sdk.openui5.org/resources/sap-ui-cachebuster/sap-ui-core.js`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-n = `data-sap-ui-theme`.
+    temp2-v = `sap_horizon`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-n = `data-sap-ui-async`.
+    temp2-v = `true`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-n = `data-sap-ui-bindingSyntax`.
+    temp2-v = `complex`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-n = `data-sap-ui-frameOptions`.
+    temp2-v = `trusted`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-n = `data-sap-ui-compatVersion`.
+    temp2-v = `edge`.
+    INSERT temp2 INTO TABLE temp1.
+    result = temp1.
+
+  ENDMETHOD.
+
+
+  METHOD get_default_security_policy.
+
+    result  = `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: ` &&
+   `ui5.sap.com *.ui5.sap.com sapui5.hana.ondemand.com *.sapui5.hana.ondemand.com openui5.hana.ondemand.com *.openui5.hana.ondemand.com ` &&
+   `sdk.openui5.org *.sdk.openui5.org cdn.jsdelivr.net *.cdn.jsdelivr.net cdnjs.cloudflare.com *.cdnjs.cloudflare.com schemas *.schemas"/>`.
 
   ENDMETHOD.
 
@@ -386,9 +424,8 @@ CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
                `                models: oview_model,` && |\n| &&
                `                controller: sap.z2ui5.oController,` && |\n| &&
                `                id: 'mainView',` && |\n| &&
-               `              preprocessor: { xml : { models: { meta : oview_model } } }` && |\n| &&
+               `                preprocessors: { xml: { models: { meta: oview_model } } }` && |\n| &&
                `            });` && |\n| &&
-                 `            sap.ui.getCore().getMessageManager().registerObject( sap.z2ui5.oView, true);` && |\n| &&
                `            if (sap.z2ui5.oParent) {` && |\n| &&
                `                sap.z2ui5.oParent.removeAllPages();` && |\n| &&
                `                sap.z2ui5.oParent.insertPage(sap.z2ui5.oView);` && |\n| &&
@@ -494,31 +531,31 @@ CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
 
   METHOD main.
 
-    DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA lt_config LIKE temp1.
-    DATA temp2 TYPE string.
-    DATA lv_sec_policy LIKE temp2.
-    DATA temp3 LIKE LINE OF lt_config.
-    DATA lr_config LIKE REF TO temp3.
+    DATA temp3 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA lt_config LIKE temp3.
+    DATA temp4 TYPE string.
+    DATA lv_sec_policy LIKE temp4.
+    DATA temp5 LIKE LINE OF lt_config.
+    DATA lr_config LIKE REF TO temp5.
     DATA lv_add_js TYPE string.
-    DATA temp4 TYPE z2ui5_if_types=>ty_s_http_request_get-json_model_limit.
-    DATA temp5 TYPE REF TO z2ui5_cl_core_draft_srv.
+    DATA temp6 TYPE z2ui5_if_types=>ty_s_http_request_get-json_model_limit.
+    DATA temp7 TYPE REF TO z2ui5_cl_core_draft_srv.
     IF ms_request-t_config IS INITIAL.
-      temp1 = get_default_config( ).
+      temp3 = get_default_config( ).
     ELSE.
-      temp1 = ms_request-t_config.
+      temp3 = ms_request-t_config.
     ENDIF.
     
-    lt_config = temp1.
+    lt_config = temp3.
 
     
     IF ms_request-content_security_policy IS INITIAL.
-      temp2 = get_default_security_policy( ).
+      temp4 = get_default_security_policy( ).
     ELSE.
-      temp2 = ms_request-content_security_policy.
+      temp4 = ms_request-content_security_policy.
     ENDIF.
     
-    lv_sec_policy = temp2.
+    lv_sec_policy = temp4.
 
     mv_response = `<!DOCTYPE html>` && |\n| &&
                `<html lang="en">` && |\n| &&
@@ -555,15 +592,15 @@ CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
 
     
     IF ms_request-json_model_limit IS NOT INITIAL.
-      temp4 = ms_request-json_model_limit.
+      temp6 = ms_request-json_model_limit.
     ELSE.
-      temp4 = 100.
+      temp6 = 100.
     ENDIF.
     mv_response = mv_response  &&
                `<script> sap.z2ui5 = sap.z2ui5 || {};` && |\n| &&
                get_js( ) && |\n| &&
                lv_add_js && |\n| &&
-    `          sap.z2ui5.JSON_MODEL_LIMIT = ` && temp4 && `;`.
+    `          sap.z2ui5.JSON_MODEL_LIMIT = ` && temp6 && `;`.
 
     mv_response = mv_response &&
        z2ui5_cl_fw_cc_debugging_tools=>get_js( ) &&
@@ -575,47 +612,9 @@ CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
                  `<abc/></body></html>`.
 
     
-    CREATE OBJECT temp5 TYPE z2ui5_cl_core_draft_srv.
-    temp5->cleanup( ).
+    CREATE OBJECT temp7 TYPE z2ui5_cl_core_draft_srv.
+    temp7->cleanup( ).
     result = mv_response.
 
   ENDMETHOD.
-
-  METHOD get_default_config.
-
-    DATA temp6 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp7 LIKE LINE OF temp6.
-    CLEAR temp6.
-    
-    temp7-n = `src`.
-    temp7-v = `https://sdk.openui5.org/resources/sap-ui-cachebuster/sap-ui-core.js`.
-    INSERT temp7 INTO TABLE temp6.
-    temp7-n = `data-sap-ui-theme`.
-    temp7-v = `sap_horizon`.
-    INSERT temp7 INTO TABLE temp6.
-    temp7-n = `data-sap-ui-async`.
-    temp7-v = `true`.
-    INSERT temp7 INTO TABLE temp6.
-    temp7-n = `data-sap-ui-bindingSyntax`.
-    temp7-v = `complex`.
-    INSERT temp7 INTO TABLE temp6.
-    temp7-n = `data-sap-ui-frameOptions`.
-    temp7-v = `trusted`.
-    INSERT temp7 INTO TABLE temp6.
-    temp7-n = `data-sap-ui-compatVersion`.
-    temp7-v = `edge`.
-    INSERT temp7 INTO TABLE temp6.
-    result = temp6.
-
-  ENDMETHOD.
-
-
-  METHOD get_default_security_policy.
-
-    result  = `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: ` &&
-   `ui5.sap.com *.ui5.sap.com sapui5.hana.ondemand.com *.sapui5.hana.ondemand.com openui5.hana.ondemand.com *.openui5.hana.ondemand.com ` &&
-   `sdk.openui5.org *.sdk.openui5.org cdn.jsdelivr.net *.cdn.jsdelivr.net cdnjs.cloudflare.com *.cdnjs.cloudflare.com schemas *.schemas"/>`.
-
-  ENDMETHOD.
-
 ENDCLASS.

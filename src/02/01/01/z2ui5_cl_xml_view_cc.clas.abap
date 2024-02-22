@@ -130,6 +130,12 @@ CLASS z2ui5_cl_xml_view_cc DEFINITION
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
+    METHODS message_manager
+      IMPORTING
+        !items        TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+
     METHODS title
       IMPORTING
         !title        TYPE clike OPTIONAL
@@ -489,7 +495,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD messaging.
+  METHOD message_manager.
     DATA temp19 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp20 LIKE LINE OF temp19.
 
@@ -500,14 +506,14 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp20-n = `items`.
     temp20-v = items.
     INSERT temp20 INTO TABLE temp19.
-    mo_view->_generic( name = `Messaging`
+    mo_view->_generic( name = `MessageManager`
               ns            = `z2ui5`
               t_prop        = temp19 ).
 
   ENDMETHOD.
 
 
-  METHOD multiinput.
+  METHOD messaging.
     DATA temp21 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp22 LIKE LINE OF temp21.
 
@@ -515,58 +521,17 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     
     CLEAR temp21.
     
-    temp22-n = `tokens`.
-    temp22-v = tokens.
+    temp22-n = `items`.
+    temp22-v = items.
     INSERT temp22 INTO TABLE temp21.
-    temp22-n = `showClearIcon`.
-    temp22-v = z2ui5_cl_util=>boolean_abap_2_json( showclearicon ).
-    INSERT temp22 INTO TABLE temp21.
-    temp22-n = `showValueHelp`.
-    temp22-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluehelp ).
-    INSERT temp22 INTO TABLE temp21.
-    temp22-n = `enabled`.
-    temp22-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp22 INTO TABLE temp21.
-    temp22-n = `suggestionItems`.
-    temp22-v = suggestionitems.
-    INSERT temp22 INTO TABLE temp21.
-    temp22-n = `tokenUpdate`.
-    temp22-v = tokenupdate.
-    INSERT temp22 INTO TABLE temp21.
-    temp22-n = `submit`.
-    temp22-v = submit.
-    INSERT temp22 INTO TABLE temp21.
-    temp22-n = `width`.
-    temp22-v = width.
-    INSERT temp22 INTO TABLE temp21.
-    temp22-n = `value`.
-    temp22-v = value.
-    INSERT temp22 INTO TABLE temp21.
-    temp22-n = `id`.
-    temp22-v = id.
-    INSERT temp22 INTO TABLE temp21.
-    temp22-n = `change`.
-    temp22-v = change.
-    INSERT temp22 INTO TABLE temp21.
-    temp22-n = `valueHelpRequest`.
-    temp22-v = valuehelprequest.
-    INSERT temp22 INTO TABLE temp21.
-    temp22-n = `addedTokens`.
-    temp22-v = addedtokens.
-    INSERT temp22 INTO TABLE temp21.
-    temp22-n = `removedTokens`.
-    temp22-v = removedtokens.
-    INSERT temp22 INTO TABLE temp21.
-    temp22-n = `class`.
-    temp22-v = class.
-    INSERT temp22 INTO TABLE temp21.
-    mo_view->_generic( name   = `MultiInput`
-                       ns     = `z2ui5`
-                       t_prop = temp21 ).
+    mo_view->_generic( name = `Messaging`
+              ns            = `z2ui5`
+              t_prop        = temp21 ).
+
   ENDMETHOD.
 
 
-  METHOD multiinput_ext.
+  METHOD multiinput.
     DATA temp23 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp24 LIKE LINE OF temp23.
 
@@ -574,11 +539,41 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     
     CLEAR temp23.
     
-    temp24-n = `MultiInputId`.
-    temp24-v = multiinputid.
+    temp24-n = `tokens`.
+    temp24-v = tokens.
+    INSERT temp24 INTO TABLE temp23.
+    temp24-n = `showClearIcon`.
+    temp24-v = z2ui5_cl_util=>boolean_abap_2_json( showclearicon ).
+    INSERT temp24 INTO TABLE temp23.
+    temp24-n = `showValueHelp`.
+    temp24-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluehelp ).
+    INSERT temp24 INTO TABLE temp23.
+    temp24-n = `enabled`.
+    temp24-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp24 INTO TABLE temp23.
+    temp24-n = `suggestionItems`.
+    temp24-v = suggestionitems.
+    INSERT temp24 INTO TABLE temp23.
+    temp24-n = `tokenUpdate`.
+    temp24-v = tokenupdate.
+    INSERT temp24 INTO TABLE temp23.
+    temp24-n = `submit`.
+    temp24-v = submit.
+    INSERT temp24 INTO TABLE temp23.
+    temp24-n = `width`.
+    temp24-v = width.
+    INSERT temp24 INTO TABLE temp23.
+    temp24-n = `value`.
+    temp24-v = value.
+    INSERT temp24 INTO TABLE temp23.
+    temp24-n = `id`.
+    temp24-v = id.
     INSERT temp24 INTO TABLE temp23.
     temp24-n = `change`.
     temp24-v = change.
+    INSERT temp24 INTO TABLE temp23.
+    temp24-n = `valueHelpRequest`.
+    temp24-v = valuehelprequest.
     INSERT temp24 INTO TABLE temp23.
     temp24-n = `addedTokens`.
     temp24-v = addedtokens.
@@ -586,14 +581,16 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp24-n = `removedTokens`.
     temp24-v = removedtokens.
     INSERT temp24 INTO TABLE temp23.
-    mo_view->_generic( name   = `MultiInputExt`
+    temp24-n = `class`.
+    temp24-v = class.
+    INSERT temp24 INTO TABLE temp23.
+    mo_view->_generic( name   = `MultiInput`
                        ns     = `z2ui5`
                        t_prop = temp23 ).
-
   ENDMETHOD.
 
 
-  METHOD scrolling.
+  METHOD multiinput_ext.
     DATA temp25 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp26 LIKE LINE OF temp25.
 
@@ -601,20 +598,26 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     
     CLEAR temp25.
     
-    temp26-n = `setUpdate`.
-    temp26-v = setupdate.
+    temp26-n = `MultiInputId`.
+    temp26-v = multiinputid.
     INSERT temp26 INTO TABLE temp25.
-    temp26-n = `items`.
-    temp26-v = items.
+    temp26-n = `change`.
+    temp26-v = change.
     INSERT temp26 INTO TABLE temp25.
-    mo_view->_generic( name = `Scrolling`
-              ns            = `z2ui5`
-              t_prop        = temp25 ).
+    temp26-n = `addedTokens`.
+    temp26-v = addedtokens.
+    INSERT temp26 INTO TABLE temp25.
+    temp26-n = `removedTokens`.
+    temp26-v = removedtokens.
+    INSERT temp26 INTO TABLE temp25.
+    mo_view->_generic( name   = `MultiInputExt`
+                       ns     = `z2ui5`
+                       t_prop = temp25 ).
 
   ENDMETHOD.
 
 
-  METHOD spreadsheet_export.
+  METHOD scrolling.
     DATA temp27 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp28 LIKE LINE OF temp27.
 
@@ -622,26 +625,20 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     
     CLEAR temp27.
     
-    temp28-n = `tableId`.
-    temp28-v = tableid.
+    temp28-n = `setUpdate`.
+    temp28-v = setupdate.
     INSERT temp28 INTO TABLE temp27.
-    temp28-n = `text`.
-    temp28-v = text.
+    temp28-n = `items`.
+    temp28-v = items.
     INSERT temp28 INTO TABLE temp27.
-    temp28-n = `icon`.
-    temp28-v = icon.
-    INSERT temp28 INTO TABLE temp27.
-    temp28-n = `type`.
-    temp28-v = type.
-    INSERT temp28 INTO TABLE temp27.
-    mo_view->_generic( name = `ExportSpreadsheet`
+    mo_view->_generic( name = `Scrolling`
               ns            = `z2ui5`
               t_prop        = temp27 ).
 
   ENDMETHOD.
 
 
-  METHOD timer.
+  METHOD spreadsheet_export.
     DATA temp29 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp30 LIKE LINE OF temp29.
 
@@ -649,26 +646,26 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     
     CLEAR temp29.
     
-    temp30-n = `delayMS`.
-    temp30-v = delayms.
+    temp30-n = `tableId`.
+    temp30-v = tableid.
     INSERT temp30 INTO TABLE temp29.
-    temp30-n = `finished`.
-    temp30-v = finished.
+    temp30-n = `text`.
+    temp30-v = text.
     INSERT temp30 INTO TABLE temp29.
-    temp30-n = `checkActive`.
-    temp30-v = z2ui5_cl_util=>boolean_abap_2_json( checkactive ).
+    temp30-n = `icon`.
+    temp30-v = icon.
     INSERT temp30 INTO TABLE temp29.
-    temp30-n = `checkRepeat`.
-    temp30-v = z2ui5_cl_util=>boolean_abap_2_json( checkrepeat ).
+    temp30-n = `type`.
+    temp30-v = type.
     INSERT temp30 INTO TABLE temp29.
-    mo_view->_generic( name = `Timer`
+    mo_view->_generic( name = `ExportSpreadsheet`
               ns            = `z2ui5`
               t_prop        = temp29 ).
 
   ENDMETHOD.
 
 
-  METHOD title.
+  METHOD timer.
     DATA temp31 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp32 LIKE LINE OF temp31.
 
@@ -676,28 +673,55 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     
     CLEAR temp31.
     
-    temp32-n = `title`.
-    temp32-v = title.
+    temp32-n = `delayMS`.
+    temp32-v = delayms.
     INSERT temp32 INTO TABLE temp31.
-    mo_view->_generic( name = `Title`
+    temp32-n = `finished`.
+    temp32-v = finished.
+    INSERT temp32 INTO TABLE temp31.
+    temp32-n = `checkActive`.
+    temp32-v = z2ui5_cl_util=>boolean_abap_2_json( checkactive ).
+    INSERT temp32 INTO TABLE temp31.
+    temp32-n = `checkRepeat`.
+    temp32-v = z2ui5_cl_util=>boolean_abap_2_json( checkrepeat ).
+    INSERT temp32 INTO TABLE temp31.
+    mo_view->_generic( name = `Timer`
               ns            = `z2ui5`
               t_prop        = temp31 ).
 
   ENDMETHOD.
 
 
-  METHOD uitableext.
-
+  METHOD title.
     DATA temp33 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp34 LIKE LINE OF temp33.
+
+    result = mo_view.
+    
     CLEAR temp33.
     
-    temp34-n = `tableId`.
-    temp34-v = tableid.
+    temp34-n = `title`.
+    temp34-v = title.
     INSERT temp34 INTO TABLE temp33.
+    mo_view->_generic( name = `Title`
+              ns            = `z2ui5`
+              t_prop        = temp33 ).
+
+  ENDMETHOD.
+
+
+  METHOD uitableext.
+
+    DATA temp35 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp36 LIKE LINE OF temp35.
+    CLEAR temp35.
+    
+    temp36-n = `tableId`.
+    temp36-v = tableid.
+    INSERT temp36 INTO TABLE temp35.
     result = mo_view->_generic( name = `UITableExt`
                                 ns   = `z2ui5`
-                       t_prop        = temp33 ).
+                       t_prop        = temp35 ).
 
   ENDMETHOD.
 ENDCLASS.
