@@ -30,6 +30,7 @@ CLASS z2ui5_cl_popup_layout_v2 DEFINITION
 
     TYPES:
       BEGIN OF ty_s_layo,
+        mandt     TYPE mandt,
         layout    TYPE c LENGTH 12,
         tab       TYPE c LENGTH 30,
         descr     TYPE c LENGTH 50,
@@ -82,7 +83,7 @@ CLASS z2ui5_cl_popup_layout_v2 DEFINITION
       RETURNING
         VALUE(result)    TYPE REF TO z2ui5_cl_popup_layout_v2.
 
-  PROTECTED SECTION.
+PROTECTED SECTION.
 
     DATA client        TYPE REF TO z2ui5_if_client.
     DATA mv_init       TYPE abap_bool.
@@ -101,7 +102,8 @@ CLASS z2ui5_cl_popup_layout_v2 DEFINITION
     METHODS render_save.
     METHODS save_layout.
     METHODS render_open.
-    METHODS get_selected_layout.
+    METHODS get_selected_layout
+    RETURNING VALUE(result) TYPE ty_s_layout.
     METHODS get_layouts.
     METHODS init_edit.
     METHODS render_delete.
@@ -361,12 +363,11 @@ CLASS z2ui5_cl_popup_layout_v2 IMPLEMENTATION.
         client->nav_app_leave( ).
 
       WHEN 'OPEN_SELECT'.
-        get_selected_layout( ).
+        ms_layout = get_selected_layout( ).
         client->popup_destroy( ).
         client->nav_app_leave( ).
 
       WHEN 'DELETE_SELECT'.
-        get_selected_layout( ).
         db_delete_layout( ).
         client->popup_destroy( ).
         client->nav_app_leave( ).
@@ -687,7 +688,7 @@ DATA del TYPE temp2.
     t001 = temp9.
     IF t001 IS NOT INITIAL.
 
-      ms_layout = db_read_layout(
+      result = db_read_layout(
            layout = t001-layout
            tab    = t001-tab ).
 
@@ -916,8 +917,11 @@ GET REFERENCE OF <temp21> INTO t001.
 
   METHOD db_delete_layout.
 
-    DELETE  z2ui5_t001 FROM ms_layout-s_head.
-    DELETE  z2ui5_t002 FROM TABLE ms_layout-t_layout.
+    DATA layout TYPE z2ui5_cl_popup_layout_v2=>ty_s_layout.
+    layout = get_selected_layout( ).
+
+    DELETE  z2ui5_t001 FROM layout-s_head.
+    DELETE  z2ui5_t002 FROM TABLE layout-t_layout.
 
     IF sy-subrc = 0.
       COMMIT WORK AND WAIT.
@@ -944,8 +948,8 @@ GET REFERENCE OF <temp21> INTO t001.
   METHOD db_read_head.
 
     SELECT  * FROM z2ui5_t001
-    WHERE classname   = i_classname
-    AND   tab     = i_tab
+    WHERE classname  = i_classname
+    AND   tab        = i_tab
     INTO CORRESPONDING FIELDS OF TABLE r_result ##SUBRC_OK.
 
   ENDMETHOD.
@@ -962,15 +966,14 @@ GET REFERENCE OF <temp21> INTO t001.
      FROM z2ui5_t001
     WHERE classname   = i_classname
     AND   tab     = i_tab_name
-    INTO TABLE r_t001 ##SUBRC_OK.
+    INTO CORRESPONDING FIELDS OF TABLE r_t001 ##SUBRC_OK.
 
   ENDMETHOD.
 
 
   METHOD db_read_layout_info.
 
-    SELECT    mandt
-              layout
+    SELECT    layout
               tab
               fname
               rollname
@@ -983,7 +986,7 @@ GET REFERENCE OF <temp21> INTO t001.
      FROM z2ui5_t002
     WHERE layout = i_def-layout
     AND   tab    = i_def-tab
-    INTO TABLE r_t002 ##SUBRC_OK.
+    INTO CORRESPONDING FIELDS OF TABLE r_t002 ##SUBRC_OK.
 
   ENDMETHOD.
 
