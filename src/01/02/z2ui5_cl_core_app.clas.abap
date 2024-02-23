@@ -68,6 +68,9 @@ CLASS z2ui5_cl_core_app IMPLEMENTATION.
         DATA temp1 LIKE REF TO mt_attri.
 DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
         DATA x2 TYPE REF TO cx_root.
+            DATA temp2 LIKE REF TO mt_attri.
+DATA lo_dissolver TYPE REF TO z2ui5_cl_core_dissolve_srv.
+            DATA temp3 LIKE REF TO mt_attri.
 
     TRY.
 
@@ -76,16 +79,31 @@ DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
 
 CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp1 app = mo_app.
         lo_model->attri_before_save( ).
-
         result = z2ui5_cl_util=>xml_stringify( me ).
 
         
       CATCH cx_root INTO x2.
+        TRY.
 
-        RAISE EXCEPTION TYPE z2ui5_cx_util_error
-          EXPORTING
-            val = `<p>` && x2->get_text( ) && `<p> Please check if all generic data references are public attributes of your class`.
+            
+            GET REFERENCE OF mt_attri INTO temp2.
 
+CREATE OBJECT lo_dissolver TYPE z2ui5_cl_core_dissolve_srv EXPORTING attri = temp2 app = mo_app.
+
+            lo_dissolver->main( ).
+            lo_dissolver->main( ).
+            
+            GET REFERENCE OF mt_attri INTO temp3.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp3 app = mo_app.
+            lo_model->attri_before_save( ).
+
+            result = z2ui5_cl_util=>xml_stringify( me ).
+
+          CATCH cx_root.
+            RAISE EXCEPTION TYPE z2ui5_cx_util_error
+              EXPORTING
+                val = `<p>` && x2->get_text( ) && `<p> Please check if all generic data references are public attributes of your class`.
+        ENDTRY.
     ENDTRY.
 
   ENDMETHOD.
@@ -95,7 +113,7 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp1 app 
 
     DATA lo_db TYPE REF TO z2ui5_cl_core_draft_srv.
     DATA ls_db TYPE z2ui5_t_core_01.
-    DATA temp2 LIKE REF TO result->mt_attri.
+    DATA temp4 LIKE REF TO result->mt_attri.
 DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
     CREATE OBJECT lo_db TYPE z2ui5_cl_core_draft_srv.
     
@@ -103,9 +121,9 @@ DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
     result = all_xml_parse( ls_db-data ).
 
     
-    GET REFERENCE OF result->mt_attri INTO temp2.
+    GET REFERENCE OF result->mt_attri INTO temp4.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp2 app = result->mo_app.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp4 app = result->mo_app.
 
     lo_model->attri_after_load( ).
 
@@ -116,7 +134,7 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp2 app 
 
     DATA lo_db TYPE REF TO z2ui5_cl_core_draft_srv.
     DATA ls_db TYPE z2ui5_t_core_01.
-    DATA temp3 LIKE REF TO result->mt_attri.
+    DATA temp5 LIKE REF TO result->mt_attri.
 DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
     CREATE OBJECT lo_db TYPE z2ui5_cl_core_draft_srv.
     
@@ -126,9 +144,9 @@ DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
     result->mo_app = app.
 
     
-    GET REFERENCE OF result->mt_attri INTO temp3.
+    GET REFERENCE OF result->mt_attri INTO temp5.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp3 app = result->mo_app.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp5 app = result->mo_app.
 
     lo_model->attri_refs_update( ).
 
@@ -136,13 +154,13 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp3 app 
 
 
   METHOD db_save.
-      DATA temp4 TYPE REF TO z2ui5_if_app.
+      DATA temp6 TYPE REF TO z2ui5_if_app.
     DATA lo_db TYPE REF TO z2ui5_cl_core_draft_srv.
 
     IF mo_app IS BOUND.
       
-      temp4 ?= mo_app.
-      temp4->id_draft = ms_draft-id.
+      temp6 ?= mo_app.
+      temp6->id_draft = ms_draft-id.
     ENDIF.
 
     
@@ -157,13 +175,13 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp3 app 
   METHOD model_json_parse.
 
     DATA lo_json_mapper TYPE REF TO z2ui5_cl_core_json_srv.
-    DATA temp5 LIKE REF TO mt_attri.
+    DATA temp7 LIKE REF TO mt_attri.
     CREATE OBJECT lo_json_mapper TYPE z2ui5_cl_core_json_srv.
     
-    GET REFERENCE OF mt_attri INTO temp5.
+    GET REFERENCE OF mt_attri INTO temp7.
 lo_json_mapper->model_front_to_back(
         view    = iv_view
-        t_attri = temp5
+        t_attri = temp7
         model   = io_model ).
 
   ENDMETHOD.
