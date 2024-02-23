@@ -943,8 +943,7 @@ DATA lt_cols TYPE temp2.
 
     DATA lv_classname TYPE abap_abstypename.
     lv_classname = cl_abap_classdescr=>get_class_name( in ).
-    result = substring_after( val = lv_classname
-                              sub = `\CLASS=` ).
+    result = substring_after( val = lv_classname sub = `\CLASS=` ).
 
   ENDMETHOD.
 
