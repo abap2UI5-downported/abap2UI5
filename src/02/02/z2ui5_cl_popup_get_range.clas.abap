@@ -33,6 +33,7 @@ CLASS z2ui5_cl_popup_get_range DEFINITION
       RETURNING
         VALUE(result) TYPE ty_s_result.
 
+    DATA mt_mapping TYPE z2ui5_if_types=>ty_t_name_value.
   PROTECTED SECTION.
 
     DATA client TYPE REF TO z2ui5_if_client.
@@ -43,7 +44,8 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_popup_get_range IMPLEMENTATION.
+CLASS Z2UI5_CL_POPUP_GET_RANGE IMPLEMENTATION.
+
 
   METHOD factory.
     DATA temp1 LIKE LINE OF r_result->ms_result-t_range.
@@ -68,6 +70,7 @@ CLASS z2ui5_cl_popup_get_range IMPLEMENTATION.
 
 
   METHOD view_display.
+
 
     DATA lo_popup TYPE REF TO z2ui5_cl_xml_view.
     DATA vbox TYPE REF TO z2ui5_cl_xml_view.
@@ -102,7 +105,7 @@ CLASS z2ui5_cl_popup_get_range IMPLEMENTATION.
     INSERT `${KEY}` INTO TABLE temp2.
     grid->combobox(
                  selectedkey = `{OPTION}`
-                 items       = client->_bind_local( z2ui5_cl_util=>filter_get_token_range_mapping( ) )
+                 items       = client->_bind( mt_mapping  )
              )->item(
                      key  = '{N}'
                      text = '{N}'
@@ -156,6 +159,8 @@ CLASS z2ui5_cl_popup_get_range IMPLEMENTATION.
     IF check_initialized = abap_false.
       check_initialized = abap_true.
 
+      mt_mapping = z2ui5_cl_util=>filter_get_token_range_mapping( ).
+
       CLEAR mt_filter.
       
       
@@ -174,6 +179,7 @@ CLASS z2ui5_cl_popup_get_range IMPLEMENTATION.
     ENDIF.
 
     CASE client->get( )-event.
+
       WHEN `BUTTON_CONFIRM`.
 
         CLEAR ms_result-t_range.

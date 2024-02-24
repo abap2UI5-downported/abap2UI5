@@ -468,14 +468,11 @@ GET REFERENCE OF <temp13> INTO t002.
         client->nav_app_leave( ).
 
       WHEN 'SAVE_CLOSE'.
-*        client->popup_destroy( ).
         render_edit(  ).
 
       WHEN 'SAVE_SAVE'.
         save_layout( ).
         render_edit(  ).
-*        client->popup_destroy( ).
-*        client->nav_app_leave( ).
 
       WHEN 'OPEN_SELECT'.
         ms_layout = get_selected_layout( ).
@@ -488,18 +485,11 @@ GET REFERENCE OF <temp13> INTO t002.
         client->nav_app_leave( ).
 
       WHEN 'LAYOUT_LOAD'.
-*        client->view_destroy( ).
-        client->nav_app_call( z2ui5_cl_popup_layout_v2=>factory( layout = ms_layout
+        client->nav_app_call( factory( layout = ms_layout
                                        open_layout = abap_true   ) ).
 
-*      WHEN 'LAYOUT_EDIT'.
-*        client->view_destroy( ).
-*        client->nav_app_call( z2ui5_cl_popup_layout_v2=>factory( layout = ms_layout
-*                                       extended_layout = abap_true   ) ).
-
       WHEN 'LAYOUT_DELETE'.
-*        client->view_destroy( ).
-        client->nav_app_call( z2ui5_cl_popup_layout_v2=>factory( layout = ms_layout
+        client->nav_app_call( factory( layout = ms_layout
                                        delete_layout = abap_true ) ).
 
     ENDCASE.
@@ -562,11 +552,13 @@ GET REFERENCE OF <temp13> INTO t002.
     popup = z2ui5_cl_xml_view=>factory_popup(  ).
 
     
-    dialog = popup->dialog( title      = 'Layout'
+    dialog = popup->dialog( title      = 'Layout - Delete'
+            contentheight = `50%`
+                                 contentwidth  = `50%`
                                   afterclose = client->_event( 'CLOSE' ) ).
 
     dialog->table(
-                headertext = 'Layout'
+*                headertext = 'Layout'
                 mode = 'SingleSelectLeft'
                 items = client->_bind_edit( mt_t001 )
                 )->columns(
@@ -611,7 +603,8 @@ GET REFERENCE OF <temp13> INTO t002.
     popup = z2ui5_cl_xml_view=>factory_popup(  ).
     
     dialog = popup->dialog( title        = 'Layout'
-                                  contentwidth = '50%'
+                                        contentheight = `50%`
+                                 contentwidth  = `50%`
                                   afterclose   = client->_event( 'CANCEL' ) )->content( ).
 
     
@@ -699,11 +692,6 @@ GET REFERENCE OF <temp13> INTO t002.
 
     dialog->get_parent(
            )->footer( )->overflow_toolbar(
-               )->toolbar_spacer(
-               )->button(
-                   text  = 'Cancel'
-                   icon  = 'sap-icon://sys-cancel-2'
-                   press = client->_event( 'CANCEL' )
               )->button(
                    text  = 'DB Delete'
                    press = client->_event( 'LAYOUT_DELETE' )
@@ -716,6 +704,11 @@ GET REFERENCE OF <temp13> INTO t002.
                    text  = 'DB Save'
                    press = client->_event( 'LAYOUT_SAVE' )
                    icon  = 'sap-icon://save'
+                     )->toolbar_spacer(
+                                  )->button(
+                   text  = 'Cancel'
+                   icon  = 'sap-icon://sys-cancel-2'
+                   press = client->_event( 'CANCEL' )
              )->button(
                    text  = 'OK'
                    icon  = 'sap-icon://accept'
@@ -736,11 +729,13 @@ GET REFERENCE OF <temp13> INTO t002.
     popup = z2ui5_cl_xml_view=>factory_popup(  ).
 
     
-    dialog = popup->dialog( title      = 'Layout'
+    dialog = popup->dialog( title      = 'Layout - Open'
+            contentheight = `50%`
+                                 contentwidth  = `50%`
                                   afterclose = client->_event( 'CLOSE' ) ).
 
     dialog->table(
-                headertext = 'Layout'
+*                headertext = 'Layout'
                 mode = 'SingleSelectLeft'
                 items = client->_bind_edit( mt_t001 )
                 )->columns(
@@ -780,11 +775,14 @@ GET REFERENCE OF <temp13> INTO t002.
     popup = z2ui5_cl_xml_view=>factory_popup(  ).
 
     
-    dialog = popup->dialog( title      = 'Save'
+    dialog = popup->dialog( title      = 'Layout - Save'
+            contentheight = `50%`
+                                 contentwidth  = `50%`
                                   afterclose = client->_event( 'SAVE_CLOSE' ) ).
 
     
-    form = dialog->simple_form( title           = 'Layout'
+    form = dialog->simple_form(
+*    title           = 'Layout'
                                       editable        = abap_true
                                       labelspanxl     = `4`
                                       labelspanl      = `4`
@@ -793,7 +791,7 @@ GET REFERENCE OF <temp13> INTO t002.
                                       adjustlabelspan = abap_false
                                       ).
 
-    form->toolbar( )->title( 'Layout' ).
+*    form->toolbar( )->title( 'Layout' ).
 
     form->content( 'form'
                            )->label( 'Layout'
