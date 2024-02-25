@@ -27,7 +27,7 @@ CLASS z2ui5_cl_core_json_srv DEFINITION
 
     METHODS model_back_to_front
       IMPORTING
-        !t_attri      TYPE z2ui5_if_core_types=>ty_t_attri
+        !t_attri      TYPE REF TO z2ui5_if_core_types=>ty_t_attri
       RETURNING
         VALUE(result) TYPE string.
 
@@ -85,7 +85,7 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
   METHOD model_back_to_front.
         DATA temp2 TYPE REF TO z2ui5_if_ajson.
         DATA ajson_result LIKE temp2.
-        DATA temp3 LIKE LINE OF t_attri.
+        DATA temp3 LIKE LINE OF t_attri->*.
         DATA lr_attri LIKE REF TO temp3.
             DATA temp4 TYPE REF TO z2ui5_if_ajson.
             DATA ajson LIKE temp4.
@@ -101,7 +101,7 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
         ajson_result = temp2.
         
         
-        LOOP AT t_attri REFERENCE INTO lr_attri WHERE bind_type <> ``.
+        LOOP AT t_attri->* REFERENCE INTO lr_attri WHERE bind_type <> ``.
 
           IF lr_attri->custom_mapper IS BOUND.
             

@@ -172,12 +172,12 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
 
   METHOD clear.
 
-    FIELD-SYMBOLS <temp4> LIKE LINE OF mo_app->mt_attri.
+    FIELD-SYMBOLS <temp4> LIKE LINE OF mo_app->mt_attri->*.
     DATA temp5 LIKE sy-tabix.
-    DATA temp6 LIKE LINE OF mo_app->mt_attri.
+    DATA temp6 LIKE LINE OF mo_app->mt_attri->*.
     DATA lr_bind2 LIKE REF TO temp6.
     temp5 = sy-tabix.
-    READ TABLE mo_app->mt_attri WITH KEY name = val ASSIGNING <temp4>.
+    READ TABLE mo_app->mt_attri->* WITH KEY name = val ASSIGNING <temp4>.
     sy-tabix = temp5.
     IF sy-subrc <> 0.
       ASSERT 1 = 0.
@@ -186,9 +186,9 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
 
     
     
-    LOOP AT mo_app->mt_attri REFERENCE INTO lr_bind2.
+    LOOP AT mo_app->mt_attri->* REFERENCE INTO lr_bind2.
       IF lr_bind2->name CS val && `-`.
-        DELETE mo_app->mt_attri.
+        DELETE mo_app->mt_attri->*.
       ENDIF.
     ENDLOOP.
 
@@ -220,8 +220,7 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
 
 
   METHOD main.
-    DATA temp8 LIKE REF TO mo_app->mt_attri.
-DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
+    DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
 
     IF z2ui5_cl_util=>check_bound_a_not_inital( config-tab ) IS NOT INITIAL.
 
@@ -237,9 +236,7 @@ DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
     mv_type   = type.
 
     
-    GET REFERENCE OF mo_app->mt_attri INTO temp8.
-
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp8 app = mo_app->mo_app.
+    CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = mo_app->mt_attri app = mo_app->mo_app.
 
     mr_attri = lo_model->attri_search_a_dissolve( val ).
 
@@ -267,7 +264,7 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp8 app 
 
   METHOD main_cell.
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp9 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp8 TYPE z2ui5_if_core_types=>ty_s_bind_config.
 
     ms_config = config.
     mv_type   = type.
@@ -275,9 +272,9 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp8 app 
     
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_app.
     
-    CLEAR temp9.
-    temp9-path_only = abap_true.
-    result = lo_bind->main( val = config-tab type = type config = temp9 ).
+    CLEAR temp8.
+    temp8-path_only = abap_true.
+    result = lo_bind->main( val = config-tab type = type config = temp8 ).
 
     result = bind_tab_cell(
           iv_name = result
@@ -291,17 +288,17 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp8 app 
 
 
   METHOD main_local.
-        DATA temp10 TYPE REF TO z2ui5_if_ajson.
-        DATA lo_json LIKE temp10.
+        DATA temp9 TYPE REF TO z2ui5_if_ajson.
+        DATA lo_json LIKE temp9.
         DATA lv_id TYPE string.
-        DATA temp11 TYPE z2ui5_if_core_types=>ty_s_attri.
+        DATA temp10 TYPE z2ui5_if_core_types=>ty_s_attri.
         DATA x TYPE REF TO cx_root.
     TRY.
 
         
-        temp10 ?= z2ui5_cl_ajson=>new( ).
+        temp9 ?= z2ui5_cl_ajson=>new( ).
         
-        lo_json = temp10.
+        lo_json = temp9.
         lo_json->set( iv_path = `/` iv_val = val ).
 
         IF config-custom_mapper IS BOUND.
@@ -319,13 +316,13 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp8 app 
         
         lv_id = to_upper( z2ui5_cl_util=>uuid_get_c22( ) ).
         
-        CLEAR temp11.
-        temp11-name_client = |/{ lv_id }|.
-        temp11-name = lv_id.
-        temp11-json_bind_local = lo_json.
-        temp11-bind_type = z2ui5_if_core_types=>cs_bind_type-one_time.
-        INSERT temp11
-          INTO TABLE mo_app->mt_attri.
+        CLEAR temp10.
+        temp10-name_client = |/{ lv_id }|.
+        temp10-name = lv_id.
+        temp10-json_bind_local = lo_json.
+        temp10-bind_type = z2ui5_if_core_types=>cs_bind_type-one_time.
+        INSERT temp10
+          INTO TABLE mo_app->mt_attri->*.
 
         result = |/{ lv_id }|.
 
@@ -341,7 +338,7 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp8 app 
 
 
   METHOD update_model_attri.
-    DATA temp12 TYPE z2ui5_if_core_types=>ty_s_attri-view.
+    DATA temp11 TYPE z2ui5_if_core_types=>ty_s_attri-view.
 
     mr_attri->bind_type     = mv_type.
     mr_attri->view          = ms_config-view.
@@ -351,11 +348,11 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp8 app 
     mr_attri->custom_mapper_back = ms_config-custom_mapper_back.
     
     IF ms_config-view IS INITIAL.
-      temp12 = z2ui5_if_client=>cs_view-main.
+      temp11 = z2ui5_if_client=>cs_view-main.
     ELSE.
-      temp12 = ms_config-view.
+      temp11 = ms_config-view.
     ENDIF.
-    mr_attri->view          = temp12.
+    mr_attri->view          = temp11.
     mr_attri->name_client   = get_client_name( ).
 
   ENDMETHOD.
