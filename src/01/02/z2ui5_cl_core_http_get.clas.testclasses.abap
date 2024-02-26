@@ -15,6 +15,7 @@ CLASS ltcl_test_http_get DEFINITION FINAL FOR TESTING
     METHODS js_no_document FOR TESTING RAISING cx_static_check.
     METHODS bootstrap_with_open_ui5 FOR TESTING RAISING cx_static_check.
     METHODS js_no_jquery FOR TESTING RAISING cx_static_check.
+    METHODS debugging_tools FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS z2ui5_cl_core_http_get DEFINITION LOCAL FRIENDS ltcl_test_http_get.
@@ -42,7 +43,7 @@ CLASS ltcl_test_http_get IMPLEMENTATION.
     CREATE OBJECT lo_get TYPE z2ui5_cl_core_http_get.
     
     lv_index_html = lo_get->main( ).
-    IF lv_index_html CS `&`.
+    IF lv_index_html CS ` && `.
       cl_abap_unit_assert=>fail( 'index.html contains the character & -> no launchpad compatibility' ).
     ENDIF.
 
@@ -154,6 +155,19 @@ CLASS ltcl_test_http_get IMPLEMENTATION.
     lv_check = temp2.
     IF lv_check = abap_true.
       cl_abap_unit_assert=>fail( 'no bootstrap with nightly version' ).
+    ENDIF.
+
+  ENDMETHOD.
+
+  METHOD debugging_tools.
+
+    DATA lv_index_html TYPE string.
+    lv_index_html = to_upper( z2ui5_cl_fw_cc_debugging_tools=>get_js( ) ) ##NEEDED.
+    IF lv_index_html CS `<`.
+      cl_abap_unit_assert=>fail( 'use of < not allowed - launchpad compatibility' ).
+    ENDIF.
+    IF lv_index_html CS `/>`.
+      cl_abap_unit_assert=>fail( 'use of /> not allowed - launchpad compatibility' ).
     ENDIF.
 
   ENDMETHOD.
