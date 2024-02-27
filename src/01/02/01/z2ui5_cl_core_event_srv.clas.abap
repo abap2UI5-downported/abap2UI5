@@ -7,9 +7,9 @@ CLASS z2ui5_cl_core_event_srv DEFINITION
 
     METHODS get_event
       IMPORTING
-        !val                TYPE clike OPTIONAL
-        !check_view_destroy TYPE abap_bool DEFAULT abap_false
-        !t_arg              TYPE string_table OPTIONAL
+        !val         TYPE clike OPTIONAL
+        !t_arg       TYPE string_table OPTIONAL
+        !s_cnt       TYPE z2ui5_if_types=>ty_s_event_control OPTIONAL
           PREFERRED PARAMETER val
       RETURNING
         VALUE(result)       TYPE string.
@@ -37,14 +37,19 @@ CLASS z2ui5_cl_core_event_srv IMPLEMENTATION.
 
   METHOD get_event.
 
-    DATA temp1 TYPE string.
-    IF check_view_destroy = abap_true.
-      temp1 = `,true`.
-    ELSE.
-      CLEAR temp1.
+    result = |{ z2ui5_if_core_types=>cs_ui5-event_backend_function }(['{ val }'|.
+
+    IF s_cnt-check_allow_parallel_events = abap_true.
+      IF s_cnt-check_view_destroy = abap_true.
+        result = result && `,true,true`.
+      ELSE.
+        result = result && `,false,true`.
+      ENDIF.
+    ELSEIF s_cnt-check_view_destroy = abap_true.
+      result = result && `,true`.
     ENDIF.
-    result = |{ z2ui5_if_core_types=>cs_ui5-event_backend_function }(['{ val }'{ temp1 }]|.
-    result = result && get_t_arg( t_arg ).
+
+    result = result && `]` && get_t_arg( t_arg ).
 
   ENDMETHOD.
 
@@ -58,8 +63,8 @@ CLASS z2ui5_cl_core_event_srv IMPLEMENTATION.
 
 
   METHOD get_t_arg.
-      DATA temp2 LIKE LINE OF val.
-      DATA lr_arg LIKE REF TO temp2.
+      DATA temp1 LIKE LINE OF val.
+      DATA lr_arg LIKE REF TO temp1.
         DATA lv_new TYPE string.
 
     IF val IS NOT INITIAL.
