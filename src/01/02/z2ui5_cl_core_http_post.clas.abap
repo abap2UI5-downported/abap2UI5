@@ -93,7 +93,21 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
     ms_response-s_front-id = mo_action->mo_app->ms_draft-id.
     ms_response-s_front-app = z2ui5_cl_util=>rtti_get_classname_by_ref( mo_action->mo_app->mo_app ).
     ms_response-s_front-app_start = ms_request-s_control-app_start.
-    ms_response-model = mo_action->mo_app->model_json_stringify( ).
+
+    IF ms_response-s_front-params-s_view-check_update_model = abap_true
+    OR ms_response-s_front-params-s_view_nest-check_update_model = abap_true
+    OR ms_response-s_front-params-s_view_nest2-check_update_model = abap_true
+    OR ms_response-s_front-params-s_popup-check_update_model = abap_true
+    OR ms_response-s_front-params-s_popover-check_update_model = abap_true
+    OR ms_response-s_front-params-s_view-xml IS NOT INITIAL
+    OR ms_response-s_front-params-s_view_nest-xml IS NOT INITIAL
+    OR ms_response-s_front-params-s_view_nest2-xml IS NOT INITIAL
+    OR ms_response-s_front-params-s_popup-xml IS NOT INITIAL
+    OR ms_response-s_front-params-s_popover-xml IS NOT INITIAL.
+      ms_response-model = mo_action->mo_app->model_json_stringify( ).
+    ELSE.
+      ms_response-model = `{}`.
+    ENDIF.
 
     
     CREATE OBJECT lo_json_mapper TYPE z2ui5_cl_core_json_srv.

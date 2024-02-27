@@ -107,9 +107,9 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~nav_app_leave.
     DATA temp4 TYPE string.
 
-    if app is not bound.
-     app = z2ui5_if_client~get_app( z2ui5_if_client~get( )-s_draft-id_prev_app_stack ).
-    endif.
+    IF app IS NOT BOUND.
+      app = z2ui5_if_client~get_app( z2ui5_if_client~get( )-s_draft-id_prev_app_stack ).
+    ENDIF.
 
     mo_action->ms_next-o_app_leave = app.
 
@@ -233,8 +233,20 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
 
   METHOD z2ui5_if_client~view_model_update.
+      DATA lv_bind TYPE string.
 
     mo_action->ms_next-s_set-s_view-check_update_model = abap_true.
+
+    IF path IS NOT INITIAL.
+        try.
+      
+      lv_bind = z2ui5_if_client~_bind( val = path path = abap_true ).
+      catch cx_root.
+       lv_bind = z2ui5_if_client~_bind_edit( val = path path = abap_true ).
+      endtry.
+      SHIFT lv_bind LEFT DELETING LEADING `/`.
+      SPLIT lv_bind AT `/` INTO TABLE mo_action->ms_next-s_set-s_view-update_path.
+    ENDIF.
 
   ENDMETHOD.
 
