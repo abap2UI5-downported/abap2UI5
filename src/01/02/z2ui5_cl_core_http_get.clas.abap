@@ -180,7 +180,7 @@ CLASS Z2UI5_CL_CORE_HTTP_GET IMPLEMENTATION.
                `            const oView = await XMLView.create({` && |\n| &&
                `                definition: xml,` && |\n| &&
                `                controller: sap.z2ui5.oControllerNest,` && |\n| &&
-               `                preprocessors: { xml: { models: { meta: oview_model } } }` && |\n| &&
+               `                preprocessors: { xml: { models: { template: oview_model } } }` && |\n| &&
                `            });` && |\n| &&
                `            oview_model.setSizeLimit(sap.z2ui5.JSON_MODEL_LIMIT);` && |\n| &&
                `            oView.setModel(oview_model);` && |\n| &&
@@ -198,7 +198,7 @@ CLASS Z2UI5_CL_CORE_HTTP_GET IMPLEMENTATION.
                `            const oView = await XMLView.create({` && |\n| &&
                `                definition: xml,` && |\n| &&
                `                controller: sap.z2ui5.oControllerNest2,` && |\n| &&
-               `                preprocessors: { xml: { models: { meta: oview_model } } }` && |\n| &&
+               `                preprocessors: { xml: { models: { template: oview_model } } }` && |\n| &&
                `            });` && |\n| &&
                `            oview_model.setSizeLimit(sap.z2ui5.JSON_MODEL_LIMIT);` && |\n| &&
                `            oView.setModel(oview_model);` && |\n| &&
@@ -416,7 +416,7 @@ CLASS Z2UI5_CL_CORE_HTTP_GET IMPLEMENTATION.
                `                models: oview_model,` && |\n| &&
                `                controller: sap.z2ui5.oController,` && |\n| &&
                `                id: 'mainView',` && |\n| &&
-               `                preprocessors: { xml: { models: { meta: oview_model } } }` && |\n| &&
+               `                preprocessors: { xml: { models: { template: oview_model } } }` && |\n| &&
                `            });` && |\n| &&
                `            if (sap.z2ui5.oParent) {` && |\n| &&
                `                sap.z2ui5.oParent.removeAllPages();` && |\n| &&
