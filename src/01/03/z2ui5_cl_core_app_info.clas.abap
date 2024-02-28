@@ -43,19 +43,22 @@ CLASS z2ui5_cl_core_app_info IMPLEMENTATION.
   METHOD view_display_start.
 
     DATA page2 TYPE REF TO z2ui5_cl_xml_view.
+    DATA content TYPE REF TO z2ui5_cl_xml_view.
     DATA simple_form2 TYPE REF TO z2ui5_cl_xml_view.
     DATA temp1 TYPE string.
     DATA temp2 TYPE REF TO z2ui5_cl_core_draft_srv.
     DATA lv_count LIKE temp1.
     page2 = z2ui5_cl_xml_view=>factory_popup(
          )->dialog(
-            stretch    = abap_true
+*            stretch    = abap_true
             title      = `abap2UI5 - System Information`
             afterclose = client->_event( `CLOSE` ) ).
 
 *    page2->header_content( )->text(  )->title( `abap2UI5 - System Information` )->toolbar_spacer( ).
 
-    page2->_z2ui5( )->info_frontend(
+    
+    content = page2->content( ).
+    content->_z2ui5( )->info_frontend(
 *        device_browser = client->_bind( mv_device_browser )
 *        device_systemtype = client->_bind( mv_device_type )
 *        ui5_gav = client->_bind( mv_device_gav )
@@ -63,7 +66,7 @@ CLASS z2ui5_cl_core_app_info IMPLEMENTATION.
         ui5_version = client->_bind( mv_ui5_version ) ).
 
     
-    simple_form2 = page2->simple_form(
+    simple_form2 = content->simple_form(
         editable                = abap_true
         layout                  = `ResponsiveGridLayout`
         labelspanxl             = `4`
@@ -113,9 +116,8 @@ CLASS z2ui5_cl_core_app_info IMPLEMENTATION.
     simple_form2->label( `Draft Entries ` ).
     simple_form2->text( lv_count ).
 
-    page2->footer( )->overflow_toolbar(
-                  )->toolbar_spacer(
-                  )->button(
+*    page2->
+    page2->end_button( )->button(
                       text  = 'close'
                       press = client->_event( 'CLOSE' )
                       type  = 'Emphasized' ).

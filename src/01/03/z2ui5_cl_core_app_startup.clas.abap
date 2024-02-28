@@ -85,11 +85,10 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
     DATA temp1 TYPE string_table.
       DATA temp3 TYPE string_table.
     page2 = z2ui5_cl_xml_view=>factory( )->shell( )->page(
+         title = `abap2UI5 - Developing UI5 Apps Purely in ABAP`
          shownavbutton = abap_false ).
 
     page2->header_content(
-      )->text(
-      )->title( `abap2UI5 - Developing UI5 Apps Purely in ABAP`
       )->toolbar_spacer(
       )->button( text = `Debugging Tools` icon = `sap-icon://enablement`
         press = client->_event( `OPEN_DEBUG` )

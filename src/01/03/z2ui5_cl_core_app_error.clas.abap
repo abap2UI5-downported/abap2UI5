@@ -38,9 +38,10 @@ CLASS Z2UI5_CL_CORE_APP_ERROR IMPLEMENTATION.
     DATA lv_url_app TYPE string.
     DATA lv_text TYPE string.
     DATA lx_error LIKE mx_error.
+    DATA view TYPE REF TO z2ui5_cl_xml_view.
+    DATA vbox TYPE REF TO z2ui5_cl_xml_view.
     DATA temp1 TYPE string_table.
     DATA temp2 TYPE string_table.
-    DATA view TYPE REF TO z2ui5_cl_ui5_m.
     lv_url = shift_left( val = client->get( )-s_config-origin && client->get( )-s_config-pathname
                                sub = ` ` ).
     
@@ -55,19 +56,37 @@ CLASS Z2UI5_CL_CORE_APP_ERROR IMPLEMENTATION.
       lx_error = lx_error->previous.
     ENDWHILE.
 
+*    DATA(view) = z2ui5_cl_ui5=>_factory( )->_ns_m( )->shell( )->illustratedmessage(
+*        enableformattedtext = abap_true
+*        illustrationtype    = `sapIllus-ErrorScreen`
+*        title               = `500 Internal Server Error`
+*        description         = lv_text
+*      )->additionalcontent(
+*        )->button(
+*            text  = `Home`
+*            type  = `Emphasized`
+*            press = client->_event_client( val = client->cs_event-location_reload t_arg  = VALUE #( ( lv_url ) ) )
+*        )->button(
+*            text  = `Restart`
+*            press = client->_event_client( val = client->cs_event-location_reload t_arg  = VALUE #( ( lv_url_app ) ) ) ).
+
+    
+    view = z2ui5_cl_xml_view=>factory( ).
+
+    
+    vbox = view->shell( )->vbox( alignItems = `Center` ).
+
+    vbox->text(  ).
+    vbox->title( `500 Internal Server Error` ).
+     vbox->icon( src = `sap-icon://status-error` ).
+    vbox->formatted_text( lv_text ).
     
     CLEAR temp1.
     INSERT lv_url INTO TABLE temp1.
     
     CLEAR temp2.
     INSERT lv_url_app INTO TABLE temp2.
-    
-    view = z2ui5_cl_ui5=>_factory( )->_ns_m( )->shell( )->illustratedmessage(
-        enableformattedtext = abap_true
-        illustrationtype    = `sapIllus-ErrorScreen`
-        title               = `500 Internal Server Error`
-        description         = lv_text
-      )->additionalcontent(
+    vbox->hbox(
         )->button(
             text  = `Home`
             type  = `Emphasized`
@@ -76,7 +95,8 @@ CLASS Z2UI5_CL_CORE_APP_ERROR IMPLEMENTATION.
             text  = `Restart`
             press = client->_event_client( val = client->cs_event-location_reload t_arg  = temp2 ) ).
 
-    client->view_display( view->_stringify( ) ).
+
+    client->view_display( view->stringify( ) ).
     client->popup_destroy( ).
 
   ENDMETHOD.
