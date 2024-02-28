@@ -55,11 +55,11 @@ CLASS lcl_github IMPLEMENTATION.
     INSERT temp20 INTO TABLE temp19.
     temp20-name = `Generic Search Help`.
     temp20-descr = `Popups with Search Helps, dynamically created based on imported values.`.
-    temp20-author_link = `https://github.com/oblomov-dev`.
-    temp20-author_name = `oblomov`.
+    temp20-author_link = `https://github.com/axelmohnen`.
+    temp20-author_name = `axelmohnen`.
     temp20-check_standard_abap = abap_true.
     temp20-check_abap_for_cloud = abap_true.
-    temp20-link = `https://github.com/oblomov-dev/a2UI5-generic_search_help`.
+    temp20-link = `https://github.com/axelmohnen/a2UI5-generic_search_hlp`.
     INSERT temp20 INTO TABLE temp19.
     result = temp19.
 
