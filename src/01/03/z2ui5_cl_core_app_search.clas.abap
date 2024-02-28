@@ -139,10 +139,9 @@ CLASS z2ui5_cl_core_app_search IMPLEMENTATION.
 
   METHOD view_display.
 
-
-    DATA page TYPE REF TO z2ui5_cl_xml_view.
+ DATA page TYPE REF TO z2ui5_cl_xml_view.
     DATA temp4 TYPE string_table.
-    DATA pages TYPE REF TO z2ui5_cl_xml_view.
+      DATA pages TYPE REF TO z2ui5_cl_xml_view.
     DATA page_all TYPE REF TO z2ui5_cl_xml_view.
     DATA temp6 LIKE LINE OF mt_apps.
     DATA lr_app LIKE REF TO temp6.
@@ -156,22 +155,14 @@ CLASS z2ui5_cl_core_app_search IMPLEMENTATION.
     DATA row TYPE REF TO z2ui5_cl_xml_view.
     DATA page_addon TYPE REF TO z2ui5_cl_xml_view.
     DATA temp11 TYPE REF TO lcl_github.
-    page = z2ui5_cl_xml_view=>factory(
-          )->shell(
-      )->tool_page(
-          )->header( `tnt`
-                            )->tool_header(
-                            )->title( `abap2UI5 - App Finder`
-                              )->get_parent(
-                            )->get_parent( )->sub_header( `tnt`
-                            )->tool_header( ).
+ page = z2ui5_cl_xml_view=>factory(    )->shell( )->page( `abap2UI5 - App Finder`
+    )->content( ).
 
     
     CLEAR temp4.
     INSERT `NavCon` INTO TABLE temp4.
     INSERT `${$parameters>/selectedKey}` INTO TABLE temp4.
-    
-    pages = page->icon_tab_header( selectedkey    = client->_bind_edit( mv_selected_key )
+    page->icon_tab_header( selectedkey    = client->_bind_edit( mv_selected_key )
                                                  select = client->_event_client(
                                                     val   = client->cs_event-nav_container_to
                                                     t_arg = temp4 )
@@ -185,9 +176,9 @@ CLASS z2ui5_cl_core_app_search IMPLEMENTATION.
                                                        text = `Apps on GitHub` )->get_parent(
                                    )->icon_tab_filter( key  = `page_addon`
                                                        text = `Addons on GitHub`
-                                 )->get_parent( )->get_parent( )->get_parent( )->get_parent( )->get_parent(
-                               )->main_contents(
-                                 )->nav_container( id                    = `NavCon`
+                                ).
+      
+      pages =   page->nav_container( id                    = `NavCon`
                                                    initialpage           = `page_favs`
                                                    defaulttransitionname = `flip`
                                     )->pages( ).
