@@ -15,11 +15,11 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lv_payload TYPE string.
     DATA lo_mapper TYPE REF TO z2ui5_cl_core_json_srv.
     DATA ls_result TYPE z2ui5_if_core_types=>ty_s_http_request_post.
-    DATA temp10 TYPE z2ui5_if_core_types=>ty_s_http_request_post.
-    DATA ls_exp LIKE temp10.
+    DATA temp12 TYPE z2ui5_if_core_types=>ty_s_http_request_post.
+    DATA ls_exp LIKE temp12.
     DATA lt_tree TYPE z2ui5_if_ajson_types=>ty_nodes_ts.
-    DATA temp11 LIKE LINE OF lt_tree.
-    DATA temp12 LIKE sy-tabix.
+    DATA temp13 LIKE LINE OF lt_tree.
+    DATA temp14 LIKE sy-tabix.
     lv_payload = `{"XX":{"NAME":"test"},"S_FRONT":{"ID":"ID_NR","EDIT":{"NAME":"test"},"ORIGIN":"ORIGIN","PATHNAME":"PATHNAME","SEARCH":"SEARCH"` &&
             `,"VIEW":"MAIN","EVENT":"BUTTON_POST","T_EVENT_ARG":[]}}`.
 
@@ -29,16 +29,16 @@ CLASS ltcl_test IMPLEMENTATION.
     ls_result = lo_mapper->request_json_to_abap( lv_payload ).
 
     
-    CLEAR temp10.
-    CLEAR temp10-s_front.
-    temp10-s_front-id = `ID_NR`.
-    temp10-s_front-view = `MAIN`.
-    temp10-s_front-origin = `ORIGIN`.
-    temp10-s_front-pathname = `PATHNAME`.
-    temp10-s_front-search = `SEARCH`.
-    temp10-s_front-event = `BUTTON_POST`.
+    CLEAR temp12.
+    CLEAR temp12-s_front.
+    temp12-s_front-id = `ID_NR`.
+    temp12-s_front-view = `MAIN`.
+    temp12-s_front-origin = `ORIGIN`.
+    temp12-s_front-pathname = `PATHNAME`.
+    temp12-s_front-search = `SEARCH`.
+    temp12-s_front-event = `BUTTON_POST`.
     
-    ls_exp = temp10.
+    ls_exp = temp12.
 
     cl_abap_unit_assert=>assert_equals(
         act = ls_result-s_front
@@ -49,14 +49,14 @@ CLASS ltcl_test IMPLEMENTATION.
 
     
     
-    temp12 = sy-tabix.
-    READ TABLE lt_tree WITH KEY name = `NAME` INTO temp11.
-    sy-tabix = temp12.
+    temp14 = sy-tabix.
+    READ TABLE lt_tree WITH KEY name = `NAME` INTO temp13.
+    sy-tabix = temp14.
     IF sy-subrc <> 0.
       ASSERT 1 = 0.
     ENDIF.
     cl_abap_unit_assert=>assert_equals(
-       act = temp11-value
+       act = temp13-value
        exp = `test` ).
 
     cl_abap_unit_assert=>assert_equals(
