@@ -187,12 +187,8 @@ CLASS z2ui5_cl_core_dissolve_srv IMPLEMENTATION.
   METHOD main.
     DATA temp5 LIKE sy-subrc.
 
-*    IF mt_attri->* IS INITIAL.
-*      main_init( ).
-*      RETURN.
-*    ENDIF.
-
     main_init( ).
+
     
     READ TABLE mt_attri->* WITH KEY check_dissolved = abap_false TRANSPORTING NO FIELDS.
     temp5 = sy-subrc.
@@ -204,27 +200,34 @@ CLASS z2ui5_cl_core_dissolve_srv IMPLEMENTATION.
 
 
   METHOD main_init.
-        DATA temp6 LIKE REF TO mo_app.
+    DATA temp6 LIKE REF TO mo_app.
 DATA temp1 TYPE z2ui5_if_core_types=>ty_s_attri.
 DATA ls_attri LIKE temp1.
-        DATA temp7 LIKE REF TO ls_attri.
+    DATA temp7 LIKE REF TO ls_attri.
 DATA lt_init TYPE z2ui5_if_core_types=>ty_t_attri.
-    TRY.
-        
-        GET REFERENCE OF mo_app INTO temp6.
+
+    IF mt_attri->* IS NOT INITIAL.
+      LOOP AT mt_attri->* TRANSPORTING NO FIELDS
+        WHERE bind_type <> z2ui5_if_core_types=>cs_bind_type-one_time.
+      ENDLOOP.
+      IF sy-subrc = 0.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    
+    GET REFERENCE OF mo_app INTO temp6.
 
 CLEAR temp1.
 temp1-r_ref = temp6.
 
 ls_attri = temp1.
-        
-        GET REFERENCE OF ls_attri INTO temp7.
+    
+    GET REFERENCE OF ls_attri INTO temp7.
 
 lt_init = diss_oref( temp7 ).
-        INSERT LINES OF lt_init INTO TABLE mt_attri->*.
+    INSERT LINES OF lt_init INTO TABLE mt_attri->*.
 
-      CATCH cx_root.
-    ENDTRY.
   ENDMETHOD.
 
 
