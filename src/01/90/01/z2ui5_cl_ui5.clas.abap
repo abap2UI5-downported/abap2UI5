@@ -34,18 +34,6 @@ CLASS z2ui5_cl_ui5 DEFINITION
     METHODS _ns
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_ui5.
 
-    METHODS _ns_ndc
-      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_ui5_ndc.
-
-    METHODS _ns_m
-      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_ui5_m.
-
-    METHODS _ns_ui
-      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_ui5_ui.
-
-    METHODS _ns_suite
-      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_ui5_suite.
-
     METHODS _ns_z2ui5
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_ui5_z2ui5.
 
@@ -53,16 +41,16 @@ CLASS z2ui5_cl_ui5 DEFINITION
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_ui5_html.
 
     METHODS _ns_webc
-      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_ui5_ui_webc.
+      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_ui5_webc.
 
     METHODS constructor
-      IMPORTING node TYPE REF TO z2ui5_cl_ui5_tree_xml OPTIONAL.
+      IMPORTING node TYPE REF TO z2ui5_cl_ui5__tree OPTIONAL.
 
     METHODS _stringify
       RETURNING VALUE(result) TYPE string.
 
   PROTECTED SECTION.
-    DATA _node TYPE REF TO z2ui5_cl_ui5_tree_xml.
+    DATA _node TYPE REF TO z2ui5_cl_ui5__tree.
 
     CLASS-METHODS _2xml
       IMPORTING obj           TYPE REF TO z2ui5_cl_ui5
@@ -327,7 +315,7 @@ CLASS z2ui5_cl_ui5 IMPLEMENTATION.
 
   METHOD _add.
         DATA temp7 TYPE string.
-    DATA lo_node TYPE REF TO z2ui5_cl_ui5_tree_xml.
+    DATA lo_node TYPE REF TO z2ui5_cl_ui5__tree.
     DATA result2 TYPE REF TO z2ui5_cl_ui5.
     TRY.
         
@@ -337,7 +325,7 @@ CLASS z2ui5_cl_ui5 IMPLEMENTATION.
     ENDTRY.
 
     
-    CREATE OBJECT lo_node TYPE z2ui5_cl_ui5_tree_xml.
+    CREATE OBJECT lo_node TYPE z2ui5_cl_ui5__tree.
     
     CREATE OBJECT result2 TYPE z2ui5_cl_ui5 EXPORTING NODE = lo_node.
     result2->_node->mv_name = n.
@@ -430,18 +418,6 @@ CLASS z2ui5_cl_ui5 IMPLEMENTATION.
     CREATE OBJECT result EXPORTING NODE = _node.
   ENDMETHOD.
 
-  METHOD _ns_ndc.
-    CREATE OBJECT result EXPORTING NODE = _node.
-  ENDMETHOD.
-
-  METHOD _ns_m.
-    CREATE OBJECT result EXPORTING NODE = _node.
-  ENDMETHOD.
-
-  METHOD _ns_ui.
-    CREATE OBJECT result EXPORTING NODE = _node.
-  ENDMETHOD.
-
   METHOD _ns_z2ui5.
     CREATE OBJECT result EXPORTING NODE = _node.
   ENDMETHOD.
@@ -450,10 +426,6 @@ CLASS z2ui5_cl_ui5 IMPLEMENTATION.
     DATA lo_node TYPE REF TO z2ui5_cl_ui5.
     CREATE OBJECT lo_node TYPE z2ui5_cl_ui5 EXPORTING NODE = _node->mo_root.
     result = _2xml( lo_node ).
-  ENDMETHOD.
-
-  METHOD _ns_suite.
-    CREATE OBJECT result EXPORTING NODE = _node.
   ENDMETHOD.
 
   METHOD _add_c.
