@@ -10436,7 +10436,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp302-v = width.
     INSERT temp302 INTO TABLE temp301.
     _generic( name   = `RangeSlider`
-              ns     = `webc`
+*              ns     = `webc`
               t_prop = temp301 ).
   ENDMETHOD.
 

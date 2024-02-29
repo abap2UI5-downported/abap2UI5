@@ -155,7 +155,7 @@ CLASS z2ui5_cl_core_app_search IMPLEMENTATION.
     DATA row TYPE REF TO z2ui5_cl_xml_view.
     DATA page_addon TYPE REF TO z2ui5_cl_xml_view.
     DATA temp11 TYPE REF TO lcl_github.
- page = z2ui5_cl_xml_view=>factory(    )->shell( )->page( `abap2UI5 - App Finder`
+ page = z2ui5_cl_xml_view=>factory( )->shell( )->page( `abap2UI5 - App Finder`
     )->content( ).
 
     
