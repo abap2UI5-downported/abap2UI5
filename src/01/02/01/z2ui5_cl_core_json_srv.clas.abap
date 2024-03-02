@@ -46,8 +46,6 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
     DATA lr_attri LIKE REF TO temp1.
           DATA lo_val_front TYPE REF TO z2ui5_if_ajson.
           FIELD-SYMBOLS <val> TYPE data.
-              DATA temp2 LIKE LINE OF lo_val_front->mt_json_tree.
-              DATA temp3 LIKE sy-tabix.
           DATA x TYPE REF TO cx_root.
     LOOP AT t_attri->* REFERENCE INTO lr_attri
       WHERE bind_type = z2ui5_if_core_types=>cs_bind_type-two_way
@@ -71,21 +69,13 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
           
           ASSIGN lr_attri->r_ref->* TO <val>.
 
-          TRY.
+*          TRY.
               lo_val_front->to_abap(
                 IMPORTING
                   ev_container = <val> ).
-            CATCH cx_root.
-              
-              
-              temp3 = sy-tabix.
-              READ TABLE lo_val_front->mt_json_tree INDEX 1 INTO temp2.
-              sy-tabix = temp3.
-              IF sy-subrc <> 0.
-                ASSERT 1 = 0.
-              ENDIF.
-              <val> = temp2-value.
-          ENDTRY.
+*            CATCH cx_root.
+*              <val> = lo_val_front->mt_json_tree[ 1 ]-value.
+*          ENDTRY.
           
         CATCH cx_root INTO x.
           ASSERT x IS BOUND.
@@ -97,35 +87,35 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
 
 
   METHOD model_back_to_front.
-        DATA temp4 TYPE REF TO z2ui5_if_ajson.
-        DATA ajson_result LIKE temp4.
-        DATA temp5 LIKE LINE OF t_attri->*.
-        DATA lr_attri LIKE REF TO temp5.
-            DATA temp6 TYPE REF TO z2ui5_if_ajson.
-            DATA ajson LIKE temp6.
-            DATA temp7 TYPE REF TO z2ui5_if_ajson.
+        DATA temp2 TYPE REF TO z2ui5_if_ajson.
+        DATA ajson_result LIKE temp2.
+        DATA temp3 LIKE LINE OF t_attri->*.
+        DATA lr_attri LIKE REF TO temp3.
+            DATA temp4 TYPE REF TO z2ui5_if_ajson.
+            DATA ajson LIKE temp4.
+            DATA temp5 TYPE REF TO z2ui5_if_ajson.
               FIELD-SYMBOLS <attribute> TYPE data.
-        DATA temp8 TYPE string.
+        DATA temp6 TYPE string.
         DATA x TYPE REF TO cx_root.
     TRY.
 
         
-        temp4 ?= z2ui5_cl_ajson=>create_empty( ).
+        temp2 ?= z2ui5_cl_ajson=>create_empty( ).
         
-        ajson_result = temp4.
+        ajson_result = temp2.
         
         
         LOOP AT t_attri->* REFERENCE INTO lr_attri WHERE bind_type <> ``.
 
           IF lr_attri->custom_mapper IS BOUND.
             
-            temp6 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = lr_attri->custom_mapper ).
+            temp4 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = lr_attri->custom_mapper ).
             
-            ajson = temp6.
+            ajson = temp4.
           ELSE.
             
-            temp7 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_upper_case( ) ).
-            ajson = temp7.
+            temp5 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_upper_case( ) ).
+            ajson = temp5.
           ENDIF.
 
           CASE lr_attri->bind_type.
@@ -154,11 +144,11 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
         result = ajson_result->stringify( ).
         
         IF result IS INITIAL.
-          temp8 = `{}`.
+          temp6 = `{}`.
         ELSE.
-          temp8 = result.
+          temp6 = result.
         ENDIF.
-        result = temp8.
+        result = temp6.
 
         
       CATCH cx_root INTO x.
@@ -168,8 +158,8 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
 
 
   METHOD request_json_to_abap.
-        DATA temp9 TYPE REF TO z2ui5_if_ajson.
-        DATA lo_ajson LIKE temp9.
+        DATA temp7 TYPE REF TO z2ui5_if_ajson.
+        DATA lo_ajson LIKE temp7.
         DATA lv_model_edit_name TYPE string.
         DATA lo_model TYPE REF TO z2ui5_if_ajson.
         DATA temp1 TYPE xsdboolean.
@@ -177,9 +167,9 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
     TRY.
 
         
-        temp9 ?= z2ui5_cl_ajson=>parse( val ).
+        temp7 ?= z2ui5_cl_ajson=>parse( val ).
         
-        lo_ajson = temp9.
+        lo_ajson = temp7.
 
         
         lv_model_edit_name = `/` && z2ui5_if_core_types=>cs_ui5-two_way_model.
@@ -220,22 +210,22 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
 
 
   METHOD response_abap_to_json.
-        DATA temp10 TYPE REF TO z2ui5_if_ajson.
-        DATA ajson_result LIKE temp10.
-        DATA temp11 TYPE REF TO z2ui5_cl_core_json_srv.
+        DATA temp8 TYPE REF TO z2ui5_if_ajson.
+        DATA ajson_result LIKE temp8.
+        DATA temp9 TYPE REF TO z2ui5_cl_core_json_srv.
         DATA lv_frontend TYPE string.
         DATA x TYPE REF TO cx_root.
     TRY.
 
         
-        temp10 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_upper_case( ) ).
+        temp8 ?= z2ui5_cl_ajson=>create_empty( ii_custom_mapping = z2ui5_cl_ajson_mapping=>create_upper_case( ) ).
         
-        ajson_result = temp10.
+        ajson_result = temp8.
 
         ajson_result->set( iv_path = `/` iv_val = val-s_front ).
         
-        CREATE OBJECT temp11 TYPE z2ui5_cl_core_json_srv.
-        ajson_result = ajson_result->filter( temp11 ).
+        CREATE OBJECT temp9 TYPE z2ui5_cl_core_json_srv.
+        ajson_result = ajson_result->filter( temp9 ).
         
         lv_frontend = ajson_result->stringify( ).
 
