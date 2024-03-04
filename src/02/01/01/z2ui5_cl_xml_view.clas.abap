@@ -1974,6 +1974,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !includeiteminselection TYPE abap_bool OPTIONAL
         !inset                  TYPE abap_bool OPTIONAL
         !width                  TYPE clike OPTIONAL
+        !toggleopenstate        TYPE clike OPTIONAL
       RETURNING
         VALUE(result)           TYPE REF TO z2ui5_cl_xml_view .
     METHODS standard_tree_item
@@ -3570,7 +3571,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_xml_view IMPLEMENTATION.
+CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
 
   METHOD actions.
@@ -12552,6 +12553,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp397 INTO TABLE temp396.
     temp397-n = `mode`.
     temp397-v = mode.
+    INSERT temp397 INTO TABLE temp396.
+    temp397-n = `toggleOpenState`.
+    temp397-v = toggleopenstate.
     INSERT temp397 INTO TABLE temp396.
     temp397-n = `width`.
     temp397-v = width.
