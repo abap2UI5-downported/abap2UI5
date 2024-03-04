@@ -63,12 +63,6 @@ CLASS z2ui5_cl_popup_table IMPLEMENTATION.
     
     tab = popup->table(
        client->_bind( <tab_out> ) ).
-*           )->header_toolbar(
-*             )->overflow_toolbar(
-*                 )->toolbar_spacer(
-*                 )->button( text = `Filter` press = client->_event( `PREVIEW_FILTER` ) icon = `sap-icon://filter`
-*           )->button(  text = `Display Popup` press = client->_event( `BUTTON_START` ) type = `Emphasized`
-*            )->get_parent( )->get_parent( ).
 
     
     lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_struc( <tab_out> ).
@@ -90,11 +84,7 @@ CLASS z2ui5_cl_popup_table IMPLEMENTATION.
     ENDLOOP.
 
     popup->get_parent(
-        )->footer( )->overflow_toolbar(
-            )->toolbar_spacer(
-*              )->button(
-*                  text  = 'Cancel'
-*                  press = client->_event( 'BUTTON_TEXTAREA_CANCEL' )
+        )->buttons(
             )->button(
                 text  = 'OK'
                 press = client->_event( 'BUTTON_CONFIRM' )

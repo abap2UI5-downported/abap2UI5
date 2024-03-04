@@ -95,8 +95,7 @@ CLASS Z2UI5_CL_POPUP_PDF IMPLEMENTATION.
                         name   = `iframe`
                         t_prop = temp1
               )->get_parent( )->get_parent( )->get_parent(
-              )->footer( )->overflow_toolbar(
-                  )->toolbar_spacer(
+              )->buttons(
                   )->button(
                       text  = button_text_cancel
                       press = client->_event( 'BUTTON_CANCEL' )
