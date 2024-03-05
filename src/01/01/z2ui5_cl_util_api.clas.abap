@@ -853,6 +853,8 @@ DATA lt_cols TYPE temp2.
     TRY.
 
         z2ui5_cl_ajson=>parse( val )->to_abap(
+          exporting
+          iv_corresponding = abap_true
           IMPORTING
             ev_container = data ).
 
