@@ -121,6 +121,8 @@ CLASS z2ui5_cl_xml_view_cc DEFINITION
         !uploadbuttontext  TYPE clike OPTIONAL
         !checkdirectupload TYPE clike OPTIONAL
         !filetype          TYPE clike OPTIONAL
+        !icon              TYPE clike OPTIONAL
+        !ENABLED           TYPE clike OPTIONAL
       RETURNING
         VALUE(result)      TYPE REF TO z2ui5_cl_xml_view .
 
@@ -360,6 +362,12 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     INSERT temp10 INTO TABLE temp9.
     temp10-n = `checkDirectUpload`.
     temp10-v = z2ui5_cl_util=>boolean_abap_2_json( checkdirectupload ).
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `icon`.
+    temp10-v = icon.
+    INSERT temp10 INTO TABLE temp9.
+    temp10-n = `enabled`.
+    temp10-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
     INSERT temp10 INTO TABLE temp9.
     mo_view->_generic( name = `FileUploader`
               ns            = `z2ui5`
