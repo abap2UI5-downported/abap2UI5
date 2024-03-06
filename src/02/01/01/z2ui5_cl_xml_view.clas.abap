@@ -1977,6 +1977,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         VALUE(result)          TYPE REF TO z2ui5_cl_xml_view .
     METHODS tree
       IMPORTING
+        !id                     TYPE clike OPTIONAL
         !items                  TYPE clike OPTIONAL
         !headertext             TYPE clike OPTIONAL
         !footertext             TYPE clike OPTIONAL
@@ -12642,6 +12643,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     DATA temp401 LIKE LINE OF temp400.
     CLEAR temp400.
     
+    temp401-n = `id`.
+    temp401-v = id.
+    INSERT temp401 INTO TABLE temp400.
     temp401-n = `items`.
     temp401-v = items.
     INSERT temp401 INTO TABLE temp400.
