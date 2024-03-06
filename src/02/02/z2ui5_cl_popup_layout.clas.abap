@@ -1,4 +1,4 @@
-CLASS z2ui5_cl_popup_layout_v2 DEFINITION
+CLASS z2ui5_cl_popup_layout DEFINITION
   PUBLIC
   FINAL
   CREATE PUBLIC .
@@ -67,7 +67,7 @@ CLASS z2ui5_cl_popup_layout_v2 DEFINITION
         !delete_layout   TYPE abap_bool OPTIONAL
         !extended_layout TYPE abap_bool OPTIONAL
       RETURNING
-        VALUE(result)    TYPE REF TO z2ui5_cl_popup_layout_v2.
+        VALUE(result)    TYPE REF TO z2ui5_cl_popup_layout.
 
     TYPES:
       BEGIN OF ty_s_result,
@@ -141,12 +141,12 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_popup_layout_v2 IMPLEMENTATION.
+CLASS z2ui5_cl_popup_layout IMPLEMENTATION.
 
 
   METHOD db_delete_layout.
 
-    DATA layout TYPE z2ui5_cl_popup_layout_v2=>ty_s_layout.
+    DATA layout TYPE z2ui5_cl_popup_layout=>ty_s_layout.
     layout = get_selected_layout( ).
 
     DELETE  z2ui5_t001 FROM layout-s_head.
@@ -240,9 +240,9 @@ CLASS z2ui5_cl_popup_layout_v2 IMPLEMENTATION.
 
     DATA temp1 TYPE string.
     DATA temp2 TYPE string.
-      FIELD-SYMBOLS <temp2> TYPE z2ui5_cl_popup_layout_v2=>ty_s_layo.
+      FIELD-SYMBOLS <temp2> TYPE z2ui5_cl_popup_layout=>ty_s_layo.
 DATA t001 LIKE REF TO <temp2>.
-        FIELD-SYMBOLS <temp3> TYPE z2ui5_cl_popup_layout_v2=>ty_s_layo.
+        FIELD-SYMBOLS <temp3> TYPE z2ui5_cl_popup_layout=>ty_s_layo.
     temp1 = ms_layout-s_head-classname.
     
     temp2 = ms_layout-s_head-tab.
@@ -279,8 +279,8 @@ GET REFERENCE OF <temp3> INTO t001.
 
   METHOD get_selected_layout.
 
-    DATA temp4 TYPE z2ui5_cl_popup_layout_v2=>ty_s_layo.
-    DATA temp5 TYPE z2ui5_cl_popup_layout_v2=>ty_s_layo.
+    DATA temp4 TYPE z2ui5_cl_popup_layout=>ty_s_layo.
+    DATA temp5 TYPE z2ui5_cl_popup_layout=>ty_s_layo.
     DATA t001 LIKE temp4.
     CLEAR temp4.
     
@@ -324,13 +324,13 @@ GET REFERENCE OF <temp3> INTO t001.
     DATA temp6 LIKE LINE OF t_comp.
     DATA lr_comp LIKE REF TO temp6.
       DATA temp7 TYPE z2ui5_t002.
-    DATA t_t001 TYPE z2ui5_cl_popup_layout_v2=>ty_t_t001.
+    DATA t_t001 TYPE z2ui5_cl_popup_layout=>ty_t_t001.
     DATA temp8 TYPE z2ui5_t001.
     DATA temp9 TYPE z2ui5_t001.
     DATA def LIKE temp8.
       DATA temp10 TYPE z2ui5_t001.
       DATA temp11 TYPE z2ui5_t001.
-      DATA t_t002 TYPE z2ui5_cl_popup_layout_v2=>ty_t_t002.
+      DATA t_t002 TYPE z2ui5_cl_popup_layout=>ty_t_t002.
       DATA temp12 LIKE LINE OF result-t_layout.
       DATA layout LIKE REF TO temp12.
             FIELD-SYMBOLS <temp13> TYPE z2ui5_t002.
@@ -503,9 +503,9 @@ GET REFERENCE OF <temp13> INTO t002.
 
   METHOD on_init.
 
-    DATA temp14 TYPE z2ui5_cl_popup_layout_v2=>fixvalues.
+    DATA temp14 TYPE z2ui5_cl_popup_layout=>fixvalues.
     DATA temp15 LIKE LINE OF temp14.
-    DATA temp16 TYPE z2ui5_cl_popup_layout_v2=>fixvalues.
+    DATA temp16 TYPE z2ui5_cl_popup_layout=>fixvalues.
     DATA temp17 LIKE LINE OF temp16.
     CLEAR temp14.
     
@@ -965,9 +965,9 @@ DATA del TYPE temp2.
 
 
   METHOD z2ui5_if_app~main.
-          DATA temp22 TYPE REF TO z2ui5_cl_popup_layout_v2.
+          DATA temp22 TYPE REF TO z2ui5_cl_popup_layout.
           DATA app LIKE temp22.
-          DATA ls_result TYPE z2ui5_cl_popup_layout_v2=>ty_s_result.
+          DATA ls_result TYPE z2ui5_cl_popup_layout=>ty_s_result.
 
     me->client = client.
 
