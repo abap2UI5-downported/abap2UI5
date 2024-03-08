@@ -1,48 +1,56 @@
 CLASS z2ui5_cl_popup_to_select DEFINITION
   PUBLIC
   FINAL
-  CREATE PROTECTED.
+  CREATE PROTECTED .
 
   PUBLIC SECTION.
-    INTERFACES z2ui5_if_app.
 
-    CLASS-METHODS factory
-      IMPORTING
-        i_tab           TYPE STANDARD TABLE
-        i_title         TYPE clike OPTIONAL
-        i_sort_field    TYPE clike OPTIONAL
-        i_descending    TYPE abap_bool OPTIONAL
-      RETURNING
-        VALUE(r_result) TYPE REF TO z2ui5_cl_popup_to_select.
+    INTERFACES if_serializable_object .
+    INTERFACES z2ui5_if_app .
 
     TYPES:
       BEGIN OF ty_s_result,
         row             TYPE REF TO data,
         check_confirmed TYPE abap_bool,
-      END OF ty_s_result.
-    DATA ms_result TYPE ty_s_result.
+      END OF ty_s_result .
 
+    DATA ms_result TYPE ty_s_result .
+    DATA mr_tab TYPE REF TO data .
+    DATA mr_tab_popup TYPE REF TO data  ##NEEDED.
+    DATA mr_tab_popup_backup TYPE REF TO data  ##NEEDED.
+
+    CLASS-METHODS factory
+      IMPORTING
+        !i_tab              TYPE STANDARD TABLE
+        !i_title            TYPE clike OPTIONAL
+        !i_sort_field       TYPE clike OPTIONAL
+        !i_descending       TYPE abap_bool OPTIONAL
+        !i_contentwidth     TYPE clike OPTIONAL
+        !i_contentheight    TYPE clike OPTIONAL
+        !i_growingthreshold TYPE clike OPTIONAL
+      RETURNING
+        VALUE(r_result)     TYPE REF TO z2ui5_cl_popup_to_select .
     METHODS result
       RETURNING
         VALUE(result) TYPE ty_s_result.
 
-    DATA mr_tab TYPE REF TO data.
-    DATA mr_tab_popup TYPE REF TO data ##NEEDED.
-    DATA mr_tab_popup_backup TYPE REF TO data ##NEEDED.
-
   PROTECTED SECTION.
-    DATA check_initialized TYPE abap_bool.
-    DATA check_table_line TYPE abap_bool.
-    DATA client TYPE REF TO z2ui5_if_client.
-    DATA title TYPE string.
-    DATA sort_field TYPE string.
-    DATA descending TYPE abap_bool.
-    METHODS on_event.
-    METHODS display.
-    METHODS set_output_table.
-    METHODS on_event_confirm.
-    METHODS on_event_search.
 
+    DATA check_initialized TYPE abap_bool .
+    DATA check_table_line TYPE abap_bool .
+    DATA client TYPE REF TO z2ui5_if_client .
+    DATA title TYPE string .
+    DATA sort_field TYPE string .
+    DATA content_width TYPE string .
+    DATA content_height TYPE string .
+    DATA growing_threshold TYPE string .
+    DATA descending TYPE abap_bool .
+
+    METHODS on_event .
+    METHODS display .
+    METHODS set_output_table .
+    METHODS on_event_confirm .
+    METHODS on_event_search .
   PRIVATE SECTION.
 ENDCLASS.
 
@@ -50,18 +58,39 @@ ENDCLASS.
 
 CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Static Public Method Z2UI5_CL_POPUP_TO_SELECT=>FACTORY
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] I_TAB                          TYPE        STANDARD TABLE
+* | [--->] I_TITLE                        TYPE        CLIKE(optional)
+* | [--->] I_SORT_FIELD                   TYPE        CLIKE(optional)
+* | [--->] I_DESCENDING                   TYPE        ABAP_BOOL(optional)
+* | [--->] I_CONTENTWIDTH                 TYPE        CLIKE(optional)
+* | [--->] I_CONTENTHEIGHT                TYPE        CLIKE(optional)
+* | [--->] I_GROWINGTHRESHOLD             TYPE        CLIKE(optional)
+* | [<-()] R_RESULT                       TYPE REF TO Z2UI5_CL_POPUP_TO_SELECT
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD factory.
 
     CREATE OBJECT r_result.
     r_result->title = i_title.
     r_result->sort_field = i_sort_field.
     r_result->descending = i_descending.
+    r_result->content_height = i_contentheight.
+    r_result->content_width = i_contentwidth.
+    r_result->growing_threshold = i_growingthreshold.
 
     r_result->mr_tab = z2ui5_cl_util=>conv_copy_ref_data( i_tab ).
     CREATE DATA r_result->ms_result-row LIKE LINE OF i_tab.
 
   ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Protected Method Z2UI5_CL_POPUP_TO_SELECT->DISPLAY
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD display.
 
     FIELD-SYMBOLS <tab_out> TYPE STANDARD TABLE.
@@ -101,6 +130,9 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
               search  = client->_event( val = 'SEARCH'  t_arg = temp1 )
               confirm = client->_event( val = 'CONFIRM' t_arg = temp2 )
               growing = abap_true
+              contentwidth = content_width
+              contentheight = content_height
+              growingthreshold = growing_threshold
               title   = title ).
 
     
@@ -143,6 +175,11 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method Z2UI5_CL_POPUP_TO_SELECT->Z2UI5_IF_APP~MAIN
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] CLIENT                         TYPE REF TO Z2UI5_IF_CLIENT
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD z2ui5_if_app~main.
 
     me->client = client.
@@ -158,6 +195,11 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Protected Method Z2UI5_CL_POPUP_TO_SELECT->ON_EVENT
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD on_event.
 
     CASE client->get( )-event.
@@ -177,6 +219,12 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
 
   ENDMETHOD.
 
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method Z2UI5_CL_POPUP_TO_SELECT->RESULT
+* +-------------------------------------------------------------------------------------------------+
+* | [<-()] RESULT                         TYPE        TY_S_RESULT
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD result.
 
     result = ms_result.
@@ -184,6 +232,10 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Protected Method Z2UI5_CL_POPUP_TO_SELECT->SET_OUTPUT_TABLE
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD set_output_table.
 
     FIELD-SYMBOLS <row> TYPE any.
@@ -277,6 +329,10 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Protected Method Z2UI5_CL_POPUP_TO_SELECT->ON_EVENT_CONFIRM
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD on_event_confirm.
 
     FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
@@ -312,6 +368,10 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
   ENDMETHOD.
 
 
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Protected Method Z2UI5_CL_POPUP_TO_SELECT->ON_EVENT_SEARCH
+* +-------------------------------------------------------------------------------------------------+
+* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD on_event_search.
 
     FIELD-SYMBOLS <tab_out> TYPE STANDARD TABLE.
@@ -359,5 +419,4 @@ CLASS z2ui5_cl_popup_to_select IMPLEMENTATION.
     client->popup_model_update( ).
 
   ENDMETHOD.
-
 ENDCLASS.

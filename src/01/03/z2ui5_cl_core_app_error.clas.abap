@@ -35,16 +35,26 @@ CLASS z2ui5_cl_core_app_error IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
 
     DATA lv_url TYPE string.
-    DATA lv_url_app TYPE string.
+    DATA lv_url_app_start TYPE string.
     DATA lv_text TYPE string.
     DATA lx_error LIKE mx_error.
     DATA view TYPE REF TO z2ui5_cl_xml_view.
     DATA vbox TYPE REF TO z2ui5_cl_xml_view.
     DATA temp1 TYPE string_table.
-    DATA temp2 TYPE string_table.
     lv_url = shift_left( val = client->get( )-s_config-origin && client->get( )-s_config-pathname sub = ` ` ).
     
-    lv_url_app = lv_url && client->get( )-s_config-search.
+    lv_url_app_start = lv_url && client->get( )-s_config-search.
+
+*    TRY.
+*        DATA(lo_app) = client->get_app( client->get( )-s_draft-id_prev ).
+*        DATA(lv_name) = z2ui5_cl_util=>rtti_get_classname_by_ref( lo_app ).
+*        DATA(lv_url_app) =  z2ui5_cl_util=>app_get_url(
+*             client    = client
+*             classname = lv_name
+*         ).
+*      CATCH cx_root.
+*    ENDTRY.
+
     
     lv_text = ``.
     
@@ -68,18 +78,19 @@ CLASS z2ui5_cl_core_app_error IMPLEMENTATION.
     vbox->formatted_text( lv_text ).
     
     CLEAR temp1.
-    INSERT lv_url INTO TABLE temp1.
-    
-    CLEAR temp2.
-    INSERT lv_url_app INTO TABLE temp2.
+    INSERT lv_url_app_start INTO TABLE temp1.
     vbox->hbox(
-        )->button(
-            text  = `Home`
-            type  = `Emphasized`
-            press = client->_event_client( val = client->cs_event-location_reload t_arg = temp1 )
+*        )->button(
+*            text  = `Home`
+*            press = client->_event_client( val = client->cs_event-location_reload t_arg = VALUE #( ( lv_url ) ) )
         )->button(
             text  = `Restart`
-            press = client->_event_client( val = client->cs_event-location_reload t_arg = temp2 ) ).
+            type  = `Emphasized`
+            press = client->_event_client( val = client->cs_event-location_reload t_arg = temp1 )
+*        )->button(
+*            text  = `Restart App`
+*            press = client->_event_client( val = client->cs_event-location_reload t_arg = VALUE #( ( lv_url_app ) ) )
+             ).
     client->view_display( view->stringify( ) ).
     client->popup_destroy( ).
 

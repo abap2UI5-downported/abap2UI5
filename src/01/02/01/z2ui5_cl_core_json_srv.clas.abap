@@ -70,9 +70,9 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
           ASSIGN lr_attri->r_ref->* TO <val>.
 
 *          TRY.
-              lo_val_front->to_abap(
-                IMPORTING
-                  ev_container = <val> ).
+          lo_val_front->to_abap(
+            IMPORTING
+              ev_container = <val> ).
 *            CATCH cx_root.
 *              <val> = lo_val_front->mt_json_tree[ 1 ]-value.
 *          ENDTRY.
@@ -163,6 +163,7 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
         DATA lv_model_edit_name TYPE string.
         DATA lo_model TYPE REF TO z2ui5_if_ajson.
         DATA temp1 TYPE xsdboolean.
+            DATA lo_comp LIKE result-s_front-o_comp_data.
         DATA x TYPE REF TO cx_root.
     TRY.
 
@@ -187,18 +188,33 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
             IMPORTING
                 ev_container    = result-s_front ).
 
+        result-s_front-o_comp_data = lo_ajson->slice( `/COMPDATA` ).
+
         
         temp1 = boolc( result-s_front-search CS `scenario=LAUNCHPAD` ).
         result-s_control-check_launchpad = temp1.
         IF result-s_front-id IS NOT INITIAL.
           RETURN.
         ENDIF.
-        result-s_control-app_start = z2ui5_cl_util=>c_trim_upper( result-s_front-app_start ).
+
+        TRY.
+            
+            lo_comp = result-s_front-o_comp_data.
+            result-s_control-app_start = lo_comp->get( `/startupParameters/app_start/1` ).
+            result-s_control-app_start = z2ui5_cl_util=>c_trim_upper( result-s_control-app_start ).
+          CATCH cx_root.
+        ENDTRY.
+
         IF result-s_control-app_start IS NOT INITIAL.
+          IF result-s_control-app_start(1) = `-`.
+            REPLACE FIRST OCCURRENCE OF `-` IN result-s_control-app_start WITH `/`.
+            REPLACE FIRST OCCURRENCE OF `-` IN result-s_control-app_start WITH `/`.
+          ENDIF.
           RETURN.
         ENDIF.
+
         result-s_control-app_start = z2ui5_cl_util=>c_trim_upper(
-            z2ui5_cl_util=>url_param_get( val = `app_start` url = result-s_front-search ) ).
+        z2ui5_cl_util=>url_param_get( val = `app_start` url = result-s_front-search ) ).
 
         
       CATCH cx_root INTO x.

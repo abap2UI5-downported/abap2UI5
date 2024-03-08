@@ -39,6 +39,10 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
 
   METHOD z2ui5_if_client~get.
+        DATA lo_params TYPE REF TO z2ui5_if_ajson.
+        DATA temp1 LIKE LINE OF lo_params->mt_json_tree.
+        DATA lr_comp LIKE REF TO temp1.
+          DATA temp2 TYPE z2ui5_if_types=>ty_s_name_value.
 
     CLEAR result.
     result-event = mo_action->ms_actual-event.
@@ -48,24 +52,45 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     result-check_on_navigated = mo_action->ms_actual-check_on_navigated.
     MOVE-CORRESPONDING mo_action->mo_http_post->ms_request-s_front TO result-s_config.
 
+    TRY.
+        
+        lo_params = mo_action->mo_http_post->ms_request-s_front-o_comp_data->slice( `/startupParameters/` ).
+        IF lo_params IS NOT BOUND.
+          RETURN.
+        ENDIF.
+        
+        
+        LOOP AT lo_params->mt_json_tree
+            REFERENCE INTO lr_comp
+            WHERE name = `1`.
+
+          
+          CLEAR temp2.
+          temp2-n = shift_left( val = shift_right( val = lr_comp->path sub = `/` ) sub = `/` ).
+          temp2-v = lr_comp->value.
+          INSERT temp2 INTO TABLE result-t_comp_params.
+        ENDLOOP.
+      CATCH cx_root.
+    ENDTRY.
+
   ENDMETHOD.
 
 
   METHOD z2ui5_if_client~get_app.
       DATA lo_app TYPE REF TO z2ui5_cl_core_app.
-      DATA temp1 TYPE REF TO z2ui5_if_app.
-      DATA temp2 TYPE REF TO z2ui5_if_app.
+      DATA temp3 TYPE REF TO z2ui5_if_app.
+      DATA temp4 TYPE REF TO z2ui5_if_app.
 
     IF id IS NOT INITIAL.
       
       lo_app = z2ui5_cl_core_app=>db_load( id ).
       
-      temp1 ?= lo_app->mo_app.
-      result = temp1.
+      temp3 ?= lo_app->mo_app.
+      result = temp3.
     ELSE.
       
-      temp2 ?= mo_action->mo_app->mo_app.
-      result = temp2.
+      temp4 ?= mo_action->mo_app->mo_app.
+      result = temp4.
     ENDIF.
 
   ENDMETHOD.
@@ -89,23 +114,23 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
 
   METHOD z2ui5_if_client~nav_app_call.
-    DATA temp3 TYPE string.
+    DATA temp5 TYPE string.
 
     mo_action->ms_next-o_app_call = app.
 
     
     IF app->id_draft IS INITIAL.
-      temp3 = z2ui5_cl_util=>uuid_get_c32( ).
+      temp5 = z2ui5_cl_util=>uuid_get_c32( ).
     ELSE.
-      temp3 = app->id_app.
+      temp5 = app->id_app.
     ENDIF.
-    result = temp3.
+    result = temp5.
 
   ENDMETHOD.
 
 
   METHOD z2ui5_if_client~nav_app_leave.
-    DATA temp4 TYPE string.
+    DATA temp6 TYPE string.
 
     IF app IS NOT BOUND.
       app = z2ui5_if_client~get_app( z2ui5_if_client~get( )-s_draft-id_prev_app_stack ).
@@ -115,11 +140,11 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
     
     IF app->id_draft IS INITIAL.
-      temp4 = z2ui5_cl_util=>uuid_get_c32( ).
+      temp6 = z2ui5_cl_util=>uuid_get_c32( ).
     ELSE.
-      temp4 = app->id_app.
+      temp6 = app->id_app.
     ENDIF.
-    result = temp4.
+    result = temp6.
 
   ENDMETHOD.
 
@@ -242,19 +267,19 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_bind.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp5 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp7 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    CLEAR temp5.
-    temp5-path_only = path.
-    temp5-custom_filter = custom_filter.
-    temp5-custom_mapper = custom_mapper.
-    temp5-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
-    temp5-tab_index = tab_index.
+    CLEAR temp7.
+    temp7-path_only = path.
+    temp7-custom_filter = custom_filter.
+    temp7-custom_mapper = custom_mapper.
+    temp7-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
+    temp7-tab_index = tab_index.
     result = lo_bind->main(
       val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
       type   = z2ui5_if_core_types=>cs_bind_type-one_way
-      config = temp5 ).
+      config = temp7 ).
 
   ENDMETHOD.
 
@@ -271,21 +296,21 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_bind_edit.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp6 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp8 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    CLEAR temp6.
-    temp6-path_only = path.
-    temp6-custom_filter = custom_filter.
-    temp6-custom_filter_back = custom_filter_back.
-    temp6-custom_mapper = custom_mapper.
-    temp6-custom_mapper_back = custom_mapper_back.
-    temp6-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
-    temp6-tab_index = tab_index.
+    CLEAR temp8.
+    temp8-path_only = path.
+    temp8-custom_filter = custom_filter.
+    temp8-custom_filter_back = custom_filter_back.
+    temp8-custom_mapper = custom_mapper.
+    temp8-custom_mapper_back = custom_mapper_back.
+    temp8-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
+    temp8-tab_index = tab_index.
     result = lo_bind->main(
       val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
       type   = z2ui5_if_core_types=>cs_bind_type-two_way
-      config = temp6 ).
+      config = temp8 ).
 
   ENDMETHOD.
 
@@ -293,16 +318,16 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_bind_local.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp7 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp9 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    CLEAR temp7.
-    temp7-path_only = path.
-    temp7-custom_mapper = custom_mapper.
-    temp7-custom_filter = custom_filter.
+    CLEAR temp9.
+    temp9-path_only = path.
+    temp9-custom_mapper = custom_mapper.
+    temp9-custom_filter = custom_filter.
     result = lo_bind->main_local(
       val    = val
-      config = temp7 ).
+      config = temp9 ).
 
   ENDMETHOD.
 

@@ -1299,6 +1299,12 @@ DATA lt_param TYPE temp3.
                                sub  = `%3D`
                                with = '='
                                occ  = 0 ).
+
+    lv_search = replace( val  = lv_search
+                               sub  = `%26`
+                               with = '&'
+                               occ  = 0 ).
+
     lv_search = shift_left( val = lv_search
                             sub = `?` ).
     lv_search = c_trim_lower( lv_search ).
