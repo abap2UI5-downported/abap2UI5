@@ -73,7 +73,7 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_classes_impl_intf.
-    DATA mt_classes TYPE string_table.
+    DATA mt_classes TYPE z2ui5_cl_util_stmpncfctn=>tt_classes.
 
     IF sy-sysid = 'ABC'.
       RETURN.

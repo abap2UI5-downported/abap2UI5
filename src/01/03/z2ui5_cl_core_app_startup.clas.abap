@@ -32,7 +32,7 @@ CLASS z2ui5_cl_core_app_startup DEFINITION
     METHODS on_event_check.
 
   PROTECTED SECTION.
-    DATA mt_classes TYPE string_table.
+    DATA mt_classes TYPE z2ui5_cl_util_stmpncfctn=>tt_classes.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -273,7 +273,8 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
 
             
             ASSIGN ls_result-row->* TO <class>.
-            ms_home-classname = <class>.
+            ms_home = ms_home.
+MOVE-CORRESPONDING <class> TO ms_home.
             view_display_start( ).
             RETURN.
           ENDIF.

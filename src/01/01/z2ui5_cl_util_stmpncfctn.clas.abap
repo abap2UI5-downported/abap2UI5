@@ -12,6 +12,14 @@ CLASS z2ui5_cl_util_stmpncfctn DEFINITION
         long   TYPE string,
       END OF ty_data_element_texts .
 
+    TYPES:
+      BEGIN OF ts_class,
+        classname   TYPE c LENGTH 30,
+        description TYPE string,
+      END OF ts_class,
+      tt_classes TYPE STANDARD TABLE OF ts_class
+                      WITH NON-UNIQUE DEFAULT KEY.
+
     CLASS-METHODS method_get_source
       IMPORTING
         !iv_classname  TYPE clike
@@ -61,15 +69,20 @@ CLASS z2ui5_cl_util_stmpncfctn DEFINITION
       IMPORTING
         !val          TYPE clike
       RETURNING
-        VALUE(result) TYPE string_table.
+        VALUE(result) TYPE tt_classes.
 
   PROTECTED SECTION.
   PRIVATE SECTION.
+    CLASS-METHODS get_class_description_xco
+      IMPORTING
+        i_classname   TYPE ts_class-classname
+      RETURNING
+        VALUE(result) TYPE string.
 ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_UTIL_STMPNCFCTN IMPLEMENTATION.
+CLASS z2ui5_cl_util_stmpncfctn IMPLEMENTATION.
 
 
   METHOD conv_decode_x_base64.
@@ -299,10 +312,21 @@ CLASS Z2UI5_CL_UTIL_STMPNCFCTN IMPLEMENTATION.
     TYPES intkey TYPE c LENGTH 30.
     TYPES END OF ty_s_key.
     DATA ls_key TYPE ty_s_key.
+    DATA BEGIN OF ls_clskey.
+    DATA clsname TYPE c LENGTH 30.
+    DATA END OF ls_clskey.
+    DATA class TYPE REF TO data.
+        DATA temp1 TYPE z2ui5_cl_util_stmpncfctn=>tt_classes.
+        DATA implementation_name LIKE LINE OF lt_implementation_names.
+          DATA temp2 LIKE LINE OF temp1.
+          DATA temp5 TYPE z2ui5_cl_util_stmpncfctn=>ts_class-classname.
         DATA lv_fm TYPE string.
-        DATA temp1 LIKE LINE OF lt_impl.
-        DATA lr_impl LIKE REF TO temp1.
-          DATA temp2 TYPE string.
+        DATA type TYPE c LENGTH 12.
+        FIELD-SYMBOLS <class> TYPE data.
+        DATA temp3 LIKE LINE OF lt_impl.
+        DATA lr_impl LIKE REF TO temp3.
+          FIELD-SYMBOLS <description> TYPE any.
+          DATA temp4 TYPE z2ui5_cl_util_stmpncfctn=>ts_class.
 
     TRY.
 
@@ -328,7 +352,18 @@ CLASS Z2UI5_CL_UTIL_STMPNCFCTN IMPLEMENTATION.
           RECEIVING
             rt_names = lt_implementation_names.
 
-        result = lt_implementation_names.
+        
+        CLEAR temp1.
+        
+        LOOP AT lt_implementation_names INTO implementation_name.
+          
+          temp2-classname = implementation_name.
+          
+          temp5 = implementation_name.
+          temp2-description = get_class_description_xco( temp5 ).
+          INSERT temp2 INTO TABLE temp1.
+        ENDLOOP.
+        result = temp1.
 
       CATCH cx_sy_dyn_call_illegal_class.
 
@@ -344,13 +379,45 @@ CLASS Z2UI5_CL_UTIL_STMPNCFCTN IMPLEMENTATION.
           EXCEPTIONS
             not_existing = 1
             OTHERS       = 2.
+        IF sy-subrc <> 0.
+          RETURN.
+        ENDIF.
+
+        
+        type = 'SEOC_CLASS_R'.
+        CREATE DATA class TYPE (type).
+        
+        ASSIGN class->* TO <class>.
 
         
         
         LOOP AT lt_impl REFERENCE INTO lr_impl.
+
+          CLEAR <class>.
+
+          ls_clskey-clsname = lr_impl->clsname.
+
+          lv_fm = `SEO_CLASS_READ`.
+          CALL FUNCTION lv_fm
+            EXPORTING
+              clskey = ls_clskey
+            IMPORTING
+              class  = <class>.
+
           
-          temp2 = lr_impl->clsname.
-          INSERT temp2 INTO TABLE result.
+          ASSIGN
+            COMPONENT 'DESCRIPT'
+            OF STRUCTURE <class>
+            TO <description>.
+          ASSERT sy-subrc = 0.
+
+          
+          CLEAR temp4.
+          temp4-classname = lr_impl->clsname.
+          temp4-description = <description>.
+          INSERT
+            temp4
+            INTO TABLE result.
         ENDLOOP.
 
     ENDTRY.
@@ -373,21 +440,21 @@ CLASS Z2UI5_CL_UTIL_STMPNCFCTN IMPLEMENTATION.
       exists TYPE abap_bool.
 
     DATA data_element_name LIKE i_data_element_name.
-        DATA temp3 TYPE REF TO cl_abap_structdescr.
-        DATA struct_desrc LIKE temp3.
+        DATA temp5 TYPE REF TO cl_abap_structdescr.
+        DATA struct_desrc LIKE temp5.
         FIELD-SYMBOLS <ddic> TYPE data.
         DATA lo_typedescr TYPE REF TO cl_abap_typedescr.
-        DATA temp4 TYPE REF TO cl_abap_datadescr.
-        DATA data_descr LIKE temp4.
+        DATA temp6 TYPE REF TO cl_abap_datadescr.
+        DATA data_descr LIKE temp6.
     data_element_name = i_data_element_name.
 
     TRY.
         cl_abap_typedescr=>describe_by_name( 'T100' ).
 
         
-        temp3 ?= cl_abap_structdescr=>describe_by_name( 'DFIES' ).
+        temp5 ?= cl_abap_structdescr=>describe_by_name( 'DFIES' ).
         
-        struct_desrc = temp3.
+        struct_desrc = temp5.
 
         CREATE DATA ddic_ref TYPE HANDLE struct_desrc.
         
@@ -407,9 +474,9 @@ CLASS Z2UI5_CL_UTIL_STMPNCFCTN IMPLEMENTATION.
         ENDIF.
 
         
-        temp4 ?= lo_typedescr.
+        temp6 ?= lo_typedescr.
         
-        data_descr = temp4.
+        data_descr = temp6.
 
         CALL METHOD data_descr->('GET_DDIC_FIELD')
           RECEIVING
@@ -553,4 +620,29 @@ CLASS Z2UI5_CL_UTIL_STMPNCFCTN IMPLEMENTATION.
     ENDTRY.
 
   ENDMETHOD.
+
+
+  METHOD get_class_description_xco.
+
+    DATA:
+      obj     TYPE REF TO object,
+      content TYPE REF TO object.
+
+    CALL METHOD ('XCO_CP_ABAP')=>('CLASS')
+      EXPORTING
+        iv_name  = i_classname
+      RECEIVING
+        ro_class = obj.
+
+    CALL METHOD obj->('IF_XCO_AO_CLASS~CONTENT')
+      RECEIVING
+        ro_content = content.
+
+    CALL METHOD content->('IF_XCO_CLAS_CONTENT~GET_SHORT_DESCRIPTION')
+      RECEIVING
+        rv_short_description = result.
+
+  ENDMETHOD.
+
 ENDCLASS.
+
