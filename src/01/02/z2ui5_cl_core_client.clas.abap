@@ -114,23 +114,21 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
 
   METHOD z2ui5_if_client~nav_app_call.
-    DATA temp5 TYPE string.
 
     mo_action->ms_next-o_app_call = app.
 
-    
-    IF app->id_draft IS INITIAL.
-      temp5 = z2ui5_cl_util=>uuid_get_c32( ).
-    ELSE.
-      temp5 = app->id_app.
-    ENDIF.
-    result = temp5.
+*    result = COND #( WHEN app->id_draft IS INITIAL
+*        THEN z2ui5_cl_util=>uuid_get_c32( )
+*        ELSE app->id_app ).
 
+    IF app->id_app IS INITIAL.
+      app->id_app = z2ui5_cl_util=>uuid_get_c32( ).
+    ENDIF.
+    result =  app->id_app.
   ENDMETHOD.
 
 
   METHOD z2ui5_if_client~nav_app_leave.
-    DATA temp6 TYPE string.
 
     IF app IS NOT BOUND.
       app = z2ui5_if_client~get_app( z2ui5_if_client~get( )-s_draft-id_prev_app_stack ).
@@ -138,13 +136,14 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
     mo_action->ms_next-o_app_leave = app.
 
-    
-    IF app->id_draft IS INITIAL.
-      temp6 = z2ui5_cl_util=>uuid_get_c32( ).
-    ELSE.
-      temp6 = app->id_app.
+*    result = COND #( WHEN app->id_draft IS INITIAL
+*        THEN z2ui5_cl_util=>uuid_get_c32( )
+*        ELSE app->id_app ).
+
+    IF app->id_app IS INITIAL.
+      app->id_app = z2ui5_cl_util=>uuid_get_c32( ).
     ENDIF.
-    result = temp6.
+    result =  app->id_app.
 
   ENDMETHOD.
 
@@ -267,19 +266,19 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_bind.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp7 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp5 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    CLEAR temp7.
-    temp7-path_only = path.
-    temp7-custom_filter = custom_filter.
-    temp7-custom_mapper = custom_mapper.
-    temp7-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
-    temp7-tab_index = tab_index.
+    CLEAR temp5.
+    temp5-path_only = path.
+    temp5-custom_filter = custom_filter.
+    temp5-custom_mapper = custom_mapper.
+    temp5-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
+    temp5-tab_index = tab_index.
     result = lo_bind->main(
       val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
       type   = z2ui5_if_core_types=>cs_bind_type-one_way
-      config = temp7 ).
+      config = temp5 ).
 
   ENDMETHOD.
 
@@ -296,21 +295,21 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_bind_edit.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp8 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp6 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    CLEAR temp8.
-    temp8-path_only = path.
-    temp8-custom_filter = custom_filter.
-    temp8-custom_filter_back = custom_filter_back.
-    temp8-custom_mapper = custom_mapper.
-    temp8-custom_mapper_back = custom_mapper_back.
-    temp8-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
-    temp8-tab_index = tab_index.
+    CLEAR temp6.
+    temp6-path_only = path.
+    temp6-custom_filter = custom_filter.
+    temp6-custom_filter_back = custom_filter_back.
+    temp6-custom_mapper = custom_mapper.
+    temp6-custom_mapper_back = custom_mapper_back.
+    temp6-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
+    temp6-tab_index = tab_index.
     result = lo_bind->main(
       val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
       type   = z2ui5_if_core_types=>cs_bind_type-two_way
-      config = temp8 ).
+      config = temp6 ).
 
   ENDMETHOD.
 
@@ -318,16 +317,16 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_bind_local.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp9 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp7 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    CLEAR temp9.
-    temp9-path_only = path.
-    temp9-custom_mapper = custom_mapper.
-    temp9-custom_filter = custom_filter.
+    CLEAR temp7.
+    temp7-path_only = path.
+    temp7-custom_mapper = custom_mapper.
+    temp7-custom_filter = custom_filter.
     result = lo_bind->main_local(
       val    = val
-      config = temp9 ).
+      config = temp7 ).
 
   ENDMETHOD.
 
