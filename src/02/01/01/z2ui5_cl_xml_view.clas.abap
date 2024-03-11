@@ -1600,17 +1600,38 @@ CLASS z2ui5_cl_xml_view DEFINITION
         VALUE(result) TYPE string .
     METHODS tree_table
       IMPORTING
-        !rows                   TYPE clike
-        !selectionmode          TYPE clike DEFAULT 'Single'
-        !enablecolumnreordering TYPE clike DEFAULT 'false'
-        !expandfirstlevel       TYPE clike DEFAULT 'false'
-        !columnselect           TYPE clike OPTIONAL
-        !rowselectionchange     TYPE clike OPTIONAL
-        !selectionbehavior      TYPE clike DEFAULT 'RowSelector'
-        !selectedindex          TYPE clike OPTIONAL
-        !id                     TYPE clike OPTIONAL
-        !visiblerowcount        TYPE clike OPTIONAL
-        !visiblerowcountmode    TYPE clike OPTIONAL
+        !rows                     TYPE clike OPTIONAL
+        !selectionMode            TYPE clike OPTIONAL
+        !enableColumnReordering   TYPE clike OPTIONAL
+        !expandFirstLevel         TYPE clike OPTIONAL
+        !columnSelect             TYPE clike OPTIONAL
+        !rowSelectionChange       TYPE clike OPTIONAL
+        !selectionBehavior        TYPE clike OPTIONAL
+        !id                       TYPE clike OPTIONAL
+        !alternateRowColors       TYPE clike OPTIONAL
+        !columnHeaderVisible      TYPE clike OPTIONAL
+        !enableCellFilter         TYPE clike OPTIONAL
+        !enableColumnFreeze       TYPE clike OPTIONAL
+        !enableCustomFilter       TYPE clike OPTIONAL
+        !enableSelectAll          TYPE clike OPTIONAL
+        !showNoData               TYPE clike OPTIONAL
+        !showOverlay              TYPE clike OPTIONAL
+        !visible                  TYPE clike OPTIONAL
+        !columnHeaderHeight       TYPE clike OPTIONAL
+        !firstVisibleRow          TYPE clike OPTIONAL
+        !fixedColumnCount         TYPE clike OPTIONAL
+        !threshold                TYPE clike OPTIONAL
+        !width                    TYPE clike OPTIONAL
+        !useGroupMode             TYPE clike OPTIONAL
+        !groupHeaderProperty      TYPE clike OPTIONAL
+        !rowActionCount           TYPE clike OPTIONAL
+        !selectedIndex            TYPE clike OPTIONAL
+        !visibleRowCount          TYPE clike OPTIONAL
+        !visibleRowCountMode      TYPE clike OPTIONAL
+        !minAutoRowCount          TYPE clike OPTIONAL
+        !fixedBottomRowCount      TYPE clike OPTIONAL
+        !fixedRowCount            TYPE clike OPTIONAL
+        !rowHeight                TYPE clike OPTIONAL
       RETURNING
         VALUE(result)           TYPE REF TO z2ui5_cl_xml_view .
     METHODS tree_columns
@@ -3584,6 +3605,12 @@ CLASS z2ui5_cl_xml_view DEFINITION
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
     METHODS relationships
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+
+    METHODS no_data
+      IMPORTING
+        !ns TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
@@ -8790,6 +8817,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   ENDMETHOD.
 
 
+  METHOD no_data.
+    result = _generic( name = `noData`
+                       ns   = ns ).
+  ENDMETHOD.
+
+
   METHOD numeric_content.
 
     DATA temp227 TYPE z2ui5_if_types=>ty_t_name_value.
@@ -12718,10 +12751,10 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp405-v = selectionmode.
     INSERT temp405 INTO TABLE temp404.
     temp405-n = `enableColumnReordering`.
-    temp405-v = enablecolumnreordering.
+    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( enableColumnReordering ).
     INSERT temp405 INTO TABLE temp404.
     temp405-n = `expandFirstLevel`.
-    temp405-v = expandfirstlevel.
+    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( expandFirstLevel ).
     INSERT temp405 INTO TABLE temp404.
     temp405-n = `columnSelect`.
     temp405-v = columnselect.
@@ -12735,8 +12768,71 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp405-n = `id`.
     temp405-v = id.
     INSERT temp405 INTO TABLE temp404.
+    temp405-n = `alternateRowColors`.
+    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( alternaterowcolors ).
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `columnHeaderVisible`.
+    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( columnHeaderVisible ).
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `enableCellFilter`.
+    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( enableCellFilter ).
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `enableColumnFreeze`.
+    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( enableColumnFreeze ).
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `enableCustomFilter`.
+    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( enableCustomFilter ).
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `enableSelectAll`.
+    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( enableSelectAll ).
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `showNoData`.
+    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( showNoData ).
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `showOverlay`.
+    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( showOverlay ).
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `visible`.
+    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `columnHeaderHeight`.
+    temp405-v = columnHeaderHeight.
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `firstVisibleRow`.
+    temp405-v = firstVisibleRow.
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `fixedColumnCount`.
+    temp405-v = fixedColumnCount.
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `threshold`.
+    temp405-v = threshold.
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `width`.
+    temp405-v = width.
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `useGroupMode`.
+    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( useGroupMode ).
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `groupHeaderProperty`.
+    temp405-v = groupHeaderProperty.
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `rowActionCount`.
+    temp405-v = rowActionCount.
+    INSERT temp405 INTO TABLE temp404.
     temp405-n = `selectedIndex`.
     temp405-v = selectedindex.
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `rowHeight`.
+    temp405-v = rowHeight.
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `fixedRowCount`.
+    temp405-v = fixedRowCount.
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `fixedBottomRowCount`.
+    temp405-v = fixedBottomRowCount.
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `minAutoRowCount`.
+    temp405-v = minAutoRowCount.
     INSERT temp405 INTO TABLE temp404.
     temp405-n = `visibleRowCount`.
     temp405-v = visiblerowcount.
@@ -12747,6 +12843,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     result = _generic( name  = `TreeTable`
                       ns     = `table`
                       t_prop = temp404 ).
+
   ENDMETHOD.
 
 
