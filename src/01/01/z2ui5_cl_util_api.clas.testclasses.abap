@@ -120,6 +120,7 @@ CLASS ltcl_unit_test DEFINITION FINAL FOR TESTING
     METHODS conv_copy_ref_data FOR TESTING RAISING cx_static_check.
     METHODS rtti_check_ref_data FOR TESTING RAISING cx_static_check.
     METHODS test_check_bound_a_not_inital FOR TESTING RAISING cx_static_check.
+    METHODS test_sql_get_by_string FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -391,6 +392,16 @@ CLASS ltcl_unit_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
         act = z2ui5_cl_util=>boolean_check_by_data( abap_false )
         exp = abap_true ).
+
+  ENDMETHOD.
+
+  METHOD test_sql_get_by_string.
+
+    DATA lv_test TYPE string.
+    DATA ls_sql TYPE z2ui5_cl_util_api=>ty_s_sql_result.
+    lv_test = ``.
+    
+    ls_sql = z2ui5_cl_util_api=>sql_get_by_string( lv_test ) ##NEEDED.
 
   ENDMETHOD.
 
