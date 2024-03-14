@@ -510,6 +510,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !enabled          TYPE clike OPTIONAL
         !class            TYPE clike OPTIONAL
         !change           TYPE clike OPTIONAL
+        !REQUIRED         type CLIKE optional
       RETURNING
         VALUE(result)     TYPE REF TO z2ui5_cl_xml_view .
     METHODS tokens
@@ -8496,6 +8497,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp218 INTO TABLE temp217.
     temp218-n = `class`.
     temp218-v = class.
+    INSERT temp218 INTO TABLE temp217.
+    temp218-n = `required`.
+    temp218-v = required.
     INSERT temp218 INTO TABLE temp217.
     result = _generic( name   = `MultiInput`
                        t_prop = temp217 ).
