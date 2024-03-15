@@ -1806,6 +1806,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !text         TYPE clike OPTIONAL
         !type         TYPE clike OPTIONAL
         !press        TYPE clike OPTIONAL
+        !visible        TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
     METHODS radio_button
@@ -12932,6 +12933,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp409 INTO TABLE temp408.
     temp409-n = `press`.
     temp409-v = press.
+    INSERT temp409 INTO TABLE temp408.
+    temp409-n = `visible`.
+    temp409-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp409 INTO TABLE temp408.
     result = _generic( name   = `RowActionItem`
                        ns     = `table`
