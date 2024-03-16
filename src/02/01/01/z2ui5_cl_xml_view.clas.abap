@@ -1633,6 +1633,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !fixedBottomRowCount      TYPE clike OPTIONAL
         !fixedRowCount            TYPE clike OPTIONAL
         !rowHeight                TYPE clike OPTIONAL
+        !toggleopenstate          TYPE clike OPTIONAL
       RETURNING
         VALUE(result)           TYPE REF TO z2ui5_cl_xml_view .
     METHODS tree_columns
@@ -12841,6 +12842,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp405 INTO TABLE temp404.
     temp405-n = `visibleRowCount`.
     temp405-v = visiblerowcount.
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `toggleopenstate`.
+    temp405-v = toggleopenstate.
     INSERT temp405 INTO TABLE temp404.
     temp405-n = `visibleRowCountMode`.
     temp405-v = visiblerowcountmode.
