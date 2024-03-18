@@ -1269,6 +1269,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !itempress              TYPE clike OPTIONAL
         !select                 TYPE clike OPTIONAL
         !delete                 TYPE clike OPTIONAL
+        !class                 TYPE clike OPTIONAL
       RETURNING
         VALUE(result)           TYPE REF TO z2ui5_cl_xml_view .
     METHODS custom_list_item
@@ -4420,7 +4421,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp34-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp34 INTO TABLE temp33.
     result = _generic( name = `Header`
-                       ns   = `f`
+                       ns   = `card`
                    t_prop   = temp33 ).
   ENDMETHOD.
 
@@ -7959,6 +7960,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp192 INTO TABLE temp191.
     temp192-n = `mode`.
     temp192-v = mode.
+    INSERT temp192 INTO TABLE temp191.
+    temp192-n = `class`.
+    temp192-v = class.
     INSERT temp192 INTO TABLE temp191.
     temp192-n = `itemPress`.
     temp192-v = itempress.
@@ -13858,6 +13862,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
       INSERT temp439 INTO TABLE temp438.
       temp439-n = `xmlns:f`.
       temp439-v = `sap.f`.
+      INSERT temp439 INTO TABLE temp438.
+      temp439-n = `xmlns:card`.
+      temp439-v = `sap.f.cards`.
       INSERT temp439 INTO TABLE temp438.
       temp439-n = `xmlns:form`.
       temp439-v = `sap.ui.layout.form`.
