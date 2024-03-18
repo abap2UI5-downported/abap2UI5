@@ -12843,7 +12843,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp405-n = `visibleRowCount`.
     temp405-v = visiblerowcount.
     INSERT temp405 INTO TABLE temp404.
-    temp405-n = `toggleopenstate`.
+    temp405-n = `toggleOpenState`.
     temp405-v = toggleopenstate.
     INSERT temp405 INTO TABLE temp404.
     temp405-n = `visibleRowCountMode`.
