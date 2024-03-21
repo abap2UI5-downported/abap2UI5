@@ -387,7 +387,7 @@ CLASS z2ui5_cl_core_app_search IMPLEMENTATION.
 
   METHOD z2ui5_if_app~main.
       DATA temp15 LIKE mt_apps.
-      DATA temp1 TYPE z2ui5_cl_util_stmpncfctn=>tt_classes.
+      DATA temp1 TYPE z2ui5_cl_stmpncfctn_api=>tt_classes.
       DATA row LIKE LINE OF temp1.
         DATA temp16 LIKE LINE OF temp15.
         DATA lv_dummy TYPE string.

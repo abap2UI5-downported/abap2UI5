@@ -1,4 +1,4 @@
-CLASS z2ui5_cl_util_stmpncfctn DEFINITION
+CLASS z2ui5_cl_stmpncfctn_api DEFINITION
   PUBLIC
   CREATE PUBLIC .
 
@@ -14,13 +14,12 @@ CLASS z2ui5_cl_util_stmpncfctn DEFINITION
 
     TYPES:
       BEGIN OF ts_class,
-        classname   TYPE c LENGTH 30,
+        classname   TYPE string,
         description TYPE string,
-      END OF ts_class,
-      tt_classes TYPE STANDARD TABLE OF ts_class
-                      WITH NON-UNIQUE DEFAULT KEY.
+      END OF ts_class.
+    TYPES tt_classes TYPE STANDARD TABLE OF ts_class WITH NON-UNIQUE DEFAULT KEY.
 
-    CLASS-METHODS method_get_source
+    CLASS-METHODS source_get_method
       IMPORTING
         !iv_classname  TYPE clike
         !iv_methodname TYPE clike
@@ -71,18 +70,19 @@ CLASS z2ui5_cl_util_stmpncfctn DEFINITION
       RETURNING
         VALUE(result) TYPE tt_classes.
 
-  PROTECTED SECTION.
-  PRIVATE SECTION.
-    CLASS-METHODS get_class_description_xco
+    CLASS-METHODS xco_get_class_description
       IMPORTING
-        i_classname   TYPE ts_class-classname
+        i_classname   TYPE clike
       RETURNING
         VALUE(result) TYPE string.
+
+  PROTECTED SECTION.
+  PRIVATE SECTION.
 ENDCLASS.
 
 
 
-CLASS z2ui5_cl_util_stmpncfctn IMPLEMENTATION.
+CLASS z2ui5_cl_stmpncfctn_api IMPLEMENTATION.
 
 
   METHOD conv_decode_x_base64.
@@ -207,7 +207,7 @@ CLASS z2ui5_cl_util_stmpncfctn IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD method_get_source.
+  METHOD source_get_method.
 
     DATA object TYPE REF TO object.
     FIELD-SYMBOLS <any> TYPE any.
@@ -316,17 +316,16 @@ CLASS z2ui5_cl_util_stmpncfctn IMPLEMENTATION.
     DATA clsname TYPE c LENGTH 30.
     DATA END OF ls_clskey.
     DATA class TYPE REF TO data.
-        DATA temp1 TYPE z2ui5_cl_util_stmpncfctn=>tt_classes.
+        DATA temp1 TYPE z2ui5_cl_stmpncfctn_api=>tt_classes.
         DATA implementation_name LIKE LINE OF lt_implementation_names.
           DATA temp2 LIKE LINE OF temp1.
-          DATA temp5 TYPE z2ui5_cl_util_stmpncfctn=>ts_class-classname.
         DATA lv_fm TYPE string.
         DATA type TYPE c LENGTH 12.
         FIELD-SYMBOLS <class> TYPE data.
         DATA temp3 LIKE LINE OF lt_impl.
         DATA lr_impl LIKE REF TO temp3.
           FIELD-SYMBOLS <description> TYPE any.
-          DATA temp4 TYPE z2ui5_cl_util_stmpncfctn=>ts_class.
+          DATA temp4 TYPE z2ui5_cl_stmpncfctn_api=>ts_class.
 
     TRY.
 
@@ -358,9 +357,7 @@ CLASS z2ui5_cl_util_stmpncfctn IMPLEMENTATION.
         LOOP AT lt_implementation_names INTO implementation_name.
           
           temp2-classname = implementation_name.
-          
-          temp5 = implementation_name.
-          temp2-description = get_class_description_xco( temp5 ).
+          temp2-description = xco_get_class_description( implementation_name ).
           INSERT temp2 INTO TABLE temp1.
         ENDLOOP.
         result = temp1.
@@ -622,7 +619,7 @@ CLASS z2ui5_cl_util_stmpncfctn IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD get_class_description_xco.
+  METHOD xco_get_class_description.
 
     DATA:
       obj     TYPE REF TO object,
