@@ -511,6 +511,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !class            TYPE clike OPTIONAL
         !change           TYPE clike OPTIONAL
         !REQUIRED         type CLIKE optional
+        !VALUESTATE type CLIKE optional
+        !VALUESTATETEXT type CLIKE optional
       RETURNING
         VALUE(result)     TYPE REF TO z2ui5_cl_xml_view .
     METHODS tokens
@@ -9048,6 +9050,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp234 INTO TABLE temp233.
     temp234-n = `required`.
     temp234-v = required.
+    INSERT temp234 INTO TABLE temp233.
+    temp234-n = `valueState`.
+    temp234-v = valueState.
+    INSERT temp234 INTO TABLE temp233.
+    temp234-n = `valueStateText`.
+    temp234-v = valueStateText.
     INSERT temp234 INTO TABLE temp233.
     result = _generic( name   = `MultiInput`
                        t_prop = temp233 ).
