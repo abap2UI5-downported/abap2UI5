@@ -3852,6 +3852,44 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !press    TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+ methods ROUTES
+    importing
+      !ID type CLIKE optional
+      !ITEMS type CLIKE optional
+    preferred parameter ITEMS
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+  methods LEGEND_AREA
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+  methods LEGENDITEM
+    importing
+      !ID type CLIKE optional
+      !TEXT type CLIKE optional
+      !COLOR type CLIKE optional
+    preferred parameter TEXT
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+  methods LEGEND
+    importing
+      !ID type CLIKE optional
+      !ITEMS type CLIKE optional
+      !CAPTION type CLIKE optional
+    preferred parameter ITEMS
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
+
+ methods ROUTE
+    importing
+      !ID type CLIKE optional
+      !POSITION type CLIKE optional
+      !ROUTETYPE type CLIKE optional
+      !LINEDASH type CLIKE optional
+      !COLOR type CLIKE optional
+      !COLORBORDER type CLIKE optional
+      !LINEWIDTH type CLIKE optional
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
 
   PROTECTED SECTION.
     DATA mv_name  TYPE string.
@@ -14951,6 +14989,114 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
   METHOD _z2ui5.
 
     CREATE OBJECT result EXPORTING VIEW = me.
+
+  ENDMETHOD.
+
+
+  METHOD LEGEND.
+
+    DATA temp474 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp475 LIKE LINE OF temp474.
+    CLEAR temp474.
+    
+    temp475-n = `id`.
+    temp475-v = id.
+    INSERT temp475 INTO TABLE temp474.
+    temp475-n = `caption`.
+    temp475-v = caption.
+    INSERT temp475 INTO TABLE temp474.
+    temp475-n = `items`.
+    temp475-v = items.
+    INSERT temp475 INTO TABLE temp474.
+    result = _generic( name  = `Legend`
+                      ns     = `vbm`
+                      t_prop = temp474 ).
+
+  ENDMETHOD.
+
+
+  METHOD LEGENDITEM.
+
+    DATA temp476 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp477 LIKE LINE OF temp476.
+    CLEAR temp476.
+    
+    temp477-n = `id`.
+    temp477-v = id.
+    INSERT temp477 INTO TABLE temp476.
+    temp477-n = `text`.
+    temp477-v = text.
+    INSERT temp477 INTO TABLE temp476.
+    temp477-n = `color`.
+    temp477-v = color.
+    INSERT temp477 INTO TABLE temp476.
+    result = _generic( name  = `LegendItem`
+                      ns     = `vbm`
+                      t_prop = temp476 ).
+
+  ENDMETHOD.
+
+
+  METHOD LEGEND_AREA.
+
+    result = _generic( name  = `legend`
+                      ns     = `vbm`
+                      ).
+
+  ENDMETHOD.
+
+
+  METHOD ROUTE.
+    DATA temp478 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp479 LIKE LINE OF temp478.
+
+    result = me.
+    
+    CLEAR temp478.
+    
+    temp479-n = `id`.
+    temp479-v = id.
+    INSERT temp479 INTO TABLE temp478.
+    temp479-n = `position`.
+    temp479-v = position.
+    INSERT temp479 INTO TABLE temp478.
+    temp479-n = `routetype`.
+    temp479-v = routetype.
+    INSERT temp479 INTO TABLE temp478.
+    temp479-n = `lineDash`.
+    temp479-v = lineDash.
+    INSERT temp479 INTO TABLE temp478.
+    temp479-n = `linewidth`.
+    temp479-v = linewidth.
+    INSERT temp479 INTO TABLE temp478.
+    temp479-n = `color`.
+    temp479-v = color.
+    INSERT temp479 INTO TABLE temp478.
+    temp479-n = `colorBorder`.
+    temp479-v = colorborder.
+    INSERT temp479 INTO TABLE temp478.
+    _generic( name           = `Route`
+                      ns     = `vbm`
+                      t_prop = temp478 ).
+
+  ENDMETHOD.
+
+
+  METHOD ROUTES.
+
+    DATA temp480 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp481 LIKE LINE OF temp480.
+    CLEAR temp480.
+    
+    temp481-n = `id`.
+    temp481-v = id.
+    INSERT temp481 INTO TABLE temp480.
+    temp481-n = `items`.
+    temp481-v = items.
+    INSERT temp481 INTO TABLE temp480.
+    result = _generic( name  = `Routes`
+                      ns     = `vbm`
+                      t_prop = temp480 ).
 
   ENDMETHOD.
 ENDCLASS.
