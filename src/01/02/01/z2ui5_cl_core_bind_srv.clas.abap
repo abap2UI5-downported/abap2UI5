@@ -171,26 +171,35 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
 
 
   METHOD clear.
+        DATA lv_path TYPE string.
+        FIELD-SYMBOLS <temp4> LIKE LINE OF mo_app->mt_attri->*.
+        DATA temp5 LIKE sy-tabix.
+        DATA temp6 LIKE LINE OF mo_app->mt_attri->*.
+        DATA lr_bind2 LIKE REF TO temp6.
 
-    FIELD-SYMBOLS <temp4> LIKE LINE OF mo_app->mt_attri->*.
-    DATA temp5 LIKE sy-tabix.
-    DATA temp6 LIKE LINE OF mo_app->mt_attri->*.
-    DATA lr_bind2 LIKE REF TO temp6.
-    temp5 = sy-tabix.
-    READ TABLE mo_app->mt_attri->* WITH KEY name = val ASSIGNING <temp4>.
-    sy-tabix = temp5.
-    IF sy-subrc <> 0.
-      ASSERT 1 = 0.
-    ENDIF.
-    <temp4>-check_dissolved = abap_false.
+    TRY.
+        
+        lv_path = shift_right( val = val sub = `->*` ).
+        
+        
+        temp5 = sy-tabix.
+        READ TABLE mo_app->mt_attri->* WITH KEY name = lv_path ASSIGNING <temp4>.
+        sy-tabix = temp5.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        <temp4>-check_dissolved = abap_false.
 
-    
-    
-    LOOP AT mo_app->mt_attri->* REFERENCE INTO lr_bind2.
-      IF lr_bind2->name CS val && `-`.
-        DELETE mo_app->mt_attri->*.
-      ENDIF.
-    ENDLOOP.
+        
+        
+        LOOP AT mo_app->mt_attri->* REFERENCE INTO lr_bind2.
+          IF lr_bind2->name CS val.
+            DELETE mo_app->mt_attri->*.
+          ENDIF.
+        ENDLOOP.
+
+      CATCH cx_root.
+    ENDTRY.
 
   ENDMETHOD.
 
