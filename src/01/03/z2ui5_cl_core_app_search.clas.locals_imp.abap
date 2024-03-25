@@ -54,9 +54,17 @@ CLASS lcl_github IMPLEMENTATION.
     temp20-link = `https://github.com/oblomov-dev/a2UI5-db_table_loader`.
     INSERT temp20 INTO TABLE temp19.
     temp20-name = `Generic Search Help`.
-    temp20-descr = `Popups with Search Helps, dynamically created based on imported values.`.
+    temp20-descr = `Popups with Search Helps, dynamically created based on imported values`.
     temp20-author_link = `https://github.com/axelmohnen`.
     temp20-author_name = `axelmohnen`.
+    temp20-check_standard_abap = abap_true.
+    temp20-check_abap_for_cloud = abap_true.
+    temp20-link = `https://github.com/axelmohnen/a2UI5-generic_search_hlp`.
+    INSERT temp20 INTO TABLE temp19.
+    temp20-name = `ABAP SQL Console`.
+    temp20-descr = `Quickly Run SQL Commands in Your Browser`.
+    temp20-author_link = `https://github.com/abap2UI5-apps/abap-sql-console`.
+    temp20-author_name = `oblomov`.
     temp20-check_standard_abap = abap_true.
     temp20-check_abap_for_cloud = abap_true.
     temp20-link = `https://github.com/axelmohnen/a2UI5-generic_search_hlp`.
@@ -86,6 +94,10 @@ CLASS lcl_github IMPLEMENTATION.
     temp22-name = `abap2UI5-web`.
     temp22-descr = `Run abap2UI5 with open-abap on Node.js`.
     temp22-link = `https://github.com/abap2UI5/abap2UI5-web`.
+    INSERT temp22 INTO TABLE temp21.
+    temp22-name = `abap2UI5-samples`.
+    temp22-descr = `Explore Code Samples of abap2UI5`.
+    temp22-link = `https://github.com/abap2UI5/abap2UI5-samples`.
     INSERT temp22 INTO TABLE temp21.
     result = temp21.
 
