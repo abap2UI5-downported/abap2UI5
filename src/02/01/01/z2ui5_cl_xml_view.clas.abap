@@ -3172,6 +3172,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !tooltip       TYPE clike OPTIONAL
         !image         TYPE clike OPTIONAL
         !icon          TYPE clike OPTIONAL
+        !click          TYPE clike OPTIONAL
       RETURNING
         VALUE(result)  TYPE REF TO z2ui5_cl_xml_view .
     METHODS analytic_map
@@ -12240,6 +12241,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp368 INTO TABLE temp367.
     temp368-n = `icon`.
     temp368-v = icon.
+    INSERT temp368 INTO TABLE temp367.
+    temp368-n = `click`.
+    temp368-v = click.
     INSERT temp368 INTO TABLE temp367.
     _generic( name           = `Spot`
                       ns     = `vbm`
