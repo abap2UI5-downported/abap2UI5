@@ -73,12 +73,17 @@ CLASS z2ui5_cl_core_dissolve_srv IMPLEMENTATION.
 
 
   METHOD diss_dref.
-
     DATA lr_ref TYPE REF TO data.
     DATA temp2 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA ls_attri2 LIKE temp2.
         DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
         DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
+
+    IF z2ui5_cl_util=>check_unassign_inital( ir_attri->r_ref ) IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+    
     lr_ref = z2ui5_cl_util=>unassign_data( ir_attri->r_ref ).
     IF lr_ref IS INITIAL.
       RETURN.

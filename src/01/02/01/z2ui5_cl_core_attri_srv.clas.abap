@@ -80,6 +80,10 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
         CONTINUE.
       ENDIF.
 
+      IF lr_attri->r_ref IS NOT BOUND.
+        CONTINUE.
+      ENDIF.
+
       
       ASSIGN lr_attri->r_ref->* TO <val_ref>.
       IF <val_ref> IS NOT INITIAL.
@@ -156,10 +160,11 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
     DATA temp4 LIKE LINE OF mt_attri->*.
     DATA lr_attri LIKE REF TO temp4.
     LOOP AT mt_attri->* REFERENCE INTO lr_attri.
-
-      lr_attri->r_ref = attri_get_val_ref( lr_attri->name ).
-      lr_attri->o_typedescr = cl_abap_datadescr=>describe_by_data_ref( lr_attri->r_ref ).
-
+      TRY.
+          lr_attri->r_ref = attri_get_val_ref( lr_attri->name ).
+          lr_attri->o_typedescr = cl_abap_datadescr=>describe_by_data_ref( lr_attri->r_ref ).
+        CATCH cx_root.
+      ENDTRY.
     ENDLOOP.
 
   ENDMETHOD.
