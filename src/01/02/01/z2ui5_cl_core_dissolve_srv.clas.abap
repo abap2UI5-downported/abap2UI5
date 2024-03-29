@@ -131,7 +131,7 @@ CLASS z2ui5_cl_core_dissolve_srv IMPLEMENTATION.
     
     
     LOOP AT lt_attri REFERENCE INTO lr_attri
-        WHERE visibility   = cl_abap_objectdescr=>public
+        WHERE visibility = cl_abap_objectdescr=>public
         AND is_interface = abap_false
         AND is_constant  = abap_false.
       TRY.

@@ -366,7 +366,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_UTIL_API IMPLEMENTATION.
+CLASS z2ui5_cl_util_api IMPLEMENTATION.
 
 
   METHOD boolean_abap_2_json.
@@ -433,9 +433,15 @@ CLASS Z2UI5_CL_UTIL_API IMPLEMENTATION.
 
 
   METHOD check_unassign_inital.
-
     FIELD-SYMBOLS <any> TYPE data.
     DATA temp2 TYPE xsdboolean.
+
+    IF val IS INITIAL.
+      result = abap_true.
+      RETURN.
+    ENDIF.
+
+    
     ASSIGN val->* TO <any>.
 
     

@@ -81,6 +81,8 @@ CLASS z2ui5_cl_core_app IMPLEMENTATION.
       CATCH cx_root INTO x2.
         TRY.
 
+            lo_model->attri_refs_update( ).
+
             
             CREATE OBJECT lo_dissolver TYPE z2ui5_cl_core_dissolve_srv EXPORTING attri = mt_attri app = mo_app.
 
