@@ -686,6 +686,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !errormessage      TYPE clike OPTIONAL
         !errormessagetitle TYPE clike OPTIONAL
         !showerror         TYPE clike OPTIONAL
+        !displayedBars     TYPE clike OPTIONAL
       RETURNING
         VALUE(result)      TYPE REF TO z2ui5_cl_xml_view .
     METHODS bars
@@ -8412,6 +8413,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp199 INTO TABLE temp198.
     temp199-n = `errorMessageTitle`.
     temp199-v = errormessagetitle.
+    INSERT temp199 INTO TABLE temp198.
+    temp199-n = `displayedBars`.
+    temp199-v = displayedBars.
     INSERT temp199 INTO TABLE temp198.
     temp199-n = `errorMessage`.
     temp199-v = errormessage.
