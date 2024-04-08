@@ -1569,6 +1569,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !wrapping           TYPE clike OPTIONAL
         !wrappingtype       TYPE clike OPTIONAL
         !id                 TYPE clike OPTIONAL
+        !visible            TYPE clike OPTIONAL
           PREFERRED PARAMETER text
       RETURNING
         VALUE(result)       TYPE REF TO z2ui5_cl_xml_view .
@@ -1769,6 +1770,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !customfilter             TYPE clike OPTIONAL
         !id                       TYPE clike OPTIONAL
         !flex                     TYPE clike OPTIONAL
+        !selectionBehavior        TYPE clike OPTIONAL
           PREFERRED PARAMETER rows
       RETURNING
         VALUE(result)             TYPE REF TO z2ui5_cl_xml_view .
@@ -13485,6 +13487,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp433-n = `textAlign`.
     temp433-v = textalign.
     INSERT temp433 INTO TABLE temp432.
+    temp433-n = `visible`.
+    temp433-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp433 INTO TABLE temp432.
     temp433-n = `textDirection`.
     temp433-v = textdirection.
     INSERT temp433 INTO TABLE temp432.
@@ -14430,7 +14435,7 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp466-n = `enableGrouping`.
     temp466-v = z2ui5_cl_util=>boolean_abap_2_json( enablegrouping ).
     INSERT temp466 INTO TABLE temp465.
-    temp466-n = `senableSelectAll`.
+    temp466-n = `enableSelectAll`.
     temp466-v = z2ui5_cl_util=>boolean_abap_2_json( enableselectall ).
     INSERT temp466 INTO TABLE temp465.
     temp466-n = `firstVisibleRow`.
@@ -14451,9 +14456,6 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp466-n = `minAutoRowCount`.
     temp466-v = minautorowcount.
     INSERT temp466 INTO TABLE temp465.
-    temp466-n = `minAutoRowCount`.
-    temp466-v = minautorowcount.
-    INSERT temp466 INTO TABLE temp465.
     temp466-n = `rowHeight`.
     temp466-v = rowheight.
     INSERT temp466 INTO TABLE temp465.
@@ -14462,6 +14464,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp466 INTO TABLE temp465.
     temp466-n = `selectionMode`.
     temp466-v = selectionmode.
+    INSERT temp466 INTO TABLE temp465.
+    temp466-n = `selectionBehavior`.
+    temp466-v = selectionBehavior.
     INSERT temp466 INTO TABLE temp465.
     temp466-n = `showColumnVisibilityMenu`.
     temp466-v = z2ui5_cl_util=>boolean_abap_2_json( showcolumnvisibilitymenu ).
