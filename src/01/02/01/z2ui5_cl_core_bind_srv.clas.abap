@@ -135,16 +135,16 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
 
   METHOD check_raise_new.
           DATA temp2 TYPE REF TO if_serializable_object.
-          DATA li_serial LIKE temp2.
+          DATA lo_dummy LIKE temp2.
           DATA temp3 TYPE REF TO if_serializable_object.
-          DATA li_serial2 LIKE temp3.
+          DATA lo_dummy2 LIKE temp3.
 
     IF mr_attri->custom_filter_back IS BOUND.
       TRY.
           
           temp2 ?= mr_attri->custom_filter_back.
           
-          li_serial = temp2.
+          lo_dummy = temp2.
         CATCH cx_root.
           RAISE EXCEPTION TYPE z2ui5_cx_util_error
             EXPORTING
@@ -158,7 +158,7 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
           
           temp3 ?= mr_attri->custom_mapper_back.
           
-          li_serial2 = temp3.
+          lo_dummy2 = temp3.
         CATCH cx_root.
           RAISE EXCEPTION TYPE z2ui5_cx_util_error
             EXPORTING
@@ -223,21 +223,12 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
         ENDIF.
         <temp10>-bind_type = ``.
 
-*        clear mo_app->mt_attri->*[ name = lv_path ]-r_ref.
-*        clear mo_app->mt_attri->*[ name = lv_path ]-o_typedescr.
-
         
         
         LOOP AT mo_app->mt_attri->* REFERENCE INTO lr_bind2
         WHERE name = lv_path.
-
           CLEAR lr_bind2->r_ref.
-
         ENDLOOP.
-*          IF lr_bind2->name CS val.
-*            DELETE mo_app->mt_attri->*.
-*          ENDIF.
-*        ENDLOOP.
 
       CATCH cx_root.
     ENDTRY.
