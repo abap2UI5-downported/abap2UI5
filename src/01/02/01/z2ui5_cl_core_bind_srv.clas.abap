@@ -279,6 +279,8 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
     
     CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = mo_app->mt_attri app = mo_app->mo_app.
 
+    lo_model->attri_refs_update( ).
+
     mr_attri = lo_model->attri_search_a_dissolve( val ).
 
     IF mr_attri->bind_type IS NOT INITIAL.
