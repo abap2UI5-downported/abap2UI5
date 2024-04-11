@@ -676,11 +676,13 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !value          TYPE clike OPTIONAL
         !displayedvalue TYPE clike OPTIONAL
         !selected       TYPE clike OPTIONAL
+        !color          TYPE clike OPTIONAL
       RETURNING
         VALUE(result)   TYPE REF TO z2ui5_cl_xml_view .
     METHODS interact_bar_chart
       IMPORTING
         !selectionchanged  TYPE clike OPTIONAL
+        !selectionEnabled  TYPE clike OPTIONAL
         !press             TYPE clike OPTIONAL
         !labelwidth        TYPE clike OPTIONAL
         !errormessage      TYPE clike OPTIONAL
@@ -698,6 +700,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !value          TYPE clike OPTIONAL
         !displayedvalue TYPE clike OPTIONAL
         !selected       TYPE clike OPTIONAL
+        !color          TYPE clike OPTIONAL
       RETURNING
         VALUE(result)   TYPE REF TO z2ui5_cl_xml_view .
     METHODS interact_line_chart
@@ -709,6 +712,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !errormessage      TYPE clike OPTIONAL
         !errormessagetitle TYPE clike OPTIONAL
         !showerror         TYPE clike OPTIONAL
+        !displayedPoints   TYPE clike OPTIONAL
+        !selectionEnabled  TYPE clike OPTIONAL
       RETURNING
         VALUE(result)      TYPE REF TO z2ui5_cl_xml_view .
     METHODS points
@@ -8414,6 +8419,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp199-n = `selectionChanged`.
     temp199-v = selectionchanged.
     INSERT temp199 INTO TABLE temp198.
+    temp199-n = `selectionEnabled`.
+    temp199-v = selectionEnabled.
+    INSERT temp199 INTO TABLE temp198.
     temp199-n = `showError`.
     temp199-v = showerror.
     INSERT temp199 INTO TABLE temp198.
@@ -8454,6 +8462,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp201 INTO TABLE temp200.
     temp201-n = `selected`.
     temp201-v = selected.
+    INSERT temp201 INTO TABLE temp200.
+    temp201-n = `color`.
+    temp201-v = color.
     INSERT temp201 INTO TABLE temp200.
     result = _generic( name   = `InteractiveBarChartBar`
                        ns     = `mchart`
@@ -8507,6 +8518,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp205-n = `selected`.
     temp205-v = selected.
     INSERT temp205 INTO TABLE temp204.
+    temp205-n = `color`.
+    temp205-v = color.
+    INSERT temp205 INTO TABLE temp204.
     result = _generic( name   = `InteractiveDonutChartSegment`
                        ns     = `mchart`
                        t_prop = temp204 ).
@@ -8538,6 +8552,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp207 INTO TABLE temp206.
     temp207-n = `succeedingPoint`.
     temp207-v = succeddingpoint.
+    INSERT temp207 INTO TABLE temp206.
+    temp207-n = `displayedPoints`.
+    temp207-v = displayedPoints.
+    INSERT temp207 INTO TABLE temp206.
+    temp207-n = `selectionEnabled`.
+    temp207-v = selectionEnabled.
     INSERT temp207 INTO TABLE temp206.
     result = _generic( name   = `InteractiveLineChart`
                        ns     = `mchart`
