@@ -2889,6 +2889,19 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !readyrecurring     TYPE clike OPTIONAL
       RETURNING
         VALUE(result)       TYPE REF TO z2ui5_cl_xml_view .
+ methods SLIDER
+    importing
+      !MAX type CLIKE optional
+      !MIN type CLIKE optional
+      !STEP type CLIKE optional
+      !VALUE type CLIKE optional
+      !ENABLETICKMARKS type CLIKE optional
+      !WIDTH type CLIKE optional
+      !CLASS type CLIKE optional
+      !ID type CLIKE optional
+      !ENABLED type CLIKE optional
+    returning
+      value(RESULT) type ref to Z2UI5_CL_XML_VIEW .
     METHODS upload_set
       IMPORTING
         !id                      TYPE clike OPTIONAL
@@ -15314,41 +15327,79 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
                        t_prop = temp491 ).
   ENDMETHOD.
 
+METHOD SLIDER.
+    DATA temp493 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp494 LIKE LINE OF temp493.
+    result = me.
+    
+    CLEAR temp493.
+    
+    temp494-n = `class`.
+    temp494-v = class.
+    INSERT temp494 INTO TABLE temp493.
+    temp494-n = `id`.
+    temp494-v = id.
+    INSERT temp494 INTO TABLE temp493.
+    temp494-n = `max`.
+    temp494-v = max.
+    INSERT temp494 INTO TABLE temp493.
+    temp494-n = `min`.
+    temp494-v = min.
+    INSERT temp494 INTO TABLE temp493.
+    temp494-n = `enableTickmarks`.
+    temp494-v = z2ui5_cl_util=>boolean_abap_2_json( enabletickmarks ).
+    INSERT temp494 INTO TABLE temp493.
+    temp494-n = `enabled`.
+    temp494-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp494 INTO TABLE temp493.
+    temp494-n = `value`.
+    temp494-v = value.
+    INSERT temp494 INTO TABLE temp493.
+    temp494-n = `step`.
+    temp494-v = step.
+    INSERT temp494 INTO TABLE temp493.
+    temp494-n = `width`.
+    temp494-v = width.
+    INSERT temp494 INTO TABLE temp493.
+    _generic( name   = `Slider`
+*              ns     = `webc`
+              t_prop = temp493 ).
+  ENDMETHOD.
 
   METHOD xml_get.
     DATA lt_prop TYPE z2ui5_if_types=>ty_t_name_value.
-        DATA temp493 LIKE LINE OF mt_prop.
-        DATA temp494 LIKE sy-tabix.
-      DATA temp495 TYPE z2ui5_if_types=>ty_t_name_value.
-      DATA temp496 LIKE LINE OF temp495.
-      DATA temp497 LIKE LINE OF mt_ns.
-      DATA lr_ns LIKE REF TO temp497.
-        DATA temp498 LIKE LINE OF lt_prop.
-        DATA lr_prop LIKE REF TO temp498.
+        DATA temp495 LIKE LINE OF mt_prop.
+        DATA temp496 LIKE sy-tabix.
+      DATA temp497 TYPE z2ui5_if_types=>ty_t_name_value.
+      DATA temp498 LIKE LINE OF temp497.
+      DATA temp499 LIKE LINE OF mt_ns.
+      DATA lr_ns LIKE REF TO temp499.
+        DATA temp500 LIKE LINE OF lt_prop.
+        DATA lr_prop LIKE REF TO temp500.
           DATA ns TYPE z2ui5_if_types=>ty_s_name_value-n.
-    DATA temp499 TYPE string.
-    DATA lv_tmp2 LIKE temp499.
-    DATA temp500 TYPE string.
+    DATA temp501 TYPE string.
+    DATA lv_tmp2 LIKE temp501.
+    DATA temp502 TYPE string.
     DATA val TYPE string.
     DATA row LIKE LINE OF mt_prop.
       DATA temp3 TYPE string.
-    DATA lv_tmp3 LIKE temp500.
+    DATA lv_tmp3 LIKE temp502.
     DATA lr_child LIKE LINE OF mt_child.
-      DATA temp501 TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp502 TYPE string.
-    DATA lv_ns LIKE temp502.
+      DATA temp503 TYPE REF TO z2ui5_cl_xml_view.
+    DATA temp504 TYPE string.
+    DATA lv_ns LIKE temp504.
 
     CASE mv_name.
       WHEN `ZZPLAIN`.
         
         
-        temp494 = sy-tabix.
-        READ TABLE mt_prop WITH KEY n = `VALUE` INTO temp493.
-        sy-tabix = temp494.
+        temp496 = sy-tabix.
+        READ TABLE mt_prop WITH KEY n = `VALUE` INTO temp495.
+        sy-tabix = temp496.
         IF sy-subrc <> 0.
           ASSERT 1 = 0.
         ENDIF.
-        result = temp493-v.
+        result = temp495-v.
         RETURN.
       WHEN OTHERS.
     ENDCASE.
@@ -15356,117 +15407,117 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     IF me = mo_root.
 
       
-      CLEAR temp495.
+      CLEAR temp497.
       
-      temp496-n = `xmlns:z2ui5`.
-      temp496-v = `z2ui5`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:layout`.
-      temp496-v = `sap.ui.layout`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:networkgraph`.
-      temp496-v = `sap.suite.ui.commons.networkgraph`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:nglayout`.
-      temp496-v = `sap.suite.ui.commons.networkgraph.layout`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:ngcustom`.
-      temp496-v = `sap.suite.ui.commons.sample.NetworkGraphCustomRendering`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:table`.
-      temp496-v = `sap.ui.table`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:template`.
-      temp496-v = `http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:f`.
-      temp496-v = `sap.f`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:columnmenu`.
-      temp496-v = `sap.m.table.columnmenu`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:card`.
-      temp496-v = `sap.f.cards`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:form`.
-      temp496-v = `sap.ui.layout.form`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:editor`.
-      temp496-v = `sap.ui.codeeditor`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:mchart`.
-      temp496-v = `sap.suite.ui.microchart`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:webc`.
-      temp496-v = `sap.ui.webc.main`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:uxap`.
-      temp496-v = `sap.uxap`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:sap`.
-      temp496-v = `sap`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:text`.
-      temp496-v = `sap.ui.richtexteditor`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:html`.
-      temp496-v = `http://www.w3.org/1999/xhtml`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:fb`.
-      temp496-v = `sap.ui.comp.filterbar`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:u`.
-      temp496-v = `sap.ui.unified`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:gantt`.
-      temp496-v = `sap.gantt.simple`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:axistime`.
-      temp496-v = `sap.gantt.axistime`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:config`.
-      temp496-v = `sap.gantt.config`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:shapes`.
-      temp496-v = `sap.gantt.simple.shapes`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:commons`.
-      temp496-v = `sap.suite.ui.commons`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:vm`.
-      temp496-v = `sap.ui.comp.variants`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:viz`.
-      temp496-v = `sap.viz.ui5.controls`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:vk`.
-      temp496-v = `sap.ui.vk`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:vbm`.
-      temp496-v = `sap.ui.vbm`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:ndc`.
-      temp496-v = `sap.ndc`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:svm`.
-      temp496-v = `sap.ui.comp.smartvariants`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:flvm`.
-      temp496-v = `sap.ui.fl.variants`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:p13n`.
-      temp496-v = `sap.m.p13n`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:upload`.
-      temp496-v = `sap.m.upload`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:fl`.
-      temp496-v = `sap.ui.fl`.
-      INSERT temp496 INTO TABLE temp495.
-      temp496-n = `xmlns:tnt`.
-      temp496-v = `sap.tnt`.
-      INSERT temp496 INTO TABLE temp495.
-      lt_prop = temp495.
+      temp498-n = `xmlns:z2ui5`.
+      temp498-v = `z2ui5`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:layout`.
+      temp498-v = `sap.ui.layout`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:networkgraph`.
+      temp498-v = `sap.suite.ui.commons.networkgraph`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:nglayout`.
+      temp498-v = `sap.suite.ui.commons.networkgraph.layout`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:ngcustom`.
+      temp498-v = `sap.suite.ui.commons.sample.NetworkGraphCustomRendering`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:table`.
+      temp498-v = `sap.ui.table`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:template`.
+      temp498-v = `http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:f`.
+      temp498-v = `sap.f`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:columnmenu`.
+      temp498-v = `sap.m.table.columnmenu`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:card`.
+      temp498-v = `sap.f.cards`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:form`.
+      temp498-v = `sap.ui.layout.form`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:editor`.
+      temp498-v = `sap.ui.codeeditor`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:mchart`.
+      temp498-v = `sap.suite.ui.microchart`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:webc`.
+      temp498-v = `sap.ui.webc.main`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:uxap`.
+      temp498-v = `sap.uxap`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:sap`.
+      temp498-v = `sap`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:text`.
+      temp498-v = `sap.ui.richtexteditor`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:html`.
+      temp498-v = `http://www.w3.org/1999/xhtml`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:fb`.
+      temp498-v = `sap.ui.comp.filterbar`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:u`.
+      temp498-v = `sap.ui.unified`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:gantt`.
+      temp498-v = `sap.gantt.simple`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:axistime`.
+      temp498-v = `sap.gantt.axistime`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:config`.
+      temp498-v = `sap.gantt.config`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:shapes`.
+      temp498-v = `sap.gantt.simple.shapes`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:commons`.
+      temp498-v = `sap.suite.ui.commons`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:vm`.
+      temp498-v = `sap.ui.comp.variants`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:viz`.
+      temp498-v = `sap.viz.ui5.controls`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:vk`.
+      temp498-v = `sap.ui.vk`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:vbm`.
+      temp498-v = `sap.ui.vbm`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:ndc`.
+      temp498-v = `sap.ndc`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:svm`.
+      temp498-v = `sap.ui.comp.smartvariants`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:flvm`.
+      temp498-v = `sap.ui.fl.variants`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:p13n`.
+      temp498-v = `sap.m.p13n`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:upload`.
+      temp498-v = `sap.m.upload`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:fl`.
+      temp498-v = `sap.ui.fl`.
+      INSERT temp498 INTO TABLE temp497.
+      temp498-n = `xmlns:tnt`.
+      temp498-v = `sap.tnt`.
+      INSERT temp498 INTO TABLE temp497.
+      lt_prop = temp497.
 
       
       
@@ -15496,12 +15547,12 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
 
     
     IF mv_ns <> ``.
-      temp499 = |{ mv_ns }:|.
+      temp501 = |{ mv_ns }:|.
     ELSE.
-      CLEAR temp499.
+      CLEAR temp501.
     ENDIF.
     
-    lv_tmp2 = temp499.
+    lv_tmp2 = temp501.
     
     
     val = ``.
@@ -15515,9 +15566,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
       ENDIF.
       val = |{ val } { row-n }="{ escape( val = temp3 format = cl_abap_format=>e_xml_attr ) }"|.
     ENDLOOP.
-    temp500 = val.
+    temp502 = val.
     
-    lv_tmp3 = temp500.
+    lv_tmp3 = temp502.
 
     result = |{ result } <{ lv_tmp2 }{ mv_name }{ lv_tmp3 }|.
 
@@ -15531,48 +15582,48 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     
     LOOP AT mt_child INTO lr_child.
       
-      temp501 ?= lr_child.
-      result = result && temp501->xml_get( ).
+      temp503 ?= lr_child.
+      result = result && temp503->xml_get( ).
     ENDLOOP.
 
     
     IF mv_ns <> ||.
-      temp502 = |{ mv_ns }:|.
+      temp504 = |{ mv_ns }:|.
     ELSE.
-      CLEAR temp502.
+      CLEAR temp504.
     ENDIF.
     
-    lv_ns = temp502.
+    lv_ns = temp504.
     result = |{ result }</{ lv_ns }{ mv_name }>|.
 
   ENDMETHOD.
 
 
   METHOD _cc_plain_xml.
-    DATA temp503 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp504 LIKE LINE OF temp503.
+    DATA temp505 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp506 LIKE LINE OF temp505.
 
     result = me.
     
-    CLEAR temp503.
+    CLEAR temp505.
     
-    temp504-n = `VALUE`.
-    temp504-v = val.
-    INSERT temp504 INTO TABLE temp503.
+    temp506-n = `VALUE`.
+    temp506-v = val.
+    INSERT temp506 INTO TABLE temp505.
     _generic( name   = `ZZPLAIN`
-              t_prop = temp503 ).
+              t_prop = temp505 ).
 
   ENDMETHOD.
 
 
   METHOD _generic.
-        DATA temp505 TYPE string.
+        DATA temp507 TYPE string.
     DATA result2 TYPE REF TO z2ui5_cl_xml_view.
 
     TRY.
         
-        temp505 = ns.
-        INSERT temp505 INTO TABLE mo_root->mt_ns.
+        temp507 = ns.
+        INSERT temp507 INTO TABLE mo_root->mt_ns.
       CATCH cx_root.
     ENDTRY.
 
