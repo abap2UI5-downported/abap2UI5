@@ -84,9 +84,14 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
     DATA page2 TYPE REF TO z2ui5_cl_xml_view.
     DATA simple_form2 TYPE REF TO z2ui5_cl_xml_view.
     DATA lv_url_samples2 TYPE string.
+    data lo_app type ref to z2ui5_cl_core_app_search.
+    DATA rtti TYPE REF TO cl_abap_typedescr.
+    DATA temp1 TYPE REF TO cl_abap_refdescr.
+    DATA ref LIKE temp1.
+    DATA name TYPE abap_abstypename.
     DATA lv_url_samples3 TYPE string.
-    DATA temp1 TYPE string_table.
-      DATA temp3 TYPE string_table.
+    DATA temp2 TYPE string_table.
+      DATA temp4 TYPE string_table.
     page2 = z2ui5_cl_xml_view=>factory( )->shell( )->page(
          title = `abap2UI5 - Developing UI5 Apps Purely in ABAP`
          shownavbutton = abap_false ).
@@ -163,30 +168,43 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
                   classname = 'z2ui5_cl_demo_app_000' ).
 
     
+    
+    rtti = cl_abap_typedescr=>describe_by_data(  lo_app  ).
+    
+    temp1 ?= rtti.
+    
+    ref = temp1.
+    
+    name = ref->get_referenced_type( )->absolute_name.
+    name = substring_after( val = name sub = `\CLASS=` ).
+
+    
     lv_url_samples3 = z2ui5_cl_util=>app_get_url(
                     client    = client
-                    classname = 'z2ui5_cl_core_app_search' ).
+*                    classname = 'z2ui5_cl_core_app_search'
+                    classname = name
+                     ).
 
     simple_form2->toolbar( )->title( `What's next?` ).
 
     simple_form2->label( `App Finder` ).
     
-    CLEAR temp1.
-    INSERT lv_url_samples3 INTO TABLE temp1.
+    CLEAR temp2.
+    INSERT lv_url_samples3 INTO TABLE temp2.
     simple_form2->button(
         text  = `Start & Install Apps`
-        press = client->_event_client( val = client->cs_event-open_new_tab t_arg = temp1 )
+        press = client->_event_client( val = client->cs_event-open_new_tab t_arg = temp2 )
         width = `70%` ).
 
     IF z2ui5_cl_util=>rtti_check_class_exists( `z2ui5_cl_demo_app_000` ) IS NOT INITIAL.
       simple_form2->label( `Start Developing` ).
       
-      CLEAR temp3.
-      INSERT lv_url_samples2 INTO TABLE temp3.
+      CLEAR temp4.
+      INSERT lv_url_samples2 INTO TABLE temp4.
       simple_form2->button(
         text      = `Explore Code Samples`
         press     = client->_event_client( val   = client->cs_event-open_new_tab
-                                           t_arg = temp3 )
+                                           t_arg = temp4 )
             width = `70%` ).
 
     ELSE.
@@ -247,8 +265,8 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
 
 
   METHOD z2ui5_if_app~main.
-          DATA temp5 TYPE REF TO z2ui5_cl_popup_to_select.
-          DATA lo_f4 LIKE temp5.
+          DATA temp6 TYPE REF TO z2ui5_cl_popup_to_select.
+          DATA lo_f4 LIKE temp6.
           DATA ls_result TYPE z2ui5_cl_popup_to_select=>ty_s_result.
             FIELD-SYMBOLS <class> TYPE data.
 
@@ -264,9 +282,9 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
     IF client->get( )-check_on_navigated = abap_true.
       TRY.
           
-          temp5 ?= client->get_app( client->get( )-s_draft-id_prev_app ).
+          temp6 ?= client->get_app( client->get( )-s_draft-id_prev_app ).
           
-          lo_f4 = temp5.
+          lo_f4 = temp6.
           
           ls_result = lo_f4->result( ).
           IF ls_result-check_confirmed = abap_true.
