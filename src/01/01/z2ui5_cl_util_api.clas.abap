@@ -899,14 +899,19 @@ DATA lt_cols TYPE temp2.
 
   METHOD rtti_check_class_exists.
 
-    cl_abap_classdescr=>describe_by_name(
-       EXPORTING
-           p_name      = val
-       EXCEPTIONS
-        type_not_found = 1 ).
-    IF sy-subrc = 0.
-      result = abap_true.
-    ENDIF.
+    TRY.
+        cl_abap_classdescr=>describe_by_name(
+          EXPORTING
+            p_name        = val
+          EXCEPTIONS
+           type_not_found = 1 ).
+        IF sy-subrc = 0.
+          result = abap_true.
+        ENDIF.
+
+      CATCH cx_root.
+        " cx_sy_rtti_syntax_error
+    ENDTRY.
 
   ENDMETHOD.
 
