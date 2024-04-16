@@ -139,9 +139,9 @@ CLASS z2ui5_cl_core_app_search IMPLEMENTATION.
 
   METHOD view_display.
 
- DATA page TYPE REF TO z2ui5_cl_xml_view.
+    DATA page TYPE REF TO z2ui5_cl_xml_view.
     DATA temp4 TYPE string_table.
-      DATA pages TYPE REF TO z2ui5_cl_xml_view.
+    DATA pages TYPE REF TO z2ui5_cl_xml_view.
     DATA page_all TYPE REF TO z2ui5_cl_xml_view.
     DATA temp6 LIKE LINE OF mt_apps.
     DATA lr_app LIKE REF TO temp6.
@@ -155,8 +155,8 @@ CLASS z2ui5_cl_core_app_search IMPLEMENTATION.
     DATA row TYPE REF TO z2ui5_cl_xml_view.
     DATA page_addon TYPE REF TO z2ui5_cl_xml_view.
     DATA temp11 TYPE REF TO lcl_github.
- page = z2ui5_cl_xml_view=>factory( )->shell( )->page( `abap2UI5 - App Finder`
-    )->content( ).
+    page = z2ui5_cl_xml_view=>factory( )->shell( )->page( `abap2UI5 - App Finder`
+       )->content( ).
 
     
     CLEAR temp4.
@@ -177,11 +177,11 @@ CLASS z2ui5_cl_core_app_search IMPLEMENTATION.
                                    )->icon_tab_filter( key  = `page_addon`
                                                        text = `Addons on GitHub`
                                 ).
-      
-      pages =   page->nav_container( id                    = `NavCon`
-                                                   initialpage           = `page_favs`
-                                                   defaulttransitionname = `flip`
-                                    )->pages( ).
+    
+    pages =   page->nav_container( id                    = `NavCon`
+                                                 initialpage           = `page_favs`
+                                                 defaulttransitionname = `flip`
+                                  )->pages( ).
 
     pages->page(
                            title = `Result: ` && client->_bind( ms_favorites-number )
@@ -386,13 +386,18 @@ CLASS z2ui5_cl_core_app_search IMPLEMENTATION.
 
 
   METHOD z2ui5_if_app~main.
-      DATA temp15 LIKE mt_apps.
+      DATA li_app2 TYPE REF TO z2ui5_if_app.
+      DATA rtti TYPE REF TO cl_abap_typedescr.
+      DATA temp15 TYPE REF TO cl_abap_refdescr.
+      DATA ref LIKE temp15.
+      DATA name TYPE abap_abstypename.
+      DATA temp16 LIKE mt_apps.
       DATA temp1 TYPE z2ui5_cl_stmpncfctn_api=>tt_classes.
       DATA row LIKE LINE OF temp1.
-        DATA temp16 LIKE LINE OF temp15.
+        DATA temp17 LIKE LINE OF temp16.
         DATA lv_dummy TYPE string.
-        DATA temp17 LIKE LINE OF mt_apps.
-        DATA temp18 LIKE sy-tabix.
+        DATA temp18 LIKE LINE OF mt_apps.
+        DATA temp19 LIKE sy-tabix.
             DATA lt_arg2 TYPE string_table.
             DATA lv_app2 LIKE LINE OF lt_arg2.
             DATA temp2 LIKE LINE OF lt_arg2.
@@ -409,14 +414,14 @@ CLASS z2ui5_cl_core_app_search IMPLEMENTATION.
     IF check_initialized = abap_false.
       check_initialized = abap_true.
 
-    ms_search-check_hide_samples = abap_true.
-    ms_search-check_hide_system  = abap_true.
+      ms_search-check_hide_samples = abap_true.
+      ms_search-check_hide_system  = abap_true.
 
       TRY.
           z2ui5_cl_util=>db_load_by_handle(
             EXPORTING
               uname  = sy-uname
-              handle = 'z2ui5_cl_app_search_apps'
+              handle = z2ui5_cl_util=>rtti_get_classname_by_ref( me )
             IMPORTING
               result = mt_favs ).
 
@@ -424,16 +429,27 @@ CLASS z2ui5_cl_core_app_search IMPLEMENTATION.
       ENDTRY.
 
       
-      CLEAR temp15.
       
-      temp1 = z2ui5_cl_util=>rtti_get_classes_impl_intf( `Z2UI5_IF_APP` ).
+      rtti = cl_abap_typedescr=>describe_by_data(  li_app2  ).
+      
+      temp15 ?= rtti.
+      
+      ref = temp15.
+      
+      name = ref->get_referenced_type( )->absolute_name.
+      name = substring_after( val = name sub = `\INTERFACE=` ).
+
+      
+      CLEAR temp16.
+      
+      temp1 = z2ui5_cl_util=>rtti_get_classes_impl_intf( name ).
       
       LOOP AT temp1 INTO row.
         
-        temp16-name = row-classname.
-        INSERT temp16 INTO TABLE temp15.
+        temp17-name = row-classname.
+        INSERT temp17 INTO TABLE temp16.
       ENDLOOP.
-      mt_apps = temp15.
+      mt_apps = temp16.
       search( ).
       view_display( client ).
       RETURN.
@@ -450,13 +466,13 @@ CLASS z2ui5_cl_core_app_search IMPLEMENTATION.
         SPLIT ms_app_sel-name AT `--` INTO lv_dummy ms_app_sel-name.
         
         
-        temp18 = sy-tabix.
-        READ TABLE mt_apps WITH KEY id = ms_app_sel-name INTO temp17.
-        sy-tabix = temp18.
+        temp19 = sy-tabix.
+        READ TABLE mt_apps WITH KEY id = ms_app_sel-name INTO temp18.
+        sy-tabix = temp19.
         IF sy-subrc <> 0.
           ASSERT 1 = 0.
         ENDIF.
-        ms_app_sel-name = temp17-name.
+        ms_app_sel-name = temp18-name.
         INSERT  ms_app_sel INTO TABLE mt_favs.
         z2ui5_cl_util=>db_save(
             uname  = sy-uname
