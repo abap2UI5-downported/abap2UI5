@@ -1789,6 +1789,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !id                       TYPE clike OPTIONAL
         !flex                     TYPE clike OPTIONAL
         !selectionBehavior        TYPE clike OPTIONAL
+        !rowmode                  TYPE clike OPTIONAL
           PREFERRED PARAMETER rows
       RETURNING
         VALUE(result)             TYPE REF TO z2ui5_cl_xml_view .
@@ -14626,6 +14627,9 @@ METHOD SLIDER.
     INSERT temp470 INTO TABLE temp469.
     temp470-n = `rowSelectionChange`.
     temp470-v = rowselectionchange.
+    INSERT temp470 INTO TABLE temp469.
+    temp470-n = `rowMode`.
+    temp470-v = rowmode.
     INSERT temp470 INTO TABLE temp469.
     result = _generic( name   = `Table`
                        ns     = `table`
