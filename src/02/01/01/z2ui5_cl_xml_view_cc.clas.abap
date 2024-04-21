@@ -106,6 +106,7 @@ CLASS z2ui5_cl_xml_view_cc DEFINITION
         !type         TYPE clike OPTIONAL
         !text         TYPE clike OPTIONAL
         !icon         TYPE clike OPTIONAL
+        !tooltip      TYPE clike OPTIONAL
         !columnconfig TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
@@ -666,6 +667,9 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     INSERT temp30 INTO TABLE temp29.
     temp30-n = `type`.
     temp30-v = type.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `tooltip`.
+    temp30-v = tooltip.
     INSERT temp30 INTO TABLE temp29.
     temp30-n = `columnconfig`.
     temp30-v = columnconfig.
