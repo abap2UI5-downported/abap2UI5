@@ -22,7 +22,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
     DATA lo_draft TYPE REF TO z2ui5_cl_core_draft_srv.
     DATA temp2 TYPE z2ui5_if_types=>ty_s_draft.
-    DATA ls_db TYPE z2ui5_t_core_01.
+    DATA ls_db TYPE z2ui5_t_01.
     CREATE OBJECT lo_draft TYPE z2ui5_cl_core_draft_srv.
 
     

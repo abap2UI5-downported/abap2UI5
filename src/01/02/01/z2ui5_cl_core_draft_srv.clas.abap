@@ -52,7 +52,7 @@ CLASS z2ui5_cl_core_draft_srv IMPLEMENTATION.
         time    = z2ui5_cl_util=>time_get_timestampl( )
         seconds = 60 * 60 * 4 ).
 
-    DELETE FROM z2ui5_t_core_01 WHERE timestampl < lv_four_hours_ago.
+    DELETE FROM z2ui5_t_01 WHERE timestampl < lv_four_hours_ago.
     COMMIT WORK.
 
   ENDMETHOD.
@@ -76,7 +76,7 @@ CLASS z2ui5_cl_core_draft_srv IMPLEMENTATION.
     
     ls_db = temp1.
 
-    MODIFY z2ui5_t_core_01 FROM ls_db.
+    MODIFY z2ui5_t_01 FROM ls_db.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE z2ui5_cx_util_error
         EXPORTING
@@ -92,14 +92,14 @@ CLASS z2ui5_cl_core_draft_srv IMPLEMENTATION.
     IF check_load_app = abap_true.
 
       SELECT SINGLE *
-        FROM z2ui5_t_core_01
+        FROM z2ui5_t_01
         WHERE id = id
         INTO result ##SUBRC_OK.
 
     ELSE.
 
       SELECT SINGLE id id_prev id_prev_app id_prev_app_stack
-        FROM z2ui5_t_core_01
+        FROM z2ui5_t_01
         WHERE id = id
         INTO CORRESPONDING FIELDS OF result ##SUBRC_OK.
 
@@ -123,7 +123,7 @@ CLASS z2ui5_cl_core_draft_srv IMPLEMENTATION.
 
   METHOD read_info.
 
-    DATA ls_db TYPE z2ui5_t_core_01.
+    DATA ls_db TYPE z2ui5_t_01.
     ls_db = read(
       id             = id
       check_load_app = abap_false ).
@@ -137,7 +137,7 @@ CLASS z2ui5_cl_core_draft_srv IMPLEMENTATION.
 
     SELECT
       COUNT( * )
-      FROM z2ui5_t_core_01
+      FROM z2ui5_t_01
       INTO result.
 
   ENDMETHOD.

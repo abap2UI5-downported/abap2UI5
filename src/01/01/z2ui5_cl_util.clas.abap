@@ -98,7 +98,7 @@ CLASS Z2UI5_CL_UTIL IMPLEMENTATION.
 
   METHOD db_delete_by_handle.
 
-    DELETE FROM z2ui5_t_util_01
+    DELETE FROM z2ui5_t_02
         WHERE
            uname = uname
             AND handle = handle
@@ -114,13 +114,13 @@ CLASS Z2UI5_CL_UTIL IMPLEMENTATION.
 
   METHOD db_load_by_handle.
 
-    DATA lt_db TYPE STANDARD TABLE OF z2ui5_t_util_01 WITH DEFAULT KEY.
+    DATA lt_db TYPE STANDARD TABLE OF z2ui5_t_02 WITH DEFAULT KEY.
     DATA ls_db LIKE LINE OF lt_db.
     DATA temp1 LIKE LINE OF lt_db.
     DATA temp2 LIKE sy-tabix.
 
     SELECT data
-      FROM z2ui5_t_util_01
+      FROM z2ui5_t_02
        WHERE
         uname = uname
         AND handle = handle
@@ -155,13 +155,13 @@ CLASS Z2UI5_CL_UTIL IMPLEMENTATION.
 
   METHOD db_load_by_id.
 
-    DATA lt_db TYPE STANDARD TABLE OF z2ui5_t_util_01 WITH DEFAULT KEY.
+    DATA lt_db TYPE STANDARD TABLE OF z2ui5_t_02 WITH DEFAULT KEY.
     DATA ls_db LIKE LINE OF lt_db.
     DATA temp3 LIKE LINE OF lt_db.
     DATA temp4 LIKE sy-tabix.
 
     SELECT data
-      FROM z2ui5_t_util_01
+      FROM z2ui5_t_02
       WHERE id = id
       INTO CORRESPONDING FIELDS OF TABLE lt_db.
     ASSERT sy-subrc = 0.
@@ -188,13 +188,13 @@ CLASS Z2UI5_CL_UTIL IMPLEMENTATION.
 
   METHOD db_save.
 
-    DATA lt_db TYPE STANDARD TABLE OF z2ui5_t_util_01 WITH DEFAULT KEY.
-    DATA temp2 TYPE z2ui5_t_util_01.
+    DATA lt_db TYPE STANDARD TABLE OF z2ui5_t_02 WITH DEFAULT KEY.
+    DATA temp2 TYPE z2ui5_t_02.
     DATA ls_db LIKE temp2.
         DATA temp3 LIKE LINE OF lt_db.
         DATA temp4 LIKE sy-tabix.
     SELECT id
-      FROM z2ui5_t_util_01
+      FROM z2ui5_t_02
        WHERE
         uname = uname
         AND handle = handle
@@ -226,7 +226,7 @@ CLASS Z2UI5_CL_UTIL IMPLEMENTATION.
         ls_db-id = uuid_get_c32( ).
     ENDTRY.
 
-    MODIFY z2ui5_t_util_01 FROM ls_db.
+    MODIFY z2ui5_t_02 FROM ls_db.
     ASSERT sy-subrc = 0.
 
     IF check_commit = abap_true.

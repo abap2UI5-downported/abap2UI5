@@ -250,9 +250,9 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
 
 
   METHOD z2ui5_if_app~main.
-          DATA temp5 TYPE REF TO z2ui5_cl_popup_to_select.
+          DATA temp5 TYPE REF TO z2ui5_cl_pop_to_select.
           DATA lo_f4 LIKE temp5.
-          DATA ls_result TYPE z2ui5_cl_popup_to_select=>ty_s_result.
+          DATA ls_result TYPE z2ui5_cl_pop_to_select=>ty_s_result.
             FIELD-SYMBOLS <class> TYPE data.
 
     me->client = client.
@@ -317,7 +317,7 @@ MOVE-CORRESPONDING <class> TO ms_home.
       WHEN 'VALUE_HELP'.
         TRY.
             mt_classes = z2ui5_cl_util=>rtti_get_classes_impl_intf( z2ui5_cl_util=>rtti_get_intfname_by_ref( li_app ) ).
-            client->nav_app_call( z2ui5_cl_popup_to_select=>factory( mt_classes ) ).
+            client->nav_app_call( z2ui5_cl_pop_to_select=>factory( mt_classes ) ).
           CATCH cx_root.
             client->message_box_display( `The value help is not available on your system, upgrade to a higher release first` ).
         ENDTRY.

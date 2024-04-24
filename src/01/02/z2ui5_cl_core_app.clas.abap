@@ -68,7 +68,7 @@ CLASS z2ui5_cl_core_app IMPLEMENTATION.
   METHOD all_xml_stringify.
         DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
         DATA x2 TYPE REF TO cx_root.
-            DATA lo_dissolver TYPE REF TO z2ui5_cl_core_dissolve_srv.
+            DATA lo_dissolver TYPE REF TO z2ui5_cl_core_diss_srv.
 
     TRY.
 
@@ -86,7 +86,7 @@ CLASS z2ui5_cl_core_app IMPLEMENTATION.
             clear mt_attri->*.
 
             
-            CREATE OBJECT lo_dissolver TYPE z2ui5_cl_core_dissolve_srv EXPORTING attri = mt_attri app = mo_app.
+            CREATE OBJECT lo_dissolver TYPE z2ui5_cl_core_diss_srv EXPORTING attri = mt_attri app = mo_app.
 
             lo_dissolver->main( ).
             lo_dissolver->main( ).
@@ -115,7 +115,7 @@ CLASS z2ui5_cl_core_app IMPLEMENTATION.
   METHOD db_load.
 
     DATA lo_db TYPE REF TO z2ui5_cl_core_draft_srv.
-    DATA ls_db TYPE z2ui5_t_core_01.
+    DATA ls_db TYPE z2ui5_t_01.
     DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
     CREATE OBJECT lo_db TYPE z2ui5_cl_core_draft_srv.
     
@@ -133,7 +133,7 @@ CLASS z2ui5_cl_core_app IMPLEMENTATION.
   METHOD db_load_by_app.
 
     DATA lo_db TYPE REF TO z2ui5_cl_core_draft_srv.
-    DATA ls_db TYPE z2ui5_t_core_01.
+    DATA ls_db TYPE z2ui5_t_01.
     DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
     CREATE OBJECT lo_db TYPE z2ui5_cl_core_draft_srv.
     

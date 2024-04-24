@@ -108,7 +108,7 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD attri_search_a_dissolve.
-    DATA lo_dissolve TYPE REF TO z2ui5_cl_core_dissolve_srv.
+    DATA lo_dissolve TYPE REF TO z2ui5_cl_core_diss_srv.
       DATA temp3 LIKE sy-subrc.
 
     result = attri_search( val ).
@@ -117,7 +117,7 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
     ENDIF.
 
     
-    CREATE OBJECT lo_dissolve TYPE z2ui5_cl_core_dissolve_srv EXPORTING attri = mt_attri app = mo_app.
+    CREATE OBJECT lo_dissolve TYPE z2ui5_cl_core_diss_srv EXPORTING attri = mt_attri app = mo_app.
 
     DO 10 TIMES.
 
