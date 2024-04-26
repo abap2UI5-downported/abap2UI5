@@ -1342,6 +1342,9 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 !width        TYPE clike OPTIONAL
                 !class        TYPE clike OPTIONAL
                 !id           TYPE clike OPTIONAL
+                !value        TYPE clike OPTIONAL
+                !value2       TYPE clike OPTIONAL
+                !change       TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS generic_tag
@@ -11422,6 +11425,15 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp356 INTO TABLE temp355.
     temp356-n = `width`.
     temp356-v = width.
+    INSERT temp356 INTO TABLE temp355.
+    temp356-n = `value`.
+    temp356-v = value.
+    INSERT temp356 INTO TABLE temp355.
+    temp356-n = `value2`.
+    temp356-v = value2.
+    INSERT temp356 INTO TABLE temp355.
+    temp356-n = `change`.
+    temp356-v = change.
     INSERT temp356 INTO TABLE temp355.
     _generic( name   = `RangeSlider`
 *              ns     = `webc`
