@@ -115,7 +115,6 @@ CLASS Z2UI5_CL_CORE_CLIENT IMPLEMENTATION.
   METHOD z2ui5_if_client~message_toast_display.
 
     CLEAR mo_action->ms_next-s_set-s_msg_toast.
-    mo_action->ms_next-s_set-s_msg_toast-id = id.
     mo_action->ms_next-s_set-s_msg_toast-text = text.
     mo_action->ms_next-s_set-s_msg_toast-duration = duration.
     mo_action->ms_next-s_set-s_msg_toast-width = width.
@@ -129,6 +128,7 @@ CLASS Z2UI5_CL_CORE_CLIENT IMPLEMENTATION.
     mo_action->ms_next-s_set-s_msg_toast-animationtimingfunction = animationtimingfunction.
     mo_action->ms_next-s_set-s_msg_toast-animationduration = animationduration.
     mo_action->ms_next-s_set-s_msg_toast-closeonbrowsernavigation = closeonbrowsernavigation.
+    mo_action->ms_next-s_set-s_msg_toast-class = class.
 
   ENDMETHOD.
 
