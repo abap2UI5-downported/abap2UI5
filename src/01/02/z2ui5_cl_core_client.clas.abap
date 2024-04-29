@@ -19,7 +19,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_core_client IMPLEMENTATION.
+CLASS Z2UI5_CL_CORE_CLIENT IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -34,6 +34,13 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     IF val = z2ui5_if_client=>cs_clear-view.
       CLEAR mo_action->ms_next-s_set-s_view.
     ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD z2ui5_if_client~follow_up_action.
+
+     mo_action->ms_next-s_set-s_follow_up_action-custom_js = val.
 
   ENDMETHOD.
 
@@ -108,7 +115,20 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~message_toast_display.
 
     CLEAR mo_action->ms_next-s_set-s_msg_toast.
+    mo_action->ms_next-s_set-s_msg_toast-id = id.
     mo_action->ms_next-s_set-s_msg_toast-text = text.
+    mo_action->ms_next-s_set-s_msg_toast-duration = duration.
+    mo_action->ms_next-s_set-s_msg_toast-width = width.
+    mo_action->ms_next-s_set-s_msg_toast-my = my.
+    mo_action->ms_next-s_set-s_msg_toast-at = at.
+    mo_action->ms_next-s_set-s_msg_toast-of = of.
+    mo_action->ms_next-s_set-s_msg_toast-offset = offset.
+    mo_action->ms_next-s_set-s_msg_toast-collision = collision.
+    mo_action->ms_next-s_set-s_msg_toast-onclose = onclose.
+    mo_action->ms_next-s_set-s_msg_toast-autoclose = autoclose.
+    mo_action->ms_next-s_set-s_msg_toast-animationtimingfunction = animationtimingfunction.
+    mo_action->ms_next-s_set-s_msg_toast-animationduration = animationduration.
+    mo_action->ms_next-s_set-s_msg_toast-closeonbrowsernavigation = closeonbrowsernavigation.
 
   ENDMETHOD.
 
@@ -352,11 +372,4 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
          t_arg = t_arg ).
 
   ENDMETHOD.
-
-  METHOD z2ui5_if_client~follow_up_action.
-
-     mo_action->ms_next-s_set-s_follow_up_action-custom_js = val.
-
-  ENDMETHOD.
-
 ENDCLASS.
