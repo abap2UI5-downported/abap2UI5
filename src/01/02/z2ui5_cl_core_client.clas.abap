@@ -108,6 +108,16 @@ CLASS Z2UI5_CL_CORE_CLIENT IMPLEMENTATION.
     CLEAR mo_action->ms_next-s_set-s_msg_box.
     mo_action->ms_next-s_set-s_msg_box-text = text.
     mo_action->ms_next-s_set-s_msg_box-type = type.
+    mo_action->ms_next-s_set-s_msg_box-title = title.
+    mo_action->ms_next-s_set-s_msg_box-styleclass = styleclass.
+    mo_action->ms_next-s_set-s_msg_box-onclose = onclose.
+    mo_action->ms_next-s_set-s_msg_box-actions = actions.
+    mo_action->ms_next-s_set-s_msg_box-emphasizedaction = emphasizedaction.
+    mo_action->ms_next-s_set-s_msg_box-initialfocus = initialfocus.
+    mo_action->ms_next-s_set-s_msg_box-textdirection = textdirection.
+    mo_action->ms_next-s_set-s_msg_box-icon = icon.
+    mo_action->ms_next-s_set-s_msg_box-details = details.
+    mo_action->ms_next-s_set-s_msg_box-closeOnNavigation = closeOnNavigation.
 
   ENDMETHOD.
 
