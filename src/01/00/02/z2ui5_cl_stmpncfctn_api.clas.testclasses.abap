@@ -86,3 +86,33 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+CLASS ltcl_rfc_bapi_test DEFINITION FINAL FOR TESTING
+  DURATION SHORT
+  RISK LEVEL HARMLESS.
+
+  PRIVATE SECTION.
+    METHODS:
+      first_test FOR TESTING RAISING cx_static_check.
+ENDCLASS.
+
+
+CLASS ltcl_rfc_bapi_test IMPLEMENTATION.
+
+  METHOD first_test.
+
+    DATA lo_rfc TYPE REF TO lcl_rfc_bapi.
+    lo_rfc = lcl_rfc_bapi=>factory_rfc_destination( `NONE` ).
+
+*    lo_rfc->bapi_message_getdetail(
+*      EXPORTING
+*        id         = 'LTVF_EXEC'
+*        number     = '014'
+**        textformat = ''
+*      IMPORTING
+*        message    = DATA(lv_message)
+*    ).
+
+  ENDMETHOD.
+
+ENDCLASS.
