@@ -105,6 +105,16 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 contentwidth  TYPE clike OPTIONAL
                 contentheight TYPE clike OPTIONAL
                 showheader    TYPE clike OPTIONAL
+                showarrow     TYPE clike OPTIONAL
+                resizable     TYPE clike OPTIONAL
+                modal         TYPE clike OPTIONAL
+                horizontalscrolling TYPE clike OPTIONAL
+                verticalscrolling   TYPE clike OPTIONAL
+                visible             TYPE clike OPTIONAL
+                offsetx             TYPE clike OPTIONAL
+                offsety             TYPE clike OPTIONAL
+                contentminwidth     TYPE clike OPTIONAL
+                titlealignment      TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS list_item
@@ -11606,8 +11616,38 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp345-n = `contentHeight`.
     temp345-v = contentheight.
     INSERT temp345 INTO TABLE temp344.
-    temp345-n = `showheader`.
-    temp345-v = showheader.
+    temp345-n = `showHeader`.
+    temp345-v = z2ui5_cl_util=>boolean_abap_2_json( showheader ).
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `showArrow`.
+    temp345-v = z2ui5_cl_util=>boolean_abap_2_json( showarrow ).
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `resizable`.
+    temp345-v = z2ui5_cl_util=>boolean_abap_2_json( resizable ).
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `modal`.
+    temp345-v = z2ui5_cl_util=>boolean_abap_2_json( modal ).
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `horizontalScrolling`.
+    temp345-v = z2ui5_cl_util=>boolean_abap_2_json( horizontalScrolling ).
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `verticalScrolling`.
+    temp345-v = z2ui5_cl_util=>boolean_abap_2_json( verticalScrolling ).
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `visible`.
+    temp345-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `offsetX`.
+    temp345-v = offsetX.
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `offsetY`.
+    temp345-v = offsetY.
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `contentMinWidth`.
+    temp345-v = contentMinWidth.
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `titleAlignment`.
+    temp345-v = titleAlignment.
     INSERT temp345 INTO TABLE temp344.
     temp345-n = `contentWidth`.
     temp345-v = contentwidth.
