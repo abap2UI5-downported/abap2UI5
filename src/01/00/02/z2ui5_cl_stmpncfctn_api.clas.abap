@@ -96,7 +96,7 @@ CLASS z2ui5_cl_stmpncfctn_api IMPLEMENTATION.
           RECEIVING
             decoded = result.
 
-      CATCH cx_sy_dyn_call_illegal_class.
+      CATCH cx_root.
 
         
         classname = 'CL_HTTP_UTILITY'.
@@ -122,7 +122,7 @@ CLASS z2ui5_cl_stmpncfctn_api IMPLEMENTATION.
           RECEIVING
             encoded   = result.
 
-      CATCH cx_sy_dyn_call_illegal_class.
+      CATCH cx_root.
 
         
         classname = 'CL_HTTP_UTILITY'.
@@ -152,7 +152,8 @@ CLASS z2ui5_cl_stmpncfctn_api IMPLEMENTATION.
             source = val
           RECEIVING
             result = result.
-      CATCH cx_sy_dyn_call_illegal_class.
+
+      CATCH cx_root.
 
         
         conv_in_class = 'CL_ABAP_CONV_IN_CE'.
@@ -187,7 +188,8 @@ CLASS z2ui5_cl_stmpncfctn_api IMPLEMENTATION.
             source = val
           RECEIVING
             result = result.
-      CATCH cx_sy_dyn_call_illegal_class.
+
+      CATCH cx_root.
 
         
         conv_out_class = 'CL_ABAP_CONV_OUT_CE'.
@@ -251,7 +253,7 @@ CLASS z2ui5_cl_stmpncfctn_api IMPLEMENTATION.
           RECEIVING
             rt_source = result.
 
-      CATCH cx_sy_dyn_call_error.
+      CATCH cx_root.
 
         
         lv_name = 'CL_OO_FACTORY'.
@@ -319,6 +321,7 @@ CLASS z2ui5_cl_stmpncfctn_api IMPLEMENTATION.
         DATA temp1 TYPE z2ui5_cl_stmpncfctn_api=>tt_classes.
         DATA implementation_name LIKE LINE OF lt_implementation_names.
           DATA temp2 LIKE LINE OF temp1.
+        DATA lx TYPE REF TO cx_root.
         DATA lv_fm TYPE string.
         DATA type TYPE c LENGTH 12.
         FIELD-SYMBOLS <class> TYPE data.
@@ -364,7 +367,8 @@ CLASS z2ui5_cl_stmpncfctn_api IMPLEMENTATION.
         ENDLOOP.
         result = temp1.
 
-      CATCH cx_sy_dyn_call_illegal_class.
+        
+      CATCH cx_root INTO lx.
 
         ls_key-intkey = val.
 
@@ -602,7 +606,7 @@ CLASS z2ui5_cl_stmpncfctn_api IMPLEMENTATION.
               RECEIVING
                 uuid = uuid.
 
-          CATCH cx_sy_dyn_call_illegal_class.
+          CATCH cx_root.
 
             
             lv_fm = `GUID_CREATE`.
@@ -617,7 +621,6 @@ CLASS z2ui5_cl_stmpncfctn_api IMPLEMENTATION.
       CATCH cx_root.
         ASSERT 1 = 0.
     ENDTRY.
-
   ENDMETHOD.
 
 
@@ -625,7 +628,7 @@ CLASS z2ui5_cl_stmpncfctn_api IMPLEMENTATION.
 
     DATA obj     TYPE REF TO object.
     DATA content TYPE REF TO object.
-    DATA lv_classname type c length 30.
+    DATA lv_classname TYPE c LENGTH 30.
 
     lv_classname = i_classname.
     CALL METHOD ('XCO_CP_ABAP')=>('CLASS')
