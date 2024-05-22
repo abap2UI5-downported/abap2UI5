@@ -201,7 +201,7 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
         result-s_front-o_comp_data = lo_ajson->slice( `/COMPDATA` ).
 
         
-        temp1 = boolc( result-s_front-search CS `scenario=LAUNCHPAD` ).
+        temp1 = boolc( result-s_front-search CS `scenario=LAUNCHPAD` or result-s_front-pathname CS `/ui2/flp` ).
         result-s_control-check_launchpad = temp1.
         IF result-s_front-id IS NOT INITIAL.
           RETURN.

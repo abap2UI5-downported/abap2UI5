@@ -72,6 +72,7 @@ CLASS z2ui5_cl_xml_view_cc DEFINITION
         !setupdate      TYPE clike OPTIONAL
       RETURNING
         VALUE(result)   TYPE REF TO z2ui5_cl_xml_view .
+
     METHODS geolocation
       IMPORTING
         !finished           TYPE clike OPTIONAL
@@ -141,6 +142,12 @@ CLASS z2ui5_cl_xml_view_cc DEFINITION
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
     METHODS title
+      IMPORTING
+        !title        TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+
+    METHODS lp_title
       IMPORTING
         !title        TYPE clike OPTIONAL
       RETURNING
@@ -730,8 +737,7 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-  METHOD title.
+  METHOD lp_title.
     DATA temp33 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp34 LIKE LINE OF temp33.
 
@@ -742,25 +748,42 @@ CLASS Z2UI5_CL_XML_VIEW_CC IMPLEMENTATION.
     temp34-n = `title`.
     temp34-v = title.
     INSERT temp34 INTO TABLE temp33.
-    mo_view->_generic( name = `Title`
+    mo_view->_generic( name = `LPTitle`
               ns            = `z2ui5`
               t_prop        = temp33 ).
+
+  ENDMETHOD.
+
+  METHOD title.
+    DATA temp35 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp36 LIKE LINE OF temp35.
+
+    result = mo_view.
+    
+    CLEAR temp35.
+    
+    temp36-n = `title`.
+    temp36-v = title.
+    INSERT temp36 INTO TABLE temp35.
+    mo_view->_generic( name = `Title`
+              ns            = `z2ui5`
+              t_prop        = temp35 ).
 
   ENDMETHOD.
 
 
   METHOD uitableext.
 
-    DATA temp35 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp36 LIKE LINE OF temp35.
-    CLEAR temp35.
+    DATA temp37 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp38 LIKE LINE OF temp37.
+    CLEAR temp37.
     
-    temp36-n = `tableId`.
-    temp36-v = tableid.
-    INSERT temp36 INTO TABLE temp35.
+    temp38-n = `tableId`.
+    temp38-v = tableid.
+    INSERT temp38 INTO TABLE temp37.
     result = mo_view->_generic( name = `UITableExt`
                                 ns   = `z2ui5`
-                       t_prop        = temp35 ).
+                       t_prop        = temp37 ).
 
   ENDMETHOD.
 ENDCLASS.
