@@ -1615,10 +1615,19 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS filter_group_item
-      IMPORTING !name              TYPE clike
-                label              TYPE clike
-                groupname          TYPE clike
-                visibleinfilterbar TYPE clike DEFAULT 'true'
+      IMPORTING !name              TYPE clike OPTIONAL
+                label              TYPE clike OPTIONAL
+                groupname          TYPE clike OPTIONAL
+                visibleinfilterbar TYPE clike OPTIONAL
+                mandatory          TYPE clike OPTIONAL
+                controlTooltip          TYPE clike OPTIONAL
+                entitySetName          TYPE clike OPTIONAL
+                entityTypeName          TYPE clike OPTIONAL
+                groupTitle          TYPE clike OPTIONAL
+                hiddenFilter          TYPE clike OPTIONAL
+                labelTooltip          TYPE clike OPTIONAL
+                visible          TYPE clike OPTIONAL
+                change          TYPE clike OPTIONAL
       RETURNING VALUE(result)      TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS filter_control
@@ -6890,12 +6899,40 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     temp133-n = 'groupName'.
     temp133-v = groupname.
     INSERT temp133 INTO TABLE temp132.
+    temp133-n = 'controlTooltip'.
+    temp133-v = controlTooltip.
+    INSERT temp133 INTO TABLE temp132.
+    temp133-n = 'entitySetName'.
+    temp133-v = entitySetName.
+    INSERT temp133 INTO TABLE temp132.
+    temp133-n = 'entityTypeName'.
+    temp133-v = entityTypeName.
+    INSERT temp133 INTO TABLE temp132.
+    temp133-n = 'groupTitle'.
+    temp133-v = groupTitle.
+    INSERT temp133 INTO TABLE temp132.
+    temp133-n = 'labelTooltip'.
+    temp133-v = labelTooltip.
+    INSERT temp133 INTO TABLE temp132.
+    temp133-n = 'change'.
+    temp133-v = change.
+    INSERT temp133 INTO TABLE temp132.
     temp133-n = 'visibleInFilterBar'.
-    temp133-v = visibleinfilterbar.
+    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( visibleInFilterBar ).
+    INSERT temp133 INTO TABLE temp132.
+    temp133-n = 'mandatory'.
+    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( mandatory ).
+    INSERT temp133 INTO TABLE temp132.
+    temp133-n = 'hiddenFilter'.
+    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( hiddenFilter ).
+    INSERT temp133 INTO TABLE temp132.
+    temp133-n = 'visible'.
+    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp133 INTO TABLE temp132.
     result = _generic( name   = `FilterGroupItem`
                        ns     = 'fb'
                        t_prop = temp132 ).
+
   ENDMETHOD.
 
 
