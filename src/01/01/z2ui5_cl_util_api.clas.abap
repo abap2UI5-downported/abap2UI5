@@ -368,6 +368,16 @@ CLASS z2ui5_cl_util_api DEFINITION
 
     CLASS-METHODS check_raise_srtti_installed.
 
+
+
+    CLASS-METHODS get_comps_by_data
+      IMPORTING !data         TYPE REF TO data
+      RETURNING VALUE(result) TYPE abap_component_tab.
+
+    CLASS-METHODS get_comp_by_struc
+      IMPORTING !type         TYPE REF TO cl_abap_datadescr
+      RETURNING VALUE(result) TYPE abap_component_tab.
+
   PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
@@ -1536,6 +1546,95 @@ DATA lt_param TYPE temp3.
           val = lv_text.
 
     ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD get_comps_by_data.
+        DATA typedesc TYPE REF TO cl_abap_typedescr.
+            DATA temp42 TYPE REF TO cl_abap_tabledescr.
+            DATA tabledesc LIKE temp42.
+            DATA temp43 TYPE REF TO cl_abap_structdescr.
+            DATA structdesc LIKE temp43.
+            DATA temp44 TYPE REF TO cl_abap_structdescr.
+        DATA comp TYPE abap_component_tab.
+        DATA com LIKE LINE OF comp.
+
+    TRY.
+        
+        typedesc = cl_abap_typedescr=>describe_by_data( data->* ).
+
+        CASE typedesc->kind.
+
+          WHEN cl_abap_typedescr=>kind_table.
+
+            
+            temp42 ?= typedesc.
+            
+            tabledesc = temp42.
+            
+            temp43 ?= tabledesc->get_table_line_type( ).
+            
+            structdesc = temp43.
+
+          WHEN cl_abap_typedescr=>kind_struct.
+
+            
+            temp44 ?= typedesc.
+            structdesc = temp44.
+
+          WHEN OTHERS.
+        ENDCASE.
+
+        
+        comp = structdesc->get_components( ).
+
+        
+        LOOP AT comp INTO com.
+
+          IF com-as_include = abap_true.
+
+            APPEND LINES OF get_comp_by_struc( com-type ) TO result.
+
+          ELSE.
+
+            APPEND com TO result.
+
+          ENDIF.
+
+        ENDLOOP.
+
+      CATCH cx_root.
+    ENDTRY.
+
+  ENDMETHOD.
+
+
+  METHOD get_comp_by_struc.
+
+    DATA struc TYPE REF TO cl_abap_structdescr.
+    DATA comp TYPE abap_component_tab.
+    DATA com LIKE LINE OF comp.
+
+    struc ?= type.
+
+    
+    comp = struc->get_components( ).
+
+    
+    LOOP AT comp INTO com.
+
+      IF com-as_include = abap_true.
+
+        APPEND LINES OF get_comp_by_struc( com-type ) TO result.
+
+      ELSE.
+
+        APPEND com TO result.
+
+      ENDIF.
+
+    ENDLOOP.
 
   ENDMETHOD.
 
