@@ -159,6 +159,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 !type         TYPE clike OPTIONAL
                 showicon      TYPE clike OPTIONAL
                 !class        TYPE clike OPTIONAL
+                !visible      TYPE clike OPTIONAL
           PREFERRED PARAMETER text
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -9710,6 +9711,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp266 INTO TABLE temp265.
     temp266-n = `showIcon`.
     temp266-v = z2ui5_cl_util=>boolean_abap_2_json( showicon ).
+    INSERT temp266 INTO TABLE temp265.
+    temp266-n = `visible`.
+    temp266-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp266 INTO TABLE temp265.
     temp266-n = `class`.
     temp266-v = class.
