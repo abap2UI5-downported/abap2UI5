@@ -80,7 +80,7 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
     READ TABLE <tab> INDEX ms_config-tab_index ASSIGNING <row>.
 
     
-    lt_attri = z2ui5_cl_util=>rtti_get_t_attri_by_struc( ms_config-tab ).
+    lt_attri = z2ui5_cl_util=>rtti_get_t_attri_by_any( ms_config-tab ).
     
     LOOP AT lt_attri ASSIGNING <comp>.
 

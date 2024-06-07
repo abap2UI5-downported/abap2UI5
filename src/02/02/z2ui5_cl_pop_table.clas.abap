@@ -65,7 +65,7 @@ CLASS z2ui5_cl_pop_table IMPLEMENTATION.
        client->_bind( <tab_out> ) ).
 
     
-    lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_struc( <tab_out> ).
+    lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_any( <tab_out> ).
 
     
     list = tab->column_list_item( valign = `Top` ).

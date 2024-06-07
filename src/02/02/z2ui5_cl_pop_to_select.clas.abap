@@ -120,7 +120,7 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
               title   = title ).
 
     
-    lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_struc( <tab_out> ).
+    lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_any( <tab_out> ).
     DELETE lt_comp WHERE name = 'ZZSELKZ'.
 
     
@@ -380,7 +380,7 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
     <tab_out> = <tab_out_backup>.
 
     
-    lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_struc( <tab_out> ).
+    lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_any( <tab_out> ).
     LOOP AT <tab_out> ASSIGNING <row2>.
       
       lv_check_continue = abap_false.

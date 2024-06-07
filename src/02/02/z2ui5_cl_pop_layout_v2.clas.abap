@@ -375,7 +375,7 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
     columns = tab->columns( ).
 
     
-    lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_struc( ms_layout-t_layout ).
+    lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_any( ms_layout-t_layout ).
 
     
     col = columns->column( )->header( `` ).
@@ -900,6 +900,7 @@ DATA t_guids TYPE temp2.
   METHOD init_layout.
 
     " create the tab first if the db fields were added/deleted
+*    DATA(t_comp) = z2ui5_cl_util_api=>get_comps_by_data( data ).
     DATA t_comp TYPE abap_component_tab.
     DATA temp14 LIKE LINE OF t_comp.
     DATA lr_comp LIKE REF TO temp14.
@@ -955,7 +956,7 @@ DATA t_pos TYPE temp4.
       DATA layout LIKE REF TO temp30.
             FIELD-SYMBOLS <temp31> TYPE temp29.
 DATA pos LIKE REF TO <temp31>.
-    t_comp = z2ui5_cl_util_api=>get_comps_by_data( data ).
+    t_comp = z2ui5_cl_util_api=>rtti_get_t_attri_by_any( data ).
 
     
     

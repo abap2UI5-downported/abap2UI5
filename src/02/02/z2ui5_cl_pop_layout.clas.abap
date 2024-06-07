@@ -336,7 +336,7 @@ GET REFERENCE OF <temp3> INTO t001.
             FIELD-SYMBOLS <temp13> TYPE z2ui5_t002.
 DATA t002 LIKE REF TO <temp13>.
       DATA index TYPE i.
-    t_comp   = z2ui5_cl_util=>rtti_get_t_attri_by_struc( tab ).
+    t_comp   = z2ui5_cl_util=>rtti_get_t_attri_by_any( tab ).
     
     tab_name = z2ui5_cl_util=>rtti_tab_get_relative_name( tab ).
     IF tab_name IS INITIAL.
@@ -622,7 +622,7 @@ GET REFERENCE OF <temp13> INTO t002.
     
     columns = tab->columns( ).
     
-    lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_struc( ms_layout-t_layout ).
+    lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_any( ms_layout-t_layout ).
 
     
     
