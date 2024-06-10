@@ -208,7 +208,7 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
 
       ENDCASE.
 
-      client->view_model_update( ).
+      client->popup_model_update( ).
 
     ENDIF.
 
@@ -635,20 +635,19 @@ DATA Positions TYPE temp1.
     DATA Head LIKE temp10.
     DATA layout LIKE LINE OF ms_layout-t_layout.
 TYPES BEGIN OF temp11.
-TYPES mandt TYPE z2ui5_t003-mandt.
 TYPES guid TYPE z2ui5_t003-guid.
-TYPES layout TYPE z2ui5_t003-layout.
-TYPES control TYPE z2ui5_t003-control.
-TYPES handle01 TYPE z2ui5_t003-handle01.
-TYPES handle02 TYPE z2ui5_t003-handle02.
-TYPES handle03 TYPE z2ui5_t003-handle03.
-TYPES handle04 TYPE z2ui5_t003-handle04.
-TYPES descr TYPE z2ui5_t003-descr.
-TYPES def TYPE z2ui5_t003-def.
-TYPES uname TYPE z2ui5_t003-uname.
 TYPES END OF temp11.
     TYPES temp2 TYPE STANDARD TABLE OF temp11 WITH DEFAULT KEY.
-DATA t_guids TYPE temp2.
+DATA t_heads TYPE temp2.
+TYPES BEGIN OF temp12.
+TYPES mandt TYPE z2ui5_t004-mandt.
+TYPES guid TYPE z2ui5_t004-guid.
+TYPES pos_guid TYPE z2ui5_t004-pos_guid.
+TYPES END OF temp12.
+        TYPES temp3 TYPE STANDARD TABLE OF temp12 WITH DEFAULT KEY.
+DATA t_del TYPE temp3.
+            DATA temp13 LIKE LINE OF Positions.
+            DATA r_pos LIKE REF TO temp13.
         DATA pos LIKE LINE OF positions.
 
     IF mv_layout IS INITIAL.
@@ -663,6 +662,7 @@ DATA t_guids TYPE temp2.
 
     
     CLEAR temp10.
+    temp10-guid = ms_layout-s_head-guid.
     temp10-layout = mv_layout.
     temp10-control = ms_layout-s_head-control.
     temp10-handle01 = ms_layout-s_head-handle01.
@@ -679,8 +679,9 @@ DATA t_guids TYPE temp2.
     LOOP AT ms_layout-t_layout INTO layout.
 
       CLEAR line.
-      MOVE-CORRESPONDING layout TO line.
+
       MOVE-CORRESPONDING ms_layout-s_head TO line.
+      MOVE-CORRESPONDING layout TO line.
       line-layout = mv_layout.
 
       line-width  = check_width_unit( line-width ).
@@ -693,30 +694,57 @@ DATA t_guids TYPE temp2.
     
     
 
-    SELECT mandt
-           guid
-           layout
-           control
-           handle01
-           handle02
-           handle03
-           handle04
-           descr
-           def
-           uname
-      FROM z2ui5_t003
+    SELECT guid FROM z2ui5_t003
       WHERE layout   = Head-layout
         AND control  = Head-control
         AND handle01 = Head-handle01
         AND handle02 = Head-handle02
         AND handle03 = Head-handle03
         AND handle04 = Head-handle04
-      INTO TABLE t_guids.
+      INTO TABLE t_heads.
 
     IF sy-subrc = 0.
-      " if structure was changed we do not want any dead entries ...
-      DELETE z2ui5_t004 FROM TABLE t_guids.
-      COMMIT WORK AND WAIT.
+
+      IF t_heads IS NOT INITIAL.
+
+        
+        
+
+        SELECT mandt guid pos_guid FROM z2ui5_t004
+          FOR ALL ENTRIES IN t_heads
+          WHERE guid = t_heads-guid
+          INTO TABLE t_del.
+
+        IF sy-subrc = 0.
+          " if structure was changed we do not want any dead entries ...
+          DELETE z2ui5_t004 FROM TABLE t_del.
+          COMMIT WORK AND WAIT.
+        ENDIF.
+
+      ENDIF.
+    ELSE.
+
+      " guid already taken
+      SELECT guid FROM z2ui5_t003
+        WHERE guid = head-guid
+        INTO TABLE t_heads.
+
+      IF sy-subrc = 0.
+        " Layout changed and saved under new name -> new Guid needed
+        TRY.
+            Head-guid = cl_system_uuid=>create_uuid_c32_static( ).
+
+            
+            
+            LOOP AT Positions REFERENCE INTO r_pos.
+              r_pos->guid = Head-guid.
+            ENDLOOP.
+
+          CATCH cx_root.
+        ENDTRY.
+
+      ENDIF.
+
     ENDIF.
 
     MODIFY z2ui5_t003 FROM Head.
@@ -731,6 +759,8 @@ DATA t_guids TYPE temp2.
         client->message_toast_display( 'Data saved.' ).
 
         ms_layout-s_head = Head.
+
+        CLEAR ms_layout-t_layout.
 
         
         LOOP AT positions INTO pos.
@@ -842,15 +872,15 @@ DATA t_guids TYPE temp2.
 
   METHOD get_selected_layout.
 
-    DATA temp12 TYPE z2ui5_cl_pop_layout_v2=>ty_s_layo.
-    DATA temp13 TYPE z2ui5_cl_pop_layout_v2=>ty_s_layo.
-    CLEAR temp12.
+    DATA temp14 TYPE z2ui5_cl_pop_layout_v2=>ty_s_layo.
+    DATA temp15 TYPE z2ui5_cl_pop_layout_v2=>ty_s_layo.
+    CLEAR temp14.
     
-    READ TABLE mt_head INTO temp13 WITH KEY selkz = abap_true.
+    READ TABLE mt_head INTO temp15 WITH KEY selkz = abap_true.
     IF sy-subrc = 0.
-      temp12 = temp13.
+      temp14 = temp15.
     ENDIF.
-    result = temp12.
+    result = temp14.
 
   ENDMETHOD.
 
@@ -894,18 +924,16 @@ DATA t_guids TYPE temp2.
       WHERE guid = Head-guid
       INTO CORRESPONDING FIELDS OF TABLE ms_layout-t_layout  ##SUBRC_OK.
 
-
   ENDMETHOD.
 
   METHOD init_layout.
 
     " create the tab first if the db fields were added/deleted
-*    DATA(t_comp) = z2ui5_cl_util_api=>get_comps_by_data( data ).
     DATA t_comp TYPE abap_component_tab.
-    DATA temp14 LIKE LINE OF t_comp.
-    DATA lr_comp LIKE REF TO temp14.
-      DATA temp15 TYPE z2ui5_cl_pop_layout_v2=>ty_s_positions.
-TYPES BEGIN OF temp16.
+    DATA temp16 LIKE LINE OF t_comp.
+    DATA lr_comp LIKE REF TO temp16.
+      DATA temp17 TYPE z2ui5_cl_pop_layout_v2=>ty_s_positions.
+TYPES BEGIN OF temp18.
 TYPES guid TYPE z2ui5_t003-guid.
 TYPES layout TYPE z2ui5_t003-layout.
 TYPES control TYPE z2ui5_t003-control.
@@ -916,24 +944,25 @@ TYPES handle04 TYPE z2ui5_t003-handle04.
 TYPES descr TYPE z2ui5_t003-descr.
 TYPES def TYPE z2ui5_t003-def.
 TYPES uname TYPE z2ui5_t003-uname.
-TYPES END OF temp16.
-    TYPES temp3 TYPE STANDARD TABLE OF temp16 WITH DEFAULT KEY.
-DATA Head TYPE temp3.
-    DATA temp17 LIKE LINE OF Head.
-    DATA temp18 TYPE temp16.
-    DATA def LIKE temp17.
-      DATA temp19 LIKE def.
-      DATA temp20 TYPE temp16.
-        DATA temp21 LIKE def.
-        DATA temp22 TYPE temp16.
-          DATA temp23 LIKE def.
-          DATA temp24 TYPE temp16.
+TYPES END OF temp18.
+    TYPES temp4 TYPE STANDARD TABLE OF temp18 WITH DEFAULT KEY.
+DATA Head TYPE temp4.
+    DATA temp19 LIKE LINE OF Head.
+    DATA temp20 TYPE temp18.
+    DATA def LIKE temp19.
+      DATA temp21 LIKE def.
+      DATA temp22 TYPE temp18.
+        DATA temp23 LIKE def.
+        DATA temp24 TYPE temp18.
           DATA temp25 LIKE def.
-          DATA temp26 TYPE temp16.
+          DATA temp26 TYPE temp18.
           DATA temp27 LIKE def.
-          DATA temp28 TYPE temp16.
-TYPES BEGIN OF temp29.
+          DATA temp28 TYPE temp18.
+          DATA temp29 LIKE def.
+          DATA temp30 TYPE temp18.
+TYPES BEGIN OF temp31.
 TYPES guid TYPE z2ui5_t004-guid.
+TYPES pos_guid TYPE z2ui5_t004-pos_guid.
 TYPES layout TYPE z2ui5_t004-layout.
 TYPES control TYPE z2ui5_t004-control.
 TYPES handle01 TYPE z2ui5_t004-handle01.
@@ -949,28 +978,30 @@ TYPES importance TYPE z2ui5_t004-importance.
 TYPES width TYPE z2ui5_t004-width.
 TYPES sequence TYPE z2ui5_t004-sequence.
 TYPES alternative_text TYPE z2ui5_t004-alternative_text.
-TYPES END OF temp29.
-      TYPES temp4 TYPE STANDARD TABLE OF temp29 WITH DEFAULT KEY.
-DATA t_pos TYPE temp4.
-      DATA temp30 LIKE LINE OF result-t_layout.
-      DATA layout LIKE REF TO temp30.
-            FIELD-SYMBOLS <temp31> TYPE temp29.
-DATA pos LIKE REF TO <temp31>.
+TYPES END OF temp31.
+      TYPES temp5 TYPE STANDARD TABLE OF temp31 WITH DEFAULT KEY.
+DATA t_pos TYPE temp5.
+      DATA temp32 LIKE LINE OF result-t_layout.
+      DATA layout LIKE REF TO temp32.
+            FIELD-SYMBOLS <temp33> TYPE temp31.
+DATA pos LIKE REF TO <temp33>.
+                DATA pos_guid TYPE sysuuid_c32.
     t_comp = z2ui5_cl_util_api=>rtti_get_t_attri_by_any( data ).
 
     
     
     LOOP AT t_comp REFERENCE INTO lr_comp.
       
-      CLEAR temp15.
-      temp15-control = control.
-      temp15-handle01 = handle01.
-      temp15-handle02 = handle02.
-      temp15-handle03 = handle03.
-      temp15-handle04 = handle04.
-      temp15-fname = lr_comp->name.
-      temp15-rollname = lr_comp->type->get_relative_name( ).
-      INSERT temp15 INTO TABLE result-t_layout.
+      CLEAR temp17.
+      temp17-control = control.
+      temp17-handle01 = handle01.
+      temp17-handle02 = handle02.
+      temp17-handle03 = handle03.
+      temp17-handle04 = handle04.
+      temp17-fname = lr_comp->name.
+      temp17-rollname = lr_comp->type->get_relative_name( ).
+      INSERT temp17
+             INTO TABLE result-t_layout.
     ENDLOOP.
 
     " Select Layouts
@@ -997,52 +1028,41 @@ DATA pos LIKE REF TO <temp31>.
 
     " Default all Handles + User
     
-    CLEAR temp17.
+    CLEAR temp19.
     
-    READ TABLE Head INTO temp18 WITH KEY handle01 = handle01 handle02 = handle02 handle03 = handle03 handle04 = handle04 def = abap_true uname = sy-uname.
+    READ TABLE Head INTO temp20 WITH KEY handle01 = handle01 handle02 = handle02 handle03 = handle03 handle04 = handle04 def = abap_true uname = sy-uname.
     IF sy-subrc = 0.
-      temp17 = temp18.
+      temp19 = temp20.
     ENDIF.
     
-    def = temp17.
+    def = temp19.
 
     IF def IS INITIAL.
       " Default frist 3 Handles + User
       
-      CLEAR temp19.
+      CLEAR temp21.
       
-      READ TABLE Head INTO temp20 WITH KEY handle01 = handle01 handle02 = handle02 handle03 = handle03 def = abap_true uname = sy-uname.
+      READ TABLE Head INTO temp22 WITH KEY handle01 = handle01 handle02 = handle02 handle03 = handle03 def = abap_true uname = sy-uname.
       IF sy-subrc = 0.
-        temp19 = temp20.
+        temp21 = temp22.
       ENDIF.
-      def = temp19.
+      def = temp21.
       IF def IS INITIAL.
         " Default frist 2 Handles + User
         
-        CLEAR temp21.
+        CLEAR temp23.
         
-        READ TABLE Head INTO temp22 WITH KEY handle01 = handle01 handle02 = handle02 def = abap_true uname = sy-uname.
+        READ TABLE Head INTO temp24 WITH KEY handle01 = handle01 handle02 = handle02 def = abap_true uname = sy-uname.
         IF sy-subrc = 0.
-          temp21 = temp22.
+          temp23 = temp24.
         ENDIF.
-        def = temp21.
+        def = temp23.
         IF def IS INITIAL.
           " Default frist 1 Handles + User
           
-          CLEAR temp23.
-          
-          READ TABLE Head INTO temp24 WITH KEY handle01 = handle01 def = abap_true uname = sy-uname.
-          IF sy-subrc = 0.
-            temp23 = temp24.
-          ENDIF.
-          def = temp23.
-        ENDIF.
-        IF def IS INITIAL.
-          " Default User
-          
           CLEAR temp25.
           
-          READ TABLE Head INTO temp26 WITH KEY def = abap_true uname = sy-uname.
+          READ TABLE Head INTO temp26 WITH KEY handle01 = handle01 def = abap_true uname = sy-uname.
           IF sy-subrc = 0.
             temp25 = temp26.
           ENDIF.
@@ -1053,11 +1073,22 @@ DATA pos LIKE REF TO <temp31>.
           
           CLEAR temp27.
           
-          READ TABLE Head INTO temp28 WITH KEY def = abap_true.
+          READ TABLE Head INTO temp28 WITH KEY def = abap_true uname = sy-uname.
           IF sy-subrc = 0.
             temp27 = temp28.
           ENDIF.
           def = temp27.
+        ENDIF.
+        IF def IS INITIAL.
+          " Default User
+          
+          CLEAR temp29.
+          
+          READ TABLE Head INTO temp30 WITH KEY def = abap_true.
+          IF sy-subrc = 0.
+            temp29 = temp30.
+          ENDIF.
+          def = temp29.
         ENDIF.
       ENDIF.
     ENDIF.
@@ -1068,6 +1099,7 @@ DATA pos LIKE REF TO <temp31>.
       
 
       SELECT guid
+             pos_guid
              layout
              control
              handle01
@@ -1093,15 +1125,23 @@ DATA pos LIKE REF TO <temp31>.
 
         TRY.
             
-            READ TABLE t_pos WITH KEY fname = layout->fname ASSIGNING <temp31>.
+            READ TABLE t_pos WITH KEY fname = layout->fname ASSIGNING <temp33>.
 IF sy-subrc <> 0.
   ASSERT 1 = 0.
 ENDIF.
 
-GET REFERENCE OF <temp31> INTO pos.
+GET REFERENCE OF <temp33> INTO pos.
             MOVE-CORRESPONDING pos->* TO layout->*.
           CATCH cx_root.
+
+            TRY.
+                
+                pos_guid = cl_system_uuid=>create_uuid_c32_static( ).
+              CATCH cx_root.
+            ENDTRY.
+
             layout->guid       = def-guid.
+            layout->pos_guid   = pos_guid.
             layout->layout     = 'Default'.
             layout->control    = control.
             layout->halign     = 'Begin'.
@@ -1139,6 +1179,7 @@ GET REFERENCE OF <temp31> INTO pos.
     DATA layout TYPE REF TO ty_s_positions.
         DATA guid TYPE sysuuid_c32.
     DATA index TYPE i.
+          DATA pos_guid TYPE sysuuid_c32.
 
     TRY.
         
@@ -1153,6 +1194,12 @@ GET REFERENCE OF <temp31> INTO pos.
     index = 0.
 
     LOOP AT result-t_layout REFERENCE INTO layout.
+
+      TRY.
+          
+          pos_guid = cl_system_uuid=>create_uuid_c32_static( ).
+        CATCH cx_root.
+      ENDTRY.
 
       index = index + 1.
 
@@ -1169,6 +1216,7 @@ GET REFERENCE OF <temp31> INTO pos.
       ENDIF.
 
       layout->guid       = guid.
+      layout->pos_guid   = pos_guid.
       layout->layout     = 'Default'.
       layout->control    = control.
       layout->halign     = 'Begin'.
@@ -1195,9 +1243,9 @@ GET REFERENCE OF <temp31> INTO pos.
   ENDMETHOD.
 
   METHOD get_layouts.
-      FIELD-SYMBOLS <temp32> TYPE z2ui5_cl_pop_layout_v2=>ty_s_layo.
-DATA Head LIKE REF TO <temp32>.
-        FIELD-SYMBOLS <temp33> TYPE z2ui5_cl_pop_layout_v2=>ty_s_layo.
+      FIELD-SYMBOLS <temp34> TYPE z2ui5_cl_pop_layout_v2=>ty_s_layo.
+DATA Head LIKE REF TO <temp34>.
+        FIELD-SYMBOLS <temp35> TYPE z2ui5_cl_pop_layout_v2=>ty_s_layo.
 
     mt_head = select_layouts( control  = ms_layout-s_head-control
                               handle01 = ms_layout-s_head-handle01
@@ -1208,22 +1256,22 @@ DATA Head LIKE REF TO <temp32>.
     IF mt_head IS NOT INITIAL.
 
       
-      READ TABLE mt_head WITH KEY layout = ms_layout-s_head-layout ASSIGNING <temp32>.
+      READ TABLE mt_head WITH KEY layout = ms_layout-s_head-layout ASSIGNING <temp34>.
 IF sy-subrc <> 0.
   ASSERT 1 = 0.
 ENDIF.
 
-GET REFERENCE OF <temp32> INTO Head.
+GET REFERENCE OF <temp34> INTO Head.
       IF Head IS BOUND.
         Head->selkz = abap_true.
         RETURN.
       ELSE.
         
-        READ TABLE mt_head INDEX 1 ASSIGNING <temp33>.
+        READ TABLE mt_head INDEX 1 ASSIGNING <temp35>.
 IF sy-subrc <> 0.
   ASSERT 1 = 0.
 ENDIF.
-GET REFERENCE OF <temp33> INTO Head.
+GET REFERENCE OF <temp35> INTO Head.
         Head->selkz = abap_true.
       ENDIF.
 
@@ -1251,16 +1299,16 @@ GET REFERENCE OF <temp33> INTO Head.
     CASE result->get( )-event.
 
       WHEN 'LAYOUT_OPEN'.
-        client->view_destroy( ).
+
         result->nav_app_call( factory( layout      = layout
                                        open_layout = abap_true   ) ).
 
       WHEN 'LAYOUT_EDIT'.
-        client->view_destroy( ).
+
         result->nav_app_call( factory( layout = layout   ) ).
 
       WHEN 'LAYOUT_DELETE'.
-        client->view_destroy( ).
+
         result->nav_app_call( factory( layout        = layout
                                        delete_layout = abap_true ) ).
 
@@ -1284,10 +1332,10 @@ GET REFERENCE OF <temp33> INTO Head.
 
     FIELD-SYMBOLS <table> TYPE any.
         DATA typedesc TYPE REF TO cl_abap_typedescr.
-            DATA temp34 TYPE REF TO cl_abap_tabledescr.
-            DATA tabledesc LIKE temp34.
-            DATA temp35 TYPE REF TO cl_abap_structdescr.
-            DATA structdesc LIKE temp35.
+            DATA temp36 TYPE REF TO cl_abap_tabledescr.
+            DATA tabledesc LIKE temp36.
+            DATA temp37 TYPE REF TO cl_abap_structdescr.
+            DATA structdesc LIKE temp37.
 
     TRY.
         
@@ -1297,13 +1345,13 @@ GET REFERENCE OF <temp33> INTO Head.
 
           WHEN cl_abap_typedescr=>kind_table.
             
-            temp34 ?= typedesc.
+            temp36 ?= typedesc.
             
-            tabledesc = temp34.
+            tabledesc = temp36.
             
-            temp35 ?= tabledesc->get_table_line_type( ).
+            temp37 ?= tabledesc->get_table_line_type( ).
             
-            structdesc = temp35.
+            structdesc = temp37.
             result = structdesc->get_relative_name( ).
             RETURN.
 
@@ -1348,17 +1396,21 @@ GET REFERENCE OF <temp33> INTO Head.
   ENDMETHOD.
 
   METHOD set_text.
-      DATA temp36 TYPE string.
-      DATA temp37 TYPE string.
+      DATA temp38 TYPE string.
+      DATA temp39 TYPE string.
 
     IF layout->alternative_text IS INITIAL.
       
-      temp36 = layout->rollname.
-      result = z2ui5_cl_stmpncfctn_api=>rtti_get_data_element_texts( temp36 )-long.
+      temp38 = layout->rollname.
+      result = z2ui5_cl_stmpncfctn_api=>rtti_get_data_element_texts( temp38 )-long.
     ELSE.
       
-      temp37 = layout->alternative_text.
-      result = z2ui5_cl_stmpncfctn_api=>rtti_get_data_element_texts( temp37 )-long.
+      temp39 = layout->alternative_text.
+      result = z2ui5_cl_stmpncfctn_api=>rtti_get_data_element_texts( temp39 )-long.
+    ENDIF.
+
+    IF result IS INITIAL.
+      result = layout->fname.
     ENDIF.
 
   ENDMETHOD.
