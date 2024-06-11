@@ -43,35 +43,35 @@ CLASS ltcl_test_search_attri IMPLEMENTATION.
 
     DATA lo_app_client TYPE REF TO ltcl_test_app2.
     DATA lr_value TYPE REF TO data.
-    DATA temp6 TYPE z2ui5_if_core_types=>ty_t_attri.
-    DATA temp7 LIKE LINE OF temp6.
-    DATA lt_attri LIKE temp6.
-    DATA temp8 LIKE REF TO lt_attri.
+    DATA temp14 TYPE z2ui5_if_core_types=>ty_t_attri.
+    DATA temp15 LIKE LINE OF temp14.
+    DATA lt_attri LIKE temp14.
+    DATA temp16 LIKE REF TO lt_attri.
 DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
-    DATA temp9 LIKE REF TO lo_app_client->mv_value.
+    DATA temp17 LIKE REF TO lo_app_client->mv_value.
 DATA lr_attri TYPE REF TO z2ui5_if_core_types=>ty_s_attri.
     CREATE OBJECT lo_app_client TYPE ltcl_test_app2.
     
     GET REFERENCE OF lo_app_client->mv_value INTO lr_value.
 
     
-    CLEAR temp6.
+    CLEAR temp14.
     
-    temp7-r_ref = lr_value.
-    temp7-o_typedescr = cl_abap_datadescr=>describe_by_data_ref( lr_value ).
-    INSERT temp7 INTO TABLE temp6.
+    temp15-r_ref = lr_value.
+    temp15-o_typedescr = cl_abap_datadescr=>describe_by_data_ref( lr_value ).
+    INSERT temp15 INTO TABLE temp14.
     
-    lt_attri = temp6.
+    lt_attri = temp14.
 
     
-    GET REFERENCE OF lt_attri INTO temp8.
+    GET REFERENCE OF lt_attri INTO temp16.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp8 app = lo_app_client.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp16 app = lo_app_client.
 
     
-    GET REFERENCE OF lo_app_client->mv_value INTO temp9.
+    GET REFERENCE OF lo_app_client->mv_value INTO temp17.
 
-lr_attri = lo_model->attri_search_a_dissolve( temp9 ).
+lr_attri = lo_model->attri_search_a_dissolve( temp17 ).
 
     IF lr_attri->r_ref <> lr_value.
       cl_abap_unit_assert=>abort( ).
@@ -83,38 +83,38 @@ lr_attri = lo_model->attri_search_a_dissolve( temp9 ).
 
     DATA lo_app_client TYPE REF TO ltcl_test_app2.
     DATA lr_value TYPE REF TO data.
-    DATA temp10 LIKE REF TO lo_app_client->mv_value.
+    DATA temp18 LIKE REF TO lo_app_client->mv_value.
 DATA temp1 TYPE z2ui5_if_core_types=>ty_t_attri.
 DATA temp2 LIKE LINE OF temp1.
 DATA lt_attri LIKE temp1.
-    DATA temp11 LIKE REF TO lt_attri.
+    DATA temp19 LIKE REF TO lt_attri.
 DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
-    DATA temp12 LIKE REF TO lo_app_client->mv_value.
+    DATA temp20 LIKE REF TO lo_app_client->mv_value.
 DATA lr_attri TYPE REF TO z2ui5_if_core_types=>ty_s_attri.
     CREATE OBJECT lo_app_client TYPE ltcl_test_app2.
     
     GET REFERENCE OF lo_app_client->mv_value INTO lr_value.
 
     
-    GET REFERENCE OF lo_app_client->mv_value INTO temp10.
+    GET REFERENCE OF lo_app_client->mv_value INTO temp18.
 
 CLEAR temp1.
 
-temp2-r_ref = temp10.
+temp2-r_ref = temp18.
 temp2-o_typedescr = cl_abap_datadescr=>describe_by_data_ref( lr_value ).
 INSERT temp2 INTO TABLE temp1.
 
 lt_attri = temp1.
 
     
-    GET REFERENCE OF lt_attri INTO temp11.
+    GET REFERENCE OF lt_attri INTO temp19.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp11 app = lo_app_client.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp19 app = lo_app_client.
 
     
-    GET REFERENCE OF lo_app_client->mv_value INTO temp12.
+    GET REFERENCE OF lo_app_client->mv_value INTO temp20.
 
-lr_attri = lo_model->attri_search_a_dissolve( temp12 ).
+lr_attri = lo_model->attri_search_a_dissolve( temp20 ).
 
     IF lr_attri->r_ref <> lr_value.
       cl_abap_unit_assert=>abort( ).
@@ -126,15 +126,15 @@ lr_attri = lo_model->attri_search_a_dissolve( temp12 ).
 
     DATA lo_app_client TYPE REF TO ltcl_test_app2.
     DATA lr_value TYPE REF TO data.
-    DATA temp13 LIKE REF TO lo_app_client->mv_value.
+    DATA temp21 LIKE REF TO lo_app_client->mv_value.
 DATA temp3 LIKE REF TO lo_app_client->mo_app.
 DATA temp1 LIKE REF TO lo_app_client->mr_value2.
 DATA temp2 LIKE REF TO lo_app_client->mr_value.
 DATA temp4 TYPE z2ui5_if_core_types=>ty_t_attri.
 DATA temp5 LIKE LINE OF temp4.
 DATA lt_attri LIKE temp4.
-    FIELD-SYMBOLS <temp14> TYPE z2ui5_if_core_types=>ty_s_attri.
-DATA lr_attri LIKE REF TO <temp14>.
+    FIELD-SYMBOLS <temp22> TYPE z2ui5_if_core_types=>ty_s_attri.
+DATA lr_attri LIKE REF TO <temp22>.
     CREATE OBJECT lo_app_client TYPE ltcl_test_app2.
     
     GET REFERENCE OF lo_app_client->mv_value INTO lr_value.
@@ -142,7 +142,7 @@ DATA lr_attri LIKE REF TO <temp14>.
     CREATE OBJECT lo_app_client->mo_app.
 
     
-    GET REFERENCE OF lo_app_client->mv_value INTO temp13.
+    GET REFERENCE OF lo_app_client->mv_value INTO temp21.
 
 GET REFERENCE OF lo_app_client->mo_app INTO temp3.
 
@@ -162,18 +162,18 @@ temp5-name = `2`.
 temp5-r_ref = temp3.
 INSERT temp5 INTO TABLE temp4.
 temp5-name = `3`.
-temp5-r_ref = temp13.
+temp5-r_ref = temp21.
 INSERT temp5 INTO TABLE temp4.
 
 lt_attri = temp4.
 
     
-    READ TABLE lt_attri WITH KEY r_ref = lr_value ASSIGNING <temp14>.
+    READ TABLE lt_attri WITH KEY r_ref = lr_value ASSIGNING <temp22>.
 IF sy-subrc <> 0.
   ASSERT 1 = 0.
 ENDIF.
 
-GET REFERENCE OF <temp14> INTO lr_attri.
+GET REFERENCE OF <temp22> INTO lr_attri.
     IF lr_attri->r_ref <> lr_value.
       cl_abap_unit_assert=>abort( ).
     ENDIF.
@@ -244,32 +244,32 @@ CLASS ltcl_test_get_attri IMPLEMENTATION.
 
     DATA lo_app_client TYPE REF TO ltcl_test_app3.
     DATA lr_value TYPE REF TO data.
-    DATA temp15 TYPE z2ui5_if_core_types=>ty_t_attri.
-    DATA lt_attri LIKE temp15.
-    DATA temp16 LIKE REF TO lt_attri.
+    DATA temp23 TYPE z2ui5_if_core_types=>ty_t_attri.
+    DATA lt_attri LIKE temp23.
+    DATA temp24 LIKE REF TO lt_attri.
 DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
     DATA lr_attri TYPE REF TO data.
-    DATA temp17 LIKE REF TO lo_app_client->mv_value.
+    DATA temp25 LIKE REF TO lo_app_client->mv_value.
     CREATE OBJECT lo_app_client TYPE ltcl_test_app3.
     
     GET REFERENCE OF lo_app_client->mv_value INTO lr_value.
 
     
-    CLEAR temp15.
+    CLEAR temp23.
     
-    lt_attri = temp15.
+    lt_attri = temp23.
 
     
-    GET REFERENCE OF lt_attri INTO temp16.
+    GET REFERENCE OF lt_attri INTO temp24.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp16 app = lo_app_client.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp24 app = lo_app_client.
 
     
     lr_attri = lo_model->attri_get_val_ref( `MV_VALUE` ).
 
     
-    GET REFERENCE OF lo_app_client->mv_value INTO temp17.
-IF temp17 <> lr_attri.
+    GET REFERENCE OF lo_app_client->mv_value INTO temp25.
+IF temp25 <> lr_attri.
       cl_abap_unit_assert=>abort( ).
     ENDIF.
 
@@ -278,22 +278,22 @@ IF temp17 <> lr_attri.
   METHOD second_test.
 
     DATA lo_app_client TYPE REF TO ltcl_test_app3.
-    DATA temp18 TYPE z2ui5_if_core_types=>ty_t_attri.
-    DATA lt_attri LIKE temp18.
-    DATA temp19 LIKE REF TO lt_attri.
+    DATA temp26 TYPE z2ui5_if_core_types=>ty_t_attri.
+    DATA lt_attri LIKE temp26.
+    DATA temp27 LIKE REF TO lt_attri.
 DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
     DATA lr_attri TYPE REF TO data.
     CREATE OBJECT lo_app_client TYPE ltcl_test_app3.
     CREATE DATA lo_app_client->mr_value.
 
     
-    CLEAR temp18.
+    CLEAR temp26.
     
-    lt_attri = temp18.
+    lt_attri = temp26.
     
-    GET REFERENCE OF lt_attri INTO temp19.
+    GET REFERENCE OF lt_attri INTO temp27.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp19 app = lo_app_client.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp27 app = lo_app_client.
 
     
     lr_attri = lo_model->attri_get_val_ref( `MR_VALUE->*` ).
@@ -307,29 +307,29 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp19 app
   METHOD third_test.
 
     DATA lo_app_client TYPE REF TO ltcl_test_app3.
-    DATA temp20 TYPE z2ui5_if_core_types=>ty_t_attri.
-    DATA lt_attri LIKE temp20.
-    DATA temp21 LIKE REF TO lt_attri.
+    DATA temp28 TYPE z2ui5_if_core_types=>ty_t_attri.
+    DATA lt_attri LIKE temp28.
+    DATA temp29 LIKE REF TO lt_attri.
 DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
     DATA lr_attri TYPE REF TO data.
-    DATA temp22 LIKE REF TO lo_app_client->mo_app->mv_value.
+    DATA temp30 LIKE REF TO lo_app_client->mo_app->mv_value.
     CREATE OBJECT lo_app_client TYPE ltcl_test_app3.
 
     
-    CLEAR temp20.
+    CLEAR temp28.
     
-    lt_attri = temp20.
+    lt_attri = temp28.
     
-    GET REFERENCE OF lt_attri INTO temp21.
+    GET REFERENCE OF lt_attri INTO temp29.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp21 app = lo_app_client.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp29 app = lo_app_client.
 
     
     lr_attri = lo_model->attri_get_val_ref( `MO_APP->MV_VALUE` ).
 
     
-    GET REFERENCE OF lo_app_client->mo_app->mv_value INTO temp22.
-IF temp22 <> lr_attri.
+    GET REFERENCE OF lo_app_client->mo_app->mv_value INTO temp30.
+IF temp30 <> lr_attri.
       cl_abap_unit_assert=>abort( ).
     ENDIF.
 
@@ -338,22 +338,22 @@ IF temp22 <> lr_attri.
   METHOD test4.
 
     DATA lo_app_client TYPE REF TO ltcl_test_app3.
-    DATA temp23 TYPE z2ui5_if_core_types=>ty_t_attri.
-    DATA lt_attri LIKE temp23.
-    DATA temp24 LIKE REF TO lt_attri.
+    DATA temp31 TYPE z2ui5_if_core_types=>ty_t_attri.
+    DATA lt_attri LIKE temp31.
+    DATA temp32 LIKE REF TO lt_attri.
 DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
     DATA lr_attri TYPE REF TO data.
     CREATE OBJECT lo_app_client TYPE ltcl_test_app3.
     CREATE DATA lo_app_client->mo_app->mr_value.
 
     
-    CLEAR temp23.
+    CLEAR temp31.
     
-    lt_attri = temp23.
+    lt_attri = temp31.
     
-    GET REFERENCE OF lt_attri INTO temp24.
+    GET REFERENCE OF lt_attri INTO temp32.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp24 app = lo_app_client.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = temp32 app = lo_app_client.
 
     
     lr_attri = lo_model->attri_get_val_ref( `MO_APP->MR_VALUE->*` ).

@@ -110,6 +110,17 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
   METHOD attri_search_a_dissolve.
     DATA lo_dissolve TYPE REF TO z2ui5_cl_core_diss_srv.
       DATA temp3 LIKE sy-subrc.
+    DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
+        FIELD-SYMBOLS <ls_attri> LIKE LINE OF mt_attri->*.
+          DATA lv_name LIKE <ls_attri>-name.
+          DATA temp4 LIKE sy-subrc.
+            DATA temp5 LIKE LINE OF lt_attri.
+            DATA temp6 LIKE sy-tabix.
+            DATA temp7 LIKE LINE OF lt_attri.
+            DATA temp8 LIKE sy-tabix.
+            DATA temp9 LIKE LINE OF lt_attri.
+            DATA temp10 LIKE sy-tabix.
+      DATA temp11 LIKE sy-subrc.
 
     result = attri_search( val ).
     IF result IS BOUND.
@@ -119,7 +130,7 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
     
     CREATE OBJECT lo_dissolve TYPE z2ui5_cl_core_diss_srv EXPORTING attri = mt_attri app = mo_app.
 
-    DO 10 TIMES.
+    DO 5 TIMES.
 
       lo_dissolve->main( ).
 
@@ -137,6 +148,70 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
 
       EXIT.
     ENDDO.
+
+    """"" new
+    
+    lt_attri = mt_attri->*.
+    DELETE lt_attri WHERE BIND_type IS INITIAL.
+    CLEAR mt_attri->*.
+    DO 5 TIMES.
+
+      lo_dissolve->main( ).
+
+      result = attri_search( val ).
+      IF result IS BOUND.
+        
+        LOOP AT mt_attri->* ASSIGNING <ls_attri>.
+          
+          lv_name = <ls_attri>-name.
+          
+          READ TABLE lt_attri WITH KEY name = lv_name TRANSPORTING NO FIELDS.
+          temp4 = sy-subrc.
+          IF temp4 = 0.
+            
+            
+            temp6 = sy-tabix.
+            READ TABLE lt_attri WITH KEY name = lv_name INTO temp5.
+            sy-tabix = temp6.
+            IF sy-subrc <> 0.
+              ASSERT 1 = 0.
+            ENDIF.
+            <ls_attri>-bind_type = temp5-bind_type.
+            
+            
+            temp8 = sy-tabix.
+            READ TABLE lt_attri WITH KEY name = lv_name INTO temp7.
+            sy-tabix = temp8.
+            IF sy-subrc <> 0.
+              ASSERT 1 = 0.
+            ENDIF.
+            <ls_attri>-name_client = temp7-name_client.
+            
+            
+            temp10 = sy-tabix.
+            READ TABLE lt_attri WITH KEY name = lv_name INTO temp9.
+            sy-tabix = temp10.
+            IF sy-subrc <> 0.
+              ASSERT 1 = 0.
+            ENDIF.
+            <ls_attri>-view = temp9-view.
+          ENDIF.
+        ENDLOOP.
+        RETURN.
+      ENDIF.
+
+      
+      READ TABLE mt_attri->* WITH KEY check_dissolved = abap_false TRANSPORTING NO FIELDS.
+      temp11 = sy-subrc.
+      IF temp11 = 0.
+        CONTINUE.
+      ENDIF.
+
+      EXIT.
+    ENDDO.
+
+
+    """""
 
     RAISE EXCEPTION TYPE z2ui5_cx_util_error
       EXPORTING
@@ -164,8 +239,8 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
 
   METHOD attri_refs_update.
 
-    DATA temp4 LIKE LINE OF mt_attri->*.
-    DATA lr_attri LIKE REF TO temp4.
+    DATA temp12 LIKE LINE OF mt_attri->*.
+    DATA lr_attri LIKE REF TO temp12.
     LOOP AT mt_attri->* REFERENCE INTO lr_attri.
       TRY.
           lr_attri->r_ref = attri_get_val_ref( lr_attri->name ).
@@ -185,8 +260,8 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
 
   METHOD attri_search.
 
-    DATA temp5 LIKE LINE OF mt_attri->*.
-    DATA lr_attri LIKE REF TO temp5.
+    DATA temp13 LIKE LINE OF mt_attri->*.
+    DATA lr_attri LIKE REF TO temp13.
     LOOP AT mt_attri->* REFERENCE INTO lr_attri
          WHERE o_typedescr IS BOUND.
 

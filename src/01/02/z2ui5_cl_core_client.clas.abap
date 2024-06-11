@@ -315,9 +315,8 @@ CLASS Z2UI5_CL_CORE_CLIENT IMPLEMENTATION.
 
   METHOD z2ui5_if_client~_bind_clear.
 
-    DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
-    lo_bind->clear( val ).
+*    DATA(lo_bind) = NEW z2ui5_cl_core_bind_srv( mo_action->mo_app ).
+*    lo_bind->clear( val ).
 
   ENDMETHOD.
 
