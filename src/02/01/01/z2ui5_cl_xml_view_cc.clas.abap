@@ -93,12 +93,17 @@ CLASS z2ui5_cl_xml_view_cc DEFINITION
       IMPORTING
         !finished              TYPE clike OPTIONAL
         !ui5_version           TYPE clike OPTIONAL
+        !device_height         TYPE clike OPTIONAL
+        !device_width          TYPE clike OPTIONAL
+        !device_phone          TYPE clike OPTIONAL
+        !device_desktop        TYPE clike OPTIONAL
+        !device_tablet         TYPE clike OPTIONAL
+        !device_combi          TYPE clike OPTIONAL
         !ui5_gav               TYPE clike OPTIONAL
         !ui5_theme             TYPE clike OPTIONAL
         !device_os             TYPE clike OPTIONAL
         !device_systemtype     TYPE clike OPTIONAL
         !device_browser        TYPE clike OPTIONAL
-        !device_system_desktop TYPE clike OPTIONAL
           PREFERRED PARAMETER finished
       RETURNING
         VALUE(result)          TYPE REF TO z2ui5_cl_xml_view .
@@ -530,12 +535,28 @@ CLASS z2ui5_cl_xml_view_cc IMPLEMENTATION.
     temp18-n = `device_browser`.
     temp18-v = device_browser.
     INSERT temp18 INTO TABLE temp17.
-    temp18-n = `device_system_desktop`.
-    temp18-v = z2ui5_cl_util=>boolean_abap_2_json( device_system_desktop ).
+    temp18-n = `device_phone`.
+    temp18-v = device_phone.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-n = `device_desktop`.
+    temp18-v = device_desktop.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-n = `device_table`.
+    temp18-v = device_tablet.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-n = `device_combi`.
+    temp18-v = device_combi.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-n = `device_height`.
+    temp18-v = device_height.
+    INSERT temp18 INTO TABLE temp17.
+    temp18-n = `device_width`.
+    temp18-v = device_width.
     INSERT temp18 INTO TABLE temp17.
     mo_view->_generic( name = `Info`
               ns            = `z2ui5`
-              t_prop        = temp17 ).
+              t_prop        = temp17
+               ).
 
   ENDMETHOD.
 
