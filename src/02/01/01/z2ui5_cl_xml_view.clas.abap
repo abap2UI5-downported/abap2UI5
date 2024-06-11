@@ -3603,6 +3603,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 validated          TYPE clike OPTIONAL
                 !visible           TYPE clike OPTIONAL
                 activate           TYPE clike OPTIONAL
+                subsequentSteps    TYPE clike OPTIONAL
+                nextStep           TYPE clike OPTIONAL
                 complete           TYPE clike OPTIONAL
       RETURNING VALUE(result)      TYPE REF TO z2ui5_cl_xml_view.
 
@@ -16234,6 +16236,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp524 INTO TABLE temp523.
     temp524-n = `complete`.
     temp524-v = complete.
+    INSERT temp524 INTO TABLE temp523.
+    temp524-n = `nextStep`.
+    temp524-v = nextStep.
+    INSERT temp524 INTO TABLE temp523.
+    temp524-n = `subsequentSteps`.
+    temp524-v = subsequentSteps.
     INSERT temp524 INTO TABLE temp523.
     result = _generic( name   = `WizardStep`
                        t_prop = temp523 ).
