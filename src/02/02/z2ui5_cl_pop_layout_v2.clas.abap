@@ -82,10 +82,10 @@ CLASS z2ui5_cl_pop_layout_v2 DEFINITION
       IMPORTING
         !data         TYPE REF TO data
         !control      TYPE control
-        handle01      TYPE handle
-        handle02      TYPE handle
-        handle03      TYPE handle
-        handle04      TYPE handle
+        handle01      TYPE handle OPTIONAL
+        handle02      TYPE handle OPTIONAL
+        handle03      TYPE handle OPTIONAL
+        handle04      TYPE handle OPTIONAL
       RETURNING
         VALUE(result) TYPE ty_s_layout.
 
@@ -356,7 +356,7 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
     popup = z2ui5_cl_xml_view=>factory_popup( ).
 
     
-    dialog = popup->dialog( title        = 'Layout'
+    dialog = popup->dialog( title        = 'Edit Layout'
 *                                  stretch      = abap_true
                                   contentwidth = '70%'
                                   afterclose   = client->_event( 'CLOSE' ) ).
@@ -477,7 +477,7 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
     ENDLOOP.
 
     dialog->buttons(
-          )->button( press = client->_event( 'LAYOUT_EDIT' )
+          )->button( press = ''
                      icon  = 'sap-icon://edit'
                      type  = 'Emphasized'
           )->button( press = client->_event( 'LAYOUT_LOAD' )
@@ -797,12 +797,11 @@ DATA t_del TYPE temp3.
     popup = z2ui5_cl_xml_view=>factory_popup( ).
 
     
-    dialog = popup->dialog( title        = 'Layout'
+    dialog = popup->dialog( title        = 'Delete Layout'
                                   contentwidth = '70%'
                                   afterclose   = client->_event( 'CLOSE' ) ).
 
-    dialog->table( headertext = 'Layout'
-                   mode       = 'SingleSelectLeft'
+    dialog->table( mode       = 'SingleSelectLeft'
                    items      = client->_bind_edit( mt_head )
                 )->columns(
                     )->column( )->text( 'Layout' )->get_parent(
@@ -821,7 +820,7 @@ DATA t_del TYPE temp3.
           )->button( press = client->_event( 'LAYOUT_LOAD' )
                      icon  = 'sap-icon://open-folder'
                      type  = 'Ghost'
-          )->button( press = client->_event( 'LAYOUT_DELETE' )
+          )->button( press = ''
                      icon  = 'sap-icon://delete'
                      type  = 'Emphasized'
           )->button( type    = 'Transparent'
@@ -846,12 +845,11 @@ DATA t_del TYPE temp3.
     popup = z2ui5_cl_xml_view=>factory_popup( ).
 
     
-    dialog = popup->dialog( title        = 'Layout'
+    dialog = popup->dialog( title        = 'Select Layout'
                                   contentwidth = '70%'
                                   afterclose   = client->_event( 'CLOSE' ) ).
 
-    dialog->table( headertext = 'Layout'
-                   mode       = 'SingleSelectLeft'
+    dialog->table( mode       = 'SingleSelectLeft'
                    items      = client->_bind_edit( mt_head )
                 )->columns(
                     )->column( )->text( 'Layout' )->get_parent(
@@ -869,7 +867,7 @@ DATA t_del TYPE temp3.
           )->button( press = client->_event( 'LAYOUT_EDIT' )
                      icon  = 'sap-icon://edit'
                      type  = 'Ghost'
-          )->button( press = client->_event( 'LAYOUT_LOAD' )
+          )->button( press = ''
                      icon  = 'sap-icon://open-folder'
                      type  = 'Emphasized'
           )->button( press = client->_event( 'LAYOUT_DELETE' )
@@ -1339,7 +1337,7 @@ GET REFERENCE OF <temp35> INTO Head.
     result = client.
 
     IF result->get( )-event = 'LAYOUT_EDIT'.
-      result->nav_app_call( factory( layout = layout   ) ).
+      result->nav_app_call( factory( layout = layout ) ).
     ENDIF.
 
   ENDMETHOD.
