@@ -448,13 +448,13 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
 
   METHOD get_dfies.
 
-    DATA t_dfies TYPE z2ui5_cl_util_api=>ty_t_dfies.
-    DATA dfies TYPE REF TO z2ui5_cl_util_api=>ty_s_dfies.
+    DATA t_dfies TYPE z2ui5_cl_stmpncfctn_api=>ty_t_dfies.
+    DATA dfies TYPE REF TO z2ui5_cl_stmpncfctn_api=>ty_s_dfies.
     DATA temp9 TYPE string.
     DATA temp10 TYPE string.
-    DATA temp11 TYPE z2ui5_cl_util_api=>ty_s_dfies.
+    DATA temp11 TYPE z2ui5_cl_stmpncfctn_api=>ty_s_dfies.
       DATA temp12 TYPE string.
-      DATA temp13 TYPE z2ui5_cl_util_api=>ty_s_dfies.
+      DATA temp13 TYPE z2ui5_cl_stmpncfctn_api=>ty_s_dfies.
     t_dfies = z2ui5_cl_util_api=>rtti_get_t_dfies_by_table_name( mv_table ).
 
     
