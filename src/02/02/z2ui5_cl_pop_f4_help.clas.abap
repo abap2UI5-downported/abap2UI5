@@ -6,8 +6,8 @@ CLASS z2ui5_cl_pop_f4_help DEFINITION
     INTERFACES if_serializable_object.
     INTERFACES z2ui5_if_app.
 
-    DATA mt_DATA         TYPE REF TO data.
-    DATA ms_DATA_row     TYPE REF TO data.
+    DATA mt_data         TYPE REF TO data.
+    DATA ms_data_row     TYPE REF TO data.
     DATA ms_layout       TYPE z2ui5_cl_pop_layout_v2=>ty_s_layout.
 
     DATA mv_table        TYPE string.
@@ -82,7 +82,7 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
 
     on_event( ).
 
-    on_after_LAYOUT( ).
+    on_after_layout( ).
 
   ENDMETHOD.
 
@@ -104,6 +104,7 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
 
     DATA temp1 LIKE LINE OF mt_dfies.
     DATA dfies LIKE REF TO temp1.
+      FIELD-SYMBOLS <row> TYPE data.
       FIELD-SYMBOLS <value> TYPE any.
         DATA and TYPE string.
         DATA escape TYPE string.
@@ -114,7 +115,10 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
       ENDIF.
 
       
-      ASSIGN COMPONENT dfies->fieldname OF STRUCTURE ms_data_row->* TO <value>.
+      ASSIGN ms_data_row->* TO <row>.
+
+      
+      ASSIGN COMPONENT dfies->fieldname OF STRUCTURE <row> TO <value>.
       IF <value> IS NOT ASSIGNED.
         CONTINUE.
       ENDIF.
@@ -151,7 +155,7 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
         DATA temp3 LIKE LINE OF temp2.
         DATA temp1 TYPE REF TO cl_abap_datadescr.
         DATA comp LIKE temp2.
-        DATA New_struct_desc TYPE REF TO cl_abap_structdescr.
+        DATA new_struct_desc TYPE REF TO cl_abap_structdescr.
         DATA new_table_desc TYPE REF TO cl_abap_tabledescr.
 
     TRY.
@@ -170,7 +174,7 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
         APPEND LINES OF z2ui5_cl_util_api=>rtti_get_t_attri_by_table_name( mv_check_tab  ) TO comp.
 
         
-        New_struct_desc = cl_abap_structdescr=>create( comp ).
+        new_struct_desc = cl_abap_structdescr=>create( comp ).
 
         
         new_table_desc = cl_abap_tabledescr=>create( p_line_type  = new_struct_desc
@@ -216,8 +220,10 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
     DATA simple_form TYPE REF TO z2ui5_cl_xml_view.
     DATA temp4 LIKE LINE OF mt_dfies.
     DATA dfies LIKE REF TO temp4.
+      FIELD-SYMBOLS <row> TYPE data.
       FIELD-SYMBOLS <val> TYPE any.
       DATA temp5 TYPE string.
+    FIELD-SYMBOLS <table> TYPE data.
     DATA table TYPE REF TO z2ui5_cl_xml_view.
     DATA headder TYPE REF TO z2ui5_cl_xml_view.
     DATA columns TYPE REF TO z2ui5_cl_xml_view.
@@ -230,7 +236,7 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
 
     
     simple_form = popup->dialog( title        = 'F4-Help'
-                                       contentWidth = '90%'
+                                       contentwidth = '90%'
                                        afterclose   = client->_event( 'F4_CLOSE' )
           )->simple_form( title    = 'F4-Help'
                           layout   = 'ResponsiveGridLayout'
@@ -249,7 +255,10 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
       ENDIF.
 
       
-      ASSIGN COMPONENT dfies->fieldname OF STRUCTURE ms_data_row->* TO <val>.
+      ASSIGN ms_data_row->* TO <row>.
+
+      
+      ASSIGN COMPONENT dfies->fieldname OF STRUCTURE <row> TO <val>.
       IF <val> IS NOT ASSIGNED.
         CONTINUE.
       ENDIF.
@@ -269,19 +278,22 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
     simple_form->input( value         = client->_bind_edit( mv_rows )
                         showvaluehelp = abap_false
                         submit        = client->_event( 'F4_INPUT_DONE' )
-                        maxLength     = '3' ).
+                        maxlength     = '3' ).
+
+    
+    ASSIGN mt_data->* TO <table>.
 
     
     table = popup->get_child( )->table( growing    = 'true'
                                               width      = 'auto'
-                                              items      = client->_bind( val = mt_DATA->* )
-                                              headerText = mv_check_tab  ).
+                                              items      = client->_bind( val = <table> )
+                                              headertext = mv_check_tab  ).
 
     " TODO: variable is assigned but never used (ABAP cleaner)
     
     headder = table->header_toolbar(
                  )->overflow_toolbar(
-                 )->Title( mv_check_tab
+                 )->title( mv_check_tab
                  )->toolbar_spacer( ).
 
     headder = z2ui5_cl_pop_layout_v2=>render_layout_function( xml    = headder
@@ -359,7 +371,7 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
         
         lt_arg = client->get( )-t_event_arg.
 
-        ASSIGN mt_DATA->* TO <tab>.
+        ASSIGN mt_data->* TO <tab>.
 
         
         
@@ -405,7 +417,7 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
     FIELD-SYMBOLS <line> TYPE any.
       FIELD-SYMBOLS <row> TYPE any.
 
-    ASSIGN mt_DATA->* TO <tab>.
+    ASSIGN mt_data->* TO <tab>.
 
     LOOP AT <tab> ASSIGNING <line>.
 
@@ -488,6 +500,7 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
 
     DATA temp14 LIKE LINE OF mt_dfies.
     DATA dfies LIKE REF TO temp14.
+      FIELD-SYMBOLS <row> TYPE data.
       FIELD-SYMBOLS <val> TYPE any.
     LOOP AT mt_dfies REFERENCE INTO dfies.
 
@@ -496,7 +509,10 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
       ENDIF.
 
       
-      ASSIGN COMPONENT dfies->fieldname OF STRUCTURE ms_data_row->* TO <val>.
+      ASSIGN ms_data_row->* TO <row>.
+
+      
+      ASSIGN COMPONENT dfies->fieldname OF STRUCTURE <row> TO <val>.
       IF <val> IS NOT ASSIGNED.
         CONTINUE.
       ENDIF.
