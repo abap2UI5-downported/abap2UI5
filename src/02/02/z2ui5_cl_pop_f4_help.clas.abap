@@ -224,8 +224,7 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
     DATA temp6 LIKE LINE OF ms_layout-t_layout.
     DATA layout LIKE REF TO temp6.
       DATA lv_index LIKE sy-tabix.
-      DATA temp7 TYPE string.
-    DATA temp8 TYPE string_table.
+    DATA temp7 TYPE string_table.
     DATA cells TYPE REF TO z2ui5_cl_xml_view.
     popup = z2ui5_cl_xml_view=>factory_popup( ).
 
@@ -297,8 +296,6 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
       
       lv_index = sy-tabix.
 
-      
-      temp7 = layout->rollname.
       columns->column( visible         = client->_bind( val       = layout->visible
                                                         tab       = ms_layout-t_layout
                                                         tab_index = lv_index )
@@ -314,20 +311,20 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
                        minscreenwidth  = client->_bind( val       = layout->width
                                                         tab       = ms_layout-t_layout
                                                         tab_index = lv_index )
-       )->text( get_txt( temp7 ) ).
+       )->text( layout->tlabel ).
 
     ENDLOOP.
 
     
-    CLEAR temp8.
-    INSERT `${ROW_ID}` INTO TABLE temp8.
+    CLEAR temp7.
+    INSERT `${ROW_ID}` INTO TABLE temp7.
     
     cells = columns->get_parent( )->items(
                                        )->column_list_item(
                                            valign = 'Middle'
                                            type   = 'Navigation'
                                            press  = client->_event( val   = 'F4_ROW_SELECT'
-                                                                    t_arg = temp8 )
+                                                                    t_arg = temp7 )
                                        )->cells( ).
 
     LOOP AT ms_layout-t_layout REFERENCE INTO layout.
@@ -441,11 +438,11 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
 
     DATA t_dfies TYPE z2ui5_cl_util_api=>ty_t_dfies.
     DATA dfies TYPE REF TO z2ui5_cl_util_api=>ty_s_dfies.
+    DATA temp9 TYPE string.
     DATA temp10 TYPE string.
-    DATA temp11 TYPE string.
-    DATA temp12 TYPE z2ui5_cl_util_api=>ty_s_dfies.
-      DATA temp13 TYPE string.
-      DATA temp14 TYPE z2ui5_cl_util_api=>ty_s_dfies.
+    DATA temp11 TYPE z2ui5_cl_util_api=>ty_s_dfies.
+      DATA temp12 TYPE string.
+      DATA temp13 TYPE z2ui5_cl_util_api=>ty_s_dfies.
     t_dfies = z2ui5_cl_util_api=>rtti_get_t_dfies_by_table_name( mv_table ).
 
     
@@ -459,29 +456,29 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
     ENDIF.
 
     
-    temp10 = dfies->checktable.
-    mt_dfies = z2ui5_cl_util_api=>rtti_get_t_dfies_by_table_name( temp10 ).
+    temp9 = dfies->checktable.
+    mt_dfies = z2ui5_cl_util_api=>rtti_get_t_dfies_by_table_name( temp9 ).
     "
     " ASSIGNMENT --- this may not be 100% certain ... :(
     
-    CLEAR temp11.
+    CLEAR temp10.
     
-    READ TABLE mt_dfies INTO temp12 WITH KEY rollname = dfies->rollname.
+    READ TABLE mt_dfies INTO temp11 WITH KEY rollname = dfies->rollname.
     IF sy-subrc = 0.
-      temp11 = temp12-fieldname.
+      temp10 = temp11-fieldname.
     ENDIF.
-    mv_check_tab_field = temp11.
+    mv_check_tab_field = temp10.
     "  we have to go via Domname ..
 
     IF mv_check_tab_field IS INITIAL.
       
-      CLEAR temp13.
+      CLEAR temp12.
       
-      READ TABLE mt_dfies INTO temp14 WITH KEY domname = dfies->domname.
+      READ TABLE mt_dfies INTO temp13 WITH KEY domname = dfies->domname.
       IF sy-subrc = 0.
-        temp13 = temp14-fieldname.
+        temp12 = temp13-fieldname.
       ENDIF.
-      mv_check_tab_field = temp13.
+      mv_check_tab_field = temp12.
     ENDIF.
     mv_check_tab = dfies->checktable.
 
@@ -489,8 +486,8 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
 
   METHOD prefill_inputs.
 
-    DATA temp15 LIKE LINE OF mt_dfies.
-    DATA dfies LIKE REF TO temp15.
+    DATA temp14 LIKE LINE OF mt_dfies.
+    DATA dfies LIKE REF TO temp14.
       FIELD-SYMBOLS <val> TYPE any.
     LOOP AT mt_dfies REFERENCE INTO dfies.
 
@@ -515,8 +512,8 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD on_after_layout.
-        DATA temp16 TYPE REF TO z2ui5_cl_pop_layout_v2.
-        DATA app LIKE temp16.
+        DATA temp15 TYPE REF TO z2ui5_cl_pop_layout_v2.
+        DATA app LIKE temp15.
 
     " Kommen wir aus einer anderen APP
     IF client->get( )-check_on_navigated = abap_false.
@@ -526,9 +523,9 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
     TRY.
         " War es das Layout?
         
-        temp16 ?= client->get_app( client->get( )-s_draft-id_prev_app ).
+        temp15 ?= client->get_app( client->get( )-s_draft-id_prev_app ).
         
-        app = temp16.
+        app = temp15.
 
         ms_layout = app->ms_layout.
 
@@ -542,21 +539,21 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
   METHOD get_layout.
 
     DATA class TYPE abap_abstypename.
-    DATA temp17 TYPE z2ui5_cl_pop_layout_v2=>handle.
+    DATA temp16 TYPE z2ui5_cl_pop_layout_v2=>handle.
     DATA temp2 TYPE z2ui5_cl_pop_layout_v2=>handle.
     DATA temp3 TYPE z2ui5_cl_pop_layout_v2=>handle.
     class = cl_abap_classdescr=>get_class_name( me ).
     SHIFT class LEFT DELETING LEADING '\CLASS='.
 
     
-    temp17 = class.
+    temp16 = class.
     
     temp2 = mv_table.
     
     temp3 = 'F4'.
     ms_layout = z2ui5_cl_pop_layout_v2=>init_layout( control  = z2ui5_cl_pop_layout_v2=>m_table
                                                      data     = mt_data
-                                                     handle01 = temp17
+                                                     handle01 = temp16
                                                      handle02 = temp2
                                                      handle03 = temp3 ).
 

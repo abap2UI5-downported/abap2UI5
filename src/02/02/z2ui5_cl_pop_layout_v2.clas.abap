@@ -20,8 +20,8 @@ CLASS z2ui5_cl_pop_layout_v2 DEFINITION
     TYPES ty_t_head TYPE STANDARD TABLE OF ty_s_head WITH DEFAULT KEY.
 
     TYPES  BEGIN OF ty_s_positions.
-    INCLUDE TYPE z2ui5_t004.
-    TYPES: tlabel TYPE string,
+             INCLUDE TYPE z2ui5_t004.
+    TYPES:   tlabel TYPE string,
            END OF ty_s_positions.
     TYPES ty_t_positions TYPE STANDARD TABLE OF ty_s_positions WITH DEFAULT KEY.
 
@@ -32,7 +32,7 @@ CLASS z2ui5_cl_pop_layout_v2 DEFINITION
       END OF ty_s_layout.
 
     TYPES BEGIN OF ty_s_layo.
-    INCLUDE TYPE z2ui5_t003.
+            INCLUDE TYPE z2ui5_t003.
     TYPES   selkz TYPE abap_bool.
     TYPES END OF ty_s_layo.
     TYPES ty_t_layo TYPE STANDARD TABLE OF ty_s_layo WITH DEFAULT KEY.
@@ -801,8 +801,8 @@ DATA t_del TYPE temp3.
                                   contentwidth = '70%'
                                   afterclose   = client->_event( 'CLOSE' ) ).
 
-    dialog->table( mode       = 'SingleSelectLeft'
-                   items      = client->_bind_edit( mt_head )
+    dialog->table( mode  = 'SingleSelectLeft'
+                   items = client->_bind_edit( mt_head )
                 )->columns(
                     )->column( )->text( 'Layout' )->get_parent(
                     )->column( )->text( 'Description'
@@ -849,8 +849,8 @@ DATA t_del TYPE temp3.
                                   contentwidth = '70%'
                                   afterclose   = client->_event( 'CLOSE' ) ).
 
-    dialog->table( mode       = 'SingleSelectLeft'
-                   items      = client->_bind_edit( mt_head )
+    dialog->table( mode  = 'SingleSelectLeft'
+                   items = client->_bind_edit( mt_head )
                 )->columns(
                     )->column( )->text( 'Layout' )->get_parent(
                     )->column( )->text( 'Description' )->get_parent(
@@ -987,19 +987,19 @@ TYPES uname TYPE z2ui5_t003-uname.
 TYPES END OF temp18.
     TYPES temp4 TYPE STANDARD TABLE OF temp18 WITH DEFAULT KEY.
 DATA Head TYPE temp4.
-    DATA temp19 LIKE LINE OF Head.
-    DATA temp20 TYPE temp18.
-    DATA def LIKE temp19.
-      DATA temp21 LIKE def.
-      DATA temp22 TYPE temp18.
-        DATA temp23 LIKE def.
-        DATA temp24 TYPE temp18.
-          DATA temp25 LIKE def.
-          DATA temp26 TYPE temp18.
-          DATA temp27 LIKE def.
-          DATA temp28 TYPE temp18.
-          DATA temp29 LIKE def.
-          DATA temp30 TYPE temp18.
+      DATA temp19 LIKE LINE OF Head.
+      DATA temp20 TYPE temp18.
+      DATA def LIKE temp19.
+        DATA temp21 LIKE def.
+        DATA temp22 TYPE temp18.
+          DATA temp23 LIKE def.
+          DATA temp24 TYPE temp18.
+            DATA temp25 LIKE def.
+            DATA temp26 TYPE temp18.
+            DATA temp27 LIKE def.
+            DATA temp28 TYPE temp18.
+            DATA temp29 LIKE def.
+            DATA temp30 TYPE temp18.
 TYPES BEGIN OF temp31.
 TYPES guid TYPE z2ui5_t004-guid.
 TYPES pos_guid TYPE z2ui5_t004-pos_guid.
@@ -1064,71 +1064,74 @@ DATA pos LIKE REF TO <temp33>.
         AND handle02 = handle02
         AND handle03 = handle03
         AND handle04 = handle04
-      INTO TABLE Head ##SUBRC_OK.
+      INTO TABLE Head.
 
-    " Default all Handles + User
-    
-    CLEAR temp19.
-    
-    READ TABLE Head INTO temp20 WITH KEY handle01 = handle01 handle02 = handle02 handle03 = handle03 handle04 = handle04 def = abap_true uname = sy-uname.
     IF sy-subrc = 0.
-      temp19 = temp20.
-    ENDIF.
-    
-    def = temp19.
 
-    IF def IS INITIAL.
-      " Default frist 3 Handles + User
+      " Default all Handles + User
       
-      CLEAR temp21.
+      CLEAR temp19.
       
-      READ TABLE Head INTO temp22 WITH KEY handle01 = handle01 handle02 = handle02 handle03 = handle03 def = abap_true uname = sy-uname.
+      READ TABLE Head INTO temp20 WITH KEY handle01 = handle01 handle02 = handle02 handle03 = handle03 handle04 = handle04 def = abap_true uname = sy-uname.
       IF sy-subrc = 0.
-        temp21 = temp22.
+        temp19 = temp20.
       ENDIF.
-      def = temp21.
+      
+      def = temp19.
+
       IF def IS INITIAL.
-        " Default frist 2 Handles + User
+        " Default frist 3 Handles + User
         
-        CLEAR temp23.
+        CLEAR temp21.
         
-        READ TABLE Head INTO temp24 WITH KEY handle01 = handle01 handle02 = handle02 def = abap_true uname = sy-uname.
+        READ TABLE Head INTO temp22 WITH KEY handle01 = handle01 handle02 = handle02 handle03 = handle03 def = abap_true uname = sy-uname.
         IF sy-subrc = 0.
-          temp23 = temp24.
+          temp21 = temp22.
         ENDIF.
-        def = temp23.
+        def = temp21.
         IF def IS INITIAL.
-          " Default frist 1 Handles + User
+          " Default frist 2 Handles + User
           
-          CLEAR temp25.
+          CLEAR temp23.
           
-          READ TABLE Head INTO temp26 WITH KEY handle01 = handle01 def = abap_true uname = sy-uname.
+          READ TABLE Head INTO temp24 WITH KEY handle01 = handle01 handle02 = handle02 def = abap_true uname = sy-uname.
           IF sy-subrc = 0.
-            temp25 = temp26.
+            temp23 = temp24.
           ENDIF.
-          def = temp25.
-        ENDIF.
-        IF def IS INITIAL.
-          " Default User
-          
-          CLEAR temp27.
-          
-          READ TABLE Head INTO temp28 WITH KEY def = abap_true uname = sy-uname.
-          IF sy-subrc = 0.
-            temp27 = temp28.
+          def = temp23.
+          IF def IS INITIAL.
+            " Default frist 1 Handles + User
+            
+            CLEAR temp25.
+            
+            READ TABLE Head INTO temp26 WITH KEY handle01 = handle01 def = abap_true uname = sy-uname.
+            IF sy-subrc = 0.
+              temp25 = temp26.
+            ENDIF.
+            def = temp25.
           ENDIF.
-          def = temp27.
-        ENDIF.
-        IF def IS INITIAL.
-          " Default User
-          
-          CLEAR temp29.
-          
-          READ TABLE Head INTO temp30 WITH KEY def = abap_true.
-          IF sy-subrc = 0.
-            temp29 = temp30.
+          IF def IS INITIAL.
+            " Default User
+            
+            CLEAR temp27.
+            
+            READ TABLE Head INTO temp28 WITH KEY def = abap_true uname = sy-uname.
+            IF sy-subrc = 0.
+              temp27 = temp28.
+            ENDIF.
+            def = temp27.
           ENDIF.
-          def = temp29.
+          IF def IS INITIAL.
+            " Default User
+            
+            CLEAR temp29.
+            
+            READ TABLE Head INTO temp30 WITH KEY def = abap_true.
+            IF sy-subrc = 0.
+              temp29 = temp30.
+            ENDIF.
+            def = temp29.
+          ENDIF.
         ENDIF.
       ENDIF.
     ENDIF.
