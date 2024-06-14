@@ -145,7 +145,7 @@ CLASS z2ui5_cl_pop_layout_v2 DEFINITION
 
     CLASS-METHODS set_text
       IMPORTING
-        !layout       TYPE REF TO ty_s_positions
+        !layout       TYPE ty_s_positions
       RETURNING
         VALUE(result) TYPE ty_s_positions-tlabel.
 
@@ -188,26 +188,9 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
 
       on_init( ms_layout-s_head-control ).
 
-      CASE abap_true.
-        WHEN mv_open.
+      init_edit( ).
 
-          get_layouts( ).
-
-          render_open( ).
-
-        WHEN mv_delete.
-
-          get_layouts( ).
-
-          render_delete( ).
-
-        WHEN OTHERS.
-
-          init_edit( ).
-
-          render_edit( ).
-
-      ENDCASE.
+      render_edit( ).
 
       client->popup_model_update( ).
 
@@ -511,18 +494,21 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
 
       WHEN 'LAYOUT_EDIT'.
 
-        client->nav_app_call( factory( layout = ms_layout ) ).
+        init_edit( ).
+
+        render_edit( ).
 
       WHEN 'LAYOUT_LOAD'.
 
-        client->nav_app_call( factory( layout      = ms_layout
-                                       open_layout = abap_true   ) ).
+        get_layouts( ).
+
+        render_open( ).
 
       WHEN 'LAYOUT_DELETE'.
 
-        client->nav_app_call( factory( layout        = ms_layout
-                                       delete_layout = abap_true ) ).
+        get_layouts( ).
 
+        render_delete( ).
 
       WHEN 'OKAY'.
 
@@ -579,11 +565,11 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
 
     CREATE OBJECT result.
 
-    result->ms_layout = layout.
+    result->ms_layout     = layout.
     result->ms_layout_tmp = layout.
 
-    result->mv_open   = open_layout.
-    result->mv_delete = delete_layout.
+    result->mv_open       = open_layout.
+    result->mv_delete     = delete_layout.
 
   ENDMETHOD.
 
@@ -796,8 +782,11 @@ DATA t_del TYPE temp3.
         LOOP AT positions INTO pos.
           CLEAR layout.
           MOVE-CORRESPONDING pos TO layout.
+          layout-tlabel = set_text( layout ).
           APPEND layout TO ms_layout-t_layout.
         ENDLOOP.
+
+        ms_layout-t_layout = sort_by_seqence( ms_layout-t_layout ).
 
       ENDIF.
     ENDIF.
@@ -840,7 +829,7 @@ DATA t_del TYPE temp3.
           )->button( type    = 'Transparent'
                      enabled = abap_false
                      text    = `               `
-         )->button( text  = 'Back'
+         )->button( text  = 'Close'
                     icon  = 'sap-icon://sys-cancel-2'
                     press = client->_event( 'CLOSE' )
          )->button( text  = 'Delete'
@@ -890,7 +879,7 @@ DATA t_del TYPE temp3.
           )->button( type    = 'Transparent'
                      enabled = abap_false
                      text    = `               `
-         )->button( text  = 'Back'
+         )->button( text  = 'Close'
                     icon  = 'sap-icon://sys-cancel-2'
                     press = client->_event( 'CLOSE' )
          )->button( text  = 'OK'
@@ -1211,7 +1200,7 @@ GET REFERENCE OF <temp33> INTO pos.
             layout->handle04   = handle04.
         ENDTRY.
 
-        layout->tlabel = set_text( layout ).
+        layout->tlabel = set_text( layout->* ).
 
       ENDLOOP.
 
@@ -1283,7 +1272,7 @@ GET REFERENCE OF <temp33> INTO pos.
       layout->handle03   = handle03.
       layout->handle04   = handle04.
 
-      layout->tlabel     = set_text( layout ).
+      layout->tlabel     = set_text( layout->* ).
 
     ENDLOOP.
 
@@ -1442,18 +1431,18 @@ GET REFERENCE OF <temp35> INTO Head.
       DATA temp38 TYPE string.
       DATA temp39 TYPE string.
 
-    IF layout->alternative_text IS INITIAL.
+    IF layout-alternative_text IS INITIAL.
       
-      temp38 = layout->rollname.
+      temp38 = layout-rollname.
       result = z2ui5_cl_stmpncfctn_api=>rtti_get_data_element_texts( temp38 )-long.
     ELSE.
       
-      temp39 = layout->alternative_text.
+      temp39 = layout-alternative_text.
       result = z2ui5_cl_stmpncfctn_api=>rtti_get_data_element_texts( temp39 )-long.
     ENDIF.
 
     IF result IS INITIAL.
-      result = layout->fname.
+      result = layout-fname.
     ENDIF.
 
   ENDMETHOD.
