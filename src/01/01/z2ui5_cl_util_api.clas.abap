@@ -1617,8 +1617,11 @@ DATA lt_param TYPE temp3.
   METHOD rtti_get_t_attri_by_table_name.
         DATA temp42 TYPE REF TO cl_abap_structdescr.
         DATA lo_struct LIKE temp42.
-    DATA temp43 LIKE LINE OF result.
-    DATA lr_comp LIKE REF TO temp43.
+            DATA temp43 TYPE REF TO cl_abap_tabledescr.
+            DATA lo_tab LIKE temp43.
+            DATA temp44 TYPE REF TO cl_abap_structdescr.
+    DATA temp45 LIKE LINE OF result.
+    DATA lr_comp LIKE REF TO temp45.
       DATA lt_attri TYPE abap_component_tab.
 
     TRY.
@@ -1627,7 +1630,19 @@ DATA lt_param TYPE temp3.
         
         lo_struct = temp42.
       CATCH cx_root.
-        RETURN.
+
+        TRY.
+            
+            temp43 ?= cl_abap_structdescr=>describe_by_name( table_name ).
+            
+            lo_tab = temp43.
+            
+            temp44 ?= lo_tab->get_table_line_type( ).
+            lo_struct = temp44.
+          CATCH cx_root.
+            RETURN.
+        ENDTRY.
+
     ENDTRY.
 
     result = lo_struct->get_components( ).
