@@ -19,9 +19,17 @@ CLASS z2ui5_cl_pop_layout_v2 DEFINITION
     TYPES ty_s_Head TYPE z2ui5_t003.
     TYPES ty_t_head TYPE STANDARD TABLE OF ty_s_head WITH DEFAULT KEY.
 
+    TYPES:
+      BEGIN OF ty_s_sub_columns,
+        key   TYPE string,
+        fname TYPE string,
+      END OF ty_s_sub_columns.
+    TYPES ty_t_sub_columns TYPE STANDARD TABLE OF ty_s_sub_columns WITH DEFAULT KEY.
+
     TYPES  BEGIN OF ty_s_positions.
              INCLUDE TYPE z2ui5_t004.
-    TYPES:   tlabel TYPE string,
+    TYPES:   tlabel    TYPE string,
+             t_sub_col TYPE ty_t_sub_columns,
            END OF ty_s_positions.
     TYPES ty_t_positions TYPE STANDARD TABLE OF ty_s_positions WITH DEFAULT KEY.
 
@@ -52,18 +60,22 @@ CLASS z2ui5_cl_pop_layout_v2 DEFINITION
     CLASS-DATA ui_table TYPE control VALUE 'ui.Table' ##NO_TEXT.
     CLASS-DATA m_table  TYPE control VALUE 'm.Table' ##NO_TEXT.
 
-    DATA mt_controls   TYPE ty_t_controls.
-    DATA mt_Head       TYPE ty_t_layo.
-    DATA ms_layout     TYPE ty_s_layout.
-    DATA ms_layout_tmp TYPE ty_s_layout.
-    DATA mv_descr      TYPE string.
-    DATA mv_layout     TYPE string.
-    DATA mv_def        TYPE abap_bool.
-    DATA mv_usr        TYPE abap_bool.
-    DATA mv_open       TYPE abap_bool.
-    DATA mv_delete     TYPE abap_bool.
-    DATA mt_halign     TYPE fixvalues.
-    DATA mt_importance TYPE fixvalues.
+    DATA mt_controls         TYPE ty_t_controls.
+    DATA mt_Head             TYPE ty_t_layo.
+    DATA ms_layout           TYPE ty_s_layout.
+    DATA ms_layout_tmp       TYPE ty_s_layout.
+    DATA mv_descr            TYPE string.
+    DATA mv_layout           TYPE string.
+    DATA mv_def              TYPE abap_bool.
+    DATA mv_usr              TYPE abap_bool.
+    DATA mv_open             TYPE abap_bool.
+    DATA mv_delete           TYPE abap_bool.
+    DATA mt_halign           TYPE fixvalues.
+    DATA mt_importance       TYPE fixvalues.
+
+    DATA mv_active_subcolumn TYPE string.
+    DATA mt_comps            TYPE ty_t_positions.
+    DATA mt_sub_cols         TYPE ty_t_sub_columns.
 
     CLASS-METHODS on_event_layout
       IMPORTING
@@ -157,6 +169,9 @@ CLASS z2ui5_cl_pop_layout_v2 DEFINITION
       IMPORTING
         !Head TYPE ty_s_layo.
 
+    METHODS render_add_subcolumn.
+    METHODS on_event_subcoloumns.
+
     CLASS-METHODS get_relative_name_of_table
       IMPORTING
         !table        TYPE any
@@ -173,6 +188,12 @@ CLASS z2ui5_cl_pop_layout_v2 DEFINITION
         handle04      TYPE handle
       RETURNING
         VALUE(result) TYPE ty_s_layout.
+
+    CLASS-METHODS set_sub_columns
+      IMPORTING
+        !layout       TYPE ty_t_positions
+      RETURNING
+        VALUE(result) TYPE ty_t_positions.
 
 ENDCLASS.
 
@@ -299,6 +320,9 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
     temp8-control = m_table.
     temp8-attribute = 'SEQUENCE'.
     INSERT temp8 INTO TABLE temp7.
+    temp8-control = m_table.
+    temp8-attribute = 'SUBCOLUMN'.
+    INSERT temp8 INTO TABLE temp7.
     temp8-control = ui_table.
     temp8-attribute = 'VISIBLE'.
     INSERT temp8 INTO TABLE temp7.
@@ -337,6 +361,7 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
     DATA temp9 LIKE LINE OF lt_comp.
     DATA comp LIKE REF TO temp9.
       DATA control TYPE z2ui5_cl_pop_layout_v2=>ty_s_controls.
+          DATA temp10 TYPE string_table.
     popup = z2ui5_cl_xml_view=>factory_popup( ).
 
     
@@ -380,11 +405,11 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
 
       CASE control-attribute.
         WHEN 'VISIBLE'.
-          col = columns->column( )->header( `` ).
+          col = columns->column( '4.5rem' )->header( `` ).
           col->text( 'Visible' ).
         WHEN 'MERGE'.
-          col = columns->column( )->header( `` ).
-          col->text( 'Merge duplicates' ).
+          col = columns->column( '4.5rem' )->header( `` ).
+          col->text( 'Merge' ).
         WHEN 'HALIGN'.
           col = columns->column( )->header( `` ).
           col->text( 'Align' ).
@@ -392,15 +417,17 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
           col = columns->column( )->header( `` ).
           col->text( 'Importance' ).
         WHEN 'WIDTH'.
-          col = columns->column( )->header( `` ).
+          col = columns->column( `7rem` )->header( `` ).
           col->text( 'Width in rem' ).
         WHEN 'SEQUENCE'.
-          col = columns->column( )->header( `` ).
+          col = columns->column( `5rem` )->header( `` ).
           col->text( 'Sequence' ).
         WHEN 'ALTERNATIVE_TEXT'.
           col = columns->column( )->header( `` ).
           col->text( 'Alternative Text' ).
-
+        WHEN 'SUBCOLUMN'.
+          col = columns->column( )->header( `` ).
+          col->text( 'Subcolumn' ).
       ENDCASE.
 
     ENDLOOP.
@@ -443,8 +470,7 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
         WHEN 'WIDTH'.
 
           cells->input( value     = |\{{ comp->name }\}|
-                        maxLength = `7`
-                        width     = `7rem` ).
+                        maxLength = `7` ).
 
         WHEN 'SEQUENCE'.
 
@@ -455,6 +481,16 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
         WHEN 'ALTERNATIVE_TEXT'.
 
           cells->input( |\{{ comp->name }\}| ).
+
+        WHEN 'SUBCOLUMN'.
+
+          
+          CLEAR temp10.
+          INSERT `${FNAME}` INTO TABLE temp10.
+          cells->button( text  = |\{{ comp->name }\}|
+                         icon  = `sap-icon://add`
+                         press = client->_event( val   = 'CALL_SUBCOLUMN'
+                                                 t_arg = temp10 ) ).
 
       ENDCASE.
 
@@ -557,6 +593,11 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
         client->popup_destroy( ).
 
         client->nav_app_leave( client->get_app( client->get( )-s_draft-id_prev_app_stack ) ).
+
+      WHEN OTHERS.
+
+        on_event_subcoloumns( ).
+
     ENDCASE.
 
   ENDMETHOD.
@@ -647,23 +688,23 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
     TYPES temp1 TYPE STANDARD TABLE OF z2ui5_t004 WITH DEFAULT KEY.
 DATA Positions TYPE temp1.
       DATA user LIKE sy-uname.
-    DATA temp10 TYPE z2ui5_t003.
-    DATA Head LIKE temp10.
+    DATA temp12 TYPE z2ui5_t003.
+    DATA Head LIKE temp12.
     DATA layout LIKE LINE OF ms_layout-t_layout.
-TYPES BEGIN OF temp11.
+TYPES BEGIN OF temp13.
 TYPES guid TYPE z2ui5_t003-guid.
-TYPES END OF temp11.
-    TYPES temp2 TYPE STANDARD TABLE OF temp11 WITH DEFAULT KEY.
+TYPES END OF temp13.
+    TYPES temp2 TYPE STANDARD TABLE OF temp13 WITH DEFAULT KEY.
 DATA t_heads TYPE temp2.
-TYPES BEGIN OF temp12.
+TYPES BEGIN OF temp14.
 TYPES mandt TYPE z2ui5_t004-mandt.
 TYPES guid TYPE z2ui5_t004-guid.
 TYPES pos_guid TYPE z2ui5_t004-pos_guid.
-TYPES END OF temp12.
-        TYPES temp3 TYPE STANDARD TABLE OF temp12 WITH DEFAULT KEY.
+TYPES END OF temp14.
+        TYPES temp3 TYPE STANDARD TABLE OF temp14 WITH DEFAULT KEY.
 DATA t_del TYPE temp3.
-            DATA temp13 LIKE LINE OF Positions.
-            DATA r_pos LIKE REF TO temp13.
+            DATA temp15 LIKE LINE OF Positions.
+            DATA r_pos LIKE REF TO temp15.
         DATA pos LIKE LINE OF positions.
 
     IF mv_layout IS INITIAL.
@@ -677,19 +718,19 @@ DATA t_del TYPE temp3.
     ENDIF.
 
     
-    CLEAR temp10.
-    temp10-guid = ms_layout-s_head-guid.
-    temp10-layout = mv_layout.
-    temp10-control = ms_layout-s_head-control.
-    temp10-handle01 = ms_layout-s_head-handle01.
-    temp10-handle02 = ms_layout-s_head-handle02.
-    temp10-handle03 = ms_layout-s_head-handle03.
-    temp10-handle04 = ms_layout-s_head-handle04.
-    temp10-descr = mv_descr.
-    temp10-def = mv_def.
-    temp10-uname = user.
+    CLEAR temp12.
+    temp12-guid = ms_layout-s_head-guid.
+    temp12-layout = mv_layout.
+    temp12-control = ms_layout-s_head-control.
+    temp12-handle01 = ms_layout-s_head-handle01.
+    temp12-handle02 = ms_layout-s_head-handle02.
+    temp12-handle03 = ms_layout-s_head-handle03.
+    temp12-handle04 = ms_layout-s_head-handle04.
+    temp12-descr = mv_descr.
+    temp12-def = mv_def.
+    temp12-uname = user.
     
-    Head = temp10.
+    Head = temp12.
 
     
     LOOP AT ms_layout-t_layout INTO layout.
@@ -915,15 +956,15 @@ DATA t_del TYPE temp3.
 
   METHOD get_selected_layout.
 
-    DATA temp14 TYPE z2ui5_cl_pop_layout_v2=>ty_s_layo.
-    DATA temp15 TYPE z2ui5_cl_pop_layout_v2=>ty_s_layo.
-    CLEAR temp14.
+    DATA temp16 TYPE z2ui5_cl_pop_layout_v2=>ty_s_layo.
+    DATA temp17 TYPE z2ui5_cl_pop_layout_v2=>ty_s_layo.
+    CLEAR temp16.
     
-    READ TABLE mt_head INTO temp15 WITH KEY selkz = abap_true.
+    READ TABLE mt_head INTO temp17 WITH KEY selkz = abap_true.
     IF sy-subrc = 0.
-      temp14 = temp15.
+      temp16 = temp17.
     ENDIF.
-    result = temp14.
+    result = temp16.
 
   ENDMETHOD.
 
@@ -963,6 +1004,7 @@ DATA t_del TYPE temp3.
            width
            sequence
            alternative_text
+           subcolumn
       FROM z2ui5_t004
       WHERE guid = Head-guid
       INTO CORRESPONDING FIELDS OF TABLE ms_layout-t_layout  ##SUBRC_OK.
@@ -973,10 +1015,10 @@ DATA t_del TYPE temp3.
 
     " create the tab first if the db fields were added/deleted
     DATA t_comp TYPE abap_component_tab.
-    DATA temp16 LIKE LINE OF t_comp.
-    DATA lr_comp LIKE REF TO temp16.
-      DATA temp17 TYPE z2ui5_cl_pop_layout_v2=>ty_s_positions.
-TYPES BEGIN OF temp18.
+    DATA temp18 LIKE LINE OF t_comp.
+    DATA lr_comp LIKE REF TO temp18.
+      DATA temp19 TYPE z2ui5_cl_pop_layout_v2=>ty_s_positions.
+TYPES BEGIN OF temp20.
 TYPES guid TYPE z2ui5_t003-guid.
 TYPES layout TYPE z2ui5_t003-layout.
 TYPES control TYPE z2ui5_t003-control.
@@ -987,23 +1029,23 @@ TYPES handle04 TYPE z2ui5_t003-handle04.
 TYPES descr TYPE z2ui5_t003-descr.
 TYPES def TYPE z2ui5_t003-def.
 TYPES uname TYPE z2ui5_t003-uname.
-TYPES END OF temp18.
-    TYPES temp4 TYPE STANDARD TABLE OF temp18 WITH DEFAULT KEY.
+TYPES END OF temp20.
+    TYPES temp4 TYPE STANDARD TABLE OF temp20 WITH DEFAULT KEY.
 DATA Head TYPE temp4.
-      DATA temp19 LIKE LINE OF Head.
-      DATA temp20 TYPE temp18.
-      DATA def LIKE temp19.
-        DATA temp21 LIKE def.
-        DATA temp22 TYPE temp18.
-          DATA temp23 LIKE def.
-          DATA temp24 TYPE temp18.
-            DATA temp25 LIKE def.
-            DATA temp26 TYPE temp18.
+      DATA temp21 LIKE LINE OF Head.
+      DATA temp22 TYPE temp20.
+      DATA def LIKE temp21.
+        DATA temp23 LIKE def.
+        DATA temp24 TYPE temp20.
+          DATA temp25 LIKE def.
+          DATA temp26 TYPE temp20.
             DATA temp27 LIKE def.
-            DATA temp28 TYPE temp18.
+            DATA temp28 TYPE temp20.
             DATA temp29 LIKE def.
-            DATA temp30 TYPE temp18.
-TYPES BEGIN OF temp31.
+            DATA temp30 TYPE temp20.
+            DATA temp31 LIKE def.
+            DATA temp32 TYPE temp20.
+TYPES BEGIN OF temp33.
 TYPES guid TYPE z2ui5_t004-guid.
 TYPES pos_guid TYPE z2ui5_t004-pos_guid.
 TYPES layout TYPE z2ui5_t004-layout.
@@ -1021,13 +1063,14 @@ TYPES importance TYPE z2ui5_t004-importance.
 TYPES width TYPE z2ui5_t004-width.
 TYPES sequence TYPE z2ui5_t004-sequence.
 TYPES alternative_text TYPE z2ui5_t004-alternative_text.
-TYPES END OF temp31.
-      TYPES temp5 TYPE STANDARD TABLE OF temp31 WITH DEFAULT KEY.
+TYPES subcolumn TYPE z2ui5_t004-subcolumn.
+TYPES END OF temp33.
+      TYPES temp5 TYPE STANDARD TABLE OF temp33 WITH DEFAULT KEY.
 DATA t_pos TYPE temp5.
-      DATA temp32 LIKE LINE OF result-t_layout.
-      DATA layout LIKE REF TO temp32.
-            FIELD-SYMBOLS <temp33> TYPE temp31.
-DATA pos LIKE REF TO <temp33>.
+      DATA temp34 LIKE LINE OF result-t_layout.
+      DATA layout LIKE REF TO temp34.
+            FIELD-SYMBOLS <temp35> TYPE temp33.
+DATA pos LIKE REF TO <temp35>.
                 DATA pos_guid TYPE sysuuid_c32.
     t_comp = z2ui5_cl_util_api=>rtti_get_t_attri_by_any( data ).
 
@@ -1035,15 +1078,15 @@ DATA pos LIKE REF TO <temp33>.
     
     LOOP AT t_comp REFERENCE INTO lr_comp.
       
-      CLEAR temp17.
-      temp17-control = control.
-      temp17-handle01 = handle01.
-      temp17-handle02 = handle02.
-      temp17-handle03 = handle03.
-      temp17-handle04 = handle04.
-      temp17-fname = lr_comp->name.
-      temp17-rollname = lr_comp->type->get_relative_name( ).
-      INSERT temp17
+      CLEAR temp19.
+      temp19-control = control.
+      temp19-handle01 = handle01.
+      temp19-handle02 = handle02.
+      temp19-handle03 = handle03.
+      temp19-handle04 = handle04.
+      temp19-fname = lr_comp->name.
+      temp19-rollname = lr_comp->type->get_relative_name( ).
+      INSERT temp19
              INTO TABLE result-t_layout.
     ENDLOOP.
 
@@ -1073,52 +1116,41 @@ DATA pos LIKE REF TO <temp33>.
 
       " Default all Handles + User
       
-      CLEAR temp19.
+      CLEAR temp21.
       
-      READ TABLE Head INTO temp20 WITH KEY handle01 = handle01 handle02 = handle02 handle03 = handle03 handle04 = handle04 def = abap_true uname = sy-uname.
+      READ TABLE Head INTO temp22 WITH KEY handle01 = handle01 handle02 = handle02 handle03 = handle03 handle04 = handle04 def = abap_true uname = sy-uname.
       IF sy-subrc = 0.
-        temp19 = temp20.
+        temp21 = temp22.
       ENDIF.
       
-      def = temp19.
+      def = temp21.
 
       IF def IS INITIAL.
         " Default frist 3 Handles + User
         
-        CLEAR temp21.
+        CLEAR temp23.
         
-        READ TABLE Head INTO temp22 WITH KEY handle01 = handle01 handle02 = handle02 handle03 = handle03 def = abap_true uname = sy-uname.
+        READ TABLE Head INTO temp24 WITH KEY handle01 = handle01 handle02 = handle02 handle03 = handle03 def = abap_true uname = sy-uname.
         IF sy-subrc = 0.
-          temp21 = temp22.
+          temp23 = temp24.
         ENDIF.
-        def = temp21.
+        def = temp23.
         IF def IS INITIAL.
           " Default frist 2 Handles + User
           
-          CLEAR temp23.
+          CLEAR temp25.
           
-          READ TABLE Head INTO temp24 WITH KEY handle01 = handle01 handle02 = handle02 def = abap_true uname = sy-uname.
+          READ TABLE Head INTO temp26 WITH KEY handle01 = handle01 handle02 = handle02 def = abap_true uname = sy-uname.
           IF sy-subrc = 0.
-            temp23 = temp24.
+            temp25 = temp26.
           ENDIF.
-          def = temp23.
+          def = temp25.
           IF def IS INITIAL.
             " Default frist 1 Handles + User
             
-            CLEAR temp25.
-            
-            READ TABLE Head INTO temp26 WITH KEY handle01 = handle01 def = abap_true uname = sy-uname.
-            IF sy-subrc = 0.
-              temp25 = temp26.
-            ENDIF.
-            def = temp25.
-          ENDIF.
-          IF def IS INITIAL.
-            " Default User
-            
             CLEAR temp27.
             
-            READ TABLE Head INTO temp28 WITH KEY def = abap_true uname = sy-uname.
+            READ TABLE Head INTO temp28 WITH KEY handle01 = handle01 def = abap_true uname = sy-uname.
             IF sy-subrc = 0.
               temp27 = temp28.
             ENDIF.
@@ -1129,11 +1161,22 @@ DATA pos LIKE REF TO <temp33>.
             
             CLEAR temp29.
             
-            READ TABLE Head INTO temp30 WITH KEY def = abap_true.
+            READ TABLE Head INTO temp30 WITH KEY def = abap_true uname = sy-uname.
             IF sy-subrc = 0.
               temp29 = temp30.
             ENDIF.
             def = temp29.
+          ENDIF.
+          IF def IS INITIAL.
+            " Default User
+            
+            CLEAR temp31.
+            
+            READ TABLE Head INTO temp32 WITH KEY def = abap_true.
+            IF sy-subrc = 0.
+              temp31 = temp32.
+            ENDIF.
+            def = temp31.
           ENDIF.
         ENDIF.
       ENDIF.
@@ -1161,6 +1204,7 @@ DATA pos LIKE REF TO <temp33>.
              width
              sequence
              alternative_text
+             subcolumn
         FROM z2ui5_t004
         WHERE guid = def-guid
         INTO TABLE t_pos ##SUBRC_OK.
@@ -1171,12 +1215,12 @@ DATA pos LIKE REF TO <temp33>.
 
         TRY.
             
-            READ TABLE t_pos WITH KEY fname = layout->fname ASSIGNING <temp33>.
+            READ TABLE t_pos WITH KEY fname = layout->fname ASSIGNING <temp35>.
 IF sy-subrc <> 0.
   ASSERT 1 = 0.
 ENDIF.
 
-GET REFERENCE OF <temp33> INTO pos.
+GET REFERENCE OF <temp35> INTO pos.
             MOVE-CORRESPONDING pos->* TO layout->*.
           CATCH cx_root.
 
@@ -1206,6 +1250,7 @@ GET REFERENCE OF <temp33> INTO pos.
 
       MOVE-CORRESPONDING def TO result-s_head.
       result-t_layout = sort_by_seqence( result-t_layout ).
+      result-t_layout = set_sub_columns( result-t_layout ).
 
       RETURN.
 
@@ -1289,9 +1334,9 @@ GET REFERENCE OF <temp33> INTO pos.
   ENDMETHOD.
 
   METHOD get_layouts.
-      FIELD-SYMBOLS <temp34> TYPE z2ui5_cl_pop_layout_v2=>ty_s_layo.
-DATA Head LIKE REF TO <temp34>.
-        FIELD-SYMBOLS <temp35> TYPE z2ui5_cl_pop_layout_v2=>ty_s_layo.
+      FIELD-SYMBOLS <temp36> TYPE z2ui5_cl_pop_layout_v2=>ty_s_layo.
+DATA Head LIKE REF TO <temp36>.
+        FIELD-SYMBOLS <temp37> TYPE z2ui5_cl_pop_layout_v2=>ty_s_layo.
 
     mt_head = select_layouts( control  = ms_layout-s_head-control
                               handle01 = ms_layout-s_head-handle01
@@ -1302,22 +1347,22 @@ DATA Head LIKE REF TO <temp34>.
     IF mt_head IS NOT INITIAL.
 
       
-      READ TABLE mt_head WITH KEY layout = ms_layout-s_head-layout ASSIGNING <temp34>.
+      READ TABLE mt_head WITH KEY layout = ms_layout-s_head-layout ASSIGNING <temp36>.
 IF sy-subrc <> 0.
   ASSERT 1 = 0.
 ENDIF.
 
-GET REFERENCE OF <temp34> INTO Head.
+GET REFERENCE OF <temp36> INTO Head.
       IF Head IS BOUND.
         Head->selkz = abap_true.
         RETURN.
       ELSE.
         
-        READ TABLE mt_head INDEX 1 ASSIGNING <temp35>.
+        READ TABLE mt_head INDEX 1 ASSIGNING <temp37>.
 IF sy-subrc <> 0.
   ASSERT 1 = 0.
 ENDIF.
-GET REFERENCE OF <temp35> INTO Head.
+GET REFERENCE OF <temp37> INTO Head.
         Head->selkz = abap_true.
       ENDIF.
 
@@ -1364,10 +1409,10 @@ GET REFERENCE OF <temp35> INTO Head.
 
     FIELD-SYMBOLS <table> TYPE any.
         DATA typedesc TYPE REF TO cl_abap_typedescr.
-            DATA temp36 TYPE REF TO cl_abap_tabledescr.
-            DATA tabledesc LIKE temp36.
-            DATA temp37 TYPE REF TO cl_abap_structdescr.
-            DATA structdesc LIKE temp37.
+            DATA temp38 TYPE REF TO cl_abap_tabledescr.
+            DATA tabledesc LIKE temp38.
+            DATA temp39 TYPE REF TO cl_abap_structdescr.
+            DATA structdesc LIKE temp39.
 
     TRY.
         
@@ -1377,13 +1422,13 @@ GET REFERENCE OF <temp35> INTO Head.
 
           WHEN cl_abap_typedescr=>kind_table.
             
-            temp36 ?= typedesc.
+            temp38 ?= typedesc.
             
-            tabledesc = temp36.
+            tabledesc = temp38.
             
-            temp37 ?= tabledesc->get_table_line_type( ).
+            temp39 ?= tabledesc->get_table_line_type( ).
             
-            structdesc = temp37.
+            structdesc = temp39.
             result = structdesc->get_relative_name( ).
             RETURN.
 
@@ -1428,17 +1473,17 @@ GET REFERENCE OF <temp35> INTO Head.
   ENDMETHOD.
 
   METHOD set_text.
-      DATA temp38 TYPE string.
-      DATA temp39 TYPE string.
+      DATA temp40 TYPE string.
+      DATA temp41 TYPE string.
 
     IF layout-alternative_text IS INITIAL.
       
-      temp38 = layout-rollname.
-      result = z2ui5_cl_stmpncfctn_api=>rtti_get_data_element_texts( temp38 )-long.
+      temp40 = layout-rollname.
+      result = z2ui5_cl_stmpncfctn_api=>rtti_get_data_element_texts( temp40 )-long.
     ELSE.
       
-      temp39 = layout-alternative_text.
-      result = z2ui5_cl_stmpncfctn_api=>rtti_get_data_element_texts( temp39 )-long.
+      temp41 = layout-alternative_text.
+      result = z2ui5_cl_stmpncfctn_api=>rtti_get_data_element_texts( temp41 )-long.
     ENDIF.
 
     IF result IS INITIAL.
@@ -1459,6 +1504,194 @@ GET REFERENCE OF <temp35> INTO Head.
       REPLACE ALL OCCURRENCES OF ` ` IN result WITH ``.
       result = |{ result }rem|.
     ENDIF.
+
+  ENDMETHOD.
+
+  METHOD render_add_subcolumn.
+
+    DATA lo_popup TYPE REF TO z2ui5_cl_xml_view.
+    DATA vbox TYPE REF TO z2ui5_cl_xml_view.
+    DATA item TYPE REF TO z2ui5_cl_xml_view.
+    DATA grid TYPE REF TO z2ui5_cl_xml_view.
+    DATA temp42 TYPE string_table.
+    lo_popup = z2ui5_cl_xml_view=>factory_popup( ).
+
+    lo_popup = lo_popup->dialog( afterclose   = client->_event( 'SUBCOLUMN_CANCEL' )
+                                 contentwidth = `20%`
+                                 title        = 'Define Sub Coloumns' ).
+
+    
+    vbox = lo_popup->vbox( justifycontent = 'SpaceBetween' ).
+
+    
+    item = vbox->list( nodata          = `no Subcolumns defined`
+                             items           = client->_bind_edit( mt_sub_cols )
+                             selectionchange = client->_event( 'SELCHANGE' )
+                )->custom_list_item( ).
+
+    
+    grid = item->grid( ).
+
+    
+    CLEAR temp42.
+    INSERT `${KEY}` INTO TABLE temp42.
+    grid->combobox( selectedkey = `{FNAME}`
+                    items       = client->_bind( mt_comps  )
+                   )->item( key  = '{FNAME}'
+                            text = '{FNAME}'
+             )->get_parent(
+             )->button( icon  = 'sap-icon://decline'
+                        type  = `Transparent`
+                        press = client->_event( val   = `SUBCOLUMN_DELETE`
+                                                t_arg = temp42 ) ).
+
+    lo_popup->buttons(
+        )->button( text  = `Delete All`
+                   icon  = 'sap-icon://delete'
+                   type  = `Transparent`
+                   press = client->_event( val = `SUBCOLUMN_DELETE_ALL` )
+        )->button( text  = `Add Item`
+                   icon  = `sap-icon://add`
+                   press = client->_event( val = `SUBCOLUMN_ADD` )
+       )->button( text  = 'Cancel'
+                  press = client->_event( 'SUBCOLUMN_CANCEL' )
+       )->button( text  = 'OK'
+                  press = client->_event( 'SUBCOLUMN_CONFIRM' )
+                  type  = 'Emphasized' ).
+
+    client->popup_display( lo_popup->stringify( ) ).
+
+  ENDMETHOD.
+
+  METHOD on_event_subcoloumns.
+        DATA arg TYPE string_table.
+        DATA temp44 TYPE string.
+        DATA temp45 TYPE string.
+        DATA layout TYPE REF TO z2ui5_cl_pop_layout_v2=>ty_s_positions.
+        DATA temp46 LIKE LINE OF mt_sub_cols.
+        DATA line LIKE REF TO temp46.
+        DATA temp47 TYPE z2ui5_cl_pop_layout_v2=>ty_s_sub_columns.
+        DATA lt_event TYPE string_table.
+        DATA temp48 LIKE LINE OF lt_event.
+        DATA temp49 LIKE sy-tabix.
+        DATA temp50 TYPE z2ui5_cl_pop_layout_v2=>ty_t_sub_columns.
+
+    CASE client->get( )-event.
+
+      WHEN 'CALL_SUBCOLUMN'.
+
+        
+        arg = client->get( )-t_event_arg.
+        
+        CLEAR temp44.
+        
+        READ TABLE arg INTO temp45 INDEX 1.
+        IF sy-subrc = 0.
+          temp44 = temp45.
+        ENDIF.
+        mv_active_SUBCOLumn = temp44.
+
+        
+        READ TABLE ms_layout-t_layout REFERENCE INTO layout WITH KEY fname = mv_active_subcolumn.
+        IF sy-subrc <> 0.
+          RETURN.
+        ENDIF.
+
+        mt_comps    = ms_layout-t_layout.
+        mt_sub_cols = layout->t_sub_col.
+
+        render_add_subcolumn( ).
+
+      WHEN `SUBCOLUMN_CONFIRM`.
+
+        READ TABLE ms_layout-t_layout REFERENCE INTO layout WITH KEY fname = mv_active_subcolumn.
+        IF sy-subrc <> 0.
+          RETURN.
+        ENDIF.
+
+        CLEAR layout->subcolumn.
+
+        
+        
+        LOOP AT mt_sub_cols REFERENCE INTO line.
+          layout->subcolumn = |{ layout->subcolumn } { line->fname }|.
+        ENDLOOP.
+        SHIFT layout->subcolumn LEFT DELETING LEADING space.
+
+        layout->t_sub_col = mt_sub_cols.
+
+        client->popup_destroy( ).
+
+        init_edit( ).
+        render_edit( ).
+
+      WHEN `SUBCOLUMN_CANCEL`.
+
+        init_edit( ).
+        render_edit( ).
+
+      WHEN `SUBCOLUMN_ADD`.
+        
+        CLEAR temp47.
+        temp47-key = z2ui5_cl_util=>uuid_get_c32( ).
+        INSERT temp47 INTO TABLE mt_sub_cols.
+        client->popup_model_update( ).
+
+      WHEN `SUBCOLUMN_DELETE`.
+        
+        lt_event = client->get( )-t_event_arg.
+        
+        
+        temp49 = sy-tabix.
+        READ TABLE lt_event INDEX 1 INTO temp48.
+        sy-tabix = temp49.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        DELETE mt_sub_cols WHERE key = temp48.
+        client->popup_model_update( ).
+
+      WHEN `SUBCOLUMN_DELETE_ALL`.
+        
+        CLEAR temp50.
+        mt_sub_cols = temp50.
+        client->popup_model_update( ).
+
+    ENDCASE.
+
+  ENDMETHOD.
+
+  METHOD set_sub_columns.
+    DATA temp51 LIKE LINE OF result.
+    DATA line LIKE REF TO temp51.
+      TYPES temp6 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+DATA tab TYPE temp6.
+      DATA temp52 TYPE z2ui5_cl_pop_layout_v2=>ty_t_sub_columns.
+      DATA t LIKE LINE OF tab.
+        DATA temp53 LIKE LINE OF temp52.
+
+    result = layout.
+
+    
+    
+    LOOP AT result REFERENCE INTO line WHERE subcolumn IS NOT INITIAL.
+
+      
+
+      SPLIT line->subcolumn AT ` ` INTO TABLE tab.
+
+      
+      CLEAR temp52.
+      
+      LOOP AT tab INTO t.
+        
+        temp53-key = z2ui5_cl_util=>uuid_get_c32( ).
+        temp53-fname = t.
+        INSERT temp53 INTO TABLE temp52.
+      ENDLOOP.
+      line->t_sub_col = temp52.
+
+    ENDLOOP.
 
   ENDMETHOD.
 
