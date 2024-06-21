@@ -1433,6 +1433,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 !min          TYPE clike OPTIONAL
                 !max          TYPE clike OPTIONAL
                 !step         TYPE clike OPTIONAL
+                !width        TYPE clike OPTIONAL
                 valuestate    TYPE clike OPTIONAL
                 !enabled      TYPE clike OPTIONAL
                 !description  TYPE clike OPTIONAL
@@ -13816,6 +13817,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp439 INTO TABLE temp438.
     temp439-n = `step`.
     temp439-v = step.
+    INSERT temp439 INTO TABLE temp438.
+    temp439-n = `width`.
+    temp439-v = width.
     INSERT temp439 INTO TABLE temp438.
     temp439-n = `value`.
     temp439-v = value.
