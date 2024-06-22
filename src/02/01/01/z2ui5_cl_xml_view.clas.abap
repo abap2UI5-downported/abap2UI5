@@ -166,11 +166,13 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING VALUE(result)       TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS message_strip
-      IMPORTING !text         TYPE clike OPTIONAL
-                !type         TYPE clike OPTIONAL
-                showicon      TYPE clike OPTIONAL
-                !class        TYPE clike OPTIONAL
-                !visible      TYPE clike OPTIONAL
+      IMPORTING !text            TYPE clike OPTIONAL
+                !type            TYPE clike OPTIONAL
+                !showicon        TYPE clike OPTIONAL
+                !customicon      TYPE clike OPTIONAL
+                !class           TYPE clike OPTIONAL
+                !visible         TYPE clike OPTIONAL
+                !showclosebutton TYPE clike OPTIONAL
                   PREFERRED PARAMETER text
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -9728,8 +9730,14 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp266-n = `showIcon`.
     temp266-v = z2ui5_cl_util=>boolean_abap_2_json( showicon ).
     INSERT temp266 INTO TABLE temp265.
+    temp266-n = `customIcon`.
+    temp266-v = customicon.
+    INSERT temp266 INTO TABLE temp265.
     temp266-n = `visible`.
     temp266-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp266 INTO TABLE temp265.
+    temp266-n = `showCloseButton`.
+    temp266-v = z2ui5_cl_util=>boolean_abap_2_json( showclosebutton ).
     INSERT temp266 INTO TABLE temp265.
     temp266-n = `class`.
     temp266-v = class.
