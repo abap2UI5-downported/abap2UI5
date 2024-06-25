@@ -2885,6 +2885,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 !class          TYPE clike OPTIONAL
                 !id             TYPE clike OPTIONAL
                 !enabled        TYPE clike OPTIONAL
+                !change         TYPE clike OPTIONAL
       RETURNING VALUE(result)   TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS upload_set
@@ -13282,6 +13283,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp412 INTO TABLE temp411.
     temp412-n = `step`.
     temp412-v = step.
+    INSERT temp412 INTO TABLE temp411.
+    temp412-n = `change`.
+    temp412-v = change.
     INSERT temp412 INTO TABLE temp411.
     temp412-n = `width`.
     temp412-v = width.
