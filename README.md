@@ -1,8 +1,9 @@
 ## Downport of abap2UI5 for v.702 <img src="https://github.com/abap2UI5/abap2UI5/assets/102328295/52ac0bb6-a219-4e9d-9e4f-62698dab3063" width="30">
+_Running into problems or found a bug? Create an issue [**here**](https://github.com/abap2UI5/abap2UI5/issues)_
 
+### Key Features
 * abap2UI5 version with syntax compatible to old R/3 NetWeaver releases
 * use this version for NW 7.02 (use the main repository for NW 7.50 and higher)
-* your questions, wishes and bugs are welcome, use the [**abap2UI5 repository**](https://github.com/ABAP2UI5/ABAP2UI5) and create an issue
 * for S-RTTI capabilities, also use the [**downport**](https://github.com/sandraros/S-RTTI/tree/7.50) of this project
 
 #### _This code is automatically downported and tested with [abaplint](https://abaplint.org/). Thank you for this excellent tool!_
