@@ -1763,7 +1763,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS radio_button
-      IMPORTING activehandling TYPE clike OPTIONAL
+      IMPORTING !id            TYPE clike OPTIONAL
+                activehandling TYPE clike OPTIONAL
                 editable       TYPE clike OPTIONAL
                 !enabled       TYPE clike OPTIONAL
                 groupname      TYPE clike OPTIONAL
@@ -1787,6 +1788,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 valuestate    TYPE clike OPTIONAL
                 !width        TYPE clike OPTIONAL
                 !select       TYPE clike OPTIONAL
+                !class        TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS dynamic_side_content
@@ -12397,6 +12399,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     DATA temp372 LIKE LINE OF temp371.
     CLEAR temp371.
     
+    temp372-n = `id`.
+    temp372-v = id.
+    INSERT temp372 INTO TABLE temp371.
     temp372-n = `activeHandling`.
     temp372-v = z2ui5_cl_util=>boolean_abap_2_json( activehandling ).
     INSERT temp372 INTO TABLE temp371.
@@ -12470,6 +12475,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp374 INTO TABLE temp373.
     temp374-n = `width`.
     temp374-v = width.
+    INSERT temp374 INTO TABLE temp373.
+    temp374-n = `class`.
+    temp374-v = class.
     INSERT temp374 INTO TABLE temp373.
     result = _generic( name   = `RadioButtonGroup`
                        t_prop = temp373 ).
