@@ -3023,6 +3023,40 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 !visible      TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS date_range_selection
+      IMPORTING
+        !value                   TYPE clike OPTIONAL
+        !placeholder             TYPE clike OPTIONAL
+        !displayformat           TYPE clike OPTIONAL
+        !valueformat             TYPE clike OPTIONAL
+        !required                TYPE clike OPTIONAL
+        !valuestate              TYPE clike OPTIONAL
+        !valuestatetext          TYPE clike OPTIONAL
+        !enabled                 TYPE clike OPTIONAL
+        !showcurrentdatebutton   TYPE clike OPTIONAL
+        !change                  TYPE clike OPTIONAL
+        !hideinput               TYPE clike OPTIONAL
+        !showfooter              TYPE clike OPTIONAL
+        !visible                 TYPE clike OPTIONAL
+        !showvaluestatemessage   TYPE clike OPTIONAL
+        !mindate                 TYPE clike OPTIONAL
+        !maxdate                 TYPE clike OPTIONAL
+        !editable                TYPE clike OPTIONAL
+        !width                   TYPE clike OPTIONAL
+        !id                      TYPE clike OPTIONAL
+        !calendarweeknumbering   TYPE clike OPTIONAL
+        !displayformattype       TYPE clike OPTIONAL
+        !class                   TYPE clike OPTIONAL
+        !textdirection           TYPE clike OPTIONAL
+        !textalign               TYPE clike OPTIONAL
+        !name                    TYPE clike OPTIONAL
+        !datevalue               TYPE clike OPTIONAL
+        !initialfocuseddatevalue TYPE clike OPTIONAL
+        !delimiter               TYPE clike OPTIONAL
+          PREFERRED PARAMETER value
+      RETURNING
+        VALUE(result)            TYPE REF TO z2ui5_cl_xml_view .
+
     METHODS variant_management_fl
       IMPORTING displaytextfsv                TYPE clike OPTIONAL
                 editable                      TYPE clike OPTIONAL
@@ -16608,4 +16642,98 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD date_range_selection.
+    DATA temp542 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp543 LIKE LINE OF temp542.
+    result = me.
+    
+    CLEAR temp542.
+    
+    temp543-n = `value`.
+    temp543-v = value.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `displayFormat`.
+    temp543-v = displayformat.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `displayFormatType`.
+    temp543-v = displayformattype.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `valueFormat`.
+    temp543-v = valueformat.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `required`.
+    temp543-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `valueState`.
+    temp543-v = valuestate.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `valueStateText`.
+    temp543-v = valuestatetext.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `placeholder`.
+    temp543-v = placeholder.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `textAlign`.
+    temp543-v = textalign.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `textDirection`.
+    temp543-v = textdirection.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `change`.
+    temp543-v = change.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `maxDate`.
+    temp543-v = maxdate.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `minDate`.
+    temp543-v = mindate.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `width`.
+    temp543-v = width.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `id`.
+    temp543-v = id.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `dateValue`.
+    temp543-v = datevalue.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `name`.
+    temp543-v = name.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `class`.
+    temp543-v = class.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `calendarWeekNumbering`.
+    temp543-v = calendarweeknumbering.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `initialFocusedDateValue`.
+    temp543-v = initialfocuseddatevalue.
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `enabled`.
+    temp543-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `visible`.
+    temp543-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `editable`.
+    temp543-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `hideInput`.
+    temp543-v = z2ui5_cl_util=>boolean_abap_2_json( hideinput ).
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `showFooter`.
+    temp543-v = z2ui5_cl_util=>boolean_abap_2_json( showfooter ).
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `showValueStateMessage`.
+    temp543-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluestatemessage ).
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `showCurrentDateButton`.
+    temp543-v = z2ui5_cl_util=>boolean_abap_2_json( showcurrentdatebutton ).
+    INSERT temp543 INTO TABLE temp542.
+    temp543-n = `delimiter`.
+    temp543-v = delimiter.
+    INSERT temp543 INTO TABLE temp542.
+    _generic( name   = `DateRangeSelection`
+              t_prop = temp542                  ).
+  ENDMETHOD.
 ENDCLASS.
