@@ -541,7 +541,7 @@ CLASS z2ui5_cl_xml_view_cc IMPLEMENTATION.
     temp18-n = `device_desktop`.
     temp18-v = device_desktop.
     INSERT temp18 INTO TABLE temp17.
-    temp18-n = `device_table`.
+    temp18-n = `device_tablet`.
     temp18-v = device_tablet.
     INSERT temp18 INTO TABLE temp17.
     temp18-n = `device_combi`.
