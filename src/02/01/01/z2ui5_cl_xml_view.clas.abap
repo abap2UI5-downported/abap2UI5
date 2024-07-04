@@ -817,6 +817,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 !width            TYPE clike OPTIONAL
                 !value            TYPE clike OPTIONAL
                 !id               TYPE clike OPTIONAL
+                !class            TYPE clike OPTIONAL
                 !change           TYPE clike OPTIONAL
                 livechange        TYPE clike OPTIONAL
                 suggest           TYPE clike OPTIONAL
@@ -12911,6 +12912,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp396 INTO TABLE temp395.
     temp396-n = `id`.
     temp396-v = id.
+    INSERT temp396 INTO TABLE temp395.
+    temp396-n = `class`.
+    temp396-v = class.
     INSERT temp396 INTO TABLE temp395.
     temp396-n = `change`.
     temp396-v = change.
