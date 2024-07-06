@@ -49,6 +49,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 showfooter               TYPE clike OPTIONAL
                 headerpinned             TYPE clike OPTIONAL
                 toggleheaderontitleclick TYPE clike OPTIONAL
+                class                    TYPE clike OPTIONAL
       RETURNING VALUE(result)            TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS dynamic_page_title
@@ -219,6 +220,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 sectionchange                  TYPE clike OPTIONAL
                 subsectionvisibilitychange     TYPE clike OPTIONAL
                 toggleanchorbar                TYPE clike OPTIONAL
+                class                          TYPE clike OPTIONAL
       RETURNING VALUE(result)                  TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS object_page_header
@@ -6226,6 +6228,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp104-n = `toggleHeaderOnTitleClick`.
     temp104-v = toggleheaderontitleclick.
     INSERT temp104 INTO TABLE temp103.
+    temp104-n = `class`.
+    temp104-v = class.
+    INSERT temp104 INTO TABLE temp103.
     result = _generic( name   = `DynamicPage`
                        ns     = `f`
                        t_prop = temp103 ).
@@ -11326,10 +11331,13 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp318-n = `showFooter`.
     temp318-v = z2ui5_cl_util=>boolean_abap_2_json( showfooter ).
     INSERT temp318 INTO TABLE temp317.
+    temp318-n = `class`.
+    temp318-v = class.
+    INSERT temp318 INTO TABLE temp317.
     result = _generic(
         name   = `ObjectPageLayout`
         ns     = `uxap`
-        t_prop = temp317 ).
+        t_prop = temp317  ).
   ENDMETHOD.
 
 
