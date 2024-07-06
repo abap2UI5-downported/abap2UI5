@@ -2886,17 +2886,20 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING VALUE(result)      TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS slider
-      IMPORTING !max            TYPE clike OPTIONAL
-                !min            TYPE clike OPTIONAL
-                !step           TYPE clike OPTIONAL
-                !value          TYPE clike OPTIONAL
-                enabletickmarks TYPE clike OPTIONAL
-                !width          TYPE clike OPTIONAL
-                !class          TYPE clike OPTIONAL
-                !id             TYPE clike OPTIONAL
-                !enabled        TYPE clike OPTIONAL
-                !change         TYPE clike OPTIONAL
-      RETURNING VALUE(result)   TYPE REF TO z2ui5_cl_xml_view.
+      IMPORTING !max                TYPE clike OPTIONAL
+                !min                TYPE clike OPTIONAL
+                !step               TYPE clike OPTIONAL
+                !value              TYPE clike OPTIONAL
+                enabletickmarks     TYPE clike OPTIONAL
+                !width              TYPE clike OPTIONAL
+                !class              TYPE clike OPTIONAL
+                !id                 TYPE clike OPTIONAL
+                !enabled            TYPE clike OPTIONAL
+                !change             TYPE clike OPTIONAL
+                inputsAsTooltips    TYPE clike OPTIONAL
+                showAdvancedTooltip TYPE clike OPTIONAL
+                showHandleTooltip   TYPE clike OPTIONAL
+      RETURNING VALUE(result)       TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS upload_set
       IMPORTING !id                     TYPE clike OPTIONAL
@@ -13365,6 +13368,15 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp414-n = `width`.
     temp414-v = width.
     INSERT temp414 INTO TABLE temp413.
+    temp414-n = `inputsAsTooltips`.
+    temp414-v = inputsAsTooltips.
+    INSERT temp414 INTO TABLE temp413.
+    temp414-n = `showAdvancedTooltip`.
+    temp414-v = showAdvancedTooltip.
+    INSERT temp414 INTO TABLE temp413.
+    temp414-n = `showHandleTooltip`.
+    temp414-v = showHandleTooltip.
+    INSERT temp414 INTO TABLE temp413.
     _generic( name   = `Slider`
 *              ns     = `webc`
               t_prop = temp413 ).
@@ -16635,6 +16647,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   ENDMETHOD.
 
+
   METHOD p_cell_selector.
     DATA temp540 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp541 LIKE LINE OF temp540.
@@ -16651,6 +16664,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
               t_prop = temp540 ).
 
   ENDMETHOD.
+
 
   METHOD p_copy_provider.
     DATA temp542 TYPE z2ui5_if_types=>ty_t_name_value.
@@ -16674,6 +16688,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
               t_prop = temp542 ).
 
   ENDMETHOD.
+
 
   METHOD date_range_selection.
     DATA temp544 TYPE z2ui5_if_types=>ty_t_name_value.
