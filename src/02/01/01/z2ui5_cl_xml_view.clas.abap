@@ -964,6 +964,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
     METHODS simple_form
       IMPORTING !title                  TYPE clike OPTIONAL
                 !layout                 TYPE clike OPTIONAL
+                !class                  TYPE clike OPTIONAL
                 editable                TYPE clike OPTIONAL
                 columnsxl               TYPE clike OPTIONAL
                 columnsl                TYPE clike OPTIONAL
@@ -13254,6 +13255,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp412 INTO TABLE temp411.
     temp412-n = `layout`.
     temp412-v = layout.
+    INSERT temp412 INTO TABLE temp411.
+    temp412-n = `class`.
+    temp412-v = class.
     INSERT temp412 INTO TABLE temp411.
     temp412-n = `adjustLabelSpan`.
     temp412-v = adjustlabelspan.
