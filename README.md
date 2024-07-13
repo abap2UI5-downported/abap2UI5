@@ -6,7 +6,7 @@ _Running into problems or found a bug? Create an issue [**here**](https://github
 * use this version for NW 7.02 (use the main repository for NW 7.50 and higher)
 * for S-RTTI capabilities, also use the [**downport**](https://github.com/sandraros/S-RTTI/tree/7.50) of this project
 
-#### _This code is automatically downported and tested with [abaplint](https://abaplint.org/). Thank you for this excellent tool!_
+#### _This code is automatically downported and tested with [abaplint](https://abaplint.org/). Thank you [@larshp](https://github.com/larshp)._
 
 ### Handler Implementation:
 ```abap
