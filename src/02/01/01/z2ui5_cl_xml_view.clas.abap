@@ -3064,6 +3064,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !textalign               TYPE clike OPTIONAL
         !name                    TYPE clike OPTIONAL
         !datevalue               TYPE clike OPTIONAL
+        !seconddatevalue         TYPE clike OPTIONAL
         !initialfocuseddatevalue TYPE clike OPTIONAL
         !delimiter               TYPE clike OPTIONAL
           PREFERRED PARAMETER value
@@ -16752,6 +16753,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp545 INTO TABLE temp544.
     temp545-n = `dateValue`.
     temp545-v = datevalue.
+    INSERT temp545 INTO TABLE temp544.
+    temp545-n = `secondDateValue`.
+    temp545-v = seconddatevalue.
     INSERT temp545 INTO TABLE temp544.
     temp545-n = `name`.
     temp545-v = name.
