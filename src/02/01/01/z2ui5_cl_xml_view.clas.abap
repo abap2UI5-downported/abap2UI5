@@ -319,6 +319,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 valuecolor        TYPE clike OPTIONAL
                 !visible          TYPE clike OPTIONAL
                 !width            TYPE clike OPTIONAL
+                !class            TYPE clike OPTIONAL
       RETURNING VALUE(result)     TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS link_tile_content
@@ -10661,6 +10662,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp296 INTO TABLE temp295.
     temp296-n = `withMargin`.
     temp296-v = z2ui5_cl_util=>boolean_abap_2_json( withmargin ).
+    INSERT temp296 INTO TABLE temp295.
+    temp296-n = `class`.
+    temp296-v = class.
     INSERT temp296 INTO TABLE temp295.
     result = _generic(
         name   = `NumericContent`
