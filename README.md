@@ -26,8 +26,6 @@ _Running into problems or found a bug? Create an issue [**here**](https://github
 ```
 
 ### Manual Steps / Known Issues
-(1/1) Adjusted ABAP SQL to OpenSQL: Correct Position of where eg. "WHERE id = id."  <br>
+Adjusted ABAP SQL to OpenSQL: Correct Position of where eg. "WHERE id = id."  <br>
 <img width="853" alt="image" src="https://github.com/abap2UI5/abap2UI5-downport/assets/102328295/4f35fe67-1816-4ea7-adb2-b6dc31545806">
 <br>
-(2/2) On  certain older releases the ImageMapster CC causes problems, just delete the class Z2UI5_CL_CC_IMAGEMAPSTER (as this is an optional feature): <br>
-<img width="795" alt="image" src="https://github.com/abap2UI5/abap2UI5-downport/assets/102328295/b3aed99f-e31b-4301-94d6-4a57586b86c5">
