@@ -12622,10 +12622,10 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp380-v = maxvalue.
     INSERT temp380 INTO TABLE temp379.
     temp380-n = `displayOnly`.
-    temp380-v = displayonly.
+    temp380-v = z2ui5_cl_util=>boolean_abap_2_json( displayOnly ).
     INSERT temp380 INTO TABLE temp379.
     temp380-n = `editable`.
-    temp380-v = editable.
+    temp380-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
     INSERT temp380 INTO TABLE temp379.
     temp380-n = `iconSize`.
     temp380-v = iconsize.
@@ -12640,7 +12640,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp380-v = change.
     INSERT temp380 INTO TABLE temp379.
     temp380-n = `enabled`.
-    temp380-v = enabled.
+    temp380-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
     INSERT temp380 INTO TABLE temp379.
     temp380-n = `tooltip`.
     temp380-v = tooltip.
