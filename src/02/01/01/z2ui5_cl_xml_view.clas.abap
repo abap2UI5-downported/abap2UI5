@@ -503,6 +503,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 !required        TYPE clike OPTIONAL
                 valuestate       TYPE clike OPTIONAL
                 valuestatetext   TYPE clike OPTIONAL
+                placeholder      TYPE clike OPTIONAL
+                showsuggestion   TYPE clike OPTIONAL
       RETURNING VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS tokens
@@ -10052,6 +10054,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp280 INTO TABLE temp279.
     temp280-n = `valueStateText`.
     temp280-v = valueStateText.
+    INSERT temp280 INTO TABLE temp279.
+    temp280-n = `placeholder`.
+    temp280-v = placeholder.
+    INSERT temp280 INTO TABLE temp279.
+    temp280-n = `showSuggestion`.
+    temp280-v = z2ui5_cl_util=>boolean_abap_2_json( showsuggestion ).
     INSERT temp280 INTO TABLE temp279.
     result = _generic( name   = `MultiInput`
                        t_prop = temp279 ).
