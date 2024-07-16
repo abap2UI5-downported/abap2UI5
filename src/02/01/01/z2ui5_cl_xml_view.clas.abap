@@ -1342,6 +1342,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 !enabled              TYPE clike OPTIONAL
                 filtersecondaryvalues TYPE clike OPTIONAL
                 showselectall         TYPE clike OPTIONAL
+                !id                   TYPE clike OPTIONAL
+                !class                TYPE clike OPTIONAL
       RETURNING VALUE(result)         TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS grid
@@ -9935,6 +9937,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp278 INTO TABLE temp277.
     temp278-n = `items`.
     temp278-v = items.
+    INSERT temp278 INTO TABLE temp277.
+    temp278-n = `id`.
+    temp278-v = id.
+    INSERT temp278 INTO TABLE temp277.
+    temp278-n = `class`.
+    temp278-v = class.
     INSERT temp278 INTO TABLE temp277.
     temp278-n = `selectionFinish`.
     temp278-v = selectionfinish.
