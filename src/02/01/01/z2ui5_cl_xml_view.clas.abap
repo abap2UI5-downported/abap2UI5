@@ -2585,6 +2585,13 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 resizable     TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS toolbar_layout_data
+      IMPORTING !id           TYPE clike OPTIONAL
+                maxWidth      TYPE clike OPTIONAL
+                minWidth      TYPE clike OPTIONAL
+                shrinkable    TYPE clike OPTIONAL
+      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS object_header
       IMPORTING backgrounddesign     TYPE clike OPTIONAL
                 condensed            TYPE clike OPTIONAL
@@ -16811,5 +16818,27 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp545 INTO TABLE temp544.
     _generic( name   = `DateRangeSelection`
               t_prop = temp544                  ).
+  ENDMETHOD.
+
+
+  METHOD toolbar_layout_data.
+    DATA temp546 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp547 LIKE LINE OF temp546.
+    CLEAR temp546.
+    
+    temp547-n = `id`.
+    temp547-v = id.
+    INSERT temp547 INTO TABLE temp546.
+    temp547-n = `maxWidth`.
+    temp547-v = maxwidth.
+    INSERT temp547 INTO TABLE temp546.
+    temp547-n = `minWidth`.
+    temp547-v = minwidth.
+    INSERT temp547 INTO TABLE temp546.
+    temp547-n = `shrinkable`.
+    temp547-v = z2ui5_cl_util=>boolean_abap_2_json( shrinkable ).
+    INSERT temp547 INTO TABLE temp546.
+    result = _generic( name   = `ToolbarLayoutData`
+                       t_prop = temp546 ).
   ENDMETHOD.
 ENDCLASS.
