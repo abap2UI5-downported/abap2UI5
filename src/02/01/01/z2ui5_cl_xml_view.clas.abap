@@ -346,6 +346,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 !disabled     TYPE clike OPTIONAL
                 !visible      TYPE clike OPTIONAL
                 footer        TYPE clike OPTIONAL
+                class         TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS expanded_heading
@@ -1347,8 +1348,9 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING VALUE(result)         TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS grid
-      IMPORTING !class        TYPE clike OPTIONAL
-                default_span  TYPE clike OPTIONAL
+      IMPORTING !class         TYPE clike OPTIONAL
+                default_span   TYPE clike OPTIONAL
+                containerquery TYPE clike OPTIONAL
                   PREFERRED PARAMETER default_span
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -7605,6 +7607,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp160 INTO TABLE temp159.
     temp160-n = `class`.
     temp160-v = class.
+    INSERT temp160 INTO TABLE temp159.
+    temp160-n = `containerQuery`.
+    temp160-v = z2ui5_cl_util=>boolean_abap_2_json( containerquery ).
     INSERT temp160 INTO TABLE temp159.
     result = _generic( name   = `Grid`
                        ns     = `layout`
@@ -14522,6 +14527,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp467 INTO TABLE temp466.
     temp467-n = `footer`.
     temp467-v = footer.
+    INSERT temp467 INTO TABLE temp466.
+    temp467-n = `class`.
+    temp467-v = class.
     INSERT temp467 INTO TABLE temp466.
     result = _generic( name   = `TileContent`
                        ns     = ``
