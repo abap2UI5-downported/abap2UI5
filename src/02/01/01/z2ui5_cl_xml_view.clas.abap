@@ -1492,6 +1492,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 wrapping          TYPE clike OPTIONAL
                 !name             TYPE clike OPTIONAL
                 valuestate        TYPE clike OPTIONAL
+                !required         TYPE clike OPTIONAL
                   PREFERRED PARAMETER selected
       RETURNING VALUE(result)     TYPE REF TO z2ui5_cl_xml_view.
 
@@ -5088,6 +5089,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp44 INTO TABLE temp43.
     temp44-n = `select`.
     temp44-v = select.
+    INSERT temp44 INTO TABLE temp43.
+    temp44-n = `required`.
+    temp44-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
     INSERT temp44 INTO TABLE temp43.
     _generic( name   = `CheckBox`
               t_prop = temp43 ).
