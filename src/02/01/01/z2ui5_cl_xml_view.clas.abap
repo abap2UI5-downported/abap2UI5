@@ -1704,6 +1704,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
       IMPORTING !rows                    TYPE clike OPTIONAL
                 columnheadervisible      TYPE clike OPTIONAL
                 editable                 TYPE clike OPTIONAL
+                class                    TYPE clike OPTIONAL
                 enablecellfilter         TYPE clike OPTIONAL
                 enablegrouping           TYPE clike OPTIONAL
                 enableselectall          TYPE clike OPTIONAL
@@ -15423,6 +15424,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp498 INTO TABLE temp497.
     temp498-n = `editable`.
     temp498-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp498 INTO TABLE temp497.
+    temp498-n = `class`.
+    temp498-v = class.
     INSERT temp498 INTO TABLE temp497.
     temp498-n = `enableCellFilter`.
     temp498-v = z2ui5_cl_util=>boolean_abap_2_json( enablecellfilter ).
