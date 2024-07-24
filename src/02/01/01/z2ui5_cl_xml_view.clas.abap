@@ -2550,6 +2550,17 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 press         TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS feed_content
+      IMPORTING contenttext      TYPE clike OPTIONAL
+                subheader        TYPE clike OPTIONAL
+                value            TYPE clike OPTIONAL
+      RETURNING VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS news_content
+      IMPORTING contenttext      TYPE clike OPTIONAL
+                subheader        TYPE clike OPTIONAL
+      RETURNING VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS mask_input
       IMPORTING placeholder           TYPE clike OPTIONAL
                 !mask                 TYPE clike OPTIONAL
@@ -16868,5 +16879,44 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp547 INTO TABLE temp546.
     result = _generic( name   = `ToolbarLayoutData`
                        t_prop = temp546 ).
+  ENDMETHOD.
+
+
+  METHOD feed_content.
+    DATA temp548 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp549 LIKE LINE OF temp548.
+    CLEAR temp548.
+    
+    temp549-n = `contentText`.
+    temp549-v = contenttext.
+    INSERT temp549 INTO TABLE temp548.
+    temp549-n = `subheader`.
+    temp549-v = subheader.
+    INSERT temp549 INTO TABLE temp548.
+    temp549-n = `value`.
+    temp549-v = value.
+    INSERT temp549 INTO TABLE temp548.
+    result = _generic(
+                 name   = `FeedContent`
+                 t_prop = temp548 ).
+
+  ENDMETHOD.
+
+
+  METHOD news_content.
+    DATA temp550 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp551 LIKE LINE OF temp550.
+    CLEAR temp550.
+    
+    temp551-n = `contentText`.
+    temp551-v = contenttext.
+    INSERT temp551 INTO TABLE temp550.
+    temp551-n = `subheader`.
+    temp551-v = subheader.
+    INSERT temp551 INTO TABLE temp550.
+    result = _generic(
+                 name   = `NewsContent`
+                 t_prop = temp550 ).
+
   ENDMETHOD.
 ENDCLASS.
