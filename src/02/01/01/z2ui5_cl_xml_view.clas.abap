@@ -7469,11 +7469,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD generic_tile.
+
     DATA temp155 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp156 LIKE LINE OF temp155.
-
-    result = me.
-    
     CLEAR temp155.
     
     temp156-n = `class`.
@@ -7569,9 +7567,10 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp156-n = `subheader`.
     temp156-v = subheader.
     INSERT temp156 INTO TABLE temp155.
-    _generic( name   = `GenericTile`
-              ns     = ``
-              t_prop = temp155 ).
+    result = _generic(
+                 name   = `GenericTile`
+                 ns     = ``
+                 t_prop = temp155 ).
 
   ENDMETHOD.
 
