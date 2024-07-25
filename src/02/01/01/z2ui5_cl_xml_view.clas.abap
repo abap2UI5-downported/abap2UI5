@@ -4378,7 +4378,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp12-n = `enabled`.
     temp12-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
     INSERT temp12 INTO TABLE temp11.
-    temp12-n = `displaysize`.
+    temp12-n = `displaySize`.
     temp12-v = displaysize.
     INSERT temp12 INTO TABLE temp11.
     _generic( name   = `Avatar`
