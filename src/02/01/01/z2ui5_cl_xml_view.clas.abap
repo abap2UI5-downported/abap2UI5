@@ -1053,7 +1053,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS overflow_toolbar_button
-      IMPORTING !text         TYPE clike OPTIONAL
+      IMPORTING !id           TYPE clike OPTIONAL
+                !text         TYPE clike OPTIONAL
                 !icon         TYPE clike OPTIONAL
                 !type         TYPE clike OPTIONAL
                 !enabled      TYPE clike OPTIONAL
@@ -11595,6 +11596,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     
     CLEAR temp327.
     
+    temp328-n = `id`.
+    temp328-v = id.
+    INSERT temp328 INTO TABLE temp327.
     temp328-n = `press`.
     temp328-v = press.
     INSERT temp328 INTO TABLE temp327.
