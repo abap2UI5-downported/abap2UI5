@@ -7220,7 +7220,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp140-v = z2ui5_cl_util=>boolean_abap_2_json( displayinline ).
     INSERT temp140 INTO TABLE temp139.
     temp140-n = `visible`.
-    temp140-v = visible.
+    temp140-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp140 INTO TABLE temp139.
     result = _generic(
                  name   = `FlexBox`
