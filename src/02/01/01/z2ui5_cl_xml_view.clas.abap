@@ -2589,6 +2589,12 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 !width        TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS splitter
+      IMPORTING height        TYPE clike OPTIONAL
+                orientation   TYPE clike OPTIONAL
+                !width        TYPE clike OPTIONAL
+      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS pane_container
       IMPORTING resize        TYPE clike OPTIONAL
                 orientation   TYPE clike OPTIONAL
@@ -16925,5 +16931,25 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
                  name   = `NewsContent`
                  t_prop = temp550 ).
 
+  ENDMETHOD.
+
+
+  METHOD splitter.
+    DATA temp552 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp553 LIKE LINE OF temp552.
+    CLEAR temp552.
+    
+    temp553-n = `height`.
+    temp553-v = height.
+    INSERT temp553 INTO TABLE temp552.
+    temp553-n = `orientation`.
+    temp553-v = orientation.
+    INSERT temp553 INTO TABLE temp552.
+    temp553-n = `width`.
+    temp553-v = width.
+    INSERT temp553 INTO TABLE temp552.
+    result = _generic( name   = `Splitter`
+                       ns     = `layout`
+                       t_prop = temp552 ).
   ENDMETHOD.
 ENDCLASS.
