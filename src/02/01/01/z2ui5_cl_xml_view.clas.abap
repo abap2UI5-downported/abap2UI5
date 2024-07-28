@@ -452,6 +452,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 basesize         TYPE clike OPTIONAL
                 backgrounddesign TYPE clike OPTIONAL
                 styleclass       TYPE clike OPTIONAL
+                order            TYPE clike OPTIONAL
       RETURNING VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS code_editor
@@ -7247,6 +7248,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp142 INTO TABLE temp141.
     temp142-n = `styleClass`.
     temp142-v = styleclass.
+    INSERT temp142 INTO TABLE temp141.
+    temp142-n = `order`.
+    temp142-v = order.
     INSERT temp142 INTO TABLE temp141.
     _generic( name   = `FlexItemData`
               t_prop = temp141 ).
