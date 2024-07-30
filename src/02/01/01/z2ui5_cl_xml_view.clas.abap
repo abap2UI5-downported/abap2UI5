@@ -558,6 +558,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 enablesuggestionshighlighting TYPE clike OPTIONAL
                 enabletableautopopinmode      TYPE clike OPTIONAL
                 arialabelledby                TYPE clike OPTIONAL
+                ariadescribedby               TYPE clike OPTIONAL
                   PREFERRED PARAMETER value
       RETURNING VALUE(result)                 TYPE REF TO z2ui5_cl_xml_view.
 
@@ -8629,6 +8630,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp201 INTO TABLE temp200.
     temp201-n = `AriaLabelledBy`.
     temp201-v = arialabelledby.
+    INSERT temp201 INTO TABLE temp200.
+    temp201-n = `AriaDescribedBy`.
+    temp201-v = ariadescribedby.
     INSERT temp201 INTO TABLE temp200.
     _generic(
         name   = `Input`
