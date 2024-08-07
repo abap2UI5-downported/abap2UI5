@@ -2605,6 +2605,20 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 text          TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS fix_flex
+      IMPORTING !ns            TYPE clike OPTIONAL
+                class          TYPE clike OPTIONAL
+                fixcontentsize TYPE clike OPTIONAL
+      RETURNING VALUE(result)  TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS fix_content
+      IMPORTING !ns            TYPE clike OPTIONAL
+      RETURNING VALUE(result)  TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS flex_content
+      IMPORTING !ns            TYPE clike OPTIONAL
+      RETURNING VALUE(result)  TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS pane_container
       IMPORTING resize        TYPE clike OPTIONAL
                 orientation   TYPE clike OPTIONAL
@@ -16995,5 +17009,34 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     result = _generic( ns     = ns
                        name   = `InvisibleText`
                        t_prop = temp556 ).
+  ENDMETHOD.
+
+
+  METHOD fix_content.
+    result = _generic( ns     = ns
+                       name   = `fixContent` ).
+  ENDMETHOD.
+
+
+  METHOD fix_flex.
+    DATA temp558 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp559 LIKE LINE OF temp558.
+    CLEAR temp558.
+    
+    temp559-n = `class`.
+    temp559-v = class.
+    INSERT temp559 INTO TABLE temp558.
+    temp559-n = `fixContentSize`.
+    temp559-v = fixcontentsize.
+    INSERT temp559 INTO TABLE temp558.
+    result = _generic( ns     = ns
+                       name   = `FixFlex`
+                       t_prop = temp558 ).
+  ENDMETHOD.
+
+
+  METHOD flex_content.
+    result = _generic( ns     = ns
+                       name   = `flexContent` ).
   ENDMETHOD.
 ENDCLASS.
