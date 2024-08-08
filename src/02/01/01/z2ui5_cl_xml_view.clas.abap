@@ -1357,6 +1357,9 @@ CLASS z2ui5_cl_xml_view DEFINITION
       IMPORTING !class         TYPE clike OPTIONAL
                 default_span   TYPE clike OPTIONAL
                 containerquery TYPE clike OPTIONAL
+                hspacing       TYPE clike OPTIONAL
+                vspacing       TYPE clike OPTIONAL
+                !width         TYPE clike OPTIONAL
                   PREFERRED PARAMETER default_span
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1418,6 +1421,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 !status        TYPE clike OPTIONAL
                 !class         TYPE clike OPTIONAL
                 press          TYPE clike OPTIONAL
+                valuestate     TYPE clike OPTIONAL
       RETURNING VALUE(result)  TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS object_attribute
@@ -7500,6 +7504,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp154-n = `text`.
     temp154-v = text.
     INSERT temp154 INTO TABLE temp153.
+    temp154-n = `valueState`.
+    temp154-v = valuestate.
+    INSERT temp154 INTO TABLE temp153.
     result = _generic( name   = `GenericTag`
                        t_prop = temp153 ).
 
@@ -7666,6 +7673,15 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp160 INTO TABLE temp159.
     temp160-n = `containerQuery`.
     temp160-v = z2ui5_cl_util=>boolean_abap_2_json( containerquery ).
+    INSERT temp160 INTO TABLE temp159.
+    temp160-n = `hSpacing`.
+    temp160-v = hspacing.
+    INSERT temp160 INTO TABLE temp159.
+    temp160-n = `vSpacing`.
+    temp160-v = vspacing.
+    INSERT temp160 INTO TABLE temp159.
+    temp160-n = `width`.
+    temp160-v = width.
     INSERT temp160 INTO TABLE temp159.
     result = _generic( name   = `Grid`
                        ns     = `layout`
