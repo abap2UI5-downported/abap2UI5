@@ -107,6 +107,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 backgrounddesign TYPE clike OPTIONAL
                 aligncontent     TYPE clike OPTIONAL
                 items            TYPE clike OPTIONAL
+                id               TYPE clike OPTIONAL
       RETURNING VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS popover
@@ -4136,6 +4137,32 @@ CLASS z2ui5_cl_xml_view DEFINITION
     METHODS badge
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS side_navigation
+      IMPORTING
+        id type CLIKE optional
+        class type CLIKE optional
+        selectedkey type CLIKE optional
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS navigation_list
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS navigation_list_item
+      IMPORTING
+        text type CLIKE optional
+        icon type CLIKE optional
+        select type CLIKE optional
+        href type CLIKE optional
+        key type CLIKE optional
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS fixed_item
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
   PROTECTED SECTION.
     DATA mv_name     TYPE string.
     DATA mv_ns       TYPE string.
@@ -7217,6 +7244,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     
     temp140-n = `class`.
     temp140-v = class.
+    INSERT temp140 INTO TABLE temp139.
+    temp140-n = `id`.
+    temp140-v = id.
     INSERT temp140 INTO TABLE temp139.
     temp140-n = `renderType`.
     temp140-v = rendertype.
@@ -17055,4 +17085,76 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     result = _generic( ns     = ns
                        name   = `flexContent` ).
   ENDMETHOD.
+
+
+  METHOD side_navigation.
+
+    DATA temp560 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp561 LIKE LINE OF temp560.
+    CLEAR temp560.
+    
+    temp561-n = `id`.
+    temp561-v = id.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `class`.
+    temp561-v = class.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `selectedKey`.
+    temp561-v = selectedkey.
+    INSERT temp561 INTO TABLE temp560.
+    result = _generic(
+                 name   = `SideNavigation`
+                 ns     = `tnt`
+                 t_prop = temp560 ).
+
+  ENDMETHOD.
+
+
+  METHOD navigation_list.
+
+    result = _generic(
+                 name   = `NavigationList`
+                 ns     = `tnt` ).
+
+  ENDMETHOD.
+
+
+  METHOD navigation_list_item.
+    DATA temp562 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp563 LIKE LINE OF temp562.
+
+    result = me.
+    
+    CLEAR temp562.
+    
+    temp563-n = `text`.
+    temp563-v = text.
+    INSERT temp563 INTO TABLE temp562.
+    temp563-n = `icon`.
+    temp563-v = icon.
+    INSERT temp563 INTO TABLE temp562.
+    temp563-n = `href`.
+    temp563-v = href.
+    INSERT temp563 INTO TABLE temp562.
+    temp563-n = `key`.
+    temp563-v = key.
+    INSERT temp563 INTO TABLE temp562.
+    temp563-n = `select`.
+    temp563-v = select.
+    INSERT temp563 INTO TABLE temp562.
+    _generic(
+      name   = `NavigationListItem`
+      ns     = `tnt`
+      t_prop = temp562 ).
+
+  ENDMETHOD.
+
+
+  METHOD fixed_item.
+
+    result = _generic( name = `fixedItem`
+                       ns   = `tnt` ).
+
+  ENDMETHOD.
+
 ENDCLASS.
