@@ -815,6 +815,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 activeicon       TYPE clike OPTIONAL
                 accessiblerole   TYPE clike OPTIONAL
                 textdirection    TYPE clike OPTIONAL
+                arialabelledby   TYPE clike OPTIONAL
+                ariadescribedby  TYPE clike OPTIONAL
       RETURNING VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS begin_button
@@ -4874,6 +4876,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp30-n = `class`.
     temp30-v = class.
     INSERT temp30 INTO TABLE temp29.
+    temp30-n = `ariaLabelledBy`.
+    temp30-v = arialabelledby.
+    INSERT temp30 INTO TABLE temp29.
+    temp30-n = `ariaDescribedBy`.
+    temp30-v = ariadescribedby.
+    INSERT temp30 INTO TABLE temp29.
     _generic( name   = `Button`
               ns     = ns
               t_prop = temp29 ).
@@ -8692,10 +8700,10 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp201-n = `fieldWidth`.
     temp201-v = fieldwidth.
     INSERT temp201 INTO TABLE temp200.
-    temp201-n = `AriaLabelledBy`.
+    temp201-n = `ariaLabelledBy`.
     temp201-v = arialabelledby.
     INSERT temp201 INTO TABLE temp200.
-    temp201-n = `AriaDescribedBy`.
+    temp201-n = `ariaDescribedBy`.
     temp201-v = ariadescribedby.
     INSERT temp201 INTO TABLE temp200.
     _generic(
@@ -17156,5 +17164,4 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
                        ns   = `tnt` ).
 
   ENDMETHOD.
-
 ENDCLASS.
