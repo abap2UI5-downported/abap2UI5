@@ -1467,7 +1467,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS step_input
-      IMPORTING !value        TYPE clike OPTIONAL
+      IMPORTING !id           TYPE clike OPTIONAL
+                !value        TYPE clike OPTIONAL
                 !min          TYPE clike OPTIONAL
                 !max          TYPE clike OPTIONAL
                 !step         TYPE clike OPTIONAL
@@ -2576,6 +2577,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
     METHODS news_content
       IMPORTING contenttext      TYPE clike OPTIONAL
                 subheader        TYPE clike OPTIONAL
+                press            TYPE clike OPTIONAL
       RETURNING VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS mask_input
@@ -14077,6 +14079,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     
     CLEAR temp440.
     
+    temp441-n = `id`.
+    temp441-v = id.
+    INSERT temp441 INTO TABLE temp440.
     temp441-n = `max`.
     temp441-v = max.
     INSERT temp441 INTO TABLE temp440.
@@ -17025,6 +17030,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp553 INTO TABLE temp552.
     temp553-n = `subheader`.
     temp553-v = subheader.
+    INSERT temp553 INTO TABLE temp552.
+    temp553-n = `press`.
+    temp553-v = press.
     INSERT temp553 INTO TABLE temp552.
     result = _generic(
                  name   = `NewsContent`
