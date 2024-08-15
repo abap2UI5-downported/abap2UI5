@@ -321,6 +321,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 !visible          TYPE clike OPTIONAL
                 !width            TYPE clike OPTIONAL
                 !class            TYPE clike OPTIONAL
+                press             TYPE clike OPTIONAL
       RETURNING VALUE(result)     TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS link_tile_content
@@ -4186,7 +4187,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
+CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD actions.
@@ -10825,6 +10826,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp296 INTO TABLE temp295.
     temp296-n = `class`.
     temp296-v = class.
+    INSERT temp296 INTO TABLE temp295.
+    temp296-n = `press`.
+    temp296-v = press.
     INSERT temp296 INTO TABLE temp295.
     result = _generic(
         name   = `NumericContent`
