@@ -767,6 +767,14 @@ CLASS z2ui5_cl_xml_view DEFINITION
       IMPORTING !ns           TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS field
+      IMPORTING !ns                TYPE clike OPTIONAL
+                !id                TYPE clike OPTIONAL
+                !value             TYPE clike OPTIONAL
+                editmode           TYPE clike OPTIONAL
+                showemptyindicator TYPE clike OPTIONAL
+      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS custom_header
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -800,6 +808,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 !enabled      TYPE clike OPTIONAL
                 press         TYPE clike OPTIONAL
                 !class        TYPE clike OPTIONAL
+                pressed       TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS button
@@ -15094,6 +15103,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp482-n = `class`.
     temp482-v = class.
     INSERT temp482 INTO TABLE temp481.
+    temp482-n = `pressed`.
+    temp482-v = z2ui5_cl_util=>boolean_abap_2_json( pressed ).
+    INSERT temp482 INTO TABLE temp481.
     _generic( name   = `ToggleButton`
               t_prop = temp481 ).
   ENDMETHOD.
@@ -16700,6 +16712,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
       temp532-n = `xmlns:tnt`.
       temp532-v = `sap.tnt`.
       INSERT temp532 INTO TABLE temp531.
+      temp532-n = `xmlns:mdc`.
+      temp532-v = `sap.ui.mdc`.
+      INSERT temp532 INTO TABLE temp531.
       lt_prop = temp531.
 
       
@@ -17185,5 +17200,28 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   METHOD content_areas.
     result = _generic( name = `contentAreas`
                        ns = ns ).
+  ENDMETHOD.
+
+
+  METHOD field.
+    DATA temp564 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp565 LIKE LINE OF temp564.
+    CLEAR temp564.
+    
+    temp565-n = `id`.
+    temp565-v = id.
+    INSERT temp565 INTO TABLE temp564.
+    temp565-n = `value`.
+    temp565-v = value.
+    INSERT temp565 INTO TABLE temp564.
+    temp565-n = `editMode`.
+    temp565-v = editmode.
+    INSERT temp565 INTO TABLE temp564.
+    temp565-n = `showEmptyIndicator`.
+    temp565-v = z2ui5_cl_util=>boolean_abap_2_json( showemptyindicator ).
+    INSERT temp565 INTO TABLE temp564.
+    result = _generic( name = `Field`
+                       ns = ns
+                       t_prop = temp564 ).
   ENDMETHOD.
 ENDCLASS.
