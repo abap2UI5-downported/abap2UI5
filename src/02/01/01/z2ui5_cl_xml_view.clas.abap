@@ -1793,8 +1793,11 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS currency
-      IMPORTING !value        TYPE clike
-                !currency     TYPE clike
+      IMPORTING !value        TYPE clike OPTIONAL
+                !currency     TYPE clike OPTIONAL
+                usesymbol     TYPE clike OPTIONAL
+                maxprecision  TYPE clike OPTIONAL
+                stringvalue   TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS ui_row_action
@@ -6013,6 +6016,15 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp92 INTO TABLE temp91.
     temp92-n = `currency`.
     temp92-v = currency.
+    INSERT temp92 INTO TABLE temp91.
+    temp92-n = `useSymbol`.
+    temp92-v = z2ui5_cl_util=>boolean_abap_2_json( usesymbol ).
+    INSERT temp92 INTO TABLE temp91.
+    temp92-n = `maxPrecision`.
+    temp92-v = maxprecision.
+    INSERT temp92 INTO TABLE temp91.
+    temp92-n = `stringValue`.
+    temp92-v = stringvalue.
     INSERT temp92 INTO TABLE temp91.
     result = _generic( name   = `Currency`
                        ns     = 'u'
