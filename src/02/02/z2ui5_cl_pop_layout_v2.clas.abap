@@ -327,6 +327,9 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
     temp8-control = m_table.
     temp8-attribute = 'SUBCOLUMN'.
     INSERT temp8 INTO TABLE temp7.
+    temp8-control = m_table.
+    temp8-attribute = 'REFERENCE_FIELD'.
+    INSERT temp8 INTO TABLE temp7.
     temp8-control = ui_table.
     temp8-attribute = 'VISIBLE'.
     INSERT temp8 INTO TABLE temp7.
@@ -347,6 +350,12 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
     INSERT temp8 INTO TABLE temp7.
     temp8-control = others.
     temp8-attribute = 'ALTERNATIVE_TEXT'.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-control = others.
+    temp8-attribute = 'REFERENCE_FIELD'.
+    INSERT temp8 INTO TABLE temp7.
+    temp8-control = others.
+    temp8-attribute = 'WIDTH'.
     INSERT temp8 INTO TABLE temp7.
     mt_controls = temp7.
 
@@ -371,7 +380,7 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
     
     dialog = popup->dialog( title        = 'Edit Layout'
 *                                  stretch      = abap_true
-                                  contentwidth = '70%'
+                                  contentwidth = '90%'
                                   afterclose   = client->_event( 'CLOSE' ) ).
 
     
@@ -392,8 +401,8 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
     lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_any( ms_layout-t_layout ).
 
     
-    col = columns->column( )->header( `` ).
-    col->text( 'Row' ).
+    col = columns->column( '15rem' )->header( `` ).
+    col->text( `Row` ).
 
     
     
@@ -429,6 +438,9 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
         WHEN 'ALTERNATIVE_TEXT'.
           col = columns->column( )->header( `` ).
           col->text( 'Alternative Text' ).
+        WHEN 'REFERENCE_FIELD'.
+          col = columns->column( )->header( `` ).
+          col->text( 'Reference Field' ).
         WHEN 'SUBCOLUMN'.
           col = columns->column( )->header( `` ).
           col->text( 'Subcolumn' ).
@@ -439,7 +451,7 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
     LOOP AT lt_comp REFERENCE INTO comp.
 
       IF comp->name = 'FNAME'.
-        cells->text( |\{{ comp->name }\}| ).
+        cells->text( |\{{ comp->name }\} { cl_abap_char_utilities=>cr_lf } \{TLABEL\} | ).
       ENDIF.
 
       READ TABLE mt_controls INTO control WITH KEY control   = ms_layout-s_head-control
@@ -496,6 +508,13 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
                          press = client->_event( val   = 'CALL_SUBCOLUMN'
                                                  t_arg = temp10 ) ).
 
+        WHEN 'REFERENCE_FIELD'.
+
+          cells->combobox( selectedkey = |\{{ comp->name }\}|
+                           items       = client->_bind_local( ms_layout-t_layout )
+                        )->item( key  = '{FNAME}'
+                                 text = '{FNAME} - {TLABEL}' ).
+
       ENDCASE.
 
     ENDLOOP.
@@ -515,7 +534,7 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
                      text    = `               `
          )->button( text  = 'Close'
                     icon  = 'sap-icon://sys-cancel-2'
-                    press = client->_event( 'EDIT_CLOSE' )
+                    press = client->_event( 'CLOSE' )
          )->button( text  = 'Okay'
                     icon  = 'sap-icon://accept'
                     press = client->_event( 'EDIT_OKAY' )
@@ -569,7 +588,7 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
 
         client->nav_app_leave( client->get_app( client->get( )-s_draft-id_prev_app_stack ) ).
 
-      WHEN 'EDIT_CLOSE'.
+      WHEN 'CLOSE'.
 
         client->popup_destroy( ).
 
@@ -651,7 +670,7 @@ CLASS z2ui5_cl_pop_layout_v2 IMPLEMENTATION.
 
     
     dialog = popup->dialog( title        = 'Save'
-                                  contentwidth = '70%'
+                                  contentwidth = '80%'
                                   afterclose   = client->_event( 'SAVE_CLOSE' ) ).
 
     
@@ -847,7 +866,7 @@ DATA t_del TYPE temp3.
         ENDLOOP.
 
         ms_layout-t_layout = sort_by_seqence( ms_layout-t_layout ).
-
+        ms_layout-t_layout = set_sub_columns( ms_layout-t_layout ).
       ENDIF.
     ENDIF.
 
@@ -861,7 +880,7 @@ DATA t_del TYPE temp3.
 
     
     dialog = popup->dialog( title        = 'Delete Layout'
-                                  contentwidth = '70%'
+                                  contentwidth = '90%'
                                   afterclose   = client->_event( 'CLOSE' ) ).
 
     dialog->table( mode  = 'SingleSelectLeft'
@@ -909,7 +928,7 @@ DATA t_del TYPE temp3.
 
     
     dialog = popup->dialog( title        = 'Select Layout'
-                                  contentwidth = '70%'
+                                  contentwidth = '90%'
                                   afterclose   = client->_event( 'CLOSE' ) ).
 
     dialog->table( mode  = 'SingleSelectLeft'
@@ -1083,6 +1102,7 @@ TYPES width TYPE z2ui5_t004-width.
 TYPES sequence TYPE z2ui5_t004-sequence.
 TYPES alternative_text TYPE z2ui5_t004-alternative_text.
 TYPES subcolumn TYPE z2ui5_t004-subcolumn.
+TYPES reference_field TYPE z2ui5_t004-reference_field.
 TYPES END OF temp34.
       TYPES temp5 TYPE STANDARD TABLE OF temp34 WITH DEFAULT KEY.
 DATA t_pos TYPE temp5.
@@ -1096,6 +1116,7 @@ DATA pos LIKE REF TO <temp36>.
     
     
     LOOP AT t_comp REFERENCE INTO lr_comp.
+
       
       CLEAR temp20.
       temp20-control = control.
@@ -1224,6 +1245,7 @@ DATA pos LIKE REF TO <temp36>.
              sequence
              alternative_text
              subcolumn
+             reference_field
         FROM z2ui5_t004
         WHERE guid = def-guid
         INTO TABLE t_pos ##SUBRC_OK.
@@ -1495,13 +1517,15 @@ GET REFERENCE OF <temp38> INTO Head.
       DATA temp41 TYPE string.
       DATA temp42 TYPE string.
     IF layout-alternative_text IS INITIAL.
+*      result = z2ui5_cl_stmpncfctn_api=>rtti_get_data_element_texts( CONV #( layout-rollname ) )-long.
       
       temp41 = layout-rollname.
-      result = z2ui5_cl_stmpncfctn_api=>rtti_get_data_element_texts( temp41 )-long.
+      result = z2ui5_cl_stmpncfctn_api=>rtti_get_data_element_texts( temp41 )-short.
     ELSE.
+*      result = z2ui5_cl_stmpncfctn_api=>rtti_get_data_element_texts( CONV #( layout-alternative_text ) )-long.
       
       temp42 = layout-alternative_text.
-      result = z2ui5_cl_stmpncfctn_api=>rtti_get_data_element_texts( temp42 )-long.
+      result = z2ui5_cl_stmpncfctn_api=>rtti_get_data_element_texts( temp42 )-short.
     ENDIF.
 
     IF result IS INITIAL.
@@ -1530,12 +1554,11 @@ GET REFERENCE OF <temp38> INTO Head.
     DATA lo_popup TYPE REF TO z2ui5_cl_xml_view.
     DATA vbox TYPE REF TO z2ui5_cl_xml_view.
     DATA item TYPE REF TO z2ui5_cl_xml_view.
-    DATA grid TYPE REF TO z2ui5_cl_xml_view.
     DATA temp43 TYPE string_table.
     lo_popup = z2ui5_cl_xml_view=>factory_popup( ).
 
     lo_popup = lo_popup->dialog( afterclose   = client->_event( 'SUBCOLUMN_CANCEL' )
-                                 contentwidth = `20%`
+                                 contentwidth = `50%`
                                  title        = 'Define Sub Coloumns' ).
 
     
@@ -1548,15 +1571,12 @@ GET REFERENCE OF <temp38> INTO Head.
                 )->custom_list_item( ).
 
     
-    grid = item->grid( ).
-
-    
     CLEAR temp43.
     INSERT `${KEY}` INTO TABLE temp43.
-    grid->combobox( selectedkey = `{FNAME}`
+    item->combobox( selectedkey = `{FNAME}`
                     items       = client->_bind( mt_comps  )
                    )->item( key  = '{FNAME}'
-                            text = '{FNAME}'
+                            text = '{FNAME} {TLABEL}'
              )->get_parent(
              )->button( icon  = 'sap-icon://decline'
                         type  = `Transparent`
@@ -1729,16 +1749,23 @@ DATA tab TYPE temp6.
            WITH KEY guid     = layout-guid
                     pos_guid = layout-pos_guid.
 
-      IF sy-subrc = 0.
-        IF layout-sequence <> layout_tmp-sequence.
-          mv_rerender = abap_true.
-          RETURN.
-        ENDIF.
+      IF sy-subrc <> 0.
+        CONTINUE.
+      ENDIF.
 
-        IF layout-t_sub_col <> layout_tmp-t_sub_col.
-          mv_rerender = abap_true.
-          RETURN.
-        ENDIF.
+      IF layout-sequence <> layout_tmp-sequence.
+        mv_rerender = abap_true.
+        RETURN.
+      ENDIF.
+
+      IF layout-t_sub_col <> layout_tmp-t_sub_col.
+        mv_rerender = abap_true.
+        RETURN.
+      ENDIF.
+
+      IF layout-reference_field <> layout_tmp-reference_field.
+        mv_rerender = abap_true.
+        RETURN.
       ENDIF.
 
     ENDLOOP.
