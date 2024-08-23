@@ -2616,6 +2616,13 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 press            TYPE clike OPTIONAL
       RETURNING VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS color_picker
+      IMPORTING colorString   TYPE clike
+                displayMode   TYPE clike OPTIONAL
+                change        TYPE clike OPTIONAL
+                liveChange    TYPE clike OPTIONAL
+      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS mask_input
       IMPORTING placeholder           TYPE clike OPTIONAL
                 !mask                 TYPE clike OPTIONAL
@@ -17329,4 +17336,27 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
                        ns = ns
                        t_prop = temp566 ).
   ENDMETHOD.
+
+  METHOD color_picker.
+    DATA temp568 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp569 LIKE LINE OF temp568.
+    CLEAR temp568.
+    
+    temp569-n = `colorString`.
+    temp569-v = colorString.
+    INSERT temp569 INTO TABLE temp568.
+    temp569-n = `displayMode`.
+    temp569-v = displayMode.
+    INSERT temp569 INTO TABLE temp568.
+    temp569-n = `change`.
+    temp569-v = change.
+    INSERT temp569 INTO TABLE temp568.
+    temp569-n = `liveChange`.
+    temp569-v = liveChange.
+    INSERT temp569 INTO TABLE temp568.
+    result = _generic(  ns     = `unified`
+                       name   = `ColorPicker`
+                       t_prop = temp568 ).
+  ENDMETHOD.
+
 ENDCLASS.
