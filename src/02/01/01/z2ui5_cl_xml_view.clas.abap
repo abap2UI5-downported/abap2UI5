@@ -384,7 +384,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS avatar
-      IMPORTING src               TYPE clike OPTIONAL
+      IMPORTING !ns               TYPE clike OPTIONAL
+                src               TYPE clike OPTIONAL
                 !class            TYPE clike OPTIONAL
                 displaysize       TYPE clike OPTIONAL
                 ariahaspopup      TYPE clike OPTIONAL
@@ -443,18 +444,26 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING VALUE(result)   TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS shell_bar
-      IMPORTING homeIcon            TYPE clike     OPTIONAL
-                homeIconTooltip     TYPE clike     OPTIONAL
-                notificationsNumber TYPE clike     OPTIONAL
-                secondTitle         TYPE clike     OPTIONAL
-                showCopilot         TYPE abap_bool OPTIONAL
-                showMenuButton      TYPE abap_bool OPTIONAL
-                showNavButton       TYPE abap_bool OPTIONAL
-                showNotifications   TYPE abap_bool OPTIONAL
-                showProductSwitcher TYPE abap_bool OPTIONAL
-                showSearch          TYPE abap_bool OPTIONAL
-                !title              TYPE clike     OPTIONAL
-      RETURNING VALUE(result)       TYPE REF TO z2ui5_cl_xml_view.
+      IMPORTING homeIcon               TYPE clike     OPTIONAL
+                homeIconTooltip        TYPE clike     OPTIONAL
+                notificationsNumber    TYPE clike     OPTIONAL
+                secondTitle            TYPE clike     OPTIONAL
+                showCopilot            TYPE abap_bool OPTIONAL
+                showMenuButton         TYPE abap_bool OPTIONAL
+                showNavButton          TYPE abap_bool OPTIONAL
+                showNotifications      TYPE abap_bool OPTIONAL
+                showProductSwitcher    TYPE abap_bool OPTIONAL
+                showSearch             TYPE abap_bool OPTIONAL
+                !title                 TYPE clike     OPTIONAL
+                avatarPressed          TYPE clike     OPTIONAL
+                copilotPressed         TYPE clike     OPTIONAL
+                homeIconPressed        TYPE clike     OPTIONAL
+                menuButtonPressed      TYPE clike     OPTIONAL
+                navButtonPressed       TYPE clike     OPTIONAL
+                notificationsPressed   TYPE clike     OPTIONAL
+                productSwitcherPressed TYPE clike     OPTIONAL
+                searchButtonPressed    TYPE clike     OPTIONAL
+      RETURNING VALUE(result)          TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS blocks
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
@@ -4480,6 +4489,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp12-v = displaysize.
     INSERT temp12 INTO TABLE temp11.
     _generic( name   = `Avatar`
+              ns     = ns
               t_prop = temp11 ).
   ENDMETHOD.
 
@@ -13382,8 +13392,8 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp406-n = `homeIconTooltip`.
     temp406-v = homeIconTooltip.
     INSERT temp406 INTO TABLE temp405.
-    temp406-n = `notificationsNumber`.
-    temp406-v = notificationsNumber.
+    temp406-n = `title`.
+    temp406-v = title.
     INSERT temp406 INTO TABLE temp405.
     temp406-n = `secondTitle`.
     temp406-v = secondTitle.
@@ -13406,12 +13416,37 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp406-n = `showSearch`.
     temp406-v = z2ui5_cl_util=>boolean_abap_2_json( showSearch ).
     INSERT temp406 INTO TABLE temp405.
-    temp406-n = `title`.
-    temp406-v = title.
+    temp406-n = `notificationsNumber`.
+    temp406-v = notificationsNumber.
+    INSERT temp406 INTO TABLE temp405.
+    temp406-n = 'avatarPressed'.
+    temp406-v = avatarPressed.
+    INSERT temp406 INTO TABLE temp405.
+    temp406-n = 'copilotPressed'.
+    temp406-v = copilotPressed.
+    INSERT temp406 INTO TABLE temp405.
+    temp406-n = 'homeIconPressed'.
+    temp406-v = homeIconPressed.
+    INSERT temp406 INTO TABLE temp405.
+    temp406-n = 'menuButtonPressed'.
+    temp406-v = menuButtonPressed.
+    INSERT temp406 INTO TABLE temp405.
+    temp406-n = 'navButtonPressed'.
+    temp406-v = navButtonPressed.
+    INSERT temp406 INTO TABLE temp405.
+    temp406-n = 'notificationsPressed'.
+    temp406-v = notificationsPressed.
+    INSERT temp406 INTO TABLE temp405.
+    temp406-n = 'productSwitcherPressed'.
+    temp406-v = productSwitcherPressed.
+    INSERT temp406 INTO TABLE temp405.
+    temp406-n = 'searchButtonPressed'.
+    temp406-v = searchButtonPressed.
     INSERT temp406 INTO TABLE temp405.
     result = _generic( name   = `ShellBar`
                        ns     = `f`
                        t_prop = temp405 ).
+
   ENDMETHOD.
 
 
