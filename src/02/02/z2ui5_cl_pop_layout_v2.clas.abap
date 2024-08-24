@@ -1043,6 +1043,7 @@ DATA t_del TYPE temp3.
            sequence
            alternative_text
            subcolumn
+           reference_field
       FROM z2ui5_t004
       WHERE guid = Head-guid
       INTO CORRESPONDING FIELDS OF TABLE ms_layout-t_layout  ##SUBRC_OK.
