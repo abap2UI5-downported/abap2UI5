@@ -15,7 +15,7 @@ CLASS z2ui5_cl_pop_f4_help DEFINITION
     DATA mv_value        TYPE string.
     DATA mv_return_value TYPE string.
     DATA mv_rows         TYPE int1 VALUE '50'.
-    DATA mt_dfies        TYPE z2ui5_cl_util_api=>ty_t_dfies.
+    DATA mt_dfies        TYPE z2ui5_cl_util=>ty_t_dfies.
 
     CLASS-METHODS factory
       IMPORTING
@@ -179,7 +179,7 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
         
         comp = temp2.
 
-        APPEND LINES OF z2ui5_cl_util_api=>rtti_get_t_attri_by_table_name( mv_check_tab  ) TO comp.
+        APPEND LINES OF z2ui5_cl_util=>rtti_get_t_attri_by_table_name( mv_check_tab  ) TO comp.
 
         
         new_struct_desc = cl_abap_structdescr=>create( comp ).
@@ -463,7 +463,7 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
     DATA temp11 TYPE z2ui5_cl_stmpncfctn_api=>ty_s_dfies.
       DATA temp12 TYPE string.
       DATA temp13 TYPE z2ui5_cl_stmpncfctn_api=>ty_s_dfies.
-    t_dfies = z2ui5_cl_util_api=>rtti_get_t_dfies_by_table_name( mv_table ).
+    t_dfies = z2ui5_cl_util=>rtti_get_t_dfies_by_table_name( mv_table ).
 
     
     READ TABLE t_dfies REFERENCE INTO dfies WITH KEY fieldname = mv_field.
@@ -480,7 +480,7 @@ CLASS z2ui5_cl_pop_f4_help IMPLEMENTATION.
 
     
     temp9 = dfies->checktable.
-    mt_dfies = z2ui5_cl_util_api=>rtti_get_t_dfies_by_table_name( temp9 ).
+    mt_dfies = z2ui5_cl_util=>rtti_get_t_dfies_by_table_name( temp9 ).
     "
     " ASSIGNMENT --- this may not be 100% certain ... :(
     

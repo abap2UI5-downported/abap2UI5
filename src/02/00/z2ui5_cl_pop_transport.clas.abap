@@ -97,7 +97,7 @@ CLASS z2ui5_cl_pop_transport IMPLEMENTATION.
 
   METHOD on_init.
 
-    IF z2ui5_cl_util_api=>rtti_check_lang_version_cloud( ) = abap_true.
+    IF z2ui5_cl_util=>rtti_check_lang_version_cloud( ) = abap_true.
       get_tr_cloud( ).
     ELSE.
       get_tr_onprem( ).
@@ -165,7 +165,7 @@ CLASS z2ui5_cl_pop_transport IMPLEMENTATION.
 
   METHOD add_DATA_to_tranport.
 
-    IF z2ui5_cl_util_api=>rtti_check_lang_version_cloud( ) = abap_false.
+    IF z2ui5_cl_util=>rtti_check_lang_version_cloud( ) = abap_false.
 *      add_to_transport_cloud( ir_data      = ir_data
 *                              iv_tabname   = iv_tabname
 *                              is_transport = is_transport ).
@@ -337,7 +337,7 @@ CLASS z2ui5_cl_pop_transport IMPLEMENTATION.
 
     TRY.
         
-        t_comp = z2ui5_cl_util_api=>rtti_get_t_attri_by_table_name( table_name ).
+        t_comp = z2ui5_cl_util=>rtti_get_t_attri_by_table_name( table_name ).
 
         
         new_struct_desc = cl_abap_structdescr=>create( t_comp ).
@@ -423,7 +423,7 @@ CLASS z2ui5_cl_pop_transport IMPLEMENTATION.
         DATA struct_desc TYPE REF TO cl_abap_structdescr.
         DATA table_desc TYPE REF TO cl_abap_tabledescr.
     DATA dfies TYPE z2ui5_cl_stmpncfctn_api=>ty_t_dfies.
-    t_comp = z2ui5_cl_util_api=>rtti_get_t_attri_by_table_name( 'E071K' ).
+    t_comp = z2ui5_cl_util=>rtti_get_t_attri_by_table_name( 'E071K' ).
 
     TRY.
 
@@ -445,7 +445,7 @@ CLASS z2ui5_cl_pop_transport IMPLEMENTATION.
     ENDTRY.
 
     
-    dfies = z2ui5_cl_util_api=>rtti_get_t_dfies_by_table_name( iv_tabname ).
+    dfies = z2ui5_cl_util=>rtti_get_t_dfies_by_table_name( iv_tabname ).
 
 *   is_transport-transport = assign_value( component = 'TRKORR'
 *                                          structure = <s_e071k> ).                                         )
@@ -529,7 +529,7 @@ CLASS z2ui5_cl_pop_transport IMPLEMENTATION.
     DATA t_comp TYPE abap_component_tab.
         DATA struct_desc_new TYPE REF TO cl_abap_structdescr.
         DATA table_desc_new TYPE REF TO cl_abap_tabledescr.
-    t_comp = z2ui5_cl_util_api=>rtti_get_t_attri_by_table_name( 'E071' ).
+    t_comp = z2ui5_cl_util=>rtti_get_t_attri_by_table_name( 'E071' ).
 
     TRY.
 
@@ -611,7 +611,7 @@ CLASS z2ui5_cl_pop_transport IMPLEMENTATION.
 
     TRY.
         
-        t_comp = z2ui5_cl_util_api=>rtti_get_t_attri_by_table_name( table_name ).
+        t_comp = z2ui5_cl_util=>rtti_get_t_attri_by_table_name( table_name ).
 
         
         new_struct_desc = cl_abap_structdescr=>create( t_comp ).

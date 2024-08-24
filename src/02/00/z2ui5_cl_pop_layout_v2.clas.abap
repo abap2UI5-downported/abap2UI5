@@ -1112,7 +1112,7 @@ DATA t_pos TYPE temp5.
             FIELD-SYMBOLS <temp36> TYPE temp34.
 DATA pos LIKE REF TO <temp36>.
                 DATA pos_guid TYPE sysuuid_c32.
-    t_comp = z2ui5_cl_util_api=>rtti_get_t_attri_by_any( data ).
+    t_comp = z2ui5_cl_util=>rtti_get_t_attri_by_any( data ).
 
     
     
