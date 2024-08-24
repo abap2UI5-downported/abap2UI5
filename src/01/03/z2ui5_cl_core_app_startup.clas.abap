@@ -64,7 +64,7 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
         ms_home-class_value_state = `Success`.
         ms_home-class_editable    = abap_false.
 
-        ms_home-url = z2ui5_cl_util=>app_get_url(
+        ms_home-url = z2ui5_cl_core_util_srv=>app_get_url(
                    client    = client
                    classname = ms_home-classname ).
 
@@ -84,10 +84,7 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
     DATA page2 TYPE REF TO z2ui5_cl_xml_view.
     DATA simple_form2 TYPE REF TO z2ui5_cl_xml_view.
     DATA lv_url_samples2 TYPE string.
-    DATA lv_url_samples3 TYPE string.
-    DATA temp2 TYPE REF TO z2ui5_cl_core_app_search.
-    DATA temp1 TYPE string_table.
-      DATA temp3 TYPE string_table.
+      DATA temp1 TYPE string_table.
     page2 = z2ui5_cl_xml_view=>factory( )->shell( )->page(
          title = `abap2UI5 - Developing UI5 Apps Purely in ABAP`
          shownavbutton = abap_false ).
@@ -163,37 +160,31 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
 
 
     
-    lv_url_samples2 = z2ui5_cl_util=>app_get_url(
+    lv_url_samples2 = z2ui5_cl_core_util_srv=>app_get_url(
                   client    = client
                   classname = 'z2ui5_cl_demo_app_000' ).
 
-    
-    
-    CREATE OBJECT temp2 TYPE z2ui5_cl_core_app_search.
-    lv_url_samples3 = z2ui5_cl_util=>app_get_url(
-                    client    = client
-                    classname = z2ui5_cl_util_api=>rtti_get_classname_by_ref( temp2 ) ).
+*    DATA(lv_url_samples3) = z2ui5_cl_core_util_srv=>app_get_url(
+*                    client    = client
+*                    classname = z2ui5_cl_util=>rtti_get_classname_by_ref( NEW z2ui5_cl_core_app_search( ) ) ).
 
     simple_form2->toolbar( )->title( `What's next?` ).
 
-    simple_form2->label( `App Finder` ).
-    
-    CLEAR temp1.
-    INSERT lv_url_samples3 INTO TABLE temp1.
-    simple_form2->button(
-        text  = `Start & Install Apps`
-        press = client->_event_client( val = client->cs_event-open_new_tab t_arg = temp1 )
-        width = `70%` ).
+*    simple_form2->label( `App Finder` ).
+*    simple_form2->button(
+*        text  = `Start & Install Apps`
+*        press = client->_event_client( val = client->cs_event-open_new_tab t_arg = VALUE #( ( lv_url_samples3 ) ) )
+*        width = `70%` ).
 
     IF z2ui5_cl_util=>rtti_check_class_exists( `z2ui5_cl_demo_app_000` ) IS NOT INITIAL.
       simple_form2->label( `Start Developing` ).
       
-      CLEAR temp3.
-      INSERT lv_url_samples2 INTO TABLE temp3.
+      CLEAR temp1.
+      INSERT lv_url_samples2 INTO TABLE temp1.
       simple_form2->button(
         text      = `Explore Code Samples`
         press     = client->_event_client( val   = client->cs_event-open_new_tab
-                                           t_arg = temp3 )
+                                           t_arg = temp1 )
             width = `70%` ).
 
     ELSE.
@@ -203,20 +194,21 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
               href             = `https://github.com/abap2UI5/abap2UI5-samples` ).
     ENDIF.
 
-    simple_form2->label( `` ).
-    simple_form2->text( `` ).
+*    simple_form2->label( `` ).
+*    simple_form2->text( `` ).
 
     simple_form2->toolbar( )->title( `Contribution` ).
+
+    simple_form2->label( `Open an issue` ).
+    simple_form2->link( text = `You have problems, comments or wishes?`
+                 target      = `_blank`
+                 href        = `https://github.com/abap2UI5/abap2UI5/issues` ).
 
     simple_form2->label( `Open a Pull Request` ).
     simple_form2->link( text = `You added a new feature or fixed a bug?`
                target        = `_blank`
                href          = `https://github.com/abap2UI5/abap2UI5/pulls` ).
 
-    simple_form2->label( `Open an issue` ).
-    simple_form2->link( text = `You have problems, comments or wishes?`
-                 target      = `_blank`
-                 href        = `https://github.com/abap2UI5/abap2UI5/issues` ).
 
     simple_form2->toolbar( )->title( `Social Media` ).
 
@@ -246,8 +238,8 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
 
 
   METHOD z2ui5_if_app~main.
-          DATA temp5 TYPE REF TO z2ui5_cl_pop_to_select.
-          DATA lo_f4 LIKE temp5.
+          DATA temp3 TYPE REF TO z2ui5_cl_pop_to_select.
+          DATA lo_f4 LIKE temp3.
           DATA ls_result TYPE z2ui5_cl_pop_to_select=>ty_s_result.
             FIELD-SYMBOLS <class> TYPE data.
 
@@ -263,9 +255,9 @@ CLASS Z2UI5_CL_CORE_APP_STARTUP IMPLEMENTATION.
     IF client->get( )-check_on_navigated = abap_true.
       TRY.
           
-          temp5 ?= client->get_app( client->get( )-s_draft-id_prev_app ).
+          temp3 ?= client->get_app( client->get( )-s_draft-id_prev_app ).
           
-          lo_f4 = temp5.
+          lo_f4 = temp3.
           
           ls_result = lo_f4->result( ).
           IF ls_result-check_confirmed = abap_true.
@@ -324,15 +316,15 @@ MOVE-CORRESPONDING <class> TO ms_home.
 
 
   METHOD z2ui5_on_init.
-    DATA temp6 TYPE REF TO z2ui5_cl_app_hello_world.
+    DATA temp4 TYPE REF TO z2ui5_cl_app_hello_world.
 
     ms_home-btn_text       = `check`.
     ms_home-btn_event_id   = `BUTTON_CHECK`.
     ms_home-class_editable = abap_true.
     ms_home-btn_icon       = `sap-icon://validate`.
     
-    CREATE OBJECT temp6 TYPE z2ui5_cl_app_hello_world.
-    ms_home-classname      = z2ui5_cl_util_api=>rtti_get_classname_by_ref( temp6 ).
+    CREATE OBJECT temp4 TYPE z2ui5_cl_app_hello_world.
+    ms_home-classname      = z2ui5_cl_util=>rtti_get_classname_by_ref( temp4 ).
 
   ENDMETHOD.
 ENDCLASS.

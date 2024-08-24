@@ -226,12 +226,12 @@ CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
                    type  = `Transparent`
                    press = client->_event( val = `POPUP_DELETE_ALL` )
 *        )->toolbar_spacer(
-        )->button( text  = 'DB Read'
-                  press = client->_event( 'BUTTON_DB_READ' )
-                 icon  = 'sap-icon://download-from-cloud'
-       )->button( text  = 'DB Save'
-                  press = client->_event( 'BUTTON_DB_SAVE' )
-                  icon  = 'sap-icon://save'
+*        )->button( text  = 'DB Read'
+*                  press = client->_event( 'BUTTON_DB_READ' )
+*                 icon  = 'sap-icon://download-from-cloud'
+*       )->button( text  = 'DB Save'
+*                  press = client->_event( 'BUTTON_DB_SAVE' )
+*                  icon  = 'sap-icon://save'
 *        )->toolbar_spacer(
        )->button( text  = 'Cancel'
                   press = client->_event( 'BUTTON_CANCEL' )
@@ -270,9 +270,20 @@ CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
                             )->text( '{DESCR}'
                             )->text( '{DEF}' ).
 
-    dialog->footer( )->overflow_toolbar(
-          )->toolbar_spacer(
-          )->button(
+*    dialog->footer( )->overflow_toolbar(
+*          )->toolbar_spacer(
+*          )->button(
+*                text  = 'Back'
+*                icon  = 'sap-icon://nav-back'
+*                press = client->_event( 'DB_READ_CLOSE' )
+*          )->button(
+*                text  = 'Open'
+*                icon  = 'sap-icon://accept'
+*                press = client->_event( 'OPEN_SELECT' )
+*                type  = 'Emphasized' ).
+
+         dialog->buttons(
+             )->button(
                 text  = 'Back'
                 icon  = 'sap-icon://nav-back'
                 press = client->_event( 'DB_READ_CLOSE' )
@@ -327,9 +338,20 @@ CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
                            )->switch( type = 'AcceptReject' state = client->_bind_edit( ms_variant_save-check_user )
                            ).
 
-    dialog->footer( )->overflow_toolbar(
-          )->toolbar_spacer(
-          )->button(
+*    dialog->footer( )->overflow_toolbar(
+*          )->toolbar_spacer(
+*          )->button(
+*                text  = 'Back'
+*                icon  = 'sap-icon://nav-back'
+*                press = client->_event( 'DB_SAVE_CLOSE' )
+*          )->button(
+*                text  = 'Save'
+*                press = client->_event( 'DB_SAVE' )
+*                type  = 'Success'
+*                icon  = 'sap-icon://save' ).
+
+         dialog->buttons(
+             )->button(
                 text  = 'Back'
                 icon  = 'sap-icon://nav-back'
                 press = client->_event( 'DB_SAVE_CLOSE' )
@@ -365,13 +387,13 @@ CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
       DATA temp7 TYPE REF TO z2ui5_cl_pop_get_range.
       DATA lo_popup LIKE temp7.
-        FIELD-SYMBOLS <tab> TYPE z2ui5_cl_util_api=>ty_s_sql_multi.
+        FIELD-SYMBOLS <tab> TYPE z2ui5_cl_util=>ty_s_sql_multi.
         DATA lt_event TYPE string_table.
         DATA temp2 LIKE LINE OF lt_event.
         DATA temp3 LIKE sy-tabix.
         DATA temp8 LIKE LINE OF lt_event.
         DATA temp9 LIKE sy-tabix.
-        DATA ls_sql TYPE z2ui5_cl_util_api=>ty_s_sql_multi.
+        DATA ls_sql TYPE z2ui5_cl_util=>ty_s_sql_multi.
         DATA temp4 LIKE LINE OF ms_result-t_sql.
         DATA temp5 LIKE sy-tabix.
         DATA ls_variant LIKE LINE OF mt_variant.
