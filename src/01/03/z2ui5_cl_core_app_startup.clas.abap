@@ -316,14 +316,14 @@ MOVE-CORRESPONDING <class> TO ms_home.
 
 
   METHOD z2ui5_on_init.
-    DATA temp4 TYPE REF TO z2ui5_cl_app_hello_world.
+    DATA temp4 TYPE REF TO z2ui5_cl_core_app_hello_w.
 
     ms_home-btn_text       = `check`.
     ms_home-btn_event_id   = `BUTTON_CHECK`.
     ms_home-class_editable = abap_true.
     ms_home-btn_icon       = `sap-icon://validate`.
     
-    CREATE OBJECT temp4 TYPE z2ui5_cl_app_hello_world.
+    CREATE OBJECT temp4 TYPE z2ui5_cl_core_app_hello_w.
     ms_home-classname      = z2ui5_cl_util=>rtti_get_classname_by_ref( temp4 ).
 
   ENDMETHOD.
