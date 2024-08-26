@@ -2732,6 +2732,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 intropress           TYPE clike OPTIONAL
                 titlepress           TYPE clike OPTIONAL
                 titleselectorpress   TYPE clike OPTIONAL
+                class                TYPE clike OPTIONAL
       RETURNING VALUE(result)        TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS additional_numbers
@@ -11098,7 +11099,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp305-n = `icontooltip`.
     temp305-v = icontooltip.
     INSERT temp305 INTO TABLE temp304.
-    temp305-n = `imageshape`.
+    temp305-n = `imageShape`.
     temp305-v = imageshape.
     INSERT temp305 INTO TABLE temp304.
     temp305-n = `intro`.
@@ -11166,6 +11167,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp305 INTO TABLE temp304.
     temp305-n = `titleselectorpress`.
     temp305-v = titleselectorpress.
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `class`.
+    temp305-v = class.
     INSERT temp305 INTO TABLE temp304.
     result = _generic(
         name   = `ObjectHeader`
