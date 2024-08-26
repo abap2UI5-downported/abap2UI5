@@ -430,7 +430,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_util IMPLEMENTATION.
+CLASS Z2UI5_CL_UTIL IMPLEMENTATION.
 
 
   METHOD db_delete_by_handle.
@@ -576,6 +576,7 @@ DATA lt_db TYPE temp6.
     result = ls_db-id.
 
   ENDMETHOD.
+
 
   METHOD boolean_abap_2_json.
       DATA temp4 TYPE string.
@@ -1812,6 +1813,7 @@ DATA lt_param TYPE temp9.
 
   ENDMETHOD.
 
+
   METHOD check_raise_srtti_installed.
       DATA lv_link TYPE string.
       DATA lv_text TYPE string.
@@ -1889,6 +1891,7 @@ DATA lt_param TYPE temp9.
 
   ENDMETHOD.
 
+
   METHOD rtti_get_t_attri_by_table_name.
         DATA temp51 TYPE REF TO cl_abap_structdescr.
         DATA lo_struct LIKE temp51.
@@ -1936,6 +1939,7 @@ DATA lt_param TYPE temp9.
 
   ENDMETHOD.
 
+
   METHOD itab_corresponding.
 
     FIELD-SYMBOLS <row_in> TYPE any.
@@ -1943,11 +1947,10 @@ DATA lt_param TYPE temp9.
 
     LOOP AT val ASSIGNING <row_in>.
 
-      INSERT INITIAL LINE INTO tab ASSIGNING <row_out>.
+      INSERT INITIAL LINE INTO tab ASSIGNING <row_out> index lines( tab ).
       MOVE-CORRESPONDING <row_in> TO <row_out>.
 
     ENDLOOP.
 
   ENDMETHOD.
-
 ENDCLASS.
