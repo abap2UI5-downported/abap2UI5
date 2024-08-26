@@ -335,6 +335,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
       IMPORTING src           TYPE clike OPTIONAL
                 !description  TYPE clike OPTIONAL
                 !visible      TYPE clike OPTIONAL
+                class         TYPE clike OPTIONAL
+                press         TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS tile_content
@@ -8604,6 +8606,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp198 INTO TABLE temp197.
     temp198-n = `visible`.
     temp198-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp198 INTO TABLE temp197.
+    temp198-n = `class`.
+    temp198-v = class.
+    INSERT temp198 INTO TABLE temp197.
+    temp198-n = `press`.
+    temp198-v = press.
     INSERT temp198 INTO TABLE temp197.
     result = _generic( name   = `ImageContent`
                        t_prop = temp197 ).
@@ -17343,6 +17351,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
                        t_prop = temp567 ).
   ENDMETHOD.
 
+
   METHOD color_picker.
     DATA temp569 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp570 LIKE LINE OF temp569.
@@ -17368,5 +17377,4 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
                       t_prop = temp569 ).
 
   ENDMETHOD.
-
 ENDCLASS.
