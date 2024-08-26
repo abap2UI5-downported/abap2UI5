@@ -12,7 +12,7 @@ CLASS ltcl_app_startup_test IMPLEMENTATION.
 
   METHOD first_test.
 
-    DATA lo_app TYPE REF TO z2ui5_cl_core_app_info.
+    DATA lo_app TYPE REF TO Z2UI5_CL_CORE_APP_INFO.
     lo_app = z2ui5_cl_core_app_info=>factory( ) ##NEEDED.
 
   ENDMETHOD.

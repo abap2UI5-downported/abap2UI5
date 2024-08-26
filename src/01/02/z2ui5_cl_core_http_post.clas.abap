@@ -59,7 +59,7 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
 
 
   METHOD main_begin.
-        DATA lo_json_mapper TYPE REF TO z2ui5_cl_core_json_srv.
+        DATA lo_json_mapper TYPE REF TO Z2UI5_CL_CORE_JSON_SRV.
         DATA x TYPE REF TO cx_root.
     TRY.
 
@@ -86,7 +86,7 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
 
   METHOD main_end.
       DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
-    DATA lo_json_mapper TYPE REF TO z2ui5_cl_core_json_srv.
+    DATA lo_json_mapper TYPE REF TO Z2UI5_CL_CORE_JSON_SRV.
 
     CLEAR ms_response.
     ms_response-s_front-params = mo_action->ms_next-s_set.
