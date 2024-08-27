@@ -3522,6 +3522,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 transitiontime TYPE clike OPTIONAL
                 press          TYPE clike OPTIONAL
                 !width         TYPE clike OPTIONAL
+                class          TYPE clike OPTIONAL
       RETURNING VALUE(result)  TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS busy_indicator
@@ -13726,6 +13727,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp419 INTO TABLE temp418.
     temp419-n = `visible`.
     temp419-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp419 INTO TABLE temp418.
+    temp419-n = `class`.
+    temp419-v = class.
     INSERT temp419 INTO TABLE temp418.
     result = _generic( name   = `SlideTile`
                        t_prop = temp418 ).
