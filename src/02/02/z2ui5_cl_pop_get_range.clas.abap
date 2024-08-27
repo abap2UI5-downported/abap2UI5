@@ -49,8 +49,7 @@ CLASS Z2UI5_CL_POP_GET_RANGE IMPLEMENTATION.
 
 
   METHOD factory.
-    DATA temp1 LIKE LINE OF r_result->ms_result-t_range.
-    DATA temp2 LIKE temp1.
+    DATA temp1 TYPE z2ui5_cl_util=>ty_s_range.
 
     CREATE OBJECT r_result.
 
@@ -62,9 +61,7 @@ CLASS Z2UI5_CL_POP_GET_RANGE IMPLEMENTATION.
     ).
 
     
-    
-    CLEAR temp2.
-    temp1 = temp2.
+    CLEAR temp1.
     INSERT temp1 INTO TABLE r_result->ms_result-t_range.
 
   ENDMETHOD.
@@ -157,7 +154,7 @@ CLASS Z2UI5_CL_POP_GET_RANGE IMPLEMENTATION.
         DATA temp5 TYPE z2ui5_cl_pop_get_range=>ty_s_filter_pop.
         DATA temp6 LIKE LINE OF mt_filter.
         DATA lr_filter LIKE REF TO temp6.
-          DATA temp7 LIKE LINE OF ms_result-t_range.
+          DATA temp7 TYPE z2ui5_cl_util=>ty_s_range.
         DATA temp8 TYPE z2ui5_cl_pop_get_range=>ty_s_filter_pop.
         DATA lt_event TYPE string_table.
         DATA temp9 LIKE LINE OF lt_event.

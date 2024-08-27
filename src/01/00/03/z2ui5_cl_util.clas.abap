@@ -15,8 +15,14 @@ CLASS z2ui5_cl_util DEFINITION
       END OF ty_s_token.
     TYPES ty_t_token TYPE STANDARD TABLE OF ty_s_token WITH DEFAULT KEY.
 
-    TYPES ty_t_range TYPE RANGE OF string.
-    TYPES ty_s_range TYPE LINE OF ty_t_range.
+    TYPES:
+      BEGIN OF ty_s_range,
+        sign   TYPE c LENGTH 1,
+        option TYPE c LENGTH 2,
+        low    TYPE string,
+        high   TYPE string,
+      END OF ty_s_range.
+    TYPES ty_t_range TYPE STANDARD TABLE OF ty_s_range WITH DEFAULT KEY.
 
     TYPES:
       BEGIN OF ty_s_sql_multi,
@@ -106,6 +112,12 @@ CLASS z2ui5_cl_util DEFINITION
         val           TYPE any
       RETURNING
         VALUE(result) TYPE string.
+
+    CLASS-METHODS filter_itab
+      IMPORTING
+        filter TYPE ty_t_filter_multi
+      CHANGING
+        val    TYPE STANDARD TABLE.
 
     CLASS-METHODS filter_get_multi_by_data
       IMPORTING
@@ -380,12 +392,16 @@ CLASS z2ui5_cl_util DEFINITION
     CLASS-METHODS check_raise_srtti_installed.
 
     CLASS-METHODS get_comps_by_data
-      IMPORTING !data         TYPE REF TO data
-      RETURNING VALUE(result) TYPE abap_component_tab ##NEEDED.
+      IMPORTING
+        data          TYPE REF TO data
+      RETURNING
+        VALUE(result) TYPE abap_component_tab ##NEEDED.
 
     CLASS-METHODS get_comp_by_struc
-      IMPORTING !type         TYPE REF TO cl_abap_datadescr
-      RETURNING VALUE(result) TYPE abap_component_tab ##NEEDED.
+      IMPORTING
+        type          TYPE REF TO cl_abap_datadescr
+      RETURNING
+        VALUE(result) TYPE abap_component_tab ##NEEDED.
 
     CLASS-METHODS db_delete_by_handle
       IMPORTING
@@ -422,15 +438,13 @@ CLASS z2ui5_cl_util DEFINITION
         VALUE(result) TYPE any.
 
   PROTECTED SECTION.
-
   PRIVATE SECTION.
-
 
 ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_UTIL IMPLEMENTATION.
+CLASS z2ui5_cl_util IMPLEMENTATION.
 
 
   METHOD db_delete_by_handle.
@@ -717,6 +731,30 @@ DATA lt_db TYPE temp6.
   ENDMETHOD.
 
 
+  METHOD filter_itab.
+
+    DATA ref TYPE REF TO data.
+      DATA ls_filter LIKE LINE OF filter.
+        FIELD-SYMBOLS <field> TYPE any.
+
+    LOOP AT val REFERENCE INTO ref.
+
+      
+      LOOP AT filter INTO ls_filter.
+
+        
+        ASSIGN ref->(ls_filter-name) TO <field>.
+        IF <field> NOT IN ls_filter-t_range.
+          DELETE val.
+          EXIT.
+        ENDIF.
+
+      ENDLOOP.
+
+    ENDLOOP.
+
+  ENDMETHOD.
+
   METHOD filter_get_multi_by_data.
 
     DATA temp8 TYPE abap_component_tab.
@@ -867,12 +905,12 @@ DATA lt_db TYPE temp6.
     
     lt_tab = temp12.
 
-      itab_corresponding(
-        EXPORTING
-          val = lt_tab
-        CHANGING
-          tab = lt_tab
-      ).
+    itab_corresponding(
+      EXPORTING
+        val = lt_tab
+      CHANGING
+        tab = lt_tab
+    ).
 
     
     
@@ -1944,10 +1982,18 @@ DATA lt_param TYPE temp9.
 
     FIELD-SYMBOLS <row_in> TYPE any.
     FIELD-SYMBOLS <row_out> TYPE any.
+        DATA lv_lines TYPE i.
 
     LOOP AT val ASSIGNING <row_in>.
 
-      INSERT INITIAL LINE INTO tab ASSIGNING <row_out> index lines( tab ).
+      IF lines( tab ) = 0.
+        
+        lv_lines = 1.
+      ELSE.
+        lv_lines = lines( tab ).
+      ENDIF.
+
+      INSERT INITIAL LINE INTO tab ASSIGNING <row_out> INDEX lv_lines.
       MOVE-CORRESPONDING <row_in> TO <row_out>.
 
     ENDLOOP.
