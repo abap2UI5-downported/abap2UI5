@@ -2093,6 +2093,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 !type         TYPE clike OPTIONAL
                 selected      TYPE clike OPTIONAL
                 counter       TYPE clike OPTIONAL
+                tooltip       TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS icon_tab_bar
@@ -14085,6 +14086,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp437 INTO TABLE temp436.
     temp437-n = `selected`.
     temp437-v = selected.
+    INSERT temp437 INTO TABLE temp436.
+    temp437-n = `tooltip`.
+    temp437-v = tooltip.
     INSERT temp437 INTO TABLE temp436.
     _generic( name   = `StandardTreeItem`
               t_prop = temp436 ).
