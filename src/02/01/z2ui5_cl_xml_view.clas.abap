@@ -2611,6 +2611,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
       IMPORTING contenttext   TYPE clike OPTIONAL
                 subheader     TYPE clike OPTIONAL
                 value         TYPE clike OPTIONAL
+                class         TYPE clike OPTIONAL
+                press         TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS news_content
@@ -17169,6 +17171,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp554 INTO TABLE temp553.
     temp554-n = `value`.
     temp554-v = value.
+    INSERT temp554 INTO TABLE temp553.
+    temp554-n = `class`.
+    temp554-v = class.
+    INSERT temp554 INTO TABLE temp553.
+    temp554-n = `press`.
+    temp554-v = press.
     INSERT temp554 INTO TABLE temp553.
     result = _generic(
                  name   = `FeedContent`
