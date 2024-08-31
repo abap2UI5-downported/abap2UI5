@@ -154,6 +154,12 @@ CLASS z2ui5_cl_xml_view_cc DEFINITION
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
+    METHODS Dirty
+      IMPORTING
+        !isdirty        TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS lp_title
       IMPORTING
         !title        TYPE clike OPTIONAL
@@ -800,19 +806,35 @@ CLASS z2ui5_cl_xml_view_cc IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD Dirty.
+    DATA temp37 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp38 LIKE LINE OF temp37.
+
+    result = mo_view.
+    
+    CLEAR temp37.
+    
+    temp38-n = `isDirty`.
+    temp38-v = z2ui5_cl_util=>boolean_abap_2_json( isDirty ).
+    INSERT temp38 INTO TABLE temp37.
+    mo_view->_generic( name = `Dirty`
+              ns            = `z2ui5`
+              t_prop        = temp37 ).
+
+  ENDMETHOD.
 
   METHOD uitableext.
 
-    DATA temp37 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp38 LIKE LINE OF temp37.
-    CLEAR temp37.
+    DATA temp39 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp40 LIKE LINE OF temp39.
+    CLEAR temp39.
     
-    temp38-n = `tableId`.
-    temp38-v = tableid.
-    INSERT temp38 INTO TABLE temp37.
+    temp40-n = `tableId`.
+    temp40-v = tableid.
+    INSERT temp40 INTO TABLE temp39.
     result = mo_view->_generic( name = `UITableExt`
                                 ns   = `z2ui5`
-                       t_prop        = temp37 ).
+                       t_prop        = temp39 ).
 
   ENDMETHOD.
 ENDCLASS.
