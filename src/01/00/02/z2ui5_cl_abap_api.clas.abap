@@ -1,4 +1,4 @@
-CLASS z2ui5_cl_stmpncfctn_api DEFINITION
+CLASS z2ui5_cl_abap_api DEFINITION
   PUBLIC
   CREATE PUBLIC .
 
@@ -155,7 +155,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_stmpncfctn_api IMPLEMENTATION.
+CLASS z2ui5_cl_abap_api IMPLEMENTATION.
 
 
   METHOD conv_decode_x_base64.
@@ -391,7 +391,7 @@ CLASS z2ui5_cl_stmpncfctn_api IMPLEMENTATION.
     DATA clsname TYPE c LENGTH 30.
     DATA END OF ls_clskey.
     DATA class TYPE REF TO data.
-        DATA temp1 TYPE z2ui5_cl_stmpncfctn_api=>tt_classes.
+        DATA temp1 TYPE z2ui5_cl_abap_api=>tt_classes.
         DATA implementation_name LIKE LINE OF lt_implementation_names.
           DATA temp2 LIKE LINE OF temp1.
         DATA lx TYPE REF TO cx_root.
@@ -401,7 +401,7 @@ CLASS z2ui5_cl_stmpncfctn_api IMPLEMENTATION.
         DATA temp3 LIKE LINE OF lt_impl.
         DATA lr_impl LIKE REF TO temp3.
           FIELD-SYMBOLS <description> TYPE any.
-          DATA temp4 TYPE z2ui5_cl_stmpncfctn_api=>ts_class.
+          DATA temp4 TYPE z2ui5_cl_abap_api=>ts_class.
 
     TRY.
 
