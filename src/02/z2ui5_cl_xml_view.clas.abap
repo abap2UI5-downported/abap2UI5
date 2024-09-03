@@ -1519,6 +1519,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 displayvalue  TYPE clike OPTIONAL
                 showvalue     TYPE clike OPTIONAL
                 !state        TYPE clike OPTIONAL
+                VISIBLE       TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS segmented_button
@@ -12531,6 +12532,9 @@ CLASS Z2UI5_CL_XML_VIEW IMPLEMENTATION.
     INSERT temp361 INTO TABLE temp360.
     temp361-n = `showValue`.
     temp361-v = z2ui5_cl_util=>boolean_abap_2_json( showvalue ).
+    INSERT temp361 INTO TABLE temp360.
+    temp361-n = `visible`.
+    temp361-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp361 INTO TABLE temp360.
     temp361-n = `state`.
     temp361-v = state.
