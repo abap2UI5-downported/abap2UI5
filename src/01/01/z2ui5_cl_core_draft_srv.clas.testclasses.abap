@@ -34,11 +34,11 @@ CLASS ltcl_test IMPLEMENTATION.
     ).
 
     
-    ls_db = lo_draft->read_draft( `TEST_ID`  ).
+    ls_db = lo_draft->read_draft( `TEST_ID` ).
 
     cl_abap_unit_assert=>assert_equals(
-        act                  = ls_db-data
-        exp                  = `my xml`  ).
+        act = ls_db-data
+        exp = `my xml` ).
 
   ENDMETHOD.
 

@@ -79,7 +79,7 @@ CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
                 )->custom_list_item( ).
 
     
-    grid = item->grid(    class = `sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin` ).
+    grid = item->grid( class = `sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin` ).
     grid->text( `{NAME}` ).
 
     

@@ -108,7 +108,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     mo_action->ms_next-s_set-s_msg_box-textdirection = textdirection.
     mo_action->ms_next-s_set-s_msg_box-icon = icon.
     mo_action->ms_next-s_set-s_msg_box-details = details.
-    mo_action->ms_next-s_set-s_msg_box-closeOnNavigation = closeOnNavigation.
+    mo_action->ms_next-s_set-s_msg_box-closeonnavigation = closeonnavigation.
 
   ENDMETHOD.
 
@@ -141,7 +141,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     IF app->id_app IS INITIAL.
       app->id_app = z2ui5_cl_util=>uuid_get_c32( ).
     ENDIF.
-    result =  app->id_app.
+    result = app->id_app.
   ENDMETHOD.
 
 
@@ -156,7 +156,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     IF app->id_app IS INITIAL.
       app->id_app = z2ui5_cl_util=>uuid_get_c32( ).
     ENDIF.
-    result =  app->id_app.
+    result = app->id_app.
 
   ENDMETHOD.
 
@@ -340,9 +340,9 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     DATA lo_ui5 TYPE REF TO z2ui5_cl_core_event_srv.
     CREATE OBJECT lo_ui5 TYPE z2ui5_cl_core_event_srv.
     result = lo_ui5->get_event(
-         val                = val
-         t_arg              = t_arg
-         s_cnt              = s_ctrl ).
+         val   = val
+         t_arg = t_arg
+         s_cnt = s_ctrl ).
 
   ENDMETHOD.
 

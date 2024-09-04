@@ -154,7 +154,7 @@ CLASS z2ui5_cl_xml_view_cc DEFINITION
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
-    METHODS Dirty
+    METHODS dirty
       IMPORTING
         !isdirty      TYPE clike OPTIONAL
       RETURNING
@@ -806,7 +806,7 @@ CLASS z2ui5_cl_xml_view_cc IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD Dirty.
+  METHOD dirty.
     DATA temp37 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp38 LIKE LINE OF temp37.
 
@@ -815,7 +815,7 @@ CLASS z2ui5_cl_xml_view_cc IMPLEMENTATION.
     CLEAR temp37.
     
     temp38-n = `isDirty`.
-    temp38-v = z2ui5_cl_util=>boolean_abap_2_json( isDirty ).
+    temp38-v = z2ui5_cl_util=>boolean_abap_2_json( isdirty ).
     INSERT temp38 INTO TABLE temp37.
     mo_view->_generic( name = `Dirty`
               ns            = `z2ui5`

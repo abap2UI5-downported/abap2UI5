@@ -14,7 +14,7 @@ CLASS z2ui5_cl_pop_file_dl DEFINITION
         i_button_text_confirm TYPE string DEFAULT `OK`
         i_button_text_cancel  TYPE string DEFAULT `Cancel`
         i_file                TYPE string
-        i_type                type string default `data:text/csv;base64,`
+        i_type                TYPE string DEFAULT `data:text/csv;base64,`
       RETURNING
         VALUE(r_result)       TYPE REF TO z2ui5_cl_pop_file_dl.
 

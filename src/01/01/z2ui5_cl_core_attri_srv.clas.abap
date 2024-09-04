@@ -50,7 +50,7 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
     LOOP AT mt_attri->* REFERENCE INTO lr_attri.
       TRY.
           lr_attri->r_ref = attri_get_val_ref( lr_attri->name ).
-          lr_attri->o_typedescr =  cl_abap_datadescr=>describe_by_data_ref( lr_attri->r_ref ).
+          lr_attri->o_typedescr = cl_abap_datadescr=>describe_by_data_ref( lr_attri->r_ref ).
 
           IF lr_attri->srtti_data IS NOT INITIAL.
             
@@ -152,7 +152,7 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
     """"" new
     
     lt_attri = mt_attri->*.
-    DELETE lt_attri WHERE BIND_type IS INITIAL.
+    DELETE lt_attri WHERE bind_type IS INITIAL.
     CLEAR mt_attri->*.
     DO 5 TIMES.
 

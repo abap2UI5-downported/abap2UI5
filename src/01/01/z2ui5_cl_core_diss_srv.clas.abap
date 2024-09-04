@@ -149,7 +149,7 @@ CLASS z2ui5_cl_core_diss_srv IMPLEMENTATION.
           
           lv_name = temp4 && lr_attri->name.
           
-          ls_new = create_new_entry( lv_name  ).
+          ls_new = create_new_entry( lv_name ).
           INSERT ls_new INTO TABLE result.
 
         CATCH cx_root.
