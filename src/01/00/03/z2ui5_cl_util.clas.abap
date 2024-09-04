@@ -294,10 +294,6 @@ CLASS z2ui5_cl_util DEFINITION
       RETURNING
         VALUE(result) TYPE string.
 
-    CLASS-METHODS context_check_abap_cloud
-      RETURNING
-        VALUE(result) TYPE abap_bool.
-
     CLASS-METHODS rtti_check_class_exists
       IMPORTING
         val           TYPE clike
@@ -1156,18 +1152,6 @@ DATA lt_cols TYPE temp8.
 
       CATCH cx_root.
         " cx_sy_rtti_syntax_error
-    ENDTRY.
-
-  ENDMETHOD.
-
-
-  METHOD context_check_abap_cloud.
-
-    TRY.
-        cl_abap_typedescr=>describe_by_name( 'T100' ).
-        result = abap_false.
-      CATCH cx_root.
-        result = abap_true.
     ENDTRY.
 
   ENDMETHOD.

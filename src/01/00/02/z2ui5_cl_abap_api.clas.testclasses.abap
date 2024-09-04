@@ -73,7 +73,7 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_classes_impl_intf.
-    DATA mt_classes TYPE z2ui5_cl_abap_api=>tt_classes.
+    DATA mt_classes TYPE z2ui5_cl_abap_api=>ty_t_classes.
 
     IF sy-sysid = 'ABC'.
       RETURN.
