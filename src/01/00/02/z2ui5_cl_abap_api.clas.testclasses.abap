@@ -60,7 +60,7 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_element_text.
-    DATA ls_result TYPE z2ui5_cl_abap_api=>ty_data_element_texts.
+    DATA ls_result TYPE z2ui5_cl_abap_api=>ty_s_data_element_text.
 
     IF sy-sysid = 'ABC'.
       RETURN.
@@ -82,36 +82,6 @@ CLASS ltcl_test IMPLEMENTATION.
     
     mt_classes = z2ui5_cl_abap_api=>rtti_get_classes_impl_intf( `IF_SERIALIZABLE_OBJECT`  ).
     cl_abap_unit_assert=>assert_not_initial( mt_classes ).
-
-  ENDMETHOD.
-
-ENDCLASS.
-
-CLASS ltcl_rfc_bapi_test DEFINITION FINAL FOR TESTING
-  DURATION SHORT
-  RISK LEVEL HARMLESS.
-
-  PRIVATE SECTION.
-    METHODS:
-      first_test FOR TESTING RAISING cx_static_check.
-ENDCLASS.
-
-
-CLASS ltcl_rfc_bapi_test IMPLEMENTATION.
-
-  METHOD first_test.
-
-    DATA lo_rfc TYPE REF TO lcl_rfc_bapi.
-    lo_rfc = lcl_rfc_bapi=>factory_rfc_destination( `NONE` ).
-
-*    lo_rfc->bapi_message_getdetail(
-*      EXPORTING
-*        id         = 'LTVF_EXEC'
-*        number     = '014'
-**        textformat = ''
-*      IMPORTING
-*        message    = DATA(lv_message)
-*    ).
 
   ENDMETHOD.
 

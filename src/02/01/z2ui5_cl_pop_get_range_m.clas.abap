@@ -382,13 +382,13 @@ CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
   METHOD z2ui5_if_app~main.
       DATA temp7 TYPE REF TO z2ui5_cl_pop_get_range.
       DATA lo_popup LIKE temp7.
-        FIELD-SYMBOLS <tab> TYPE z2ui5_cl_util=>ty_s_sql_multi.
+        FIELD-SYMBOLS <tab> TYPE z2ui5_cl_util=>ty_s_filter_multi.
         DATA lt_event TYPE string_table.
         DATA temp2 LIKE LINE OF lt_event.
         DATA temp3 LIKE sy-tabix.
         DATA temp8 LIKE LINE OF lt_event.
         DATA temp9 LIKE sy-tabix.
-        DATA ls_sql TYPE z2ui5_cl_util=>ty_s_sql_multi.
+        DATA ls_sql TYPE z2ui5_cl_util=>ty_s_filter_multi.
         DATA temp4 LIKE LINE OF ms_result-t_sql.
         DATA temp5 LIKE sy-tabix.
         DATA ls_variant LIKE LINE OF mt_variant.

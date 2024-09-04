@@ -5,6 +5,12 @@ CLASS z2ui5_cl_util DEFINITION
 
   PUBLIC SECTION.
 
+*  abap-toolkit - Utility Functions for ABAP Cloud & Standard ABAP
+*  version: '0.0.1'.
+*  origin: https://github.com/oblomov-dev/abap-toolkit
+*  author: https://github.com/oblomov-dev
+*  license: MIT.
+
     TYPES:
       BEGIN OF ty_s_token,
         key      TYPE string,
@@ -25,25 +31,20 @@ CLASS z2ui5_cl_util DEFINITION
     TYPES ty_t_range TYPE STANDARD TABLE OF ty_s_range WITH DEFAULT KEY.
 
     TYPES:
-      BEGIN OF ty_s_sql_multi,
-        name    TYPE string,
-        t_range TYPE ty_t_range,
-        t_token TYPE ty_t_token,
-      END OF ty_s_sql_multi.
-    TYPES ty_t_filter_multi TYPE STANDARD TABLE OF ty_s_sql_multi WITH DEFAULT KEY.
+      BEGIN OF ty_S_sql,
+        tabname TYPE string,
+        where   TYPE string,
+      END OF ty_S_sql.
 
     TYPES:
-      BEGIN OF ty_s_sql_result,
-        table TYPE string,
-      END OF ty_s_sql_result.
-
-    TYPES:
-      BEGIN OF ty_s_fix_val,
-        low   TYPE string,
-        high  TYPE string,
-        descr TYPE string,
-      END OF ty_s_fix_val.
-    TYPES ty_t_fix_val TYPE STANDARD TABLE OF ty_s_fix_val WITH DEFAULT KEY.
+      BEGIN OF ty_s_filter_multi,
+        name     TYPE string,
+        t_range  TYPE ty_t_range,
+        t_token  TYPE ty_t_token,
+        s_sql    TYPE ty_S_sql,
+        sql_text TYPE string,
+      END OF ty_s_filter_multi.
+    TYPES ty_t_filter_multi TYPE STANDARD TABLE OF ty_s_filter_multi WITH DEFAULT KEY.
 
     CLASS-METHODS rtti_get_t_attri_by_include
       IMPORTING
@@ -56,7 +57,7 @@ CLASS z2ui5_cl_util DEFINITION
         rollname      TYPE clike
         langu         TYPE clike DEFAULT sy-langu
       RETURNING
-        VALUE(result) TYPE ty_t_fix_val ##NEEDED.
+        VALUE(result) TYPE z2ui5_cl_abap_api=>ty_t_fix_val ##NEEDED.
 
     CLASS-METHODS source_get_method2
       IMPORTING
@@ -125,11 +126,11 @@ CLASS z2ui5_cl_util DEFINITION
       RETURNING
         VALUE(result) TYPE ty_t_filter_multi.
 
-    CLASS-METHODS sql_get_by_string
+    CLASS-METHODS filter_get_sql_by_sql_string
       IMPORTING
         val           TYPE clike
       RETURNING
-        VALUE(result) TYPE ty_s_sql_result.
+        VALUE(result) TYPE ty_s_sql.
 
     CLASS-METHODS url_param_get
       IMPORTING
@@ -177,28 +178,28 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS x_raise
       IMPORTING
-        !v TYPE clike DEFAULT `CX_SY_SUBRC`
+        v TYPE clike DEFAULT `CX_SY_SUBRC`
           PREFERRED PARAMETER v.
 
-    CLASS-METHODS user_get_tech
+    CLASS-METHODS context_get_user_tech
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS json_stringify
       IMPORTING
-        !any          TYPE any
+        any           TYPE any
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS xml_parse
       IMPORTING
-        !xml TYPE clike
+        xml TYPE clike
       EXPORTING
-        !any TYPE any.
+        any TYPE any.
 
     CLASS-METHODS xml_stringify
       IMPORTING
-        !any          TYPE any
+        any           TYPE any
       RETURNING
         VALUE(result) TYPE string
       RAISING
@@ -206,37 +207,37 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS boolean_check_by_data
       IMPORTING
-        !val          TYPE any
+        val           TYPE any
       RETURNING
         VALUE(result) TYPE abap_bool.
 
     CLASS-METHODS boolean_abap_2_json
       IMPORTING
-        !val          TYPE any
+        val           TYPE any
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS json_parse
       IMPORTING
-        !val  TYPE any
+        val  TYPE any
       CHANGING
-        !data TYPE any.
+        data TYPE any.
 
     CLASS-METHODS c_trim_upper
       IMPORTING
-        !val          TYPE clike
+        val           TYPE clike
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS xml_srtti_stringify
       IMPORTING
-        !data         TYPE any
+        data          TYPE any
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS xml_srtti_parse
       IMPORTING
-        !rtti_data    TYPE clike
+        rtti_data     TYPE clike
       RETURNING
         VALUE(result) TYPE REF TO data.
 
@@ -246,38 +247,38 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS time_substract_seconds
       IMPORTING
-        !time         TYPE timestampl
-        !seconds      TYPE i
+        time          TYPE timestampl
+        seconds       TYPE i
       RETURNING
         VALUE(result) TYPE timestampl.
 
     CLASS-METHODS c_trim
       IMPORTING
-        !val          TYPE any
+        val           TYPE any
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS c_trim_lower
       IMPORTING
-        !val          TYPE clike
+        val           TYPE clike
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS url_param_get_tab
       IMPORTING
-        !i_val           TYPE clike
+        i_val            TYPE clike
       RETURNING
         VALUE(rt_params) TYPE z2ui5_if_types=>ty_t_name_value.
 
     CLASS-METHODS rtti_get_t_attri_by_oref
       IMPORTING
-        !val          TYPE any
+        val           TYPE any
       RETURNING
         VALUE(result) TYPE abap_attrdescr_tab.
 
     CLASS-METHODS rtti_get_t_attri_by_any
       IMPORTING
-        !val          TYPE any
+        val           TYPE any
       RETURNING
         VALUE(result) TYPE cl_abap_structdescr=>component_table.
 
@@ -289,7 +290,7 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS rtti_get_type_name
       IMPORTING
-        !val          TYPE any
+        val           TYPE any
       RETURNING
         VALUE(result) TYPE string.
 
@@ -305,19 +306,19 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS rtti_check_type_kind_dref
       IMPORTING
-        !val          TYPE any
+        val           TYPE any
       RETURNING
         VALUE(result) TYPE abap_bool.
 
     CLASS-METHODS rtti_get_type_kind
       IMPORTING
-        !val          TYPE any
+        val           TYPE any
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS rtti_check_ref_data
       IMPORTING
-        !val          TYPE any
+        val           TYPE any
       RETURNING
         VALUE(result) TYPE abap_bool.
 
@@ -385,55 +386,43 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS rtti_tab_get_relative_name
       IMPORTING
-        !table        TYPE any
+        table         TYPE any
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS check_raise_srtti_installed.
 
-    CLASS-METHODS get_comps_by_data
-      IMPORTING
-        data          TYPE REF TO data
-      RETURNING
-        VALUE(result) TYPE abap_component_tab ##NEEDED.
-
-    CLASS-METHODS get_comp_by_struc
-      IMPORTING
-        type          TYPE REF TO cl_abap_datadescr
-      RETURNING
-        VALUE(result) TYPE abap_component_tab ##NEEDED.
-
     CLASS-METHODS db_delete_by_handle
       IMPORTING
-        !uname        TYPE clike OPTIONAL
-        !handle       TYPE clike OPTIONAL
-        !handle2      TYPE clike OPTIONAL
-        !handle3      TYPE clike OPTIONAL
-        !check_commit TYPE abap_bool DEFAULT abap_true.
+        uname        TYPE clike OPTIONAL
+        handle       TYPE clike OPTIONAL
+        handle2      TYPE clike OPTIONAL
+        handle3      TYPE clike OPTIONAL
+        check_commit TYPE abap_bool DEFAULT abap_true.
 
     CLASS-METHODS db_save
       IMPORTING
-        !uname        TYPE clike OPTIONAL
-        !handle       TYPE clike OPTIONAL
-        !handle2      TYPE clike OPTIONAL
-        !handle3      TYPE clike OPTIONAL
-        !data         TYPE any
-        !check_commit TYPE abap_bool DEFAULT abap_true
+        uname         TYPE clike OPTIONAL
+        handle        TYPE clike OPTIONAL
+        handle2       TYPE clike OPTIONAL
+        handle3       TYPE clike OPTIONAL
+        data          TYPE any
+        check_commit  TYPE abap_bool DEFAULT abap_true
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS db_load_by_id
       IMPORTING
-        !id           TYPE clike OPTIONAL
+        id            TYPE clike OPTIONAL
       EXPORTING
         VALUE(result) TYPE any.
 
     CLASS-METHODS db_load_by_handle
       IMPORTING
-        !uname        TYPE clike OPTIONAL
-        !handle       TYPE clike OPTIONAL
-        !handle2      TYPE clike OPTIONAL
-        !handle3      TYPE clike OPTIONAL
+        uname         TYPE clike OPTIONAL
+        handle        TYPE clike OPTIONAL
+        handle2       TYPE clike OPTIONAL
+        handle3       TYPE clike OPTIONAL
       EXPORTING
         VALUE(result) TYPE any.
 
@@ -755,12 +744,13 @@ DATA lt_db TYPE temp6.
 
   ENDMETHOD.
 
+
   METHOD filter_get_multi_by_data.
 
     DATA temp8 TYPE abap_component_tab.
     DATA temp5 LIKE LINE OF temp8.
     DATA lr_comp LIKE REF TO temp5.
-      DATA temp9 TYPE z2ui5_cl_util=>ty_s_sql_multi.
+      DATA temp9 TYPE z2ui5_cl_util=>ty_s_filter_multi.
     temp8 = rtti_get_t_attri_by_any( val ).
     
     
@@ -1280,7 +1270,6 @@ DATA lt_cols TYPE temp8.
     temp26 ?= cl_abap_typedescr=>describe_by_name( type->absolute_name ).
     
     sdescr = temp26.
-
     
     comps = sdescr->get_components( ).
 
@@ -1296,10 +1285,8 @@ DATA lt_cols TYPE temp8.
         
         
         LOOP AT incl_comps REFERENCE INTO lr_incl_comp.
-
           lr_incl_comp->name = lr_incl_comp->name.
           APPEND lr_incl_comp->* TO result.
-
         ENDLOOP.
 
       ELSE.
@@ -1397,18 +1384,6 @@ DATA lt_cols TYPE temp8.
         DATA typedescr TYPE REF TO cl_abap_typedescr.
         DATA temp38 TYPE REF TO cl_abap_elemdescr.
         DATA elemdescr LIKE temp38.
-TYPES BEGIN OF fixvalue.
-TYPES low TYPE c LENGTH 10.
-TYPES high TYPE c LENGTH 10.
-TYPES option TYPE c LENGTH 2.
-TYPES ddlanguage TYPE c LENGTH 1.
-TYPES ddtext TYPE c LENGTH 60.
-TYPES END OF fixvalue.
-        TYPES fixvalues TYPE STANDARD TABLE OF fixvalue WITH DEFAULT KEY.
-        DATA lt_values TYPE fixvalues.
-        DATA temp39 LIKE LINE OF lt_values.
-        DATA lr_fix LIKE REF TO temp39.
-          DATA temp40 TYPE z2ui5_cl_util=>ty_s_fix_val.
 
     IF rollname IS INITIAL.
       RETURN.
@@ -1432,41 +1407,9 @@ TYPES END OF fixvalue.
         
         elemdescr = temp38.
 
-
-        
-        
-        
-
-        CALL METHOD elemdescr->('GET_DDIC_FIXED_VALUES')
-          EXPORTING
-            p_langu        = langu
-          RECEIVING
-            p_fixed_values = lt_values
-          EXCEPTIONS
-            not_found      = 1
-            no_ddic_type   = 2
-            OTHERS         = 3.
-
-*        elemdescr->get_ddic_fixed_values( EXPORTING  p_langu        = langu
-*                                          RECEIVING  p_fixed_values = DATA(lt_values)
-*                                          EXCEPTIONS not_found      = 1
-*                                                     no_ddic_type   = 2
-*                                                     OTHERS         = 3 ).
-
-
-        
-        
-        LOOP AT lt_values REFERENCE INTO lr_fix.
-
-          
-          CLEAR temp40.
-          temp40-low = lr_fix->low.
-          temp40-high = lr_fix->high.
-          temp40-descr = lr_fix->ddtext.
-          INSERT temp40
-                 INTO TABLE result.
-
-        ENDLOOP.
+        result = rtti_get_t_fixvalues(
+            elemdescr = elemdescr
+            langu     = langu ).
 
       CATCH cx_root.
     ENDTRY.
@@ -1478,10 +1421,10 @@ TYPES END OF fixvalue.
 
     FIELD-SYMBOLS <table> TYPE any.
         DATA typedesc TYPE REF TO cl_abap_typedescr.
-            DATA temp41 TYPE REF TO cl_abap_tabledescr.
-            DATA tabledesc LIKE temp41.
-            DATA temp42 TYPE REF TO cl_abap_structdescr.
-            DATA structdesc LIKE temp42.
+            DATA temp39 TYPE REF TO cl_abap_tabledescr.
+            DATA tabledesc LIKE temp39.
+            DATA temp40 TYPE REF TO cl_abap_structdescr.
+            DATA structdesc LIKE temp40.
 
     TRY.
         
@@ -1491,13 +1434,13 @@ TYPES END OF fixvalue.
 
           WHEN cl_abap_typedescr=>kind_table.
             
-            temp41 ?= typedesc.
+            temp39 ?= typedesc.
             
-            tabledesc = temp41.
+            tabledesc = temp39.
             
-            temp42 ?= tabledesc->get_table_line_type( ).
+            temp40 ?= tabledesc->get_table_line_type( ).
             
-            structdesc = temp42.
+            structdesc = temp40.
             result = structdesc->get_relative_name( ).
             RETURN.
 
@@ -1553,15 +1496,15 @@ TYPES END OF fixvalue.
   ENDMETHOD.
 
 
-  METHOD sql_get_by_string.
+  METHOD filter_get_sql_by_sql_string.
 
-    DATA temp43 TYPE string.
-    DATA lv_sql LIKE temp43.
+    DATA temp41 TYPE string.
+    DATA lv_sql LIKE temp41.
     DATA lv_dummy TYPE string.
     DATA lv_tab TYPE string.
-    temp43 = val.
+    temp41 = val.
     
-    lv_sql = temp43.
+    lv_sql = temp41.
     REPLACE ALL OCCURRENCES OF ` ` IN lv_sql  WITH ``.
     lv_sql = to_upper( lv_sql ).
     
@@ -1569,16 +1512,14 @@ TYPES END OF fixvalue.
     SPLIT lv_sql AT 'SELECTFROM' INTO lv_dummy lv_tab.
     SPLIT lv_tab AT `FIELDS` INTO lv_tab lv_dummy.
 
-    result-table = lv_tab.
+    result-tabname = lv_tab.
 
   ENDMETHOD.
 
 
   METHOD time_get_date_by_stampl.
-
     DATA lv_dummy TYPE t.
     CONVERT TIME STAMP val TIME ZONE sy-zonlo INTO DATE result TIME lv_dummy.
-
   ENDMETHOD.
 
 
@@ -1588,10 +1529,8 @@ TYPES END OF fixvalue.
 
 
   METHOD time_get_time_by_stampl.
-
     DATA lv_dummy TYPE d.
     CONVERT TIME STAMP val TIME ZONE sy-zonlo INTO DATE lv_dummy TIME result.
-
   ENDMETHOD.
 
 
@@ -1636,19 +1575,19 @@ TYPES END OF fixvalue.
 
     DATA lt_params TYPE z2ui5_if_types=>ty_t_name_value.
     DATA lv_val TYPE string.
-    DATA temp44 TYPE string.
-    DATA temp45 TYPE z2ui5_if_types=>ty_s_name_value.
+    DATA temp42 TYPE string.
+    DATA temp43 TYPE z2ui5_if_types=>ty_s_name_value.
     lt_params = url_param_get_tab( url ).
     
     lv_val = c_trim_lower( val ).
     
-    CLEAR temp44.
+    CLEAR temp42.
     
-    READ TABLE lt_params INTO temp45 WITH KEY n = lv_val.
+    READ TABLE lt_params INTO temp43 WITH KEY n = lv_val.
     IF sy-subrc = 0.
-      temp44 = temp45-v.
+      temp42 = temp43-v.
     ENDIF.
-    result = temp44.
+    result = temp42.
 
   ENDMETHOD.
 
@@ -1657,14 +1596,14 @@ TYPES END OF fixvalue.
 
     DATA lv_search TYPE string.
     DATA lv_search2 TYPE string.
-    DATA temp46 TYPE string.
+    DATA temp44 TYPE string.
     TYPES temp9 TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 DATA lt_param TYPE temp9.
-    DATA temp47 LIKE LINE OF lt_param.
-    DATA lr_param LIKE REF TO temp47.
+    DATA temp45 LIKE LINE OF lt_param.
+    DATA lr_param LIKE REF TO temp45.
       DATA lv_name TYPE string.
       DATA lv_value TYPE string.
-      DATA temp48 TYPE z2ui5_if_types=>ty_s_name_value.
+      DATA temp46 TYPE z2ui5_if_types=>ty_s_name_value.
     lv_search = replace( val  = i_val
                                sub  = `%3D`
                                with = '='
@@ -1684,11 +1623,11 @@ DATA lt_param TYPE temp9.
                                         sub = `&sap-startup-params=` ).
     
     IF lv_search2 IS NOT INITIAL.
-      temp46 = lv_search2.
+      temp44 = lv_search2.
     ELSE.
-      temp46 = lv_search.
+      temp44 = lv_search.
     ENDIF.
-    lv_search = temp46.
+    lv_search = temp44.
 
     lv_search2 = substring_after( val = c_trim_lower( lv_search )
                                   sub = `?` ).
@@ -1707,10 +1646,10 @@ DATA lt_param TYPE temp9.
       
       SPLIT lr_param->* AT `=` INTO lv_name lv_value.
       
-      CLEAR temp48.
-      temp48-n = c_trim_lower( lv_name ).
-      temp48-v = c_trim_lower( lv_value ).
-      INSERT temp48 INTO TABLE rt_params.
+      CLEAR temp46.
+      temp46-n = c_trim_lower( lv_name ).
+      temp46-v = c_trim_lower( lv_value ).
+      INSERT temp46 INTO TABLE rt_params.
     ENDLOOP.
 
   ENDMETHOD.
@@ -1720,9 +1659,9 @@ DATA lt_param TYPE temp9.
 
     DATA lt_params TYPE z2ui5_if_types=>ty_t_name_value.
     DATA lv_n TYPE string.
-    DATA temp49 LIKE LINE OF lt_params.
-    DATA lr_params LIKE REF TO temp49.
-      DATA temp50 TYPE z2ui5_if_types=>ty_s_name_value.
+    DATA temp47 LIKE LINE OF lt_params.
+    DATA lr_params LIKE REF TO temp47.
+      DATA temp48 TYPE z2ui5_if_types=>ty_s_name_value.
     lt_params = url_param_get_tab( url ).
     
     lv_n = c_trim_lower( name ).
@@ -1735,10 +1674,10 @@ DATA lt_param TYPE temp9.
     ENDLOOP.
     IF sy-subrc <> 0.
       
-      CLEAR temp50.
-      temp50-n = lv_n.
-      temp50-v = c_trim_lower( value ).
-      INSERT temp50 INTO TABLE lt_params.
+      CLEAR temp48.
+      temp48-n = lv_n.
+      temp48-v = c_trim_lower( value ).
+      INSERT temp48 INTO TABLE lt_params.
     ENDIF.
 
     result = url_param_create_url( lt_params ).
@@ -1746,7 +1685,7 @@ DATA lt_param TYPE temp9.
   ENDMETHOD.
 
 
-  METHOD user_get_tech.
+  METHOD context_get_user_tech.
     result = sy-uname.
   ENDMETHOD.
 
@@ -1873,88 +1812,31 @@ DATA lt_param TYPE temp9.
   ENDMETHOD.
 
 
-  METHOD get_comps_by_data.
-
-*    TRY.
-*        FIELD-SYMBOLS <any> type any.
-*        ASSign data->* to <any>.
-*        DATA(typedesc) = cl_abap_typedescr=>describe_by_data( data->* ).
-*
-*        CASE typedesc->kind.
-*
-*          WHEN cl_abap_typedescr=>kind_table.
-*
-*            DATA(tabledesc) = CAST cl_abap_tabledescr( typedesc ).
-*            DATA(structdesc) = CAST cl_abap_structdescr( tabledesc->get_table_line_type( ) ).
-*
-*          WHEN cl_abap_typedescr=>kind_struct.
-*
-*            structdesc = CAST cl_abap_structdescr( typedesc ).
-*
-*          WHEN OTHERS.
-*        ENDCASE.
-*
-*        DATA(comp) = structdesc->get_components( ).
-*
-*        LOOP AT comp INTO DATA(com).
-*
-*          IF com-as_include = abap_true.
-*            APPEND LINES OF get_comp_by_struc( com-type ) TO result.
-*          ELSE.
-*            APPEND com TO result.
-*          ENDIF.
-*
-*        ENDLOOP.
-*
-*      CATCH cx_root.
-*    ENDTRY.
-
-  ENDMETHOD.
-
-
-  METHOD get_comp_by_struc.
-
-*    DATA struc TYPE REF TO cl_abap_structdescr.
-*    struc ?= type.
-*    DATA(comp) = struc->get_components( ).
-*    LOOP AT comp INTO DATA(com).
-*
-*      IF com-as_include = abap_true.
-*        APPEND LINES OF get_comp_by_struc( com-type ) TO result.
-*      ELSE.
-*        APPEND com TO result.
-*      ENDIF.
-*
-*    ENDLOOP.
-
-  ENDMETHOD.
-
-
   METHOD rtti_get_t_attri_by_table_name.
-        DATA temp51 TYPE REF TO cl_abap_structdescr.
-        DATA lo_struct LIKE temp51.
-            DATA temp52 TYPE REF TO cl_abap_tabledescr.
-            DATA lo_tab LIKE temp52.
-            DATA temp53 TYPE REF TO cl_abap_structdescr.
-    DATA temp54 LIKE LINE OF result.
-    DATA lr_comp LIKE REF TO temp54.
+        DATA temp49 TYPE REF TO cl_abap_structdescr.
+        DATA lo_struct LIKE temp49.
+            DATA temp50 TYPE REF TO cl_abap_tabledescr.
+            DATA lo_tab LIKE temp50.
+            DATA temp51 TYPE REF TO cl_abap_structdescr.
+    DATA temp52 LIKE LINE OF result.
+    DATA lr_comp LIKE REF TO temp52.
       DATA lt_attri TYPE abap_component_tab.
 
     TRY.
         
-        temp51 ?= cl_abap_structdescr=>describe_by_name( table_name ).
+        temp49 ?= cl_abap_structdescr=>describe_by_name( table_name ).
         
-        lo_struct = temp51.
+        lo_struct = temp49.
       CATCH cx_root.
 
         TRY.
             
-            temp52 ?= cl_abap_structdescr=>describe_by_name( table_name ).
+            temp50 ?= cl_abap_structdescr=>describe_by_name( table_name ).
             
-            lo_tab = temp52.
+            lo_tab = temp50.
             
-            temp53 ?= lo_tab->get_table_line_type( ).
-            lo_struct = temp53.
+            temp51 ?= lo_tab->get_table_line_type( ).
+            lo_struct = temp51.
           CATCH cx_root.
             RETURN.
         ENDTRY.

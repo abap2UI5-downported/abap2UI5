@@ -4,6 +4,20 @@ CLASS z2ui5_cl_abap_api DEFINITION
 
   PUBLIC SECTION.
 
+*  abap-api - Serving a Release & Version Independent ABAP Layer
+*  version: '0.0.1'.
+*  origin: https://github.com/oblomov-dev/abap-api
+*  author: https://github.com/oblomov-dev
+*  license: MIT.
+
+    TYPES:
+      BEGIN OF ty_s_fix_val,
+        low   TYPE string,
+        high  TYPE string,
+        descr TYPE string,
+      END OF ty_s_fix_val.
+    TYPES ty_t_fix_val TYPE STANDARD TABLE OF ty_s_fix_val WITH DEFAULT KEY.
+
     TYPES:
       BEGIN OF ty_s_dfies,
         tabname     TYPE c LENGTH 30,
@@ -59,19 +73,19 @@ CLASS z2ui5_cl_abap_api DEFINITION
       ty_t_dfies TYPE STANDARD TABLE OF ty_s_dfies WITH DEFAULT KEY.
 
     TYPES:
-      BEGIN OF ty_data_element_texts,
+      BEGIN OF ty_s_data_element_text,
         header TYPE string,
         short  TYPE string,
         medium TYPE string,
         long   TYPE string,
-      END OF ty_data_element_texts .
+      END OF ty_s_data_element_text .
 
     TYPES:
-      BEGIN OF ts_class,
+      BEGIN OF ty_s_class_descr,
         classname   TYPE string,
         description TYPE string,
-      END OF ts_class.
-    TYPES tt_classes TYPE STANDARD TABLE OF ts_class WITH NON-UNIQUE DEFAULT KEY.
+      END OF ty_s_class_descr.
+    TYPES tt_classes TYPE STANDARD TABLE OF ty_s_class_descr WITH NON-UNIQUE DEFAULT KEY.
 
     CLASS-METHODS source_get_method
       IMPORTING
@@ -92,7 +106,7 @@ CLASS z2ui5_cl_abap_api DEFINITION
       IMPORTING
         !i_data_element_name TYPE string
       RETURNING
-        VALUE(result)        TYPE ty_data_element_texts.
+        VALUE(result)        TYPE ty_s_data_element_text.
 
     CLASS-METHODS conv_decode_x_base64
       IMPORTING
@@ -124,11 +138,7 @@ CLASS z2ui5_cl_abap_api DEFINITION
       RETURNING
         VALUE(result) TYPE tt_classes.
 
-    CLASS-METHODS xco_get_class_description
-      IMPORTING
-        i_classname   TYPE clike
-      RETURNING
-        VALUE(result) TYPE string.
+
 
     CLASS-METHODS rtti_get_t_dfies_by_table_name
       IMPORTING
@@ -136,7 +146,21 @@ CLASS z2ui5_cl_abap_api DEFINITION
       RETURNING
         VALUE(result) TYPE ty_t_dfies.
 
+    CLASS-METHODS rtti_get_t_fixvalues
+      IMPORTING
+        elemdescr     TYPE REF TO cl_abap_elemdescr
+        langu         TYPE clike
+      RETURNING
+        VALUE(result) TYPE ty_t_fix_val.
+
   PROTECTED SECTION.
+
+    CLASS-METHODS rtti_get_class_descr_on_cloud
+      IMPORTING
+        i_classname   TYPE clike
+      RETURNING
+        VALUE(result) TYPE string.
+
     CLASS-METHODS rtti_get_t_attri_on_prem
       IMPORTING
         tabname       TYPE string
@@ -149,14 +173,60 @@ CLASS z2ui5_cl_abap_api DEFINITION
       RETURNING
         VALUE(result) TYPE ty_t_dfies ##NEEDED.
 
-
   PRIVATE SECTION.
+
 ENDCLASS.
 
 
 
 CLASS z2ui5_cl_abap_api IMPLEMENTATION.
 
+
+  METHOD rtti_get_t_fixvalues.
+
+    TYPES:
+      BEGIN OF fixvalue,
+        low        TYPE c LENGTH 10,
+        high       TYPE c LENGTH 10,
+        option     TYPE c LENGTH 2,
+        ddlanguage TYPE c LENGTH 1,
+        ddtext     TYPE c LENGTH 60,
+      END OF fixvalue.
+    TYPES fixvalues TYPE STANDARD TABLE OF fixvalue WITH DEFAULT KEY.
+    DATA lt_values TYPE fixvalues.
+
+    DATA lv_langu TYPE string.
+    DATA temp1 LIKE LINE OF lt_values.
+    DATA lr_fix LIKE REF TO temp1.
+      DATA temp2 TYPE z2ui5_cl_abap_api=>ty_s_fix_val.
+    lv_langu = ``.
+    lv_langu = langu.
+
+    CALL METHOD elemdescr->('GET_DDIC_FIXED_VALUES')
+      EXPORTING
+        p_langu        = lv_langu
+      RECEIVING
+        p_fixed_values = lt_values
+      EXCEPTIONS
+        not_found      = 1
+        no_ddic_type   = 2
+        OTHERS         = 3.
+
+    
+    
+    LOOP AT lt_values REFERENCE INTO lr_fix.
+
+      
+      CLEAR temp2.
+      temp2-low = lr_fix->low.
+      temp2-high = lr_fix->high.
+      temp2-descr = lr_fix->ddtext.
+      INSERT temp2
+             INTO TABLE result.
+
+    ENDLOOP.
+
+  ENDMETHOD.
 
   METHOD conv_decode_x_base64.
         DATA classname TYPE c LENGTH 15.
@@ -391,17 +461,17 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
     DATA clsname TYPE c LENGTH 30.
     DATA END OF ls_clskey.
     DATA class TYPE REF TO data.
-        DATA temp1 TYPE z2ui5_cl_abap_api=>tt_classes.
+        DATA temp3 TYPE z2ui5_cl_abap_api=>tt_classes.
         DATA implementation_name LIKE LINE OF lt_implementation_names.
-          DATA temp2 LIKE LINE OF temp1.
+          DATA temp4 LIKE LINE OF temp3.
         DATA lx TYPE REF TO cx_root.
         DATA lv_fm TYPE string.
         DATA type TYPE c LENGTH 12.
         FIELD-SYMBOLS <class> TYPE data.
-        DATA temp3 LIKE LINE OF lt_impl.
-        DATA lr_impl LIKE REF TO temp3.
+        DATA temp5 LIKE LINE OF lt_impl.
+        DATA lr_impl LIKE REF TO temp5.
           FIELD-SYMBOLS <description> TYPE any.
-          DATA temp4 TYPE z2ui5_cl_abap_api=>ts_class.
+          DATA temp6 TYPE z2ui5_cl_abap_api=>ty_s_class_descr.
 
     TRY.
 
@@ -430,15 +500,15 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
             rt_names = lt_implementation_names.
 
         
-        CLEAR temp1.
+        CLEAR temp3.
         
         LOOP AT lt_implementation_names INTO implementation_name.
           
-          temp2-classname = implementation_name.
-          temp2-description = xco_get_class_description( implementation_name ).
-          INSERT temp2 INTO TABLE temp1.
+          temp4-classname = implementation_name.
+          temp4-description = rtti_get_class_descr_on_cloud( implementation_name ).
+          INSERT temp4 INTO TABLE temp3.
         ENDLOOP.
-        result = temp1.
+        result = temp3.
 
         
       CATCH cx_root INTO lx.
@@ -488,11 +558,11 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
           ASSERT sy-subrc = 0.
 
           
-          CLEAR temp4.
-          temp4-classname = lr_impl->clsname.
-          temp4-description = <description>.
+          CLEAR temp6.
+          temp6-classname = lr_impl->clsname.
+          temp6-description = <description>.
           INSERT
-            temp4
+            temp6
             INTO TABLE result.
         ENDLOOP.
 
@@ -516,21 +586,21 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
       exists TYPE abap_bool.
 
     DATA data_element_name LIKE i_data_element_name.
-        DATA temp5 TYPE REF TO cl_abap_structdescr.
-        DATA struct_desrc LIKE temp5.
+        DATA temp7 TYPE REF TO cl_abap_structdescr.
+        DATA struct_desrc LIKE temp7.
         FIELD-SYMBOLS <ddic> TYPE data.
         DATA lo_typedescr TYPE REF TO cl_abap_typedescr.
-        DATA temp6 TYPE REF TO cl_abap_datadescr.
-        DATA data_descr LIKE temp6.
+        DATA temp8 TYPE REF TO cl_abap_datadescr.
+        DATA data_descr LIKE temp8.
     data_element_name = i_data_element_name.
 
     TRY.
         cl_abap_typedescr=>describe_by_name( 'T100' ).
 
         
-        temp5 ?= cl_abap_structdescr=>describe_by_name( 'DFIES' ).
+        temp7 ?= cl_abap_structdescr=>describe_by_name( 'DFIES' ).
         
-        struct_desrc = temp5.
+        struct_desrc = temp7.
 
         CREATE DATA ddic_ref TYPE HANDLE struct_desrc.
         
@@ -550,9 +620,9 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
         ENDIF.
 
         
-        temp6 ?= lo_typedescr.
+        temp8 ?= lo_typedescr.
         
-        data_descr = temp6.
+        data_descr = temp8.
 
         CALL METHOD data_descr->('GET_DDIC_FIELD')
           RECEIVING
@@ -697,7 +767,7 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD xco_get_class_description.
+  METHOD rtti_get_class_descr_on_cloud.
 
     DATA obj     TYPE REF TO object.
     DATA content TYPE REF TO object.
@@ -731,22 +801,22 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
     FIELD-SYMBOLS <dfies> TYPE STANDARD TABLE.
     FIELD-SYMBOLS <line>  TYPE any.
 
-    DATA temp7 TYPE cl_abap_structdescr=>component_table.
-    DATA comps LIKE temp7.
-    DATA temp8 TYPE REF TO cl_abap_structdescr.
-    DATA lo_struct LIKE temp8.
+    DATA temp9 TYPE cl_abap_structdescr=>component_table.
+    DATA comps LIKE temp9.
+    DATA temp10 TYPE REF TO cl_abap_structdescr.
+    DATA lo_struct LIKE temp10.
         DATA new_struct_desc TYPE REF TO cl_abap_structdescr.
         DATA new_table_desc TYPE REF TO cl_abap_tabledescr.
           DATA comp LIKE LINE OF comps.
             FIELD-SYMBOLS <value> TYPE any.
             FIELD-SYMBOLS <value_dest> TYPE any.
-    CLEAR temp7.
+    CLEAR temp9.
     
-    comps = temp7.
+    comps = temp9.
     
-    temp8 ?= cl_abap_structdescr=>describe_by_name( 'DFIES' ).
+    temp10 ?= cl_abap_structdescr=>describe_by_name( 'DFIES' ).
     
-    lo_struct = temp8.
+    lo_struct = temp10.
     comps = lo_struct->get_components( ).
 
     TRY.

@@ -70,7 +70,7 @@ CLASS z2ui5_cl_core_draft_srv IMPLEMENTATION.
     temp1-id_prev = draft-id_prev.
     temp1-id_prev_app = draft-id_prev_app.
     temp1-id_prev_app_stack = draft-id_prev_app_stack.
-    temp1-uname = z2ui5_cl_util=>user_get_tech( ).
+    temp1-uname = z2ui5_cl_util=>context_get_user_tech( ).
     temp1-timestampl = z2ui5_cl_util=>time_get_timestampl( ).
     temp1-data = model_xml.
     
