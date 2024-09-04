@@ -45,16 +45,6 @@ CLASS z2ui5_cl_core_app_error IMPLEMENTATION.
     
     lv_url_app_start = lv_url && client->get( )-s_config-search.
 
-*    TRY.
-*        DATA(lo_app) = client->get_app( client->get( )-s_draft-id_prev ).
-*        DATA(lv_name) = z2ui5_cl_util=>rtti_get_classname_by_ref( lo_app ).
-*        DATA(lv_url_app) =  z2ui5_cl_util=>app_get_url(
-*             client    = client
-*             classname = lv_name
-*         ).
-*      CATCH cx_root.
-*    ENDTRY.
-
     
     lv_text = ``.
     
@@ -80,17 +70,11 @@ CLASS z2ui5_cl_core_app_error IMPLEMENTATION.
     CLEAR temp1.
     INSERT lv_url_app_start INTO TABLE temp1.
     vbox->hbox(
-*        )->button(
-*            text  = `Home`
-*            press = client->_event_client( val = client->cs_event-location_reload t_arg = VALUE #( ( lv_url ) ) )
-        )->button(
+         )->button(
             text  = `Restart`
             type  = `Emphasized`
             press = client->_event_client( val = client->cs_event-location_reload t_arg = temp1 )
-*        )->button(
-*            text  = `Restart App`
-*            press = client->_event_client( val = client->cs_event-location_reload t_arg = VALUE #( ( lv_url_app ) ) )
-             ).
+         ).
     client->view_display( view->stringify( ) ).
     client->popup_destroy( ).
 

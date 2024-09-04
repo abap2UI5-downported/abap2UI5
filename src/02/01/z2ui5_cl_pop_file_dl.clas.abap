@@ -86,7 +86,6 @@ CLASS Z2UI5_CL_POP_FILE_DL IMPLEMENTATION.
       lv_csv_x = z2ui5_cl_util=>conv_get_xstring_by_string( mv_value ).
       
       lv_base64 = z2ui5_cl_util=>conv_encode_x_base64( lv_csv_x ).
-*      DATA(lv_base64) = z2ui5_cl_util=>conv_decode_x_base64( mv_value ).
       
       CLEAR temp1.
       
