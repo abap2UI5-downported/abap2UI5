@@ -173,7 +173,7 @@ CLASS z2ui5_cl_core_app IMPLEMENTATION.
 
   METHOD model_json_parse.
 
-    DATA lo_json_mapper TYPE REF TO Z2UI5_CL_CORE_JSON_SRV.
+    DATA lo_json_mapper TYPE REF TO z2ui5_cl_core_json_srv.
     CREATE OBJECT lo_json_mapper TYPE z2ui5_cl_core_json_srv.
     lo_json_mapper->model_front_to_back(
         view    = iv_view
@@ -185,7 +185,7 @@ CLASS z2ui5_cl_core_app IMPLEMENTATION.
 
   METHOD model_json_stringify.
 
-    DATA lo_json_mapper TYPE REF TO Z2UI5_CL_CORE_JSON_SRV.
+    DATA lo_json_mapper TYPE REF TO z2ui5_cl_core_json_srv.
     CREATE OBJECT lo_json_mapper TYPE z2ui5_cl_core_json_srv.
     result = lo_json_mapper->model_back_to_front( mt_attri ).
 

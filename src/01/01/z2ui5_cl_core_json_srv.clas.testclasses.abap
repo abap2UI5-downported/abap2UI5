@@ -13,7 +13,7 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD request_json_to_abap.
 
     DATA lv_payload TYPE string.
-    DATA lo_mapper TYPE REF TO Z2UI5_CL_CORE_JSON_SRV.
+    DATA lo_mapper TYPE REF TO z2ui5_cl_core_json_srv.
     DATA ls_result TYPE z2ui5_if_core_types=>ty_s_http_request_post.
     DATA temp11 TYPE z2ui5_if_core_types=>ty_s_http_request_post.
     DATA ls_exp LIKE temp11.
