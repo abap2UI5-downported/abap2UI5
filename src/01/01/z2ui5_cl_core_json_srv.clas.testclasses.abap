@@ -17,9 +17,10 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA ls_result TYPE z2ui5_if_core_types=>ty_s_http_request_post.
     DATA temp11 TYPE z2ui5_if_core_types=>ty_s_http_request_post.
     DATA ls_exp LIKE temp11.
-    DATA lt_tree TYPE z2ui5_if_ajson_types=>ty_nodes_ts.
-    DATA temp12 LIKE LINE OF lt_tree.
-    DATA temp13 LIKE sy-tabix.
+    DATA temp12 TYPE z2ui5_if_ajson_types=>ty_nodes_ts.
+    DATA lt_tree LIKE temp12.
+    DATA temp13 LIKE LINE OF lt_tree.
+    DATA temp14 LIKE sy-tabix.
     lv_payload = `{"XX":{"NAME":"test"},"S_FRONT":{"ID":"ID_NR","EDIT":{"NAME":"test"},"ORIGIN":"ORIGIN","PATHNAME":"PATHNAME","SEARCH":"SEARCH"` &&
             `,"VIEW":"MAIN","EVENT":"BUTTON_POST","T_EVENT_ARG":[]}}`.
 
@@ -45,18 +46,21 @@ CLASS ltcl_test IMPLEMENTATION.
         exp = ls_exp-s_front ).
 
     
+    CLEAR temp12.
+    
+    lt_tree = temp12.
     lt_tree = ls_result-o_model->mt_json_tree.
 
     
     
-    temp13 = sy-tabix.
-    READ TABLE lt_tree WITH KEY name = `NAME` INTO temp12.
-    sy-tabix = temp13.
+    temp14 = sy-tabix.
+    READ TABLE lt_tree WITH KEY name = `NAME` INTO temp13.
+    sy-tabix = temp14.
     IF sy-subrc <> 0.
       ASSERT 1 = 0.
     ENDIF.
     cl_abap_unit_assert=>assert_equals(
-       act = temp12-value
+       act = temp13-value
        exp = `test` ).
 
     cl_abap_unit_assert=>assert_equals(
