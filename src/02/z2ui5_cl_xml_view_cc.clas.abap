@@ -189,6 +189,25 @@ CLASS z2ui5_cl_xml_view_cc DEFINITION
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
 
+    METHODS websocket
+      IMPORTING
+        !value        TYPE clike OPTIONAL
+        !received     TYPE clike OPTIONAL
+        !path         TYPE clike OPTIONAL
+        !checkrepeat  TYPE clike OPTIONAL
+        !checkactive  TYPE clike OPTIONAL
+          PREFERRED PARAMETER received
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+
+    METHODS binding_update
+      IMPORTING
+        !changed      TYPE clike OPTIONAL
+        !path         TYPE clike OPTIONAL
+          PREFERRED PARAMETER changed
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+
     METHODS chartjs
       IMPORTING
         !canvas_id    TYPE clike OPTIONAL
@@ -221,6 +240,7 @@ CLASS z2ui5_cl_xml_view_cc DEFINITION
     METHODS constructor
       IMPORTING
         !view TYPE REF TO z2ui5_cl_xml_view .
+
   PROTECTED SECTION.
     DATA mo_view TYPE REF TO z2ui5_cl_xml_view.
   PRIVATE SECTION.
@@ -772,7 +792,7 @@ CLASS z2ui5_cl_xml_view_cc IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD lp_title.
+  METHOD binding_update.
     DATA temp33 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp34 LIKE LINE OF temp33.
 
@@ -780,16 +800,20 @@ CLASS z2ui5_cl_xml_view_cc IMPLEMENTATION.
     
     CLEAR temp33.
     
-    temp34-n = `title`.
-    temp34-v = title.
+    temp34-n = `path`.
+    temp34-v = path.
     INSERT temp34 INTO TABLE temp33.
-    mo_view->_generic( name = `LPTitle`
+    temp34-n = `changed`.
+    temp34-v = changed.
+    INSERT temp34 INTO TABLE temp33.
+    mo_view->_generic( name = `BindingUpdate`
               ns            = `z2ui5`
               t_prop        = temp33 ).
 
   ENDMETHOD.
 
-  METHOD title.
+
+  METHOD websocket.
     DATA temp35 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp36 LIKE LINE OF temp35.
 
@@ -797,16 +821,28 @@ CLASS z2ui5_cl_xml_view_cc IMPLEMENTATION.
     
     CLEAR temp35.
     
-    temp36-n = `title`.
-    temp36-v = title.
+    temp36-n = `value`.
+    temp36-v = value.
     INSERT temp36 INTO TABLE temp35.
-    mo_view->_generic( name = `Title`
+    temp36-n = `path`.
+    temp36-v = path.
+    INSERT temp36 INTO TABLE temp35.
+    temp36-n = `received`.
+    temp36-v = received.
+    INSERT temp36 INTO TABLE temp35.
+    temp36-n = `checkActive`.
+    temp36-v = z2ui5_cl_util=>boolean_abap_2_json( checkactive ).
+    INSERT temp36 INTO TABLE temp35.
+    temp36-n = `checkRepeat`.
+    temp36-v = z2ui5_cl_util=>boolean_abap_2_json( checkrepeat ).
+    INSERT temp36 INTO TABLE temp35.
+    mo_view->_generic( name = `Websocket`
               ns            = `z2ui5`
               t_prop        = temp35 ).
 
   ENDMETHOD.
 
-  METHOD dirty.
+  METHOD lp_title.
     DATA temp37 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp38 LIKE LINE OF temp37.
 
@@ -814,27 +850,61 @@ CLASS z2ui5_cl_xml_view_cc IMPLEMENTATION.
     
     CLEAR temp37.
     
-    temp38-n = `isDirty`.
-    temp38-v = z2ui5_cl_util=>boolean_abap_2_json( isdirty ).
+    temp38-n = `title`.
+    temp38-v = title.
     INSERT temp38 INTO TABLE temp37.
-    mo_view->_generic( name = `Dirty`
+    mo_view->_generic( name = `LPTitle`
               ns            = `z2ui5`
               t_prop        = temp37 ).
 
   ENDMETHOD.
 
-  METHOD uitableext.
-
+  METHOD title.
     DATA temp39 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp40 LIKE LINE OF temp39.
+
+    result = mo_view.
+    
     CLEAR temp39.
     
-    temp40-n = `tableId`.
-    temp40-v = tableid.
+    temp40-n = `title`.
+    temp40-v = title.
     INSERT temp40 INTO TABLE temp39.
+    mo_view->_generic( name = `Title`
+              ns            = `z2ui5`
+              t_prop        = temp39 ).
+
+  ENDMETHOD.
+
+  METHOD dirty.
+    DATA temp41 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp42 LIKE LINE OF temp41.
+
+    result = mo_view.
+    
+    CLEAR temp41.
+    
+    temp42-n = `isDirty`.
+    temp42-v = z2ui5_cl_util=>boolean_abap_2_json( isdirty ).
+    INSERT temp42 INTO TABLE temp41.
+    mo_view->_generic( name = `Dirty`
+              ns            = `z2ui5`
+              t_prop        = temp41 ).
+
+  ENDMETHOD.
+
+  METHOD uitableext.
+
+    DATA temp43 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp44 LIKE LINE OF temp43.
+    CLEAR temp43.
+    
+    temp44-n = `tableId`.
+    temp44-v = tableid.
+    INSERT temp44 INTO TABLE temp43.
     result = mo_view->_generic( name = `UITableExt`
                                 ns   = `z2ui5`
-                       t_prop        = temp39 ).
+                       t_prop        = temp43 ).
 
   ENDMETHOD.
 ENDCLASS.
