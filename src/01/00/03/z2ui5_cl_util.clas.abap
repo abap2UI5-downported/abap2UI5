@@ -31,10 +31,10 @@ CLASS z2ui5_cl_util DEFINITION
     TYPES ty_t_range TYPE STANDARD TABLE OF ty_s_range WITH DEFAULT KEY.
 
     TYPES:
-      BEGIN OF ty_S_sql,
+      BEGIN OF ty_s_sql,
         tabname TYPE string,
         where   TYPE string,
-      END OF ty_S_sql.
+      END OF ty_s_sql.
 
     TYPES:
       BEGIN OF ty_s_filter_multi,
@@ -340,7 +340,7 @@ CLASS z2ui5_cl_util DEFINITION
       IMPORTING
         val           TYPE ANY TABLE
       RETURNING
-        VALUE(result) TYPE ty_t_token.
+        VALUE(result) TYPE ty_t_token ##NEEDED.
 
     CLASS-METHODS filter_get_token_range_mapping
       RETURNING
@@ -729,6 +729,9 @@ DATA lt_db TYPE temp6.
 
         
         ASSIGN ref->(ls_filter-name) TO <field>.
+        IF sy-subrc <> 0.
+          CONTINUE.
+        ENDIF.
         IF <field> NOT IN ls_filter-t_range.
           DELETE val.
           EXIT.
@@ -1108,7 +1111,7 @@ DATA lt_cols TYPE temp8.
 
         z2ui5_cl_ajson=>parse( val )->to_abap(
           EXPORTING
-          iv_corresponding = abap_true
+            iv_corresponding = abap_true
           IMPORTING
             ev_container = data ).
 
@@ -1594,9 +1597,9 @@ DATA lt_param TYPE temp9.
                                occ  = 0 ).
 
     lv_search = replace( val  = lv_search
-                               sub  = `%26`
-                               with = '&'
-                               occ  = 0 ).
+                         sub  = `%26`
+                         with = '&'
+                         occ  = 0 ).
 
     lv_search = shift_left( val = lv_search
                             sub = `?` ).

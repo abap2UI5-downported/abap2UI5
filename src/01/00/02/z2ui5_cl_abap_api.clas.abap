@@ -96,7 +96,7 @@ CLASS z2ui5_cl_abap_api DEFINITION
         iv_classname  TYPE clike
         iv_methodname TYPE clike
       RETURNING
-        VALUE(result)  TYPE string_table.
+        VALUE(result) TYPE string_table.
 
     CLASS-METHODS uuid_get_c32
       RETURNING
@@ -110,35 +110,35 @@ CLASS z2ui5_cl_abap_api DEFINITION
       IMPORTING
         i_data_element_name TYPE string
       RETURNING
-        VALUE(result)        TYPE ty_s_data_element_text.
+        VALUE(result)       TYPE ty_s_data_element_text.
 
     CLASS-METHODS conv_decode_x_base64
       IMPORTING
-        val          TYPE string
+        val           TYPE string
       RETURNING
         VALUE(result) TYPE xstring.
 
     CLASS-METHODS conv_encode_x_base64
       IMPORTING
-        val          TYPE xstring
+        val           TYPE xstring
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS conv_get_string_by_xstring
       IMPORTING
-        val          TYPE xstring
+        val           TYPE xstring
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS conv_get_xstring_by_string
       IMPORTING
-        val          TYPE string
+        val           TYPE string
       RETURNING
         VALUE(result) TYPE xstring.
 
     CLASS-METHODS rtti_get_classes_impl_intf
       IMPORTING
-        val          TYPE clike
+        val           TYPE clike
       RETURNING
         VALUE(result) TYPE ty_t_classes.
 
@@ -461,7 +461,7 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
     FIELD-SYMBOLS <any> TYPE any.
     DATA lt_implementation_names TYPE string_table.
     TYPES BEGIN OF ty_s_impl.
-    TYPES clsname TYPE c LENGTH 30.
+    TYPES clsname    TYPE c LENGTH 30.
     TYPES refclsname TYPE c LENGTH 30.
     TYPES END OF ty_s_impl.
     DATA lt_impl TYPE STANDARD TABLE OF ty_s_impl WITH DEFAULT KEY.
@@ -476,7 +476,6 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
         DATA temp3 TYPE z2ui5_cl_abap_api=>ty_t_classes.
         DATA implementation_name LIKE LINE OF lt_implementation_names.
           DATA temp4 LIKE LINE OF temp3.
-        DATA lx TYPE REF TO cx_root.
         DATA lv_fm TYPE string.
         DATA type TYPE c LENGTH 12.
         FIELD-SYMBOLS <class> TYPE data.
@@ -522,8 +521,7 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
         ENDLOOP.
         result = temp3.
 
-        
-      CATCH cx_root INTO lx.
+      CATCH cx_root.
 
         ls_key-intkey = val.
 
@@ -801,7 +799,6 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
         rv_short_description = result.
 
   ENDMETHOD.
-
 
 
   METHOD rtti_get_t_attri_on_prem.
