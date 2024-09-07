@@ -241,11 +241,14 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD conv_decode_x_base64.
+        DATA lv_web_http_name TYPE c LENGTH 19.
         DATA classname TYPE c LENGTH 15.
 
     TRY.
 
-        CALL METHOD ('CL_WEB_HTTP_UTILITY')=>('DECODE_X_BASE64')
+        
+        lv_web_http_name = 'CL_WEB_HTTP_UTILITY'.
+        CALL METHOD (lv_web_http_name)=>('DECODE_X_BASE64')
           EXPORTING
             encoded = val
           RECEIVING
@@ -267,11 +270,14 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
 
 
   METHOD conv_encode_x_base64.
+        DATA lv_web_http_name TYPE c LENGTH 19.
         DATA classname TYPE c LENGTH 15.
 
     TRY.
 
-        CALL METHOD ('CL_WEB_HTTP_UTILITY')=>('ENCODE_X_BASE64')
+        
+        lv_web_http_name = 'CL_WEB_HTTP_UTILITY'.
+        CALL METHOD (lv_web_http_name)=>('ENCODE_X_BASE64')
           EXPORTING
             unencoded = val
           RECEIVING
@@ -295,10 +301,13 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
   METHOD conv_get_string_by_xstring.
 
     DATA conv TYPE REF TO object.
+        DATA conv_codepage TYPE c LENGTH 21.
         DATA conv_in_class TYPE c LENGTH 18.
 
     TRY.
-        CALL METHOD ('CL_ABAP_CONV_CODEPAGE')=>create_in
+        
+        conv_codepage = 'CL_ABAP_CONV_CODEPAGE'.
+        CALL METHOD (conv_codepage)=>create_in
           RECEIVING
             instance = conv.
 
@@ -331,10 +340,13 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
   METHOD conv_get_xstring_by_string.
 
     DATA conv TYPE REF TO object.
+        DATA conv_codepage TYPE c LENGTH 21.
         DATA conv_out_class TYPE c LENGTH 19.
 
     TRY.
-        CALL METHOD ('CL_ABAP_CONV_CODEPAGE')=>create_out
+        
+        conv_codepage = 'CL_ABAP_CONV_CODEPAGE'.
+        CALL METHOD (conv_codepage)=>create_out
           RECEIVING
             instance = conv.
 
@@ -372,6 +384,7 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
     DATA lt_string TYPE string_table.
         DATA lv_class TYPE string.
         DATA lv_method TYPE string.
+        DATA xco_cp_abap TYPE c LENGTH 11.
         DATA lv_name TYPE c LENGTH 13.
         DATA lv_check_method LIKE abap_false.
         DATA lv_source LIKE LINE OF lt_source.
@@ -384,7 +397,9 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
         
         lv_method = to_upper( iv_methodname ).
 
-        CALL METHOD ('XCO_CP_ABAP')=>('CLASS')
+        
+        xco_cp_abap = 'XCO_CP_ABAP'.
+        CALL METHOD (xco_cp_abap)=>('CLASS')
           EXPORTING
             iv_name  = lv_class
           RECEIVING
@@ -473,6 +488,7 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
     DATA clsname TYPE c LENGTH 30.
     DATA END OF ls_clskey.
     DATA class TYPE REF TO data.
+        DATA xco_cp_abap TYPE c LENGTH 11.
         DATA temp3 TYPE z2ui5_cl_abap_api=>ty_t_classes.
         DATA implementation_name LIKE LINE OF lt_implementation_names.
           DATA temp4 LIKE LINE OF temp3.
@@ -488,7 +504,9 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
 
         ls_clskey-clsname = val.
 
-        CALL METHOD ('XCO_CP_ABAP')=>interface
+        
+        xco_cp_abap = 'XCO_CP_ABAP'.
+        CALL METHOD (xco_cp_abap)=>interface
           EXPORTING
             iv_name      = ls_clskey-clsname
           RECEIVING
@@ -602,6 +620,7 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
         DATA lo_typedescr TYPE REF TO cl_abap_typedescr.
         DATA temp8 TYPE REF TO cl_abap_datadescr.
         DATA data_descr LIKE temp8.
+            DATA xco_cp_abap_dictionary TYPE c LENGTH 22.
     data_element_name = i_data_element_name.
 
     TRY.
@@ -653,7 +672,9 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
 
       CATCH cx_root.
         TRY.
-            CALL METHOD ('XCO_CP_ABAP_DICTIONARY')=>('DATA_ELEMENT')
+            
+            xco_cp_abap_dictionary = 'XCO_CP_ABAP_DICTIONARY'.
+            CALL METHOD (xco_cp_abap_dictionary)=>('DATA_ELEMENT')
               EXPORTING
                 iv_name         = data_element_name
               RECEIVING
@@ -782,9 +803,13 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
     DATA obj     TYPE REF TO object.
     DATA content TYPE REF TO object.
     DATA lv_classname TYPE c LENGTH 30.
+    DATA xco_cp_abap TYPE c LENGTH 11.
 
     lv_classname = i_classname.
-    CALL METHOD ('XCO_CP_ABAP')=>('CLASS')
+
+    
+    xco_cp_abap = 'XCO_CP_ABAP'.
+    CALL METHOD (xco_cp_abap)=>('CLASS')
       EXPORTING
         iv_name  = lv_classname
       RECEIVING
