@@ -12,6 +12,13 @@ CLASS z2ui5_cl_util DEFINITION
 *  license: MIT.
 
     TYPES:
+      BEGIN OF ty_s_name_value,
+        n TYPE string,
+        v TYPE string,
+      END OF ty_s_name_value.
+    TYPES ty_t_name_value TYPE STANDARD TABLE OF ty_s_name_value WITH DEFAULT KEY.
+
+    TYPES:
       BEGIN OF ty_s_token,
         key      TYPE string,
         text     TYPE string,
@@ -141,7 +148,7 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS url_param_create_url
       IMPORTING
-        !t_params     TYPE z2ui5_if_types=>ty_t_name_value
+        !t_params     TYPE ty_t_name_value
       RETURNING
         VALUE(result) TYPE string.
 
@@ -268,7 +275,7 @@ CLASS z2ui5_cl_util DEFINITION
       IMPORTING
         i_val            TYPE clike
       RETURNING
-        VALUE(rt_params) TYPE z2ui5_if_types=>ty_t_name_value.
+        VALUE(rt_params) TYPE ty_t_name_value.
 
     CLASS-METHODS rtti_get_t_attri_by_oref
       IMPORTING
@@ -344,7 +351,7 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS filter_get_token_range_mapping
       RETURNING
-        VALUE(result) TYPE z2ui5_if_types=>ty_t_name_value.
+        VALUE(result) TYPE ty_t_name_value.
 
     CLASS-METHODS itab_corresponding
       IMPORTING
@@ -837,7 +844,7 @@ DATA lt_db TYPE temp6.
 
   METHOD filter_get_token_range_mapping.
 
-    DATA temp10 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp10 TYPE z2ui5_cl_util=>ty_t_name_value.
     DATA temp11 LIKE LINE OF temp10.
     CLEAR temp10.
     
@@ -878,12 +885,12 @@ DATA lt_db TYPE temp6.
 
   METHOD filter_get_token_t_by_range_t.
 
-    DATA lt_mapping TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA lt_mapping TYPE z2ui5_cl_util=>ty_t_name_value.
     DATA temp12 TYPE ty_t_range.
     DATA lt_tab LIKE temp12.
     DATA temp13 LIKE LINE OF lt_tab.
     DATA lr_row LIKE REF TO temp13.
-      DATA lv_value TYPE z2ui5_if_types=>ty_s_name_value-v.
+      DATA lv_value TYPE z2ui5_cl_util=>ty_s_name_value-v.
       DATA temp6 LIKE LINE OF lt_mapping.
       DATA temp7 LIKE sy-tabix.
       DATA temp14 TYPE z2ui5_cl_util=>ty_s_token.
@@ -1106,7 +1113,7 @@ DATA lt_cols TYPE temp8.
 
 
   METHOD json_parse.
-        DATA x TYPE REF TO z2ui5_cx_ajson_error.
+        DATA x TYPE REF TO cx_root.
     TRY.
 
         z2ui5_cl_ajson=>parse( val )->to_abap(
@@ -1116,7 +1123,7 @@ DATA lt_cols TYPE temp8.
             ev_container = data ).
 
         
-      CATCH z2ui5_cx_ajson_error INTO x.
+      CATCH cx_root INTO x.
         ASSERT x IS NOT BOUND.
     ENDTRY.
   ENDMETHOD.
@@ -1125,7 +1132,7 @@ DATA lt_cols TYPE temp8.
   METHOD json_stringify.
         DATA temp22 TYPE REF TO z2ui5_if_ajson.
         DATA li_ajson LIKE temp22.
-        DATA x TYPE REF TO z2ui5_cx_ajson_error.
+        DATA x TYPE REF TO cx_root.
     TRY.
 
         
@@ -1135,7 +1142,7 @@ DATA lt_cols TYPE temp8.
         result = li_ajson->set( iv_path = `/` iv_val = any )->stringify( ).
 
         
-      CATCH z2ui5_cx_ajson_error INTO x.
+      CATCH cx_root INTO x.
         ASSERT x IS NOT BOUND.
     ENDTRY.
   ENDMETHOD.
@@ -1560,10 +1567,10 @@ DATA lt_cols TYPE temp8.
 
   METHOD url_param_get.
 
-    DATA lt_params TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA lt_params TYPE z2ui5_cl_util=>ty_t_name_value.
     DATA lv_val TYPE string.
     DATA temp42 TYPE string.
-    DATA temp43 TYPE z2ui5_if_types=>ty_s_name_value.
+    DATA temp43 TYPE z2ui5_cl_util=>ty_s_name_value.
     lt_params = url_param_get_tab( url ).
     
     lv_val = c_trim_lower( val ).
@@ -1590,7 +1597,7 @@ DATA lt_param TYPE temp9.
     DATA lr_param LIKE REF TO temp45.
       DATA lv_name TYPE string.
       DATA lv_value TYPE string.
-      DATA temp46 TYPE z2ui5_if_types=>ty_s_name_value.
+      DATA temp46 TYPE z2ui5_cl_util=>ty_s_name_value.
     lv_search = replace( val  = i_val
                                sub  = `%3D`
                                with = '='
@@ -1644,11 +1651,11 @@ DATA lt_param TYPE temp9.
 
   METHOD url_param_set.
 
-    DATA lt_params TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA lt_params TYPE z2ui5_cl_util=>ty_t_name_value.
     DATA lv_n TYPE string.
     DATA temp47 LIKE LINE OF lt_params.
     DATA lr_params LIKE REF TO temp47.
-      DATA temp48 TYPE z2ui5_if_types=>ty_s_name_value.
+      DATA temp48 TYPE z2ui5_cl_util=>ty_s_name_value.
     lt_params = url_param_get_tab( url ).
     
     lv_n = c_trim_lower( name ).

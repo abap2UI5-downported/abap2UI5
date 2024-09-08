@@ -770,7 +770,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   METHOD test_url_param_create_url.
 
-    DATA lt_param TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA lt_param TYPE z2ui5_cl_util=>ty_t_name_value.
     DATA lv_url TYPE string.
     lt_param = z2ui5_cl_util=>url_param_get_tab( `https://url.com/rvice_for_ui?sap-client=100&app_start=z2ui5_cl_app_hello_world` ).
     
@@ -797,7 +797,7 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   METHOD test_url_param_get_tab.
 
-    DATA lt_param TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA lt_param TYPE z2ui5_cl_util=>ty_t_name_value.
     DATA temp73 LIKE LINE OF lt_param.
     DATA temp74 LIKE sy-tabix.
     DATA temp75 LIKE LINE OF lt_param.

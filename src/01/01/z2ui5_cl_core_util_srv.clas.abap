@@ -29,8 +29,8 @@ CLASS z2ui5_cl_core_util_srv IMPLEMENTATION.
 
   METHOD app_get_url.
     DATA lv_url TYPE string.
-    DATA lt_param TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp1 TYPE z2ui5_if_types=>ty_s_name_value.
+    DATA lt_param TYPE z2ui5_cl_util=>ty_t_name_value.
+    DATA temp1 TYPE z2ui5_cl_util=>ty_s_name_value.
 
     IF classname IS INITIAL.
       classname = rtti_get_classname_by_ref( client->get_app( ) ).
