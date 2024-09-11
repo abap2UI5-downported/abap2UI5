@@ -146,6 +146,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
     METHODS table
       IMPORTING !id                 TYPE clike OPTIONAL
                 items               TYPE clike OPTIONAL
+                class               TYPE clike OPTIONAL
                 growing             TYPE clike OPTIONAL
                 growingthreshold    TYPE clike OPTIONAL
                 growingscrolltoload TYPE clike OPTIONAL
@@ -14408,6 +14409,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp452 INTO TABLE temp451.
     temp452-n = `headerText`.
     temp452-v = headertext.
+    INSERT temp452 INTO TABLE temp451.
+    temp452-n = `class`.
+    temp452-v = class.
     INSERT temp452 INTO TABLE temp451.
     temp452-n = `growing`.
     temp452-v = growing.
