@@ -129,9 +129,14 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
         DATA li_app LIKE temp1.
         DATA x TYPE REF TO cx_root.
     TRY.
-
         
-        CREATE OBJECT li_client TYPE z2ui5_cl_core_client EXPORTING ACTION = mo_action.
+        TRY.
+            CREATE OBJECT li_client TYPE ('ZCL_2UI5_CUSTOM_CLIENT')
+                EXPORTING
+                    action = mo_action.
+          CATCH cx_root.
+            CREATE OBJECT li_client TYPE z2ui5_cl_core_client EXPORTING ACTION = mo_action.
+        ENDTRY.
         
         temp1 ?= mo_action->mo_app->mo_app.
         

@@ -4,17 +4,25 @@ CLASS z2ui5_cl_core_http_get2 DEFINITION
   CREATE PUBLIC .
 
   PUBLIC SECTION.
-
-    DATA ms_request  TYPE z2ui5_if_types=>ty_s_http_request_get2.
-    DATA mv_response TYPE string.
+    CLASS-METHODS class_constructor.
 
     METHODS constructor
       IMPORTING
-        val TYPE z2ui5_if_types=>ty_s_http_request_get2 OPTIONAL.
+        val TYPE z2ui5_if_types=>ty_s_config_index_html OPTIONAL.
 
     METHODS main
       RETURNING
         VALUE(result) TYPE string.
+
+
+  PROTECTED SECTION.
+
+    CLASS-DATA cs_config_default TYPE z2ui5_if_types=>ty_s_config_index_html.
+
+    DATA ms_config_in      TYPE z2ui5_if_types=>ty_s_config_index_html.
+    DATA mv_index_html       TYPE string.
+
+    CLASS-METHODS set_default_config.
 
     METHODS get_js
       RETURNING
@@ -24,19 +32,13 @@ CLASS z2ui5_cl_core_http_get2 DEFINITION
       RETURNING
         VALUE(result) TYPE string.
 
-  PROTECTED SECTION.
-
-    METHODS get_default_t_param
+    METHODS main_set_config
       RETURNING
-        VALUE(result) TYPE z2ui5_if_types=>ty_t_name_value.
+        VALUE(result) TYPE z2ui5_if_types=>ty_s_config_index_html.
 
-    METHODS get_default_t_option
-      RETURNING
-        VALUE(result) TYPE z2ui5_if_types=>ty_t_name_value.
-
-    METHODS get_default_security_policy
-      RETURNING
-        VALUE(result) TYPE string.
+    METHODS main_set_index_html
+      IMPORTING
+        cs_config TYPE z2ui5_if_types=>ty_s_config_index_html.
 
   PRIVATE SECTION.
 ENDCLASS.
@@ -45,21 +47,30 @@ ENDCLASS.
 
 CLASS z2ui5_cl_core_http_get2 IMPLEMENTATION.
 
-
   METHOD constructor.
 
-    ms_request = val.
+    me->ms_config_in = val.
 
   ENDMETHOD.
 
-  METHOD get_default_t_param.
+  METHOD class_constructor.
+    set_default_config( ).
+  ENDMETHOD.
 
+
+  METHOD set_default_config.
+
+    DATA lv_csp TYPE string.
     DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp2 LIKE LINE OF temp1.
-    DATA temp3 LIKE LINE OF ms_request-t_param.
-    DATA lr_input LIKE REF TO temp3.
-          FIELD-SYMBOLS <temp4> LIKE LINE OF result.
-          DATA temp5 LIKE sy-tabix.
+    DATA temp3 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp4 LIKE LINE OF temp3.
+    lv_csp  = `default-src 'self' 'unsafe-inline' 'unsafe-eval' data: ` &&
+   `ui5.sap.com *.ui5.sap.com sapui5.hana.ondemand.com *.sapui5.hana.ondemand.com openui5.hana.ondemand.com *.openui5.hana.ondemand.com ` &&
+   `sdk.openui5.org *.sdk.openui5.org cdn.jsdelivr.net *.cdn.jsdelivr.net cdnjs.cloudflare.com *.cdnjs.cloudflare.com schemas *.schemas`.
+
+    CLEAR cs_config_default.
+    
     CLEAR temp1.
     
     temp2-n = `TITLE`.
@@ -69,89 +80,84 @@ CLASS z2ui5_cl_core_http_get2 IMPLEMENTATION.
     temp2-v = `sapUiBody sapUiSizeCompact`.
     INSERT temp2 INTO TABLE temp1.
     temp2-n = `CONTENT_SECURITY_POLICY`.
-    temp2-v = get_default_security_policy( ).
+    temp2-v = lv_csp.
     INSERT temp2 INTO TABLE temp1.
-    result = temp1.
-
+    cs_config_default-t_param = temp1.
     
+    CLEAR temp3.
     
-    LOOP AT ms_request-t_param REFERENCE INTO lr_input.
-      TRY.
-          
-          
-          temp5 = sy-tabix.
-          READ TABLE result WITH KEY n = lr_input->n ASSIGNING <temp4>.
-          sy-tabix = temp5.
-          IF sy-subrc <> 0.
-            ASSERT 1 = 0.
-          ENDIF.
-          <temp4>-v = lr_input->v.
-        CATCH cx_root.
-          INSERT lr_input->* INTO TABLE result.
-      ENDTRY.
-    ENDLOOP.
+    temp4-n = `src`.
+    temp4-v = `https://sdk.openui5.org/resources/sap-ui-cachebuster/sap-ui-core.js`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `data-sap-ui-theme`.
+    temp4-v = `sap_horizon`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `data-sap-ui-async`.
+    temp4-v = `true`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `id`.
+    temp4-v = `sap-ui-bootstrap`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `data-sap-ui-bindingSyntax`.
+    temp4-v = `complex`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `data-sap-ui-frameOptions`.
+    temp4-v = `trusted`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `data-sap-ui-compatVersion`.
+    temp4-v = `edge`.
+    INSERT temp4 INTO TABLE temp3.
+    cs_config_default-t_option = temp3.
 
   ENDMETHOD.
 
-  METHOD get_default_t_option.
+  METHOD main_set_config.
+    DATA temp1 LIKE LINE OF ms_config_in-t_param.
+    DATA lr_param LIKE REF TO temp1.
+          FIELD-SYMBOLS <temp2> LIKE LINE OF result-t_param.
+          DATA temp3 LIKE sy-tabix.
+    DATA temp4 LIKE LINE OF ms_config_in-t_option.
+    DATA lr_option LIKE REF TO temp4.
+          FIELD-SYMBOLS <temp5> LIKE LINE OF result-t_option.
+          DATA temp6 LIKE sy-tabix.
 
-    DATA temp6 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp7 LIKE LINE OF temp6.
-    DATA temp8 LIKE LINE OF ms_request-t_option.
-    DATA lr_input LIKE REF TO temp8.
-          FIELD-SYMBOLS <temp9> LIKE LINE OF result.
-          DATA temp10 LIKE sy-tabix.
-    CLEAR temp6.
-    
-    temp7-n = `src`.
-    temp7-v = `https://sdk.openui5.org/resources/sap-ui-cachebuster/sap-ui-core.js`.
-    INSERT temp7 INTO TABLE temp6.
-    temp7-n = `data-sap-ui-theme`.
-    temp7-v = `sap_horizon`.
-    INSERT temp7 INTO TABLE temp6.
-    temp7-n = `data-sap-ui-async`.
-    temp7-v = `true`.
-    INSERT temp7 INTO TABLE temp6.
-    temp7-n = `id`.
-    temp7-v = `sap-ui-bootstrap`.
-    INSERT temp7 INTO TABLE temp6.
-    temp7-n = `data-sap-ui-bindingSyntax`.
-    temp7-v = `complex`.
-    INSERT temp7 INTO TABLE temp6.
-    temp7-n = `data-sap-ui-frameOptions`.
-    temp7-v = `trusted`.
-    INSERT temp7 INTO TABLE temp6.
-    temp7-n = `data-sap-ui-compatVersion`.
-    temp7-v = `edge`.
-    INSERT temp7 INTO TABLE temp6.
-    result = temp6.
+    result = cs_config_default.
 
     
     
-    LOOP AT ms_request-t_option REFERENCE INTO lr_input.
+    LOOP AT ms_config_in-t_param REFERENCE INTO lr_param.
       TRY.
           
           
-          temp10 = sy-tabix.
-          READ TABLE result WITH KEY n = lr_input->n ASSIGNING <temp9>.
-          sy-tabix = temp10.
+          temp3 = sy-tabix.
+          READ TABLE result-t_param WITH KEY n = lr_param->n ASSIGNING <temp2>.
+          sy-tabix = temp3.
           IF sy-subrc <> 0.
             ASSERT 1 = 0.
           ENDIF.
-          <temp9>-v = lr_input->v.
+          <temp2>-v = lr_param->v.
         CATCH cx_root.
-          INSERT lr_input->* INTO TABLE result.
+          INSERT lr_param->* INTO TABLE result-t_param.
       ENDTRY.
     ENDLOOP.
 
-  ENDMETHOD.
-
-
-  METHOD get_default_security_policy.
-
-    result  = `default-src 'self' 'unsafe-inline' 'unsafe-eval' data: ` &&
-   `ui5.sap.com *.ui5.sap.com sapui5.hana.ondemand.com *.sapui5.hana.ondemand.com openui5.hana.ondemand.com *.openui5.hana.ondemand.com ` &&
-   `sdk.openui5.org *.sdk.openui5.org cdn.jsdelivr.net *.cdn.jsdelivr.net cdnjs.cloudflare.com *.cdnjs.cloudflare.com schemas *.schemas`.
+    
+    
+    LOOP AT ms_config_in-t_option REFERENCE INTO lr_option.
+      TRY.
+          
+          
+          temp6 = sy-tabix.
+          READ TABLE result-t_option WITH KEY n = lr_option->n ASSIGNING <temp5>.
+          sy-tabix = temp6.
+          IF sy-subrc <> 0.
+            ASSERT 1 = 0.
+          ENDIF.
+          <temp5>-v = lr_option->v.
+        CATCH cx_root.
+          INSERT lr_option->* INTO TABLE result-t_option.
+      ENDTRY.
+    ENDLOOP.
 
   ENDMETHOD.
 
@@ -180,83 +186,85 @@ CLASS z2ui5_cl_core_http_get2 IMPLEMENTATION.
 
   METHOD main.
 
-    DATA lt_config TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA lt_param TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp11 LIKE LINE OF lt_param.
-    DATA temp12 LIKE sy-tabix.
-    DATA temp1 LIKE LINE OF lt_param.
-    DATA temp2 LIKE sy-tabix.
-    DATA temp13 LIKE LINE OF lt_config.
-    DATA lr_config LIKE REF TO temp13.
-    DATA temp14 LIKE LINE OF lt_param.
-    DATA temp15 LIKE sy-tabix.
-    DATA lv_add_js TYPE string.
-    DATA temp16 TYPE REF TO z2ui5_cl_core_draft_srv.
-    lt_config = get_default_t_option( ).
-    
-    lt_param  = get_default_t_param( ).
+    DATA ls_config TYPE z2ui5_if_types=>ty_s_config_index_html.
+    DATA temp7 TYPE REF TO z2ui5_cl_core_draft_srv.
+    ls_config = main_set_config( ).
+    main_set_index_html( ls_config ).
+    result = mv_index_html.
 
     
-    
-    temp12 = sy-tabix.
-    READ TABLE lt_param WITH KEY n = `CONTENT_SECURITY_POLICY` INTO temp11.
-    sy-tabix = temp12.
+    CREATE OBJECT temp7 TYPE z2ui5_cl_core_draft_srv.
+    temp7->cleanup( ).
+
+  ENDMETHOD.
+
+
+  METHOD main_set_index_html.
+
+    DATA temp8 LIKE LINE OF cs_config-t_param.
+    DATA temp9 LIKE sy-tabix.
+    DATA temp5 LIKE LINE OF cs_config-t_param.
+    DATA temp6 LIKE sy-tabix.
+    DATA temp10 LIKE LINE OF cs_config-t_option.
+    DATA lr_config LIKE REF TO temp10.
+    DATA temp11 LIKE LINE OF cs_config-t_param.
+    DATA temp12 LIKE sy-tabix.
+    DATA lv_add_js TYPE string.
+    temp9 = sy-tabix.
+    READ TABLE cs_config-t_param WITH KEY n = `CONTENT_SECURITY_POLICY` INTO temp8.
+    sy-tabix = temp9.
     IF sy-subrc <> 0.
       ASSERT 1 = 0.
     ENDIF.
     
     
-    temp2 = sy-tabix.
-    READ TABLE lt_param WITH KEY n = `TITLE` INTO temp1.
-    sy-tabix = temp2.
+    temp6 = sy-tabix.
+    READ TABLE cs_config-t_param WITH KEY n = `TITLE` INTO temp5.
+    sy-tabix = temp6.
     IF sy-subrc <> 0.
       ASSERT 1 = 0.
     ENDIF.
-    mv_response = `<!DOCTYPE html>` && |\n| &&
+    mv_index_html = `<!DOCTYPE html>` && |\n| &&
                `<head>` && |\n| &&
-             |   <meta http-equiv="Content-Security-Policy" content="{ temp11-v }"/>\n| &&
+             |   <meta http-equiv="Content-Security-Policy" content="{ temp8-v }"/>\n| &&
                `    <meta charset="UTF-8">` && |\n| &&
                `    <meta name="viewport" content="width=device-width, initial-scale=1.0">` && |\n| &&
-            | <title>{ temp1-v }</title> \n| &&
+            | <title>{ temp5-v }</title> \n| &&
                `    <script `.
 
     
     
-    LOOP AT lt_config REFERENCE INTO lr_config.
-      mv_response = mv_response && | { lr_config->n }='{ lr_config->v }'|.
+    LOOP AT cs_config-t_option REFERENCE INTO lr_config.
+      mv_index_html = mv_index_html && | { lr_config->n }='{ lr_config->v }'|.
     ENDLOOP.
 
     
     
-    temp15 = sy-tabix.
-    READ TABLE lt_param WITH KEY n = 'BODY_CLASS' INTO temp14.
-    sy-tabix = temp15.
+    temp12 = sy-tabix.
+    READ TABLE cs_config-t_param WITH KEY n = 'BODY_CLASS' INTO temp11.
+    sy-tabix = temp12.
     IF sy-subrc <> 0.
       ASSERT 1 = 0.
     ENDIF.
-    mv_response = mv_response &&
+    mv_index_html = mv_index_html &&
         |  ></script></head> \n| &&
-        | <body class="{ temp14-v }" id="content" > \n| &&
+        | <body class="{ temp11-v }" id="content" > \n| &&
         |<body class="sapUiBody" id="content" >  \n| &&
         |    <div data-sap-ui-component data-height="100%" data-id="container" ></div> \n| &&
         |<abc/> \n|.
 
     
-    lv_add_js = get_js_cc_startup( ) && ms_request-add_js.
+    lv_add_js = get_js_cc_startup( ) && ms_config_in-add_js.
 
-    mv_response = mv_response  &&
-     | <script>  sap.z2ui5 = sap.z2ui5 \|\| \{\} ; if ( typeof z2ui5 == "undefined" ) \{ var z2ui5 = \{\}; \}; \n| &&
+    mv_index_html = mv_index_html  &&
+     | <script> sap.z2ui5 = sap.z2ui5 \|\| \{\} ; if ( typeof z2ui5 == "undefined" ) \{ var z2ui5 = \{\}; \}; \n| &&
      |         {  get_js( ) }     \n| &&
-     |         { lv_add_js  }     \n|.
-
-    mv_response = mv_response && z2ui5_cl_cc_debug_tool=>get_js( ) && `</script><abc/></body></html>`.
-
-    
-    CREATE OBJECT temp16 TYPE z2ui5_cl_core_draft_srv.
-    temp16->cleanup( ).
-    result = mv_response.
+     |         { lv_add_js  }     \n| &&
+     |         { z2ui5_cl_cc_debug_tool=>get_js( )  }     \n| &&
+     |  </script><abc/></body></html> |.
 
   ENDMETHOD.
+
 
   METHOD get_js.
 

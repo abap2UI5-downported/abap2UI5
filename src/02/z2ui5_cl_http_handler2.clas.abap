@@ -7,7 +7,7 @@ CLASS z2ui5_cl_http_handler2 DEFINITION
     CLASS-METHODS main
       IMPORTING
         body          TYPE string
-        config        TYPE z2ui5_if_types=>ty_s_http_request_get2 OPTIONAL
+        config        TYPE z2ui5_if_types=>ty_s_config_index_html OPTIONAL
       RETURNING
         VALUE(result) TYPE string.
 
@@ -17,7 +17,7 @@ ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_HTTP_HANDLER2 IMPLEMENTATION.
+CLASS z2ui5_cl_http_handler2 IMPLEMENTATION.
 
   METHOD main.
       DATA lo_get TYPE REF TO z2ui5_cl_core_http_get2.
@@ -26,7 +26,7 @@ CLASS Z2UI5_CL_HTTP_HANDLER2 IMPLEMENTATION.
     IF body IS INITIAL.
       
       CREATE OBJECT lo_get TYPE z2ui5_cl_core_http_get2 EXPORTING VAL = config.
-      result = lo_get->main( ).
+      result = lo_get->main(  ).
     ELSE.
       
       CREATE OBJECT lo_post TYPE z2ui5_cl_core_http_post EXPORTING VAL = body.
