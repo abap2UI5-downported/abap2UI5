@@ -16785,13 +16785,13 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
       temp535-n = `customData`.
       temp535-v = `http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1`.
       INSERT temp535 INTO TABLE temp534.
-      temp535-n = `xmlns:f`.
+      temp535-n = `f`.
       temp535-v = `sap.f`.
       INSERT temp535 INTO TABLE temp534.
-      temp535-n = `xmlns:columnmenu`.
+      temp535-n = `columnmenu`.
       temp535-v = `sap.m.table.columnmenu`.
       INSERT temp535 INTO TABLE temp534.
-      temp535-n = `xmlns:card`.
+      temp535-n = `card`.
       temp535-v = `sap.f.cards`.
       INSERT temp535 INTO TABLE temp534.
       temp535-n = `form`.

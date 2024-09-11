@@ -71,9 +71,6 @@ CLASS z2ui5_cl_core_http_get2 IMPLEMENTATION.
     temp2-n = `CONTENT_SECURITY_POLICY`.
     temp2-v = get_default_security_policy( ).
     INSERT temp2 INTO TABLE temp1.
-    temp2-n = `JSON_MODEL_LIMIT`.
-    temp2-v = `100`.
-    INSERT temp2 INTO TABLE temp1.
     result = temp1.
 
     
@@ -194,9 +191,7 @@ CLASS z2ui5_cl_core_http_get2 IMPLEMENTATION.
     DATA temp14 LIKE LINE OF lt_param.
     DATA temp15 LIKE sy-tabix.
     DATA lv_add_js TYPE string.
-    DATA temp16 LIKE LINE OF lt_param.
-    DATA temp17 LIKE sy-tabix.
-    DATA temp18 TYPE REF TO z2ui5_cl_core_draft_srv.
+    DATA temp16 TYPE REF TO z2ui5_cl_core_draft_srv.
     lt_config = get_default_t_option( ).
     
     lt_param  = get_default_t_param( ).
@@ -247,27 +242,18 @@ CLASS z2ui5_cl_core_http_get2 IMPLEMENTATION.
         |<abc/> \n|.
 
     
-    lv_add_js = get_js_cc_startup( ) && ms_request-custom_js.
+    lv_add_js = get_js_cc_startup( ) && ms_request-add_js.
 
-    
-    
-    temp17 = sy-tabix.
-    READ TABLE lt_param WITH KEY n = 'JSON_MODEL_LIMIT' INTO temp16.
-    sy-tabix = temp17.
-    IF sy-subrc <> 0.
-      ASSERT 1 = 0.
-    ENDIF.
     mv_response = mv_response  &&
      | <script>  sap.z2ui5 = sap.z2ui5 \|\| \{\} ; if ( typeof z2ui5 == "undefined" ) \{ var z2ui5 = \{\}; \}; \n| &&
      |         {  get_js( ) }     \n| &&
-     |         { lv_add_js  }     \n| &&
-     |         sap.z2ui5.JSON_MODEL_LIMIT = { temp16-v };|.
+     |         { lv_add_js  }     \n|.
 
     mv_response = mv_response && z2ui5_cl_cc_debug_tool=>get_js( ) && `</script><abc/></body></html>`.
 
     
-    CREATE OBJECT temp18 TYPE z2ui5_cl_core_draft_srv.
-    temp18->cleanup( ).
+    CREATE OBJECT temp16 TYPE z2ui5_cl_core_draft_srv.
+    temp16->cleanup( ).
     result = mv_response.
 
   ENDMETHOD.
