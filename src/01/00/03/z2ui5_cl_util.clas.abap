@@ -1041,7 +1041,7 @@ DATA lt_cols TYPE temp8.
       DATA lv_name TYPE string.
       DATA temp19 TYPE abap_componentdescr.
     DATA struc TYPE REF TO cl_abap_structdescr.
-    DATA temp20 TYPE REF TO cl_abap_datadescr.
+    DATA temp20 TYPE REF TO cl_abap_typedescr.
     DATA o_table_desc TYPE REF TO cl_abap_tabledescr.
     DATA temp21 LIKE LINE OF lt_rows.
     DATA lr_rows LIKE REF TO temp21.
