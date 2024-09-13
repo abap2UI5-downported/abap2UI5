@@ -9,6 +9,7 @@ CLASS z2ui5_cl_pop_to_select DEFINITION
     TYPES:
       BEGIN OF ty_s_result,
         row             TYPE REF TO data,
+        table           TYPE REF TO data,
         check_confirmed TYPE abap_bool,
       END OF ty_s_result .
 
@@ -26,6 +27,7 @@ CLASS z2ui5_cl_pop_to_select DEFINITION
         !i_contentwidth     TYPE clike OPTIONAL
         !i_contentheight    TYPE clike OPTIONAL
         !i_growingthreshold TYPE clike OPTIONAL
+        !i_multiselect      TYPE abap_bool OPTIONAL
       RETURNING
         VALUE(r_result)     TYPE REF TO z2ui5_cl_pop_to_select .
     METHODS result
@@ -43,6 +45,7 @@ CLASS z2ui5_cl_pop_to_select DEFINITION
     DATA content_height TYPE string .
     DATA growing_threshold TYPE string .
     DATA descending TYPE abap_bool .
+    DATA multiselect TYPE abap_bool.
 
     METHODS on_event .
     METHODS display .
@@ -66,9 +69,11 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
     r_result->content_height = i_contentheight.
     r_result->content_width = i_contentwidth.
     r_result->growing_threshold = i_growingthreshold.
+    r_result->multiselect = i_multiselect.
 
     r_result->mr_tab = z2ui5_cl_util=>conv_copy_ref_data( i_tab ).
     CREATE DATA r_result->ms_result-row LIKE LINE OF i_tab.
+    CREATE DATA r_result->ms_result-table LIKE i_tab.
 
   ENDMETHOD.
 
@@ -115,7 +120,8 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
               contentwidth     = content_width
               contentheight    = content_height
               growingthreshold = growing_threshold
-              title            = title ).
+              title            = title
+              multiselect      = multiselect ).
 
     
     lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_any( <tab_out> ).
@@ -156,6 +162,7 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
 
   ENDMETHOD.
 
+
   METHOD z2ui5_if_app~main.
 
     me->client = client.
@@ -170,6 +177,7 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
     on_event( ).
 
   ENDMETHOD.
+
 
   METHOD on_event.
 
@@ -216,10 +224,11 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
         DATA temp6 TYPE REF TO cl_abap_elemdescr.
         DATA lo_elem LIKE temp6.
         DATA temp7 TYPE abap_componentdescr.
-        DATA temp9 TYPE REF TO cl_abap_datadescr.
-    DATA lo_type_bool TYPE REF TO cl_abap_typedescr.
-    DATA temp8 TYPE abap_componentdescr.
-    DATA temp10 TYPE REF TO cl_abap_datadescr.
+        DATA temp10 TYPE REF TO cl_abap_datadescr.
+    DATA temp8 LIKE sy-subrc.
+      DATA lo_type_bool TYPE REF TO cl_abap_typedescr.
+      DATA temp9 TYPE abap_componentdescr.
+      DATA temp11 TYPE REF TO cl_abap_datadescr.
     DATA lo_line_type TYPE REF TO cl_abap_structdescr.
     DATA lo_tab_type TYPE REF TO cl_abap_tabledescr.
     ASSIGN mr_tab->* TO <tab>.
@@ -247,19 +256,25 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
         CLEAR temp7.
         temp7-name = 'TAB_LINE'.
         
-        temp9 ?= lo_elem.
-        temp7-type = temp9.
+        temp10 ?= lo_elem.
+        temp7-type = temp10.
         INSERT temp7 INTO TABLE lt_comp.
     ENDTRY.
+
     
-    lo_type_bool = cl_abap_structdescr=>describe_by_name( 'ABAP_BOOL' ).
-    
-    CLEAR temp8.
-    temp8-name = `ZZSELKZ`.
-    
-    temp10 ?= lo_type_bool.
-    temp8-type = temp10.
-    INSERT temp8 INTO TABLE lt_comp.
+    READ TABLE lt_comp WITH KEY name = `ZZSELKZ` TRANSPORTING NO FIELDS.
+    temp8 = sy-subrc.
+    IF NOT temp8 = 0.
+      
+      lo_type_bool = cl_abap_structdescr=>describe_by_name( 'ABAP_BOOL' ).
+      
+      CLEAR temp9.
+      temp9-name = `ZZSELKZ`.
+      
+      temp11 ?= lo_type_bool.
+      temp9-type = temp11.
+      INSERT temp9 INTO TABLE lt_comp.
+    ENDIF.
 
     
     lo_line_type = cl_abap_structdescr=>create( lt_comp ).
@@ -290,15 +305,16 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD on_event_confirm.
 
     FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
     FIELD-SYMBOLS <row_selected> TYPE any.
     FIELD-SYMBOLS <selkz> TYPE any.
     FIELD-SYMBOLS <row_result> TYPE any.
+    FIELD-SYMBOLS <table_result> TYPE ANY TABLE.
     FIELD-SYMBOLS <table_line_selected> TYPE any.
     ASSIGN mr_tab_popup->* TO <tab>.
+    ASSIGN ms_result-table->* TO <table_result>.
 
     LOOP AT <tab> ASSIGNING <row_selected>.
 
@@ -310,14 +326,20 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
 
       ASSIGN ms_result-row->* TO <row_result>.
       IF check_table_line = abap_true.
-
         ASSIGN ('<ROW_SELECTED>-TAB_LINE') TO <table_line_selected>.
         ASSERT sy-subrc = 0.
         <row_result> = <table_line_selected>.
       ELSE.
         MOVE-CORRESPONDING <row_selected> TO <row_result>.
       ENDIF.
-      EXIT.
+
+      IF multiselect = abap_false.
+        EXIT.
+      ELSE.
+        INSERT <row_result> INTO TABLE <table_result>.
+        CLEAR <row_result>.
+      ENDIF.
+
     ENDLOOP.
 
     client->popup_destroy( ).
@@ -373,4 +395,5 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
     client->popup_model_update( ).
 
   ENDMETHOD.
+
 ENDCLASS.
