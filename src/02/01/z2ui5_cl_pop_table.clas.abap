@@ -9,6 +9,7 @@ CLASS z2ui5_cl_pop_table DEFINITION
     CLASS-METHODS factory
       IMPORTING
         i_tab           TYPE STANDARD TABLE
+        i_title         TYPE clike OPTIONAL
       RETURNING
         VALUE(r_result) TYPE REF TO z2ui5_cl_pop_table.
 
@@ -27,6 +28,7 @@ CLASS z2ui5_cl_pop_table DEFINITION
 
   PROTECTED SECTION.
     DATA check_initialized TYPE abap_bool.
+    DATA title TYPE string VALUE 'Table View'.
     DATA client TYPE REF TO z2ui5_if_client.
     METHODS on_event.
     METHODS display.
@@ -56,7 +58,7 @@ CLASS z2ui5_cl_pop_table IMPLEMENTATION.
     popup = z2ui5_cl_xml_view=>factory_popup( )->dialog(
               afterclose = client->_event( 'BUTTON_CONFIRM' )
               stretch    = abap_true
-              title      = 'Table View'
+              title      = title
 *              icon = 'sap-icon://edit'
           )->content( ).
 
@@ -99,6 +101,9 @@ CLASS z2ui5_cl_pop_table IMPLEMENTATION.
     FIELD-SYMBOLS <tab> TYPE any.
 
     CREATE OBJECT r_result.
+    IF i_title IS NOT INITIAL.
+      r_result->title = i_title.
+    ENDIF.
     CREATE DATA r_result->mr_tab LIKE i_tab.
     CREATE DATA r_result->ms_result-row LIKE LINE OF i_tab.
 
