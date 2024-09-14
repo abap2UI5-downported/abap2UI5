@@ -6,7 +6,6 @@ CLASS z2ui5_cl_core_http_get DEFINITION
   PUBLIC SECTION.
 
     DATA ms_request TYPE z2ui5_if_types=>ty_s_http_request_get.
-    DATA mv_response TYPE string.
 
     METHODS constructor
       IMPORTING
@@ -17,6 +16,8 @@ CLASS z2ui5_cl_core_http_get DEFINITION
         VALUE(result) TYPE string.
 
     METHODS get_js
+*      IMPORTING
+*        cs_config     TYPE z2ui5_if_types=>ty_s_http_request_get
       RETURNING
         VALUE(result) TYPE string.
 
@@ -28,18 +29,24 @@ CLASS z2ui5_cl_core_http_get DEFINITION
 
     METHODS get_default_config
       RETURNING
-        VALUE(result) TYPE z2ui5_if_types=>ty_s_http_request_get-t_config.
+        VALUE(result) TYPE z2ui5_if_types=>ty_s_http_request_get.
 
-    METHODS get_default_security_policy
+    METHODS main_get_config
       RETURNING
-        VALUE(result) TYPE string.
+        VALUE(result) TYPE z2ui5_if_types=>ty_s_http_request_get.
+
+    METHODS main_get_index_html
+      IMPORTING
+                cs_config     TYPE z2ui5_if_types=>ty_s_http_request_get
+      RETURNING VALUE(result) TYPE string.
+
 
   PRIVATE SECTION.
 ENDCLASS.
 
 
 
-CLASS Z2UI5_CL_CORE_HTTP_GET IMPLEMENTATION.
+CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -51,41 +58,233 @@ CLASS Z2UI5_CL_CORE_HTTP_GET IMPLEMENTATION.
 
   METHOD get_default_config.
 
+    DATA lv_csp TYPE string.
+    DATA lv_style TYPE string.
     DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp2 LIKE LINE OF temp1.
-    CLEAR temp1.
-    
-    temp2-n = `src`.
-    temp2-v = `https://sdk.openui5.org/resources/sap-ui-cachebuster/sap-ui-core.js`.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `data-sap-ui-theme`.
-    temp2-v = `sap_horizon`.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `data-sap-ui-async`.
-    temp2-v = `true`.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `data-sap-ui-bindingSyntax`.
-    temp2-v = `complex`.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `data-sap-ui-frameOptions`.
-    temp2-v = `trusted`.
-    INSERT temp2 INTO TABLE temp1.
-    temp2-n = `data-sap-ui-compatVersion`.
-    temp2-v = `edge`.
-    INSERT temp2 INTO TABLE temp1.
-    result = temp1.
-
-  ENDMETHOD.
-
-
-  METHOD get_default_security_policy.
-
-    result  = `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: ` &&
+    DATA temp3 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp4 LIKE LINE OF temp3.
+    lv_csp  = `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: ` &&
    `ui5.sap.com *.ui5.sap.com sapui5.hana.ondemand.com *.sapui5.hana.ondemand.com openui5.hana.ondemand.com *.openui5.hana.ondemand.com ` &&
    `sdk.openui5.org *.sdk.openui5.org cdn.jsdelivr.net *.cdn.jsdelivr.net cdnjs.cloudflare.com *.cdnjs.cloudflare.com schemas *.schemas"/>`.
 
+    
+    lv_style =  `        html, body, body > div, #container, #container-uiarea {` && |\n| &&
+               `            height: 100%;` && |\n| &&
+               `        }` && |\n| &&
+               `        .dbg-ltr {` && |\n| &&
+               `            direction: ltr !important;` && |\n| &&
+               `        }`.
+
+    CLEAR result.
+    
+    CLEAR temp1.
+    
+    temp2-n = `TITLE`.
+    temp2-v = `abap2UI5`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-n = `STYLE`.
+    temp2-v = lv_style.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-n = `SET_SIZE_LIMIT`.
+    temp2-v = `100`.
+    INSERT temp2 INTO TABLE temp1.
+    temp2-n = `BODY_CLASS`.
+    temp2-v = `sapUiBody sapUiSizeCompact`.
+    INSERT temp2 INTO TABLE temp1.
+    result-t_param = temp1.
+    
+    CLEAR temp3.
+    
+    temp4-n = `src`.
+    temp4-v = `https://sdk.openui5.org/resources/sap-ui-cachebuster/sap-ui-core.js`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `data-sap-ui-theme`.
+    temp4-v = `sap_horizon`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `data-sap-ui-async`.
+    temp4-v = `true`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `id`.
+    temp4-v = `sap-ui-bootstrap`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `data-sap-ui-bindingSyntax`.
+    temp4-v = `complex`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `data-sap-ui-frameOptions`.
+    temp4-v = `trusted`.
+    INSERT temp4 INTO TABLE temp3.
+    temp4-n = `data-sap-ui-compatVersion`.
+    temp4-v = `edge`.
+    INSERT temp4 INTO TABLE temp3.
+    result-t_config = temp3.
+    result-content_security_policy = lv_csp.
+
   ENDMETHOD.
 
+
+  METHOD get_js_cc_startup.
+
+    result = ` ` &&
+        z2ui5_cl_cc_timer=>get_js( ) &&
+        z2ui5_cl_cc_focus=>get_js( ) &&
+        z2ui5_cl_cc_title=>get_js( ) &&
+        z2ui5_cl_cc_lp_title=>get_js( ) &&
+        z2ui5_cl_cc_history=>get_js( ) &&
+        z2ui5_cl_cc_scrolling=>get_js( ) &&
+        z2ui5_cl_cc_info=>get_js( ) &&
+        z2ui5_cl_cc_geoloc=>get_js( ) &&
+        z2ui5_cl_cc_file_upl=>get_js( ) &&
+        z2ui5_cl_cc_multiinput=>get_js( ) &&
+        z2ui5_cl_cc_uitable=>get_js( ) &&
+        z2ui5_cl_cc_util=>get_js( ) &&
+        z2ui5_cl_cc_favicon=>get_js( ) &&
+        z2ui5_cl_cc_dirty=>get_js( ) &&
+       `  `.
+
+  ENDMETHOD.
+
+  METHOD main_get_config.
+    DATA temp1 LIKE LINE OF ms_request-t_param.
+    DATA lr_param LIKE REF TO temp1.
+          FIELD-SYMBOLS <temp2> LIKE LINE OF result-t_param.
+          DATA temp3 LIKE sy-tabix.
+    DATA temp4 LIKE LINE OF ms_request-t_config.
+    DATA lr_option LIKE REF TO temp4.
+          FIELD-SYMBOLS <temp5> LIKE LINE OF result-t_config.
+          DATA temp6 LIKE sy-tabix.
+
+    result = get_default_config( ).
+
+    
+    
+    LOOP AT ms_request-t_param REFERENCE INTO lr_param.
+      TRY.
+          
+          
+          temp3 = sy-tabix.
+          READ TABLE result-t_param WITH KEY n = lr_param->n ASSIGNING <temp2>.
+          sy-tabix = temp3.
+          IF sy-subrc <> 0.
+            ASSERT 1 = 0.
+          ENDIF.
+          <temp2>-v = lr_param->v.
+        CATCH cx_root.
+          INSERT lr_param->* INTO TABLE result-t_param.
+      ENDTRY.
+    ENDLOOP.
+
+    
+    
+    LOOP AT ms_request-t_config REFERENCE INTO lr_option.
+      TRY.
+          
+          
+          temp6 = sy-tabix.
+          READ TABLE result-t_config WITH KEY n = lr_option->n ASSIGNING <temp5>.
+          sy-tabix = temp6.
+          IF sy-subrc <> 0.
+            ASSERT 1 = 0.
+          ENDIF.
+          <temp5>-v = lr_option->v.
+        CATCH cx_root.
+          INSERT lr_option->* INTO TABLE result-t_config.
+      ENDTRY.
+    ENDLOOP.
+
+    IF ms_request-content_security_policy IS NOT INITIAL.
+      result-content_security_policy = ms_request-content_security_policy.
+    ENDIF.
+
+    IF ms_request-custom_js IS NOT INITIAL.
+      result-custom_js = ms_request-custom_js.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD main_get_index_html.
+
+    DATA temp7 LIKE LINE OF cs_config-t_param.
+    DATA temp8 LIKE sy-tabix.
+    DATA temp5 LIKE LINE OF cs_config-t_param.
+    DATA temp6 LIKE sy-tabix.
+    DATA temp9 LIKE LINE OF cs_config-t_config.
+    DATA lr_config LIKE REF TO temp9.
+    DATA lv_add_js TYPE string.
+    DATA temp10 LIKE LINE OF cs_config-t_param.
+    DATA temp11 LIKE sy-tabix.
+    temp8 = sy-tabix.
+    READ TABLE cs_config-t_param WITH KEY n = `TITLE` INTO temp7.
+    sy-tabix = temp8.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    
+    
+    temp6 = sy-tabix.
+    READ TABLE cs_config-t_param WITH KEY n = `STYLE` INTO temp5.
+    sy-tabix = temp6.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    result = `<!DOCTYPE html>` && |\n| &&
+               `<html lang="en">` && |\n| &&
+               `<head>` && |\n| &&
+                  cs_config-content_security_policy && |\n| &&
+               `    <meta charset="UTF-8">` && |\n| &&
+               `    <meta name="viewport" content="width=device-width, initial-scale=1.0">` && |\n| &&
+               `    <meta http-equiv="X-UA-Compatible" content="IE=edge">` && |\n| &&
+                | <title>{ temp7-v }</title> \n| &&
+                | <style>{ temp5-v }</style> \n| &&
+               `    <script id="sap-ui-bootstrap"`.
+
+    
+    
+    LOOP AT cs_config-t_config REFERENCE INTO lr_config.
+      result = result && | { lr_config->n }='{ lr_config->v }'|.
+    ENDLOOP.
+
+    result = result &&
+        ` ></script></head>` && |\n| &&
+        `<body class="sapUiBody sapUiSizeCompact" >` && |\n| &&
+        `    <div id="content"  data-handle-validation="true" ></div>` && |\n| &&
+        `<abc/>` && |\n|.
+
+    
+    lv_add_js = get_js_cc_startup( ) && cs_config-custom_js.
+    
+    
+    temp11 = sy-tabix.
+    READ TABLE cs_config-t_param WITH KEY n = `SET_SIZE_LIMIT` INTO temp10.
+    sy-tabix = temp11.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    result = result  &&
+     | <script> sap.z2ui5 = sap.z2ui5 \|\| \{\} ; if ( typeof z2ui5 == "undefined" ) \{ var z2ui5 = \{\}; \}; \n| &&
+     |         {  get_js(  ) }     \n| &&
+     |         { lv_add_js  }     \n| &&
+     |         { z2ui5_cl_cc_debug_tool=>get_js( )  }     \n| &&
+     |           sap.z2ui5.JSON_MODEL_LIMIT = { temp10-v };| &&
+*     |           sap.z2ui5.NAME_TWO_WAY_MODEL = "{ z2ui5_if_core_types=>cs_ui5-two_way_model }" ;| &&
+     |         { z2ui5_cl_cc_debug_tool=>get_js( )  }     \n| &&
+     |  </script><abc/></body></html> |.
+
+  ENDMETHOD.
+
+
+  METHOD main.
+
+    DATA ls_config TYPE z2ui5_if_types=>ty_s_http_request_get.
+    DATA temp12 TYPE REF TO z2ui5_cl_core_draft_srv.
+    ls_config = main_get_config( ).
+    result = main_get_index_html( ls_config ).
+    
+    CREATE OBJECT temp12 TYPE z2ui5_cl_core_draft_srv.
+    temp12->cleanup( ).
+
+  ENDMETHOD.
 
   METHOD get_js.
 
@@ -582,112 +781,4 @@ CLASS Z2UI5_CL_CORE_HTTP_GET IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD get_js_cc_startup.
-
-    result = ` ` &&
-        z2ui5_cl_cc_timer=>get_js( ) &&
-        z2ui5_cl_cc_focus=>get_js( ) &&
-        z2ui5_cl_cc_title=>get_js( ) &&
-        z2ui5_cl_cc_lp_title=>get_js( ) &&
-        z2ui5_cl_cc_history=>get_js( ) &&
-        z2ui5_cl_cc_scrolling=>get_js( ) &&
-        z2ui5_cl_cc_info=>get_js( ) &&
-        z2ui5_cl_cc_geoloc=>get_js( ) &&
-        z2ui5_cl_cc_file_upl=>get_js( ) &&
-        z2ui5_cl_cc_multiinput=>get_js( ) &&
-        z2ui5_cl_cc_uitable=>get_js( ) &&
-        z2ui5_cl_cc_util=>get_js( ) &&
-        z2ui5_cl_cc_favicon=>get_js( ) &&
-        z2ui5_cl_cc_dirty=>get_js( ) &&
-       `  `.
-
-  ENDMETHOD.
-
-
-  METHOD main.
-
-    DATA temp3 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA lt_config LIKE temp3.
-    DATA temp4 TYPE string.
-    DATA lv_sec_policy LIKE temp4.
-    DATA temp5 LIKE LINE OF lt_config.
-    DATA lr_config LIKE REF TO temp5.
-    DATA lv_add_js TYPE string.
-    DATA temp6 TYPE z2ui5_if_types=>ty_s_http_request_get-json_model_limit.
-    DATA temp7 TYPE REF TO z2ui5_cl_core_draft_srv.
-    IF ms_request-t_config IS INITIAL.
-      temp3 = get_default_config( ).
-    ELSE.
-      temp3 = ms_request-t_config.
-    ENDIF.
-    
-    lt_config = temp3.
-
-    
-    IF ms_request-content_security_policy IS INITIAL.
-      temp4 = get_default_security_policy( ).
-    ELSE.
-      temp4 = ms_request-content_security_policy.
-    ENDIF.
-    
-    lv_sec_policy = temp4.
-
-    mv_response = `<!DOCTYPE html>` && |\n| &&
-               `<html lang="en">` && |\n| &&
-               `<head>` && |\n| &&
-                  lv_sec_policy && |\n| &&
-               `    <meta charset="UTF-8">` && |\n| &&
-               `    <meta name="viewport" content="width=device-width, initial-scale=1.0">` && |\n| &&
-               `    <meta http-equiv="X-UA-Compatible" content="IE=edge">` && |\n| &&
-               `    <title>abap2UI5</title>` && |\n| &&
-               `    <style>` && |\n| &&
-               `        html, body, body > div, #container, #container-uiarea {` && |\n| &&
-               `            height: 100%;` && |\n| &&
-               `        }` && |\n| &&
-               `        .dbg-ltr {` && |\n| &&
-               `            direction: ltr !important;` && |\n| &&
-               `        }` && |\n| &&
-               `    </style> ` &&
-               `    <script id="sap-ui-bootstrap"`.
-
-    
-    
-    LOOP AT lt_config REFERENCE INTO lr_config.
-      mv_response = mv_response && | { lr_config->n }='{ lr_config->v }'|.
-    ENDLOOP.
-
-    mv_response = mv_response &&
-        ` ></script></head>` && |\n| &&
-        `<body class="sapUiBody sapUiSizeCompact" >` && |\n| &&
-        `    <div id="content"  data-handle-validation="true" ></div>` && |\n| &&
-        `<abc/>` && |\n|.
-
-    
-    lv_add_js = get_js_cc_startup( ) && ms_request-custom_js.
-
-    
-    IF ms_request-json_model_limit IS NOT INITIAL.
-      temp6 = ms_request-json_model_limit.
-    ELSE.
-      temp6 = 100.
-    ENDIF.
-    mv_response = mv_response  &&
-               `<script> sap.z2ui5 = sap.z2ui5 || {} ;  if ( typeof z2ui5 == "undefined" ) { var z2ui5 = {}; };` && |\n| &&
-               get_js( ) && |\n| &&
-               lv_add_js && |\n| &&
-    `          sap.z2ui5.JSON_MODEL_LIMIT = ` && temp6 && `;`.
-
-    mv_response = mv_response &&
-       z2ui5_cl_cc_debug_tool=>get_js( ).
-
-    mv_response = mv_response && |\n| &&
-                 `</script>` && |\n| &&
-                 `<abc/></body></html>`.
-
-    
-    CREATE OBJECT temp7 TYPE z2ui5_cl_core_draft_srv.
-    temp7->cleanup( ).
-    result = mv_response.
-
-  ENDMETHOD.
 ENDCLASS.
