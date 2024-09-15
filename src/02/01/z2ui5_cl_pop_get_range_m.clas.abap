@@ -13,7 +13,7 @@ CLASS z2ui5_cl_pop_get_range_m DEFINITION
 
     TYPES:
       BEGIN OF ty_s_result,
-        t_sql           TYPE z2ui5_cl_util=>ty_t_filter_multi,
+        t_filter        TYPE z2ui5_cl_util=>ty_t_filter_multi,
         check_confirmed TYPE abap_bool,
       END OF ty_s_result.
 
@@ -41,7 +41,7 @@ CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
   METHOD factory.
 
     CREATE OBJECT r_result.
-    r_result->ms_result-t_sql = val.
+    r_result->ms_result-t_filter = val.
 
   ENDMETHOD.
 
@@ -74,7 +74,7 @@ CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
 
     
     item = vbox->list( nodata          = `no conditions defined`
-                             items           = client->_bind( ms_result-t_sql )
+                             items           = client->_bind( ms_result-t_filter )
                              selectionchange = client->_event( 'SELCHANGE' )
                 )->custom_list_item( ).
 
@@ -136,9 +136,9 @@ CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
         DATA temp8 LIKE LINE OF lt_event.
         DATA temp9 LIKE sy-tabix.
         DATA ls_sql TYPE z2ui5_cl_util=>ty_s_filter_multi.
-        DATA temp3 LIKE LINE OF ms_result-t_sql.
+        DATA temp3 LIKE LINE OF ms_result-t_filter.
         DATA temp4 LIKE sy-tabix.
-        DATA temp10 LIKE LINE OF ms_result-t_sql.
+        DATA temp10 LIKE LINE OF ms_result-t_filter.
         DATA lr_sql LIKE REF TO temp10.
     me->client = client.
 
@@ -156,7 +156,7 @@ CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
       lo_popup = temp7.
       IF lo_popup->result( )-check_confirmed = abap_true.
         
-        READ TABLE ms_result-t_sql WITH KEY name = mv_popup_name ASSIGNING <tab>.
+        READ TABLE ms_result-t_filter WITH KEY name = mv_popup_name ASSIGNING <tab>.
         <tab>-t_range = lo_popup->result( )-t_range.
         <tab>-t_token = z2ui5_cl_util=>filter_get_token_t_by_range_t( <tab>-t_range ).
       ENDIF.
@@ -177,7 +177,7 @@ CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
         IF sy-subrc <> 0.
           ASSERT 1 = 0.
         ENDIF.
-        READ TABLE ms_result-t_sql WITH KEY name = temp1 ASSIGNING <tab>.
+        READ TABLE ms_result-t_filter WITH KEY name = temp1 ASSIGNING <tab>.
         CLEAR <tab>-t_token.
         CLEAR <tab>-t_range.
         client->popup_model_update( ).
@@ -197,7 +197,7 @@ CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
         
         
         temp4 = sy-tabix.
-        READ TABLE ms_result-t_sql WITH KEY name = mv_popup_name INTO temp3.
+        READ TABLE ms_result-t_filter WITH KEY name = mv_popup_name INTO temp3.
         sy-tabix = temp4.
         IF sy-subrc <> 0.
           ASSERT 1 = 0.
@@ -217,7 +217,7 @@ CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
       WHEN `POPUP_DELETE_ALL`.
         
         
-        LOOP AT ms_result-t_sql REFERENCE INTO lr_sql.
+        LOOP AT ms_result-t_filter REFERENCE INTO lr_sql.
           CLEAR lr_sql->t_range.
           CLEAR lr_sql->t_token.
         ENDLOOP.
