@@ -248,6 +248,7 @@ CLASS ltcl_unit_test DEFINITION FINAL FOR TESTING
     METHODS rtti_check_ref_data FOR TESTING RAISING cx_static_check.
     METHODS test_check_bound_a_not_inital FOR TESTING RAISING cx_static_check.
     METHODS test_sql_get_by_string FOR TESTING RAISING cx_static_check.
+    METHODS test_get_token_t_by_r_t FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -1162,6 +1163,47 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD test_get_token_t_by_r_t.
+
+    DATA temp92 TYPE z2ui5_cl_util=>ty_t_range.
+    DATA temp93 LIKE LINE OF temp92.
+    DATA lt_range LIKE temp92.
+    DATA lt_result TYPE z2ui5_cl_util=>ty_t_token.
+    DATA temp94 TYPE z2ui5_cl_util=>ty_t_token.
+    DATA temp95 LIKE LINE OF temp94.
+    DATA lt_exp LIKE temp94.
+    CLEAR temp92.
+    
+    temp93-sign = 'I'.
+    temp93-option = 'EQ'.
+    temp93-low = `table`.
+    temp93-high = ``.
+    INSERT temp93 INTO TABLE temp92.
+    
+    lt_range = temp92.
+
+    
+    lt_result = z2ui5_cl_util=>filter_get_token_t_by_range_t( lt_range ).
+
+    
+    CLEAR temp94.
+    
+    temp95-key = `=table`.
+    temp95-text = `=table`.
+    temp95-visible = 'X'.
+    temp95-selkz = ''.
+    temp95-editable = 'X'.
+    INSERT temp95 INTO TABLE temp94.
+    
+    lt_exp = temp94.
+
+    cl_abap_unit_assert=>assert_equals(
+        act                  = lt_result
+        exp                  = lt_exp
+    ).
+
+  ENDMETHOD.
+
   METHOD test_rtti_get_t_attri_by_incl.
 TYPES BEGIN OF ty_struc_incl.
 TYPES incl_title TYPE string.
@@ -1175,7 +1217,7 @@ TYPES value2 TYPE string.
 TYPES END OF ty_struc.
 DATA BEGIN OF ms_struc2.INCLUDE TYPE ty_struc.INCLUDE TYPE ty_struc_incl.DATA END OF ms_struc2.
     DATA lo_datadescr TYPE REF TO cl_abap_typedescr.
-    DATA temp92 TYPE REF TO cl_abap_datadescr.
+    DATA temp96 TYPE REF TO cl_abap_datadescr.
     DATA lt_attri TYPE abap_component_tab.
 
     IF sy-sysid = 'ABC'.
@@ -1191,9 +1233,9 @@ DATA BEGIN OF ms_struc2.INCLUDE TYPE ty_struc.INCLUDE TYPE ty_struc_incl.DATA EN
     
     lo_datadescr = cl_abap_typedescr=>describe_by_data( ms_struc2 ).
     
-    temp92 ?= lo_datadescr.
+    temp96 ?= lo_datadescr.
     
-    lt_attri = z2ui5_cl_util=>rtti_get_t_attri_by_include( temp92 ).
+    lt_attri = z2ui5_cl_util=>rtti_get_t_attri_by_include( temp96 ).
 
     IF lines( lt_attri ) <> 6.
       cl_abap_unit_assert=>fail( ).
