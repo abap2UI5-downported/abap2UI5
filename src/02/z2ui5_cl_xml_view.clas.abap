@@ -17456,7 +17456,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp571-n = `liveChange`.
     temp571-v = livechange.
     INSERT temp571 INTO TABLE temp570.
-    _generic( ns             = `unified`
+    _generic( ns             = `u`
                       name   = `ColorPicker`
                       t_prop = temp570 ).
 
