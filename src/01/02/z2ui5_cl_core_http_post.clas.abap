@@ -91,6 +91,7 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
   METHOD main_end.
       DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
     DATA lo_json_mapper TYPE REF TO z2ui5_cl_core_json_srv.
+    DATA temp1 TYPE REF TO z2ui5_if_app.
 
     CLEAR ms_response.
     ms_response-s_front-params = mo_action->ms_next-s_set.
@@ -122,15 +123,20 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
     mv_response = lo_json_mapper->response_abap_to_json( ms_response ).
 
     CLEAR mo_action->ms_next.
-    mo_action->mo_app->db_save( ).
+
+    
+    temp1 ?= mo_action->mo_app->mo_app.
+    IF temp1->check_sticky = abap_false.
+      mo_action->mo_app->db_save( ).
+    ENDIF.
 
   ENDMETHOD.
 
 
   METHOD main_process.
         DATA li_client TYPE REF TO z2ui5_cl_core_client.
-        DATA temp1 TYPE REF TO z2ui5_if_app.
-        DATA li_app LIKE temp1.
+        DATA temp2 TYPE REF TO z2ui5_if_app.
+        DATA li_app LIKE temp2.
         DATA x TYPE REF TO cx_root.
     TRY.
         
@@ -142,13 +148,17 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
             CREATE OBJECT li_client TYPE z2ui5_cl_core_client EXPORTING ACTION = mo_action.
         ENDTRY.
         
-        temp1 ?= mo_action->mo_app->mo_app.
+        temp2 ?= mo_action->mo_app->mo_app.
         
-        li_app = temp1.
+        li_app = temp2.
 
-        ROLLBACK WORK.
+        IF li_app->check_sticky = abap_false.
+          ROLLBACK WORK.
+        ENDIF.
         li_app->main( li_client ).
-        ROLLBACK WORK.
+        IF li_app->check_sticky = abap_false.
+          ROLLBACK WORK.
+        ENDIF.
 
         IF mo_action->ms_next-o_app_leave IS NOT INITIAL.
           mo_action = mo_action->factory_stack_leave( ).

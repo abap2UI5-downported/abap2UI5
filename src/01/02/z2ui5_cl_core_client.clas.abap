@@ -371,11 +371,19 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
 
   METHOD z2ui5_if_client~set_session_stateful.
+      DATA temp8 TYPE REF TO z2ui5_if_app.
+      DATA temp9 TYPE REF TO z2ui5_if_app.
 
     IF stateful = abap_true.
       mo_action->ms_next-s_set-handler_attrs-stateful-active = 1.
+      
+      temp8 ?= mo_action->mo_app->mo_app.
+      temp8->check_sticky = abap_true.
     ELSE.
       mo_action->ms_next-s_set-handler_attrs-stateful-active = 0.
+      
+      temp9 ?= mo_action->mo_app->mo_app.
+      temp9->check_sticky = abap_false.
     ENDIF.
     mo_action->ms_next-s_set-handler_attrs-stateful-switched = abap_true.
 

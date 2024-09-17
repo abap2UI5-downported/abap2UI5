@@ -4,6 +4,8 @@ CLASS z2ui5_cl_http_handler DEFINITION
 
   PUBLIC SECTION.
 
+    CLASS-DATA so_sticky_handler TYPE REF TO z2ui5_cl_core_http_post.
+
     CLASS-METHODS main
       IMPORTING
         body          TYPE string
@@ -46,20 +48,26 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
 
 
   METHOD http_post.
-    DATA lo_post TYPE REF TO z2ui5_cl_core_http_post.
+      DATA lo_post TYPE REF TO z2ui5_cl_core_http_post.
     CLEAR attributes.
 
-    
-    CREATE OBJECT lo_post TYPE z2ui5_cl_core_http_post EXPORTING VAL = val.
+    IF so_sticky_handler IS NOT BOUND.
+      
+      CREATE OBJECT lo_post TYPE z2ui5_cl_core_http_post EXPORTING VAL = val.
+    ELSE.
+      so_sticky_handler = lo_post.
+    ENDIF.
     result = lo_post->main(
       IMPORTING
         attributes = attributes ).
+
+    so_sticky_handler = lo_post.
 
   ENDMETHOD.
 
   METHOD main.
       DATA lo_get TYPE REF TO z2ui5_cl_core_http_get.
-      DATA lo_post TYPE REF TO z2ui5_cl_core_http_post.
+        DATA lo_post TYPE REF TO z2ui5_cl_core_http_post.
     CLEAR attributes.
 
     IF body IS INITIAL.
@@ -67,12 +75,20 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
       CREATE OBJECT lo_get TYPE z2ui5_cl_core_http_get EXPORTING VAL = config.
       result = lo_get->main( ).
     ELSE.
-      
-      CREATE OBJECT lo_post TYPE z2ui5_cl_core_http_post EXPORTING VAL = body.
+      IF so_sticky_handler IS NOT BOUND.
+        
+        CREATE OBJECT lo_post TYPE z2ui5_cl_core_http_post EXPORTING VAL = body.
+      ELSE.
+        lo_post = so_sticky_handler.
+        lo_post->mv_request_json = body.
+      ENDIF.
+*      DATA(lo_post) = NEW z2ui5_cl_core_http_post( body ).
       result = lo_post->main(
         IMPORTING
           attributes = attributes ).
     ENDIF.
+
+    so_sticky_handler = lo_post.
 
   ENDMETHOD.
 

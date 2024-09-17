@@ -15,8 +15,8 @@ CLASS ltcl_test_handler_post IMPLEMENTATION.
   METHOD load_startup_app.
     DATA lv_payload TYPE string.
     DATA lo_post TYPE REF TO z2ui5_cl_core_http_post.
-    DATA temp2 TYPE REF TO z2ui5_cl_core_app_startup.
-    DATA lo_startup LIKE temp2.
+    DATA temp3 TYPE REF TO z2ui5_cl_core_app_startup.
+    DATA lo_startup LIKE temp3.
 
     IF sy-sysid = 'ABC'.
       RETURN.
@@ -39,9 +39,9 @@ CLASS ltcl_test_handler_post IMPLEMENTATION.
       exp = `PATHNAME` ).
 
     
-    temp2 ?= lo_post->mo_action->mo_app->mo_app.
+    temp3 ?= lo_post->mo_action->mo_app->mo_app.
     
-    lo_startup = temp2.
+    lo_startup = temp3.
 
   ENDMETHOD.
 
