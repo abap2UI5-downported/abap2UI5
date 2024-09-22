@@ -173,15 +173,15 @@ CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
 
 
     DATA lv_add_js TYPE string.
-    DATA temp7 TYPE REF TO lcl_ui5_app.
-    DATA temp5 TYPE REF TO lcl_ui5_app.
-    DATA temp1 TYPE REF TO lcl_ui5_app.
-    DATA temp2 TYPE REF TO lcl_ui5_app.
-    DATA temp3 TYPE REF TO lcl_ui5_app.
-    DATA temp4 TYPE REF TO lcl_ui5_app.
-    DATA temp6 TYPE REF TO lcl_ui5_app.
-    DATA temp9 TYPE REF TO lcl_ui5_app.
-    DATA temp10 TYPE REF TO lcl_ui5_app.
+    DATA temp7 TYPE REF TO z2ui5_cl_core_ui5_app.
+    DATA temp5 TYPE REF TO z2ui5_cl_core_ui5_app.
+    DATA temp1 TYPE REF TO z2ui5_cl_core_ui5_app.
+    DATA temp2 TYPE REF TO z2ui5_cl_core_ui5_app.
+    DATA temp3 TYPE REF TO z2ui5_cl_core_ui5_app.
+    DATA temp4 TYPE REF TO z2ui5_cl_core_ui5_app.
+    DATA temp6 TYPE REF TO z2ui5_cl_core_ui5_app.
+    DATA temp9 TYPE REF TO z2ui5_cl_core_ui5_app.
+    DATA temp10 TYPE REF TO z2ui5_cl_core_ui5_app.
     DATA temp11 LIKE LINE OF cs_config-t_param.
     DATA temp12 LIKE sy-tabix.
     DATA temp13 LIKE LINE OF cs_config-t_param.
@@ -191,23 +191,23 @@ CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
     lv_add_js = get_js_cc_startup( ) && cs_config-custom_js.
 
     
-    CREATE OBJECT temp7 TYPE lcl_ui5_app.
+    CREATE OBJECT temp7 TYPE z2ui5_cl_core_ui5_app.
     
-    CREATE OBJECT temp5 TYPE lcl_ui5_app.
+    CREATE OBJECT temp5 TYPE z2ui5_cl_core_ui5_app.
     
-    CREATE OBJECT temp1 TYPE lcl_ui5_app.
+    CREATE OBJECT temp1 TYPE z2ui5_cl_core_ui5_app.
     
-    CREATE OBJECT temp2 TYPE lcl_ui5_app.
+    CREATE OBJECT temp2 TYPE z2ui5_cl_core_ui5_app.
     
-    CREATE OBJECT temp3 TYPE lcl_ui5_app.
+    CREATE OBJECT temp3 TYPE z2ui5_cl_core_ui5_app.
     
-    CREATE OBJECT temp4 TYPE lcl_ui5_app.
+    CREATE OBJECT temp4 TYPE z2ui5_cl_core_ui5_app.
     
-    CREATE OBJECT temp6 TYPE lcl_ui5_app.
+    CREATE OBJECT temp6 TYPE z2ui5_cl_core_ui5_app.
     
-    CREATE OBJECT temp9 TYPE lcl_ui5_app.
+    CREATE OBJECT temp9 TYPE z2ui5_cl_core_ui5_app.
     
-    CREATE OBJECT temp10 TYPE lcl_ui5_app.
+    CREATE OBJECT temp10 TYPE z2ui5_cl_core_ui5_app.
     
     
     temp12 = sy-tabix.

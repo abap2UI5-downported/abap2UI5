@@ -72,17 +72,22 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD z2ui5_if_client~get_event_args.
+  METHOD z2ui5_if_client~get_event_arg.
+        DATA temp3 LIKE LINE OF mo_action->ms_actual-t_event_arg.
+        DATA temp4 LIKE sy-tabix.
 
-    DATA temp3 LIKE LINE OF mo_action->ms_actual-t_event_arg.
-    DATA temp4 LIKE sy-tabix.
-    temp4 = sy-tabix.
-    READ TABLE mo_action->ms_actual-t_event_arg INDEX v INTO temp3.
-    sy-tabix = temp4.
-    IF sy-subrc <> 0.
-      ASSERT 1 = 0.
-    ENDIF.
-    result = temp3.
+    TRY.
+        
+        
+        temp4 = sy-tabix.
+        READ TABLE mo_action->ms_actual-t_event_arg INDEX v INTO temp3.
+        sy-tabix = temp4.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        result = temp3.
+      CATCH cx_root.
+    ENDTRY.
 
   ENDMETHOD.
 
