@@ -141,6 +141,13 @@ CLASS z2ui5_cl_util DEFINITION
       RETURNING
         VALUE(result) TYPE ty_t_filter_multi.
 
+    CLASS-METHODS filter_get_sql_where
+      IMPORTING
+        val           TYPE  z2ui5_cl_util=>ty_t_filter_multi
+      RETURNING
+        VALUE(result) TYPE string.
+
+
     CLASS-METHODS filter_get_sql_by_sql_string
       IMPORTING
         val           TYPE clike
@@ -1899,6 +1906,11 @@ DATA lt_param TYPE temp9.
     DATA lr_comp LIKE REF TO temp54.
       DATA lt_attri TYPE abap_component_tab.
 
+    IF table_name IS INITIAL.
+      RAISE EXCEPTION TYPE z2ui5_cx_util_error
+        EXPORTING
+          val = 'TABLE_NAME_INITIAL_ERROR'.
+    ENDIF.
     TRY.
         
         temp51 ?= cl_abap_structdescr=>describe_by_name( table_name ).
@@ -1967,6 +1979,26 @@ DATA lt_param TYPE temp9.
   METHOD filter_get_data_by_multi.
 
 
+
+  ENDMETHOD.
+
+  METHOD filter_get_sql_where.
+
+    DATA ls_filter LIKE LINE OF val.
+      DATA lo_range TYPE REF TO lcl_range_to_sql.
+      DATA temp55 LIKE REF TO ls_filter-t_range.
+    LOOP AT val INTO ls_filter.
+
+      
+
+      
+      GET REFERENCE OF ls_filter-t_range INTO temp55.
+CREATE OBJECT lo_range
+        EXPORTING
+          iv_fieldname = ls_filter-name
+          ir_range     = temp55.
+
+    ENDLOOP.
 
   ENDMETHOD.
 

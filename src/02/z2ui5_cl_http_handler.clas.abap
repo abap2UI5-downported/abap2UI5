@@ -68,6 +68,8 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
   METHOD main.
       DATA lo_get TYPE REF TO z2ui5_cl_core_http_get.
         DATA lo_post TYPE REF TO z2ui5_cl_core_http_post.
+          DATA temp1 TYPE REF TO z2ui5_if_app.
+          DATA li_app LIKE temp1.
     CLEAR attributes.
 
     IF body IS INITIAL.
@@ -88,7 +90,21 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
           attributes = attributes ).
     ENDIF.
 
-    so_sticky_handler = lo_post.
+    TRY.
+        IF lo_post IS BOUND.
+          
+          temp1 ?= lo_post->mo_action->mo_app->mo_app.
+          
+          li_app = temp1.
+          IF li_app->check_sticky = abap_true.
+            so_sticky_handler = lo_post.
+          ELSE.
+            CLEAR so_sticky_handler.
+          ENDIF.
+
+        ENDIF.
+      CATCH cx_root.
+    ENDTRY.
 
   ENDMETHOD.
 

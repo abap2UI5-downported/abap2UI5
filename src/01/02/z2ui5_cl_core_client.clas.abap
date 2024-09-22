@@ -72,22 +72,35 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD z2ui5_if_client~get_event_args.
+
+    DATA temp3 LIKE LINE OF mo_action->ms_actual-t_event_arg.
+    DATA temp4 LIKE sy-tabix.
+    temp4 = sy-tabix.
+    READ TABLE mo_action->ms_actual-t_event_arg INDEX v INTO temp3.
+    sy-tabix = temp4.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    result = temp3.
+
+  ENDMETHOD.
 
   METHOD z2ui5_if_client~get_app.
       DATA lo_app TYPE REF TO z2ui5_cl_core_app.
-      DATA temp3 TYPE REF TO z2ui5_if_app.
-      DATA temp4 TYPE REF TO z2ui5_if_app.
+      DATA temp5 TYPE REF TO z2ui5_if_app.
+      DATA temp6 TYPE REF TO z2ui5_if_app.
 
     IF id IS NOT INITIAL.
       
       lo_app = z2ui5_cl_core_app=>db_load( id ).
       
-      temp3 ?= lo_app->mo_app.
-      result = temp3.
+      temp5 ?= lo_app->mo_app.
+      result = temp5.
     ELSE.
       
-      temp4 ?= mo_action->mo_app->mo_app.
-      result = temp4.
+      temp6 ?= mo_action->mo_app->mo_app.
+      result = temp6.
     ENDIF.
 
   ENDMETHOD.
@@ -181,7 +194,6 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     mo_action->ms_next-s_set-s_view_nest2-id = id.
     mo_action->ms_next-s_set-s_view_nest2-method_destroy = method_destroy.
     mo_action->ms_next-s_set-s_view_nest2-method_insert = method_insert.
-    mo_action->ms_next-s_set-s_view_nest2-s_config = s_config.
 
   ENDMETHOD.
 
@@ -206,7 +218,6 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     mo_action->ms_next-s_set-s_view_nest-id = id.
     mo_action->ms_next-s_set-s_view_nest-method_destroy = method_destroy.
     mo_action->ms_next-s_set-s_view_nest-method_insert = method_insert.
-    mo_action->ms_next-s_set-s_view_nest-s_config = s_config.
 
   ENDMETHOD.
 
@@ -230,7 +241,6 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     mo_action->ms_next-s_set-s_popover-check_destroy = abap_false.
     mo_action->ms_next-s_set-s_popover-xml = xml.
     mo_action->ms_next-s_set-s_popover-open_by_id = by_id.
-    mo_action->ms_next-s_set-s_popover-s_config = s_config.
 
   ENDMETHOD.
 
@@ -254,7 +264,6 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
     mo_action->ms_next-s_set-s_popup-check_destroy = abap_false.
     mo_action->ms_next-s_set-s_popup-xml = val.
-    mo_action->ms_next-s_set-s_popup-s_config = s_config.
 
   ENDMETHOD.
 
@@ -276,7 +285,6 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~view_display.
 
     mo_action->ms_next-s_set-s_view-xml = val.
-    mo_action->ms_next-s_set-s_view-s_config = s_config.
 
   ENDMETHOD.
 
@@ -291,19 +299,19 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_bind.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp5 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp7 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    CLEAR temp5.
-    temp5-path_only = path.
-    temp5-custom_filter = custom_filter.
-    temp5-custom_mapper = custom_mapper.
-    temp5-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
-    temp5-tab_index = tab_index.
+    CLEAR temp7.
+    temp7-path_only = path.
+    temp7-custom_filter = custom_filter.
+    temp7-custom_mapper = custom_mapper.
+    temp7-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
+    temp7-tab_index = tab_index.
     result = lo_bind->main(
       val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
       type   = z2ui5_if_core_types=>cs_bind_type-one_way
-      config = temp5 ).
+      config = temp7 ).
 
   ENDMETHOD.
 
@@ -311,21 +319,21 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_bind_edit.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp6 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp8 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    CLEAR temp6.
-    temp6-path_only = path.
-    temp6-custom_filter = custom_filter.
-    temp6-custom_filter_back = custom_filter_back.
-    temp6-custom_mapper = custom_mapper.
-    temp6-custom_mapper_back = custom_mapper_back.
-    temp6-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
-    temp6-tab_index = tab_index.
+    CLEAR temp8.
+    temp8-path_only = path.
+    temp8-custom_filter = custom_filter.
+    temp8-custom_filter_back = custom_filter_back.
+    temp8-custom_mapper = custom_mapper.
+    temp8-custom_mapper_back = custom_mapper_back.
+    temp8-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
+    temp8-tab_index = tab_index.
     result = lo_bind->main(
       val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
       type   = z2ui5_if_core_types=>cs_bind_type-two_way
-      config = temp6 ).
+      config = temp8 ).
 
   ENDMETHOD.
 
@@ -333,16 +341,16 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_bind_local.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp7 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp9 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    CLEAR temp7.
-    temp7-path_only = path.
-    temp7-custom_mapper = custom_mapper.
-    temp7-custom_filter = custom_filter.
+    CLEAR temp9.
+    temp9-path_only = path.
+    temp9-custom_mapper = custom_mapper.
+    temp9-custom_filter = custom_filter.
     result = lo_bind->main_local(
       val    = val
-      config = temp7 ).
+      config = temp9 ).
 
   ENDMETHOD.
 
@@ -371,19 +379,29 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
 
   METHOD z2ui5_if_client~set_session_stateful.
-      DATA temp8 TYPE REF TO z2ui5_if_app.
-      DATA temp9 TYPE REF TO z2ui5_if_app.
 
+    DATA temp10 TYPE REF TO z2ui5_if_app.
+    DATA lv_check_sticky LIKE temp10->check_sticky.
+      DATA temp11 TYPE REF TO z2ui5_if_app.
+      DATA temp12 TYPE REF TO z2ui5_if_app.
+    temp10 ?= mo_action->mo_app->mo_app.
+    
+    lv_check_sticky = temp10->check_sticky.
+    IF lv_check_sticky = abap_true AND stateful = abap_true.
+      RAISE EXCEPTION TYPE z2ui5_cx_util_error
+        EXPORTING
+          val = `STATEFUL_ALREADY_ACTIVATED_ERROR`.
+    ENDIF.
     IF stateful = abap_true.
       mo_action->ms_next-s_set-handler_attrs-stateful-active = 1.
       
-      temp8 ?= mo_action->mo_app->mo_app.
-      temp8->check_sticky = abap_true.
+      temp11 ?= mo_action->mo_app->mo_app.
+      temp11->check_sticky = abap_true.
     ELSE.
       mo_action->ms_next-s_set-handler_attrs-stateful-active = 0.
       
-      temp9 ?= mo_action->mo_app->mo_app.
-      temp9->check_sticky = abap_false.
+      temp12 ?= mo_action->mo_app->mo_app.
+      temp12->check_sticky = abap_false.
     ENDIF.
     mo_action->ms_next-s_set-handler_attrs-stateful-switched = abap_true.
 

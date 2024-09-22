@@ -69,6 +69,7 @@ CLASS z2ui5_cl_core_app IMPLEMENTATION.
         DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
         DATA x2 TYPE REF TO cx_root.
             DATA lo_dissolver TYPE REF TO z2ui5_cl_core_diss_srv.
+            DATA cx TYPE REF TO cx_root.
 
     TRY.
 
@@ -95,11 +96,12 @@ CLASS z2ui5_cl_core_app IMPLEMENTATION.
 
             result = z2ui5_cl_util=>xml_stringify( me ).
 
-          CATCH cx_root.
+            
+          CATCH cx_root INTO cx.
 
             RAISE EXCEPTION TYPE z2ui5_cx_util_error
               EXPORTING
-                val = `<p>` && x2->get_text( ) && ` or <p> Please check if all generic data references are public attributes of your class`.
+                val =  `<p>` && cx->get_text( ) && `<p>` && x2->get_text( ) && ` or <p> Please check if all generic data references are public attributes of your class`.
 
         ENDTRY.
     ENDTRY.

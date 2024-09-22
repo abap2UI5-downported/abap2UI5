@@ -207,11 +207,11 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
     TYPES fixvalues TYPE STANDARD TABLE OF fixvalue WITH DEFAULT KEY.
     DATA lt_values TYPE fixvalues.
 
-    DATA lv_langu TYPE string.
+    DATA lv_langu TYPE c LENGTH 1.
     DATA temp1 LIKE LINE OF lt_values.
     DATA lr_fix LIKE REF TO temp1.
       DATA temp2 TYPE z2ui5_cl_abap_api=>ty_s_fix_val.
-    lv_langu = ``.
+    lv_langu = ' '.
     lv_langu = langu.
 
     CALL METHOD elemdescr->('GET_DDIC_FIXED_VALUES')
@@ -866,6 +866,12 @@ CLASS z2ui5_cl_abap_api IMPLEMENTATION.
         ASSIGN dfies->* TO <dfies>.
         IF <dfies> IS NOT ASSIGNED.
           RETURN.
+        ENDIF.
+
+        IF tabname IS INITIAL.
+          RAISE EXCEPTION TYPE z2ui5_cx_util_error
+            EXPORTING
+              val = `RTTI_BY_NAME_TAB_INITIAL`.
         ENDIF.
 
         structdescr ?= cl_abap_structdescr=>describe_by_name( tabname ).

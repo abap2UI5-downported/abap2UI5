@@ -538,6 +538,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
     METHODS multi_input
       IMPORTING showclearicon    TYPE clike OPTIONAL
                 showvaluehelp    TYPE clike OPTIONAL
+                name             TYPE clike OPTIONAL
                 suggestionitems  TYPE clike OPTIONAL
                 tokenupdate      TYPE clike OPTIONAL
                 !width           TYPE clike OPTIONAL
@@ -10282,6 +10283,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp281 INTO TABLE temp280.
     temp281-n = `showClearIcon`.
     temp281-v = z2ui5_cl_util=>boolean_abap_2_json( showclearicon ).
+    INSERT temp281 INTO TABLE temp280.
+    temp281-n = `name`.
+    temp281-v = name.
     INSERT temp281 INTO TABLE temp280.
     temp281-n = `showValueHelp`.
     temp281-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluehelp ).
