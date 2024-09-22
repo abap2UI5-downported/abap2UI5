@@ -69,9 +69,6 @@ CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
     temp2-n = `TITLE`.
     temp2-v = `abap2UI5`.
     INSERT temp2 INTO TABLE temp1.
-    temp2-n = `SET_SIZE_LIMIT`.
-    temp2-v = `100`.
-    INSERT temp2 INTO TABLE temp1.
     result-t_param = temp1.
     
     CLEAR temp3.
@@ -105,7 +102,7 @@ CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
         z2ui5_cl_cc_util=>get_js( ) &&
         z2ui5_cl_cc_favicon=>get_js( ) &&
         z2ui5_cl_cc_dirty=>get_js( ) &&
-        z2ui5_cl_cc_debug_tool=>get_js( )  &&
+*        z2ui5_cl_cc_debug_tool=>get_js( )  &&
        `  `.
 
   ENDMETHOD.
@@ -184,8 +181,6 @@ CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
     DATA temp10 TYPE REF TO z2ui5_cl_core_ui5_app.
     DATA temp11 LIKE LINE OF cs_config-t_param.
     DATA temp12 LIKE sy-tabix.
-    DATA temp13 LIKE LINE OF cs_config-t_param.
-    DATA temp14 LIKE sy-tabix.
     DATA temp8 LIKE LINE OF cs_config-t_config.
     DATA lr_config LIKE REF TO temp8.
     lv_add_js = get_js_cc_startup( ) && cs_config-custom_js.
@@ -216,14 +211,6 @@ CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
     IF sy-subrc <> 0.
       ASSERT 1 = 0.
     ENDIF.
-    
-    
-    temp14 = sy-tabix.
-    READ TABLE cs_config-t_param WITH KEY n = 'SET_SIZE_LIMIT' INTO temp13.
-    sy-tabix = temp14.
-    IF sy-subrc <> 0.
-      ASSERT 1 = 0.
-    ENDIF.
     result = `<!DOCTYPE html>` && |\n| &&
                `<html lang="en">` && |\n| &&
                `<head>` && |\n| &&
@@ -239,7 +226,7 @@ CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
              `  function onInitComponent(){` && |\n| &&
              `    sap.ui.require.preload({` && |\n| &&
              `      "z2ui5/manifest.json": '` && temp7->manifest_json( ) && ` ',` && |\n| &&
-             `      "z2ui5/Component.js": function(){` && temp5->component_js( ) && lv_add_js && | sap.z2ui5.JSON_MODEL_LIMIT = { temp13-v };| && ` },` && |\n| &&
+             `      "z2ui5/Component.js": function(){` && temp5->component_js( ) && lv_add_js && ` },` && |\n| &&
              `      "z2ui5/css/style.css": function(){` && temp1->css_style_css( ) && `},` && |\n| &&
              `      "z2ui5/model/models.js": function(){` && temp2->model_models_js( ) && `},` && |\n| &&
              `      "z2ui5/i18n/i18n.properties": '` && temp3->i18n_i18n_properties( ) && `' ,` && |\n| &&
@@ -247,6 +234,8 @@ CLASS z2ui5_cl_core_http_get IMPLEMENTATION.
              `      "z2ui5/controller/App.controller.js": function(){` && temp6->controller_app_js( ) && `},` && |\n| &&
              `      "z2ui5/view/View1.view.xml": '` && temp9->view_view1_xml( )  && `' ,` && |\n| &&
              `      "z2ui5/controller/View1.controller.js": function(){` && temp10->controller_view1_js( ) && `},` && |\n| &&
+             `      "z2ui5/cc/DebugTool.fragment.xml": '` && z2ui5_cl_cc_debug_tool=>get_xml( )  && `' ,` && |\n| &&
+             `      "z2ui5/cc/DebugTool.js": function(){` && z2ui5_cl_cc_debug_tool=>get_js( ) && `},` && |\n| &&
              `    });` && |\n| &&
              `    sap.ui.require(["sap/ui/core/ComponentSupport"], function(ComponentSupport){` && |\n| &&
              `      ComponentSupport.run();` && |\n| &&
