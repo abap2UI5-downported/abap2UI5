@@ -1526,16 +1526,24 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS step_input
-      IMPORTING !id           TYPE clike OPTIONAL
-                !value        TYPE clike OPTIONAL
-                !min          TYPE clike OPTIONAL
-                !max          TYPE clike OPTIONAL
-                !step         TYPE clike OPTIONAL
-                !width        TYPE clike OPTIONAL
-                valuestate    TYPE clike OPTIONAL
-                !enabled      TYPE clike OPTIONAL
-                !description  TYPE clike OPTIONAL
-      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+      IMPORTING !id                   TYPE clike OPTIONAL
+                !value                TYPE clike OPTIONAL
+                !min                  TYPE clike OPTIONAL
+                !max                  TYPE clike OPTIONAL
+                !step                 TYPE clike OPTIONAL
+                !width                TYPE clike OPTIONAL
+                valuestate            TYPE clike OPTIONAL
+                !enabled              TYPE clike OPTIONAL
+                !description          TYPE clike OPTIONAL
+                displayvalueprecision TYPE clike OPTIONAL
+                largerstep            TYPE clike OPTIONAL
+                stepmode              TYPE clike OPTIONAL
+                editable              TYPE clike OPTIONAL
+                fieldwidth            TYPE clike OPTIONAL
+                textalign             TYPE clike OPTIONAL
+                validationmode        TYPE clike OPTIONAL
+                !change               TYPE clike OPTIONAL
+      RETURNING VALUE(result)         TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS progress_indicator
       IMPORTING !class        TYPE clike OPTIONAL
@@ -14300,6 +14308,30 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp444 INTO TABLE temp443.
     temp444-n = `description`.
     temp444-v = description.
+    INSERT temp444 INTO TABLE temp443.
+    temp444-n = `displayValuePrecision`.
+    temp444-v = displayvalueprecision.
+    INSERT temp444 INTO TABLE temp443.
+    temp444-n = `largerStep`.
+    temp444-v = largerstep.
+    INSERT temp444 INTO TABLE temp443.
+    temp444-n = `stepMode`.
+    temp444-v = stepmode.
+    INSERT temp444 INTO TABLE temp443.
+    temp444-n = `editable`.
+    temp444-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp444 INTO TABLE temp443.
+    temp444-n = `fieldWidth`.
+    temp444-v = fieldwidth.
+    INSERT temp444 INTO TABLE temp443.
+    temp444-n = `textalign`.
+    temp444-v = textalign.
+    INSERT temp444 INTO TABLE temp443.
+    temp444-n = `validationMode`.
+    temp444-v = validationmode.
+    INSERT temp444 INTO TABLE temp443.
+    temp444-n = `change`.
+    temp444-v = change.
     INSERT temp444 INTO TABLE temp443.
     _generic( name   = `StepInput`
               t_prop = temp443 ).
