@@ -59,7 +59,6 @@ CLASS z2ui5_cl_pop_table IMPLEMENTATION.
               afterclose = client->_event( 'BUTTON_CONFIRM' )
               stretch    = abap_true
               title      = title
-*              icon = 'sap-icon://edit'
           )->content( ).
 
     
@@ -124,7 +123,6 @@ CLASS z2ui5_cl_pop_table IMPLEMENTATION.
       WHEN 'CANCEL'.
         client->popup_destroy( ).
         client->nav_app_leave( client->get_app( client->get( )-s_draft-id_prev_app_stack ) ).
-
 
     ENDCASE.
 
