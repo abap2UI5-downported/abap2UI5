@@ -2841,6 +2841,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 titletextdirection  TYPE clike OPTIONAL
                 press               TYPE clike OPTIONAL
                 selected            TYPE clike OPTIONAL
+                type                TYPE clike OPTIONAL
       RETURNING VALUE(result)       TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS detail_box
@@ -11306,6 +11307,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp309 INTO TABLE temp308.
     temp309-n = `selected`.
     temp309-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `type`.
+    temp309-v = type.
     INSERT temp309 INTO TABLE temp308.
     result = _generic(
         name   = `ObjectListItem`
