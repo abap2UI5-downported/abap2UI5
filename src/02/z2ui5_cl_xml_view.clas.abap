@@ -1298,6 +1298,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 ariahaspopup       TYPE clike OPTIONAL
                 accessiblerole     TYPE clike OPTIONAL
                 !class             TYPE clike OPTIONAL
+                endicon            TYPE clike OPTIONAL
+                icon               TYPE clike OPTIONAL
       RETURNING VALUE(result)      TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS list
@@ -9627,6 +9629,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp245 INTO TABLE temp244.
     temp245-n = `enabled`.
     temp245-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp245 INTO TABLE temp244.
+    temp245-n = `endIcon`.
+    temp245-v = endicon.
+    INSERT temp245 INTO TABLE temp244.
+    temp245-n = `icon`.
+    temp245-v = icon.
     INSERT temp245 INTO TABLE temp244.
     _generic( name   = `Link`
               ns     = ns
