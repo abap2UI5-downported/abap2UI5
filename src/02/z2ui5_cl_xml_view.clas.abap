@@ -187,15 +187,16 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS message_strip
-      IMPORTING !text            TYPE clike OPTIONAL
-                !type            TYPE clike OPTIONAL
-                !showicon        TYPE clike OPTIONAL
-                !customicon      TYPE clike OPTIONAL
-                !class           TYPE clike OPTIONAL
-                !visible         TYPE clike OPTIONAL
-                !showclosebutton TYPE clike OPTIONAL
+      IMPORTING !text               TYPE clike OPTIONAL
+                !type               TYPE clike OPTIONAL
+                !showicon           TYPE clike OPTIONAL
+                !customicon         TYPE clike OPTIONAL
+                !class              TYPE clike OPTIONAL
+                !visible            TYPE clike OPTIONAL
+                !showclosebutton    TYPE clike OPTIONAL
+                enableformattedtext TYPE clike OPTIONAL
                   PREFERRED PARAMETER text
-      RETURNING VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
+      RETURNING VALUE(result)       TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS footer
       IMPORTING !ns           TYPE string OPTIONAL
@@ -10079,6 +10080,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp269 INTO TABLE temp268.
     temp269-n = `class`.
     temp269-v = class.
+    INSERT temp269 INTO TABLE temp268.
+    temp269-n = `enableFormattedText`.
+    temp269-v = z2ui5_cl_util=>boolean_abap_2_json( enableformattedtext ).
     INSERT temp269 INTO TABLE temp268.
     _generic( name   = `MessageStrip`
               t_prop = temp268 ).
