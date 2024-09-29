@@ -37,7 +37,7 @@ CLASS z2ui5_cl_core_util_srv IMPLEMENTATION.
     ENDIF.
 
     
-    lv_url = to_lower( client->get( )-s_config-origin && client->get( )-s_config-pathname ) && `?`.
+    lv_url = client->get( )-s_config-origin && client->get( )-s_config-pathname && `?`.
     
     lt_param = url_param_get_tab( client->get( )-s_config-search ).
     DELETE lt_param WHERE n = `app_start`.
@@ -47,7 +47,7 @@ CLASS z2ui5_cl_core_util_srv IMPLEMENTATION.
     temp1-v = to_lower( classname ).
     INSERT temp1 INTO TABLE lt_param.
 
-    result = lv_url && url_param_create_url( lt_param ).
+    result = lv_url && url_param_create_url( lt_param ) &&  client->get( )-s_config-hash.
 
   ENDMETHOD.
 
