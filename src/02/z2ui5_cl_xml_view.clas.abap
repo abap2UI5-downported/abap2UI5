@@ -190,6 +190,11 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 link          TYPE clike OPTIONAL
       RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS color_palette
+      IMPORTING !ns           TYPE clike OPTIONAL
+                colorselect   TYPE clike OPTIONAL
+      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS auto
       IMPORTING !ns              TYPE clike OPTIONAL
                 rowcontentheight TYPE clike OPTIONAL
@@ -15400,6 +15405,8 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     DATA temp490 LIKE LINE OF temp489.
     IF ns = 'table'.
       temp3 = 'toolbar'.
+    ELSEIF ns = 'form'.
+      temp3 = 'toolbar'.
     ELSE.
       temp3 = `Toolbar`.
     ENDIF.
@@ -17607,5 +17614,20 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
                 ns     = ns
                 name   = `currentLocation`
                 t_prop = temp578 ).
+  ENDMETHOD.
+
+
+  METHOD color_palette.
+    DATA temp580 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp581 LIKE LINE OF temp580.
+    CLEAR temp580.
+    
+    temp581-n = `colorSelect`.
+    temp581-v = colorselect.
+    INSERT temp581 INTO TABLE temp580.
+    result = _generic(
+                ns     = ns
+                name   = `ColorPalette`
+                t_prop = temp580 ).
   ENDMETHOD.
 ENDCLASS.
