@@ -141,22 +141,17 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD http_get.
-    DATA temp1 TYPE REF TO z2ui5_cl_core_draft_srv.
 
     set_config( is_custom_config ).
     ms_res-body = get_index_html( ).
-
-    
-    CREATE OBJECT temp1 TYPE z2ui5_cl_core_draft_srv.
-    temp1->cleanup( ).
 
   ENDMETHOD.
 
 
   METHOD http_post.
       DATA lo_post TYPE REF TO z2ui5_cl_core_http_post.
-          DATA temp2 TYPE REF TO z2ui5_if_app.
-          DATA li_app LIKE temp2.
+          DATA temp1 TYPE REF TO z2ui5_if_app.
+          DATA li_app LIKE temp1.
 
     IF so_sticky_handler IS NOT BOUND.
       
@@ -173,9 +168,9 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
     TRY.
         IF lo_post IS BOUND.
           
-          temp2 ?= lo_post->mo_action->mo_app->mo_app.
+          temp1 ?= lo_post->mo_action->mo_app->mo_app.
           
-          li_app = temp2.
+          li_app = temp1.
           IF li_app->check_sticky = abap_true.
             so_sticky_handler = lo_post.
           ELSE.
@@ -214,8 +209,8 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
 
   METHOD get_index_html.
       DATA lv_style_css TYPE string.
-    DATA temp3 LIKE LINE OF ms_config-t_add_config.
-    DATA lr_config LIKE REF TO temp3.
+    DATA temp2 LIKE LINE OF ms_config-t_add_config.
+    DATA lr_config LIKE REF TO temp2.
 
     IF ms_config-styles_css IS INITIAL.
       

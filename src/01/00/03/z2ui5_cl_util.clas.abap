@@ -1900,6 +1900,7 @@ DATA lt_param TYPE temp9.
 
 
   METHOD rtti_get_t_attri_by_table_name.
+        DATA lo_obj TYPE REF TO cl_abap_typedescr.
         DATA temp51 TYPE REF TO cl_abap_structdescr.
         DATA lo_struct LIKE temp51.
             DATA temp52 TYPE REF TO cl_abap_tabledescr.
@@ -1914,16 +1915,49 @@ DATA lt_param TYPE temp9.
         EXPORTING
           val = 'TABLE_NAME_INITIAL_ERROR'.
     ENDIF.
+
     TRY.
         
-        temp51 ?= cl_abap_structdescr=>describe_by_name( table_name ).
+        cl_abap_structdescr=>describe_by_name(
+          EXPORTING
+            p_name         = table_name
+          RECEIVING
+            p_descr_ref    =   lo_obj
+          EXCEPTIONS
+            type_not_found = 1
+            OTHERS         = 2
+            ).
+
+        IF sy-subrc <> 0.
+          RAISE EXCEPTION TYPE z2ui5_cx_util_error
+            EXPORTING
+              val = 'TABLE_NOT_FOUD_NAME___' && table_name.
+        ENDIF.
+        
+        temp51 ?= lo_obj.
         
         lo_struct = temp51.
+
       CATCH cx_root.
 
         TRY.
+            cl_abap_structdescr=>describe_by_name(
+              EXPORTING
+                p_name         = table_name
+             RECEIVING
+                p_descr_ref    = lo_obj
+              EXCEPTIONS
+                type_not_found = 1
+                OTHERS         = 2
+            ).
+            IF sy-subrc <> 0.
+              RAISE EXCEPTION TYPE z2ui5_cx_util_error
+                EXPORTING
+                  val = 'TABLE_NOT_FOUD_NAME___' && table_name.
+            ENDIF.
+
             
-            temp52 ?= cl_abap_structdescr=>describe_by_name( table_name ).
+            temp52 ?= lo_obj.
             
             lo_tab = temp52.
             

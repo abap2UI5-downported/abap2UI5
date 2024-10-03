@@ -64,6 +64,7 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
 
   METHOD main_begin.
         DATA lo_json_mapper TYPE REF TO z2ui5_cl_core_json_srv.
+          DATA temp1 TYPE REF TO z2ui5_cl_core_draft_srv.
         DATA x TYPE REF TO cx_root.
     TRY.
 
@@ -75,6 +76,9 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
           mo_action = mo_action->factory_by_frontend( ).
 
         ELSEIF ms_request-s_control-app_start IS NOT INITIAL.
+          
+          CREATE OBJECT temp1 TYPE z2ui5_cl_core_draft_srv.
+          temp1->cleanup( ).
           mo_action = mo_action->factory_first_start( ).
 
         ELSE.
@@ -84,7 +88,6 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
         
       CATCH cx_root INTO x.
         ASSERT x->get_text( ) = 1.
-*        mo_action = mo_action->factory_system_error( x ).
     ENDTRY.
   ENDMETHOD.
 
@@ -92,7 +95,7 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
   METHOD main_end.
       DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
     DATA lo_json_mapper TYPE REF TO z2ui5_cl_core_json_srv.
-    DATA temp1 TYPE REF TO z2ui5_if_app.
+    DATA temp2 TYPE REF TO z2ui5_if_app.
 
     CLEAR ms_response.
     ms_response-s_front-params = mo_action->ms_next-s_set.
@@ -126,8 +129,8 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
     CLEAR mo_action->ms_next.
 
     
-    temp1 ?= mo_action->mo_app->mo_app.
-    IF temp1->check_sticky = abap_false.
+    temp2 ?= mo_action->mo_app->mo_app.
+    IF temp2->check_sticky = abap_false.
       mo_action->mo_app->db_save( ).
     ENDIF.
 
@@ -136,8 +139,8 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
 
   METHOD main_process.
         DATA li_client TYPE REF TO z2ui5_cl_core_client.
-        DATA temp2 TYPE REF TO z2ui5_if_app.
-        DATA li_app LIKE temp2.
+        DATA temp3 TYPE REF TO z2ui5_if_app.
+        DATA li_app LIKE temp3.
         DATA x TYPE REF TO cx_root.
     TRY.
         
@@ -149,9 +152,9 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
             CREATE OBJECT li_client TYPE z2ui5_cl_core_client EXPORTING ACTION = mo_action.
         ENDTRY.
         
-        temp2 ?= mo_action->mo_app->mo_app.
+        temp3 ?= mo_action->mo_app->mo_app.
         
-        li_app = temp2.
+        li_app = temp3.
 
         IF li_app->check_sticky = abap_false.
           ROLLBACK WORK.
@@ -175,7 +178,6 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
         
       CATCH cx_root INTO x.
         ASSERT x->get_text( ) = 1.
-*        mo_action = mo_action->factory_system_error( x ).
     ENDTRY.
   ENDMETHOD.
 ENDCLASS.
