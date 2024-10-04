@@ -6,25 +6,6 @@ _Running into problems or found a bug? Create an issue [**here**](https://github
 * use this version for NW 7.02 (use the main repository for NW 7.50 and higher)
 * for S-RTTI capabilities, also use the [**downport**](https://github.com/sandraros/S-RTTI/tree/7.50) of this project
 
-
-
-### Handler Implementation:
-```abap
-  METHOD if_http_extension~handle_request.
-
-    DATA lv_req TYPE string.
-    lv_req = server->request->get_cdata( ).
-
-    DATA lv_res TYPE string.
-    lv_res = z2ui5_cl_http_handler=>main( lv_req ).
-
-    server->response->set_cdata( lv_res ).
-    server->response->set_header_field( name = `cache-control` value = `no-cache` ).
-    server->response->set_status( code = 200 reason = `success` ).
-
-  ENDMETHOD.
-```
-
 ### Manual Steps / Known Issues
 Adjusted ABAP SQL to OpenSQL: Correct Position of where eg. "WHERE id = id."  <br>
 <img width="853" alt="image" src="https://github.com/abap2UI5/abap2UI5-downport/assets/102328295/4f35fe67-1816-4ea7-adb2-b6dc31545806">
