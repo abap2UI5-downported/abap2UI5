@@ -157,7 +157,7 @@ CLASS z2ui5_cl_abap_api_http IMPLEMENTATION.
 
     ELSE.
 
-      CALL METHOD mo_request_cloud->('GET_HEADER_FIELD')
+      CALL METHOD mo_request_cloud->('IF_WEB_HTTP_REQUEST~GET_HEADER_FIELD')
         EXPORTING
           i_name  = lv_val
         RECEIVING
@@ -195,7 +195,7 @@ CLASS z2ui5_cl_abap_api_http IMPLEMENTATION.
 
     ELSE.
 
-      CALL METHOD mo_request_cloud->('SET_HEADER_FIELD')
+      CALL METHOD mo_response_cloud->('IF_WEB_HTTP_RESPONSE~SET_HEADER_FIELD')
         EXPORTING
           i_name  = lv_n
           i_value = lv_v.
@@ -235,7 +235,7 @@ CLASS z2ui5_cl_abap_api_http IMPLEMENTATION.
 
     ELSE.
 
-      CALL METHOD mo_request_cloud->('GET_TEXT')
+      CALL METHOD mo_request_cloud->('IF_WEB_HTTP_REQUEST~GET_TEXT')
         RECEIVING
           r_value = result.
 
@@ -259,7 +259,7 @@ CLASS z2ui5_cl_abap_api_http IMPLEMENTATION.
 
     ELSE.
 
-      CALL METHOD mo_request_cloud->('GET_METHOD')
+      CALL METHOD mo_request_cloud->('IF_WEB_HTTP_REQUEST~GET_METHOD')
         RECEIVING
           r_value = result.
 
@@ -283,9 +283,9 @@ CLASS z2ui5_cl_abap_api_http IMPLEMENTATION.
 
     ELSE.
 
-      CALL METHOD mo_request_cloud->('SET_TEXT')
+      CALL METHOD mo_response_cloud->('IF_WEB_HTTP_RESPONSE~SET_TEXT')
         EXPORTING
-          r_value = val.
+          i_text = val.
 
     ENDIF.
 
@@ -313,7 +313,7 @@ CLASS z2ui5_cl_abap_api_http IMPLEMENTATION.
 
     ELSE.
 
-      CALL METHOD mo_response_cloud->('SET_STATUS')
+      CALL METHOD mo_response_cloud->('IF_WEB_HTTP_RESPONSE~SET_STATUS')
         EXPORTING
           i_code   = code
           i_reason = lv_reason.
