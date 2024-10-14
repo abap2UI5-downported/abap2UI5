@@ -1,129 +1,3 @@
-CLASS ltcl_test DEFINITION FINAL FOR TESTING
-  DURATION SHORT
-  RISK LEVEL HARMLESS.
-
-  PRIVATE SECTION.
-    METHODS  test_db_handle FOR TESTING RAISING cx_static_check.
-    METHODS  test_db_handle_read_id FOR TESTING RAISING cx_static_check.
-ENDCLASS.
-
-
-CLASS ltcl_test IMPLEMENTATION.
-
-  METHOD test_db_handle.
-TYPES BEGIN OF ty_row.
-TYPES title TYPE string.
-TYPES value TYPE string.
-TYPES selected TYPE abap_bool.
-TYPES END OF ty_row.
-    DATA temp56 TYPE ty_row.
-    DATA ls_row LIKE temp56.
-    DATA temp57 TYPE ty_row.
-    DATA ls_row_result LIKE temp57.
-    DATA lv_id TYPE string.
-
-    IF sy-sysid = 'ABC'.
-      RETURN.
-    ENDIF.
-
-    
-
-    
-    CLEAR temp56.
-    temp56-title = `test`.
-    temp56-value = `val`.
-    temp56-selected = abap_true.
-    
-    ls_row = temp56.
-    
-    CLEAR temp57.
-    
-    ls_row_result = temp57.
-
-    
-    lv_id = z2ui5_cl_util=>db_save(
-        uname   = `name`
-        handle  = `handle1`
-        handle2 = `handle2`
-        handle3 = `handle3`
-        data    = ls_row ).
-
-    z2ui5_cl_util=>db_load_by_id(
-      EXPORTING
-        id     = lv_id
-      IMPORTING
-        result = ls_row_result ).
-
-    cl_abap_unit_assert=>assert_equals(
-        act = ls_row_result
-        exp = ls_row ).
-
-    CLEAR ls_row_result.
-    z2ui5_cl_util=>db_load_by_handle(
-      EXPORTING
-        uname   = `name`
-        handle  = `handle1`
-        handle2 = `handle2`
-        handle3 = `handle3`
-      IMPORTING
-        result  = ls_row_result ).
-
-    cl_abap_unit_assert=>assert_equals(
-       act = ls_row_result
-       exp = ls_row ).
-
-  ENDMETHOD.
-
-  METHOD test_db_handle_read_id.
-TYPES BEGIN OF ty_row.
-TYPES title TYPE string.
-TYPES value TYPE string.
-TYPES selected TYPE abap_bool.
-TYPES END OF ty_row.
-    DATA temp58 TYPE ty_row.
-    DATA ls_row LIKE temp58.
-    DATA lv_id TYPE string.
-    DATA lv_id2 TYPE string.
-
-    IF sy-sysid = 'ABC'.
-      RETURN.
-    ENDIF.
-
-    
-
-    
-    CLEAR temp58.
-    temp58-title = `test`.
-    temp58-value = `val`.
-    temp58-selected = abap_true.
-    
-    ls_row = temp58.
-
-    
-    lv_id = z2ui5_cl_util=>db_save(
-        uname   = `name`
-        handle  = `handle1`
-        handle2 = `handle2`
-        handle3 = `handle3`
-        data    = ls_row ).
-
-    cl_abap_unit_assert=>assert_not_initial( lv_id ).
-
-    
-    lv_id2 = z2ui5_cl_util=>db_save(
-        uname   = `name`
-        handle  = `handle1`
-        handle2 = `handle2`
-        handle3 = `handle3`
-        data    = ls_row ).
-
-    cl_abap_unit_assert=>assert_equals(
-        act = lv_id
-        exp = lv_id2 ).
-
-  ENDMETHOD.
-
-ENDCLASS.
 
 CLASS ltcl_test_app DEFINITION FOR TESTING.
 
@@ -161,16 +35,16 @@ ENDCLASS.
 CLASS ltcl_test_app IMPLEMENTATION.
 
   METHOD class_constructor.
-    DATA temp59 TYPE ltcl_test_app=>ty_row.
-    DATA temp60 LIKE st_tab.
+    DATA temp53 TYPE ltcl_test_app=>ty_row.
+    DATA temp54 LIKE st_tab.
 
     sv_var = 1.
     
-    CLEAR temp59.
-    ss_tab = temp59.
+    CLEAR temp53.
+    ss_tab = temp53.
     
-    CLEAR temp60.
-    st_tab = temp60.
+    CLEAR temp54.
+    st_tab = temp54.
 
   ENDMETHOD.
 ENDCLASS.
@@ -280,44 +154,71 @@ CLASS ltcl_unit_test_abap_api IMPLEMENTATION.
   METHOD test_classdescr.
 
     DATA lo_app TYPE REF TO ltcl_test_app.
-    DATA temp61 TYPE REF TO cl_abap_classdescr.
-    DATA lt_attri LIKE temp61->attributes.
+    DATA temp55 TYPE REF TO cl_abap_classdescr.
+    DATA lt_attri LIKE temp55->attributes.
     DATA lv_test LIKE LINE OF lt_attri.
-    DATA temp15 LIKE LINE OF lt_attri.
-    DATA temp16 LIKE sy-tabix.
+    DATA temp11 LIKE LINE OF lt_attri.
+    DATA temp12 LIKE sy-tabix.
+    DATA temp56 LIKE LINE OF lt_attri.
+    DATA temp57 LIKE sy-tabix.
+    DATA temp58 LIKE LINE OF lt_attri.
+    DATA temp59 LIKE sy-tabix.
+    DATA temp60 LIKE LINE OF lt_attri.
+    DATA temp61 LIKE sy-tabix.
     DATA temp62 LIKE LINE OF lt_attri.
     DATA temp63 LIKE sy-tabix.
     DATA temp64 LIKE LINE OF lt_attri.
     DATA temp65 LIKE sy-tabix.
     DATA temp66 LIKE LINE OF lt_attri.
     DATA temp67 LIKE sy-tabix.
-    DATA temp68 LIKE LINE OF lt_attri.
-    DATA temp69 LIKE sy-tabix.
-    DATA temp70 LIKE LINE OF lt_attri.
-    DATA temp71 LIKE sy-tabix.
-    DATA temp72 LIKE LINE OF lt_attri.
-    DATA temp73 LIKE sy-tabix.
     CREATE OBJECT lo_app TYPE ltcl_test_app.
 
     
-    temp61 ?= cl_abap_objectdescr=>describe_by_object_ref( lo_app ).
+    temp55 ?= cl_abap_objectdescr=>describe_by_object_ref( lo_app ).
     
-    lt_attri = temp61->attributes.
+    lt_attri = temp55->attributes.
 
     
     
     
-    temp16 = sy-tabix.
-    READ TABLE lt_attri WITH KEY name = `MS_TAB` INTO temp15.
-    sy-tabix = temp16.
+    temp12 = sy-tabix.
+    READ TABLE lt_attri WITH KEY name = `MS_TAB` INTO temp11.
+    sy-tabix = temp12.
     IF sy-subrc <> 0.
       ASSERT 1 = 0.
     ENDIF.
-    lv_test = temp15.
+    lv_test = temp11.
+    
+    
+    temp57 = sy-tabix.
+    READ TABLE lt_attri WITH KEY name = `MT_TAB` INTO temp56.
+    sy-tabix = temp57.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    lv_test = temp56.
+    
+    
+    temp59 = sy-tabix.
+    READ TABLE lt_attri WITH KEY name = `MV_VAL` INTO temp58.
+    sy-tabix = temp59.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    lv_test = temp58.
+    
+    
+    temp61 = sy-tabix.
+    READ TABLE lt_attri WITH KEY name = `SS_TAB` INTO temp60.
+    sy-tabix = temp61.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    lv_test = temp60.
     
     
     temp63 = sy-tabix.
-    READ TABLE lt_attri WITH KEY name = `MT_TAB` INTO temp62.
+    READ TABLE lt_attri WITH KEY name = `ST_TAB` INTO temp62.
     sy-tabix = temp63.
     IF sy-subrc <> 0.
       ASSERT 1 = 0.
@@ -326,7 +227,7 @@ CLASS ltcl_unit_test_abap_api IMPLEMENTATION.
     
     
     temp65 = sy-tabix.
-    READ TABLE lt_attri WITH KEY name = `MV_VAL` INTO temp64.
+    READ TABLE lt_attri WITH KEY name = `SV_STATUS` INTO temp64.
     sy-tabix = temp65.
     IF sy-subrc <> 0.
       ASSERT 1 = 0.
@@ -335,49 +236,22 @@ CLASS ltcl_unit_test_abap_api IMPLEMENTATION.
     
     
     temp67 = sy-tabix.
-    READ TABLE lt_attri WITH KEY name = `SS_TAB` INTO temp66.
+    READ TABLE lt_attri WITH KEY name = `SV_VAR` INTO temp66.
     sy-tabix = temp67.
     IF sy-subrc <> 0.
       ASSERT 1 = 0.
     ENDIF.
     lv_test = temp66.
-    
-    
-    temp69 = sy-tabix.
-    READ TABLE lt_attri WITH KEY name = `ST_TAB` INTO temp68.
-    sy-tabix = temp69.
-    IF sy-subrc <> 0.
-      ASSERT 1 = 0.
-    ENDIF.
-    lv_test = temp68.
-    
-    
-    temp71 = sy-tabix.
-    READ TABLE lt_attri WITH KEY name = `SV_STATUS` INTO temp70.
-    sy-tabix = temp71.
-    IF sy-subrc <> 0.
-      ASSERT 1 = 0.
-    ENDIF.
-    lv_test = temp70.
-    
-    
-    temp73 = sy-tabix.
-    READ TABLE lt_attri WITH KEY name = `SV_VAR` INTO temp72.
-    sy-tabix = temp73.
-    IF sy-subrc <> 0.
-      ASSERT 1 = 0.
-    ENDIF.
-    lv_test = temp72.
 
   ENDMETHOD.
 
   METHOD test_eledescr_rel_name.
 
-    DATA temp74 TYPE REF TO cl_abap_elemdescr.
-    DATA lo_ele LIKE temp74.
-    temp74 ?= cl_abap_elemdescr=>describe_by_data( abap_true ).
+    DATA temp68 TYPE REF TO cl_abap_elemdescr.
+    DATA lo_ele LIKE temp68.
+    temp68 ?= cl_abap_elemdescr=>describe_by_data( abap_true ).
     
-    lo_ele = temp74.
+    lo_ele = temp68.
 
     cl_abap_unit_assert=>assert_equals(
       act = lo_ele->get_relative_name( )
@@ -755,12 +629,12 @@ CLASS ltcl_unit_test IMPLEMENTATION.
         value    TYPE string,
         selected TYPE abap_bool,
       END OF ty_row.
-    DATA temp75 TYPE ty_row.
-    DATA ls_row LIKE temp75.
-    CLEAR temp75.
-    temp75-title = `test`.
+    DATA temp69 TYPE ty_row.
+    DATA ls_row LIKE temp69.
+    CLEAR temp69.
+    temp69-title = `test`.
     
-    ls_row = temp75.
+    ls_row = temp69.
 
     cl_abap_unit_assert=>assert_equals(
         act = z2ui5_cl_util=>json_stringify( ls_row )
@@ -799,34 +673,34 @@ CLASS ltcl_unit_test IMPLEMENTATION.
   METHOD test_url_param_get_tab.
 
     DATA lt_param TYPE z2ui5_cl_util=>ty_t_name_value.
-    DATA temp76 LIKE LINE OF lt_param.
-    DATA temp77 LIKE sy-tabix.
-    DATA temp78 LIKE LINE OF lt_param.
-    DATA temp79 LIKE sy-tabix.
+    DATA temp70 LIKE LINE OF lt_param.
+    DATA temp71 LIKE sy-tabix.
+    DATA temp72 LIKE LINE OF lt_param.
+    DATA temp73 LIKE sy-tabix.
     lt_param = z2ui5_cl_util=>url_param_get_tab( `https://url.com/rvice_for_ui?sap-client=100&app_start=z2ui5_cl_app_hello_world` ).
 
     
     
-    temp77 = sy-tabix.
-    READ TABLE lt_param WITH KEY n = `sap-client` INTO temp76.
-    sy-tabix = temp77.
+    temp71 = sy-tabix.
+    READ TABLE lt_param WITH KEY n = `sap-client` INTO temp70.
+    sy-tabix = temp71.
     IF sy-subrc <> 0.
       ASSERT 1 = 0.
     ENDIF.
     cl_abap_unit_assert=>assert_equals(
-          act = temp76-v
+          act = temp70-v
           exp = `100` ).
 
     
     
-    temp79 = sy-tabix.
-    READ TABLE lt_param WITH KEY n = `app_start` INTO temp78.
-    sy-tabix = temp79.
+    temp73 = sy-tabix.
+    READ TABLE lt_param WITH KEY n = `app_start` INTO temp72.
+    sy-tabix = temp73.
     IF sy-subrc <> 0.
       ASSERT 1 = 0.
     ENDIF.
     cl_abap_unit_assert=>assert_equals(
-       act = temp78-v
+       act = temp72-v
        exp = `z2ui5_cl_app_hello_world` ).
 
   ENDMETHOD.
@@ -859,12 +733,12 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   METHOD test_rtti_get_type_name.
 
-    DATA temp80 TYPE xsdboolean.
-    DATA lv_xsdbool LIKE temp80.
+    DATA temp74 TYPE xsdboolean.
+    DATA lv_xsdbool LIKE temp74.
     DATA lv_name TYPE string.
-    CLEAR temp80.
+    CLEAR temp74.
     
-    lv_xsdbool = temp80.
+    lv_xsdbool = temp74.
     
     lv_name = z2ui5_cl_util=>rtti_get_type_name( lv_xsdbool ).
     cl_abap_unit_assert=>assert_equals(
@@ -875,13 +749,13 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   METHOD test_rtti_get_type_kind.
 
-    DATA temp81 TYPE string.
-    DATA lv_string LIKE temp81.
+    DATA temp75 TYPE string.
+    DATA lv_string LIKE temp75.
     DATA lv_type_kind TYPE string.
     DATA lr_string TYPE REF TO string.
-    CLEAR temp81.
+    CLEAR temp75.
     
-    lv_string = temp81.
+    lv_string = temp75.
 
     
     lv_type_kind = z2ui5_cl_util=>rtti_get_type_kind( lv_string ).
@@ -901,12 +775,12 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   METHOD test_rtti_check_type_kind.
 
-    DATA temp82 TYPE string.
-    DATA lv_string LIKE temp82.
+    DATA temp76 TYPE string.
+    DATA lv_string LIKE temp76.
     DATA lr_string TYPE REF TO string.
-    CLEAR temp82.
+    CLEAR temp76.
     
-    lv_string = temp82.
+    lv_string = temp76.
     
     cl_abap_unit_assert=>assert_equals(
         act = z2ui5_cl_util=>rtti_check_type_kind_dref( lv_string )
@@ -924,10 +798,10 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
     DATA lo_obj TYPE REF TO ltcl_test_app.
     DATA lt_attri TYPE abap_attrdescr_tab.
-    DATA temp83 LIKE sy-subrc.
-    DATA temp84 LIKE sy-subrc.
-    DATA temp85 LIKE sy-subrc.
-    DATA temp86 LIKE sy-subrc.
+    DATA temp77 LIKE sy-subrc.
+    DATA temp78 LIKE sy-subrc.
+    DATA temp79 LIKE sy-subrc.
+    DATA temp80 LIKE sy-subrc.
     CREATE OBJECT lo_obj TYPE ltcl_test_app.
     
     lt_attri = z2ui5_cl_util=>rtti_get_t_attri_by_oref( lo_obj ).
@@ -938,29 +812,29 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
     
     READ TABLE lt_attri WITH KEY name = `MS_TAB` TRANSPORTING NO FIELDS.
-    temp83 = sy-subrc.
-    IF NOT temp83 = 0.
+    temp77 = sy-subrc.
+    IF NOT temp77 = 0.
       cl_abap_unit_assert=>fail( ).
     ENDIF.
 
     
     READ TABLE lt_attri WITH KEY name = `SS_TAB` type_kind = `v` TRANSPORTING NO FIELDS.
-    temp84 = sy-subrc.
-    IF NOT temp84 = 0.
+    temp78 = sy-subrc.
+    IF NOT temp78 = 0.
       cl_abap_unit_assert=>fail( ).
     ENDIF.
 
     
     READ TABLE lt_attri WITH KEY name = `SV_VAR` type_kind = `g` is_class = abap_true TRANSPORTING NO FIELDS.
-    temp85 = sy-subrc.
-    IF NOT temp85 = 0.
+    temp79 = sy-subrc.
+    IF NOT temp79 = 0.
       cl_abap_unit_assert=>fail( ).
     ENDIF.
 
     
     READ TABLE lt_attri WITH KEY name = `SV_STATUS` type_kind = `g` is_class = abap_true is_constant = `X` TRANSPORTING NO FIELDS.
-    temp86 = sy-subrc.
-    IF NOT temp86 = 0.
+    temp80 = sy-subrc.
+    IF NOT temp80 = 0.
       cl_abap_unit_assert=>fail( ).
     ENDIF.
 
@@ -979,19 +853,19 @@ CLASS ltcl_unit_test IMPLEMENTATION.
         checkbox TYPE abap_bool,
       END OF ty_row.
 
-    DATA temp87 TYPE ty_row.
-    DATA ls_row LIKE temp87.
+    DATA temp81 TYPE ty_row.
+    DATA ls_row LIKE temp81.
     DATA lt_comp TYPE abap_component_tab.
-    DATA temp88 LIKE sy-subrc.
-    DATA temp89 LIKE sy-subrc.
-    DATA temp90 LIKE sy-subrc.
-    DATA temp91 LIKE sy-subrc.
+    DATA temp82 LIKE sy-subrc.
+    DATA temp83 LIKE sy-subrc.
+    DATA temp84 LIKE sy-subrc.
+    DATA temp85 LIKE sy-subrc.
     DATA ls_title LIKE LINE OF lt_comp.
-    DATA temp17 LIKE LINE OF lt_comp.
-    DATA temp18 LIKE sy-tabix.
-    CLEAR temp87.
+    DATA temp13 LIKE LINE OF lt_comp.
+    DATA temp14 LIKE sy-tabix.
+    CLEAR temp81.
     
-    ls_row = temp87.
+    ls_row = temp81.
 
     
     lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_any( ls_row ).
@@ -1002,42 +876,42 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
     
     READ TABLE lt_comp WITH KEY name = `TITLE` TRANSPORTING NO FIELDS.
-    temp88 = sy-subrc.
-    IF NOT temp88 = 0.
+    temp82 = sy-subrc.
+    IF NOT temp82 = 0.
       cl_abap_unit_assert=>fail( ).
     ENDIF.
 
     
     READ TABLE lt_comp WITH KEY name = `VALUE` TRANSPORTING NO FIELDS.
-    temp89 = sy-subrc.
-    IF NOT temp89 = 0.
+    temp83 = sy-subrc.
+    IF NOT temp83 = 0.
       cl_abap_unit_assert=>fail( ).
     ENDIF.
 
     
     READ TABLE lt_comp WITH KEY name = `SELECTED` TRANSPORTING NO FIELDS.
-    temp90 = sy-subrc.
-    IF NOT temp90 = 0.
+    temp84 = sy-subrc.
+    IF NOT temp84 = 0.
       cl_abap_unit_assert=>fail( ).
     ENDIF.
 
     
     READ TABLE lt_comp WITH KEY name = `CHECKBOX` TRANSPORTING NO FIELDS.
-    temp91 = sy-subrc.
-    IF NOT temp91 = 0.
+    temp85 = sy-subrc.
+    IF NOT temp85 = 0.
       cl_abap_unit_assert=>fail( ).
     ENDIF.
 
     
     
     
-    temp18 = sy-tabix.
-    READ TABLE lt_comp INDEX 1 INTO temp17.
-    sy-tabix = temp18.
+    temp14 = sy-tabix.
+    READ TABLE lt_comp INDEX 1 INTO temp13.
+    sy-tabix = temp14.
     IF sy-subrc <> 0.
       ASSERT 1 = 0.
     ENDIF.
-    ls_title = temp17.
+    ls_title = temp13.
 
     IF ls_title-type->type_kind <> `g`.
       cl_abap_unit_assert=>fail( ).
@@ -1092,12 +966,12 @@ CLASS ltcl_unit_test IMPLEMENTATION.
         checkbox TYPE abap_bool,
       END OF ty_row.
 
-    DATA temp92 TYPE ty_row.
-    DATA ls_row LIKE temp92.
+    DATA temp86 TYPE ty_row.
+    DATA ls_row LIKE temp86.
     DATA lv_xml TYPE string.
-    CLEAR temp92.
+    CLEAR temp86.
     
-    ls_row = temp92.
+    ls_row = temp86.
     ls_row-value = `test`.
 
     
@@ -1122,18 +996,18 @@ CLASS ltcl_unit_test IMPLEMENTATION.
         checkbox TYPE abap_bool,
       END OF ty_row.
 
-    DATA temp93 TYPE ty_row.
-    DATA ls_row LIKE temp93.
-    DATA temp94 TYPE ty_row.
-    DATA ls_row2 LIKE temp94.
+    DATA temp87 TYPE ty_row.
+    DATA ls_row LIKE temp87.
+    DATA temp88 TYPE ty_row.
+    DATA ls_row2 LIKE temp88.
     DATA lv_xml TYPE string.
-    CLEAR temp93.
+    CLEAR temp87.
     
-    ls_row = temp93.
+    ls_row = temp87.
     
-    CLEAR temp94.
+    CLEAR temp88.
     
-    ls_row2 = temp94.
+    ls_row2 = temp88.
     ls_row-value = `test`.
 
     
@@ -1165,37 +1039,37 @@ CLASS ltcl_unit_test IMPLEMENTATION.
 
   METHOD test_get_token_t_by_r_t.
 
-    DATA temp95 TYPE z2ui5_cl_util=>ty_t_range.
-    DATA temp96 LIKE LINE OF temp95.
-    DATA lt_range LIKE temp95.
+    DATA temp89 TYPE z2ui5_cl_util=>ty_t_range.
+    DATA temp90 LIKE LINE OF temp89.
+    DATA lt_range LIKE temp89.
     DATA lt_result TYPE z2ui5_cl_util=>ty_t_token.
-    DATA temp97 TYPE z2ui5_cl_util=>ty_t_token.
-    DATA temp98 LIKE LINE OF temp97.
-    DATA lt_exp LIKE temp97.
-    CLEAR temp95.
+    DATA temp91 TYPE z2ui5_cl_util=>ty_t_token.
+    DATA temp92 LIKE LINE OF temp91.
+    DATA lt_exp LIKE temp91.
+    CLEAR temp89.
     
-    temp96-sign = 'I'.
-    temp96-option = 'EQ'.
-    temp96-low = `table`.
-    temp96-high = ``.
-    INSERT temp96 INTO TABLE temp95.
+    temp90-sign = 'I'.
+    temp90-option = 'EQ'.
+    temp90-low = `table`.
+    temp90-high = ``.
+    INSERT temp90 INTO TABLE temp89.
     
-    lt_range = temp95.
+    lt_range = temp89.
 
     
     lt_result = z2ui5_cl_util=>filter_get_token_t_by_range_t( lt_range ).
 
     
-    CLEAR temp97.
+    CLEAR temp91.
     
-    temp98-key = `=table`.
-    temp98-text = `=table`.
-    temp98-visible = 'X'.
-    temp98-selkz = ''.
-    temp98-editable = 'X'.
-    INSERT temp98 INTO TABLE temp97.
+    temp92-key = `=table`.
+    temp92-text = `=table`.
+    temp92-visible = 'X'.
+    temp92-selkz = ''.
+    temp92-editable = 'X'.
+    INSERT temp92 INTO TABLE temp91.
     
-    lt_exp = temp97.
+    lt_exp = temp91.
 
     cl_abap_unit_assert=>assert_equals(
         act                  = lt_result
@@ -1217,7 +1091,7 @@ TYPES value2 TYPE string.
 TYPES END OF ty_struc.
 DATA BEGIN OF ms_struc2.INCLUDE TYPE ty_struc.INCLUDE TYPE ty_struc_incl.DATA END OF ms_struc2.
     DATA lo_datadescr TYPE REF TO cl_abap_typedescr.
-    DATA temp99 TYPE REF TO cl_abap_datadescr.
+    DATA temp93 TYPE REF TO cl_abap_datadescr.
     DATA lt_attri TYPE abap_component_tab.
 
     IF sy-sysid = 'ABC'.
@@ -1233,9 +1107,9 @@ DATA BEGIN OF ms_struc2.INCLUDE TYPE ty_struc.INCLUDE TYPE ty_struc_incl.DATA EN
     
     lo_datadescr = cl_abap_typedescr=>describe_by_data( ms_struc2 ).
     
-    temp99 ?= lo_datadescr.
+    temp93 ?= lo_datadescr.
     
-    lt_attri = z2ui5_cl_util=>rtti_get_t_attri_by_include( temp99 ).
+    lt_attri = z2ui5_cl_util=>rtti_get_t_attri_by_include( temp93 ).
 
     IF lines( lt_attri ) <> 6.
       cl_abap_unit_assert=>fail( ).
