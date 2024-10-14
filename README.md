@@ -1,4 +1,4 @@
-## Downport of abap2UI5
+## abap2UI5 Downported
 Use abap2UI5 on older R/3 Netweaver Releases!
 <br>
 
