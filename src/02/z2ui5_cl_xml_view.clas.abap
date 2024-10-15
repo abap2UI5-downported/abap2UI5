@@ -3445,6 +3445,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 textdirection      TYPE clike OPTIONAL
                 !visible           TYPE clike OPTIONAL
                 wrappingtype       TYPE clike OPTIONAL
+                class              TYPE clike OPTIONAL
       RETURNING VALUE(result)      TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS select
@@ -6599,6 +6600,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp112 INTO TABLE temp111.
     temp112-n = `visible`.
     temp112-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp112 INTO TABLE temp111.
+    temp112-n = `class`.
+    temp112-v = class.
     INSERT temp112 INTO TABLE temp111.
     result = _generic(
                  name   = `ExpandableText`
