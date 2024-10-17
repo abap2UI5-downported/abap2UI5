@@ -9,17 +9,15 @@ CLASS z2ui5_cl_core_http_post DEFINITION
     DATA mv_request_json TYPE string.
     DATA ms_request      TYPE z2ui5_if_core_types=>ty_s_http_request_post.
     DATA ms_response     TYPE z2ui5_if_core_types=>ty_s_http_response_post.
-    DATA mv_response    TYPE string.
+    DATA mv_response     TYPE string.
 
     METHODS constructor
       IMPORTING
         val TYPE string.
 
     METHODS main
-      EXPORTING
-        attributes    TYPE z2ui5_if_types=>ty_s_http_handler_attributes
       RETURNING
-        VALUE(result) TYPE string.
+        VALUE(result) TYPE z2ui5_if_core_types=>ty_s_http_res.
 
   PROTECTED SECTION.
 
@@ -48,7 +46,7 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
 
 
   METHOD main.
-    CLEAR attributes.
+*    CLEAR attributes.
 
     main_begin( ).
     DO.
@@ -56,8 +54,10 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
         EXIT.
       ENDIF.
     ENDDO.
-    result = mv_response.
-    attributes = ms_response-s_front-params-handler_attrs.
+
+    CLEAR result.
+    result-body = mv_response.
+    result-s_stateful = ms_response-s_front-params-s_stateful.
 
   ENDMETHOD.
 
@@ -143,14 +143,9 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
         DATA li_app LIKE temp3.
         DATA x TYPE REF TO cx_root.
     TRY.
+
         
-        TRY.
-            CREATE OBJECT li_client TYPE ('ZCL_2UI5_CUSTOM_CLIENT')
-                EXPORTING
-                    action = mo_action.
-          CATCH cx_root.
-            CREATE OBJECT li_client TYPE z2ui5_cl_core_client EXPORTING ACTION = mo_action.
-        ENDTRY.
+        CREATE OBJECT li_client TYPE z2ui5_cl_core_client EXPORTING ACTION = mo_action.
         
         temp3 ?= mo_action->mo_app->mo_app.
         
