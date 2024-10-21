@@ -28,35 +28,39 @@ CLASS z2ui5_cl_http_handler DEFINITION
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_http_handler.
 
+    CLASS-METHODS _http_post
+      IMPORTING
+        is_req        TYPE z2ui5_if_core_types=>ty_s_http_req
+      RETURNING
+        VALUE(result) TYPE z2ui5_if_core_types=>ty_s_http_res.
+
+    CLASS-METHODS _http_get
+      IMPORTING
+        VALUE(is_config) TYPE  z2ui5_if_types=>ty_s_http_config
+      RETURNING
+        VALUE(result)    TYPE string.
+
     METHODS main
       IMPORTING
         s_config TYPE z2ui5_if_types=>ty_s_http_config OPTIONAL.
+
+    CLASS-METHODS _main
+      IMPORTING
+        is_config     TYPE  z2ui5_if_types=>ty_s_http_config
+        is_req        TYPE z2ui5_if_core_types=>ty_s_http_req
+      RETURNING
+        VALUE(result) TYPE z2ui5_if_core_types=>ty_s_http_res.
 
   PROTECTED SECTION.
 
     CLASS-DATA so_sticky_handler TYPE REF TO z2ui5_cl_core_http_post.
     DATA mo_server TYPE REF TO z2ui5_cl_abap_api_http.
-*    DATA ms_session_attributes TYPE z2ui5_if_core_types=>ty_s_http_handler_attributes.
 
     DATA ms_req TYPE z2ui5_if_core_types=>ty_s_http_req.
     DATA ms_res TYPE z2ui5_if_core_types=>ty_s_http_res.
     DATA ms_config TYPE z2ui5_if_types=>ty_s_http_config.
 
-    METHODS http_get.
-
-    METHODS http_post.
-
-    METHODS session_handling.
-*      IMPORTING
-*        attributes TYPE z2ui5_if_core_types=>ty_s_http_handler_attributes.
-
-    METHODS get_index_html
-      RETURNING
-        VALUE(result) TYPE string
-          ##CALLED.
-
     METHODS set_request.
-
     METHODS set_response.
 
   PRIVATE SECTION.
@@ -75,17 +79,14 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
     set_request( ).
 
     CASE ms_req-method.
-      WHEN `GET`.
-        http_get( ).
-      WHEN `POST`.
-        http_post( ).
       WHEN `HEAD`.
         mo_server->set_session_stateful( 0 ).
         RETURN.
+      WHEN OTHERS.
+        ms_res = _main( is_req = ms_req  is_config = ms_config ).
     ENDCASE.
 
     set_response( ).
-    session_handling( ).
 
   ENDMETHOD.
 
@@ -112,110 +113,47 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD http_get.
 
-    ms_res-body = get_index_html( ).
-
-  ENDMETHOD.
-
-
-  METHOD http_post.
-      DATA lo_post TYPE REF TO z2ui5_cl_core_http_post.
-          DATA temp1 TYPE REF TO z2ui5_if_app.
-          DATA li_app LIKE temp1.
-
-    IF so_sticky_handler IS NOT BOUND.
-      
-      CREATE OBJECT lo_post TYPE z2ui5_cl_core_http_post EXPORTING VAL = ms_req-body.
-    ELSE.
-      lo_post = so_sticky_handler.
-      lo_post->mv_request_json = ms_req-body.
-    ENDIF.
-
-    ms_res = lo_post->main( ).
-
-    TRY.
-        IF lo_post IS BOUND.
-          
-          temp1 ?= lo_post->mo_action->mo_app->mo_app.
-          
-          li_app = temp1.
-          IF li_app->check_sticky = abap_true.
-            so_sticky_handler = lo_post.
-          ELSE.
-            CLEAR so_sticky_handler.
-          ENDIF.
-        ENDIF.
-      CATCH cx_root.
-    ENDTRY.
-
-  ENDMETHOD.
-
-
-  METHOD session_handling.
-        DATA lv_contextid TYPE string.
-
-    "transform cookie to header based contextid handling
-    IF ms_res-s_stateful-switched = abap_true.
-      mo_server->set_session_stateful( ms_res-s_stateful-active  ).
-      IF mo_server->get_header_field( 'sap-contextid-accept' ) = 'header'.
-        
-        lv_contextid = mo_server->get_response_cookie( 'sap-contextid' ).
-        IF lv_contextid IS NOT INITIAL.
-          mo_server->delete_response_cookie( 'sap-contextid' ).
-          mo_server->set_header_field( n = 'sap-contextid' v = lv_contextid ).
-        ENDIF.
-      ENDIF.
-    ELSE.
-      lv_contextid = mo_server->get_header_field( 'sap-contextid' ).
-      IF lv_contextid IS NOT INITIAL.
-        mo_server->set_header_field( n = 'sap-contextid' v = lv_contextid ).
-      ENDIF.
-    ENDIF.
-
-  ENDMETHOD.
-
-
-  METHOD get_index_html.
+  METHOD _http_get.
       DATA lv_style_css TYPE string.
-    DATA temp2 LIKE LINE OF ms_config-t_add_config.
-    DATA lr_config LIKE REF TO temp2.
+    DATA temp1 LIKE LINE OF is_config-t_add_config.
+    DATA lr_config LIKE REF TO temp1.
 
-    IF ms_config-title IS INITIAL.
-      ms_config-title = `abap2UI5`.
+    IF is_config-title IS INITIAL.
+      is_config-title = `abap2UI5`.
     ENDIF.
 
-    IF ms_config-theme IS INITIAL.
-      ms_config-theme = `sap_horizon`.
+    IF is_config-theme IS INITIAL.
+      is_config-theme = `sap_horizon`.
     ENDIF.
 
-    IF ms_config-src IS INITIAL.
-      ms_config-src     = `https://sdk.openui5.org/resources/sap-ui-cachebuster/sap-ui-core.js`.
+    IF is_config-src IS INITIAL.
+      is_config-src     = `https://sdk.openui5.org/resources/sap-ui-cachebuster/sap-ui-core.js`.
 *      ms_req_config-src     = `https://sdk.openui5.org/1.71.67/resources/sap-ui-core.js`.
 *      ms_req_config-src     = `https://sdk.openui5.org/nightly/2/resources/sap-ui-core.js`.
     ENDIF.
 
-    IF ms_config-content_security_policy IS INITIAL.
-      ms_config-content_security_policy = `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: ` &&
+    IF is_config-content_security_policy IS INITIAL.
+      is_config-content_security_policy = `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: ` &&
      `ui5.sap.com *.ui5.sap.com sapui5.hana.ondemand.com *.sapui5.hana.ondemand.com openui5.hana.ondemand.com *.openui5.hana.ondemand.com ` &&
      `sdk.openui5.org *.sdk.openui5.org cdn.jsdelivr.net *.cdn.jsdelivr.net cdnjs.cloudflare.com *.cdnjs.cloudflare.com schemas *.schemas"/>`.
     ENDIF.
 
-    IF ms_config-styles_css IS INITIAL.
+    IF is_config-styles_css IS INITIAL.
       
       lv_style_css = z2ui5_cl_app_style_css=>get( ).
     ELSE.
-      lv_style_css = ms_config-styles_css.
+      lv_style_css = is_config-styles_css.
     ENDIF.
 
     result = `<!DOCTYPE html>` && |\n| &&
                `<html lang="en">` && |\n| &&
                `<head>` && |\n| &&
-                  ms_config-content_security_policy && |\n| &&
+                  is_config-content_security_policy && |\n| &&
                `    <meta charset="UTF-8">` && |\n| &&
                `    <meta name="viewport" content="width=device-width, initial-scale=1.0">` && |\n| &&
                `    <meta http-equiv="X-UA-Compatible" content="IE=edge">` && |\n| &&
-                | <title> { ms_config-title }</title> \n| &&
+                | <title> { is_config-title }</title> \n| &&
                 | <style>        html, body, body > div, #container, #container-uiarea \{\n| &
                 |            height: 100%;\n| &
                 |        \}</style> \n| &&
@@ -223,7 +161,7 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
              `  function onInitComponent(){` && |\n| &&
              `    sap.ui.require.preload({` && |\n| &&
              `      "z2ui5/manifest.json": '` && z2ui5_cl_app_manifest_json=>get( ) && `',` && |\n| &&
-             `      "z2ui5/Component.js": function(){` &&  z2ui5_cl_app_component_js=>get( ) && ms_config-custom_js && `},` && |\n| &&
+             `      "z2ui5/Component.js": function(){` &&  z2ui5_cl_app_component_js=>get( ) && is_config-custom_js && `},` && |\n| &&
              `      "z2ui5/css/style.css": '` && lv_style_css && `',` && |\n| &&
              `      "z2ui5/model/models.js": function(){` &&  z2ui5_cl_app_models_js=>get( ) && `},` && |\n| &&
              `      "z2ui5/view/App.view.xml": '` && z2ui5_cl_app_app_xml=>get( ) && `',` && |\n| &&
@@ -241,11 +179,11 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
              `</script>` && |\n| &&
                 `<script id="sap-ui-bootstrap" data-sap-ui-resourceroots='{ "z2ui5": "./" }' data-sap-ui-oninit="onInitComponent" ` && |\n| &&
                  `data-sap-ui-compatVersion="edge" data-sap-ui-async="true" data-sap-ui-frameOptions="trusted" data-sap-ui-bindingSyntax="complex"` && |\n| &&
-                 `data-sap-ui-theme="` &&  ms_config-theme   &&  `" src=" ` && ms_config-src && `"   `.
+                 `data-sap-ui-theme="` &&  is_config-theme   &&  `" src=" ` && is_config-src && `"   `.
 
     
     
-    LOOP AT ms_config-t_add_config REFERENCE INTO lr_config.
+    LOOP AT is_config-t_add_config REFERENCE INTO lr_config.
       result = result && | { lr_config->n }='{ lr_config->v }'|.
     ENDLOOP.
 
@@ -280,10 +218,74 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
 
 
   METHOD set_response.
+        DATA lv_contextid TYPE string.
 
     mo_server->set_cdata( ms_res-body ).
     mo_server->set_header_field( n = `cache-control` v = `no-cache` ).
     mo_server->set_status( code = 200 reason = `success` ).
+
+    "transform cookie to header based contextid handling
+    IF ms_res-s_stateful-switched = abap_true.
+      mo_server->set_session_stateful( ms_res-s_stateful-active  ).
+      IF mo_server->get_header_field( 'sap-contextid-accept' ) = 'header'.
+        
+        lv_contextid = mo_server->get_response_cookie( 'sap-contextid' ).
+        IF lv_contextid IS NOT INITIAL.
+          mo_server->delete_response_cookie( 'sap-contextid' ).
+          mo_server->set_header_field( n = 'sap-contextid' v = lv_contextid ).
+        ENDIF.
+      ENDIF.
+    ELSE.
+      lv_contextid = mo_server->get_header_field( 'sap-contextid' ).
+      IF lv_contextid IS NOT INITIAL.
+        mo_server->set_header_field( n = 'sap-contextid' v = lv_contextid ).
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD _http_post.
+      DATA lo_post TYPE REF TO z2ui5_cl_core_http_post.
+          DATA temp2 TYPE REF TO z2ui5_if_app.
+          DATA li_app LIKE temp2.
+
+    IF so_sticky_handler IS NOT BOUND.
+      
+      CREATE OBJECT lo_post TYPE z2ui5_cl_core_http_post EXPORTING VAL = is_req-body.
+    ELSE.
+      lo_post = so_sticky_handler.
+      lo_post->mv_request_json = is_req-body.
+    ENDIF.
+
+    result = lo_post->main( ).
+
+    TRY.
+        IF lo_post IS BOUND.
+          
+          temp2 ?= lo_post->mo_action->mo_app->mo_app.
+          
+          li_app = temp2.
+          IF li_app->check_sticky = abap_true.
+            so_sticky_handler = lo_post.
+          ELSE.
+            CLEAR so_sticky_handler.
+          ENDIF.
+        ENDIF.
+      CATCH cx_root.
+    ENDTRY.
+
+  ENDMETHOD.
+
+
+  METHOD _main.
+
+    CASE is_req-method.
+      WHEN `GET`.
+        result-body = _http_get( is_config ).
+      WHEN `POST`.
+        result = _http_post( is_req ).
+    ENDCASE.
 
   ENDMETHOD.
 

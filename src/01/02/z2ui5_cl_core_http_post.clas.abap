@@ -46,7 +46,6 @@ CLASS z2ui5_cl_core_http_post IMPLEMENTATION.
 
 
   METHOD main.
-*    CLEAR attributes.
 
     main_begin( ).
     DO.
