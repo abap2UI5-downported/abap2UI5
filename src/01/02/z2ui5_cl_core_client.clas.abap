@@ -48,6 +48,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     MOVE-CORRESPONDING mo_action->mo_app->ms_draft TO result-s_draft.
     result-check_on_navigated = mo_action->ms_actual-check_on_navigated.
     MOVE-CORRESPONDING mo_action->mo_http_post->ms_request-s_front TO result-s_config.
+    result-r_event_data = mo_action->ms_actual-r_data.
 
     TRY.
         
@@ -112,11 +113,118 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
 
   METHOD z2ui5_if_client~message_box_display.
+      DATA lt_msg TYPE z2ui5_cl_util=>ty_t_msg.
+        DATA lv_text TYPE z2ui5_cl_util=>ty_s_msg-text.
+        DATA temp1 LIKE LINE OF lt_msg.
+        DATA temp2 LIKE sy-tabix.
+        DATA lv_type TYPE string.
+        DATA temp3 LIKE LINE OF lt_msg.
+        DATA temp4 LIKE sy-tabix.
+        DATA temp7 TYPE string.
+        DATA temp5 LIKE LINE OF lt_msg.
+        DATA temp6 LIKE sy-tabix.
+        DATA lv_title LIKE temp7.
+        DATA lv_details TYPE string.
+        DATA temp8 LIKE LINE OF lt_msg.
+        DATA lr_msg LIKE REF TO temp8.
+          DATA temp9 TYPE string.
+          DATA temp10 LIKE LINE OF lt_msg.
+          DATA temp11 LIKE sy-tabix.
+
+    IF z2ui5_cl_util=>rtti_check_clike( text ) = abap_false.
+      
+      lt_msg = z2ui5_cl_util=>msg_get( text ).
+      IF lines( lt_msg ) = 1.
+        
+        
+        
+        temp2 = sy-tabix.
+        READ TABLE lt_msg INDEX 1 INTO temp1.
+        sy-tabix = temp2.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        lv_text = temp1-text.
+
+        
+        
+        
+        temp4 = sy-tabix.
+        READ TABLE lt_msg INDEX 1 INTO temp3.
+        sy-tabix = temp4.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        lv_type = z2ui5_cl_util=>ui5_get_msg_type( temp3-type ).
+        lv_type = to_lower( lv_type ).
+        
+        
+        
+        temp6 = sy-tabix.
+        READ TABLE lt_msg INDEX 1 INTO temp5.
+        sy-tabix = temp6.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        CASE temp5-type.
+          WHEN 'E'.
+            temp7 = `Error`.
+          WHEN 'S'.
+            temp7 = `Success`.
+          WHEN `W`.
+            temp7 = `Warning`.
+          WHEN OTHERS.
+            temp7 = `Information`.
+        ENDCASE.
+        
+        lv_title = temp7.
+
+      ELSEIF lines( lt_msg ) > 1.
+        lv_text = | { lines( lt_msg ) } Messages found: |.
+        
+        lv_details = `<ul>`.
+        
+        
+        LOOP AT lt_msg REFERENCE INTO lr_msg.
+          lv_details = lv_details && |<li>|  && lr_msg->text && |</li>|.
+        ENDLOOP.
+        lv_details = lv_details && |</ul>|.
+        IF title IS INITIAL.
+          
+          
+          
+          temp11 = sy-tabix.
+          READ TABLE lt_msg INDEX 1 INTO temp10.
+          sy-tabix = temp11.
+          IF sy-subrc <> 0.
+            ASSERT 1 = 0.
+          ENDIF.
+          CASE temp10-type.
+            WHEN 'E'.
+              temp9 = `Error`.
+            WHEN 'S'.
+              temp9 = `Success`.
+            WHEN `W`.
+              temp9 = `Warning`.
+            WHEN OTHERS.
+              temp9 = `Information`.
+          ENDCASE.
+          lv_title = temp9.
+        ENDIF.
+      ELSE.
+        RETURN.
+      ENDIF.
+    ELSE.
+      lv_text = text.
+      lv_type = type.
+      lv_title = title.
+      lv_details = details.
+    ENDIF.
 
     CLEAR mo_action->ms_next-s_set-s_msg_box.
-    mo_action->ms_next-s_set-s_msg_box-text = text.
-    mo_action->ms_next-s_set-s_msg_box-type = type.
-    mo_action->ms_next-s_set-s_msg_box-title = title.
+    mo_action->ms_next-s_set-s_msg_box-text = lv_text.
+    mo_action->ms_next-s_set-s_msg_box-type = lv_type.
+    mo_action->ms_next-s_set-s_msg_box-title = lv_title.
     mo_action->ms_next-s_set-s_msg_box-styleclass = styleclass.
     mo_action->ms_next-s_set-s_msg_box-onclose = onclose.
     mo_action->ms_next-s_set-s_msg_box-actions = actions.
@@ -124,7 +232,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     mo_action->ms_next-s_set-s_msg_box-initialfocus = initialfocus.
     mo_action->ms_next-s_set-s_msg_box-textdirection = textdirection.
     mo_action->ms_next-s_set-s_msg_box-icon = icon.
-    mo_action->ms_next-s_set-s_msg_box-details = details.
+    mo_action->ms_next-s_set-s_msg_box-details = lv_details.
     mo_action->ms_next-s_set-s_msg_box-closeonnavigation = closeonnavigation.
 
   ENDMETHOD.
@@ -304,19 +412,19 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_bind.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp7 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp10 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    CLEAR temp7.
-    temp7-path_only = path.
-    temp7-custom_filter = custom_filter.
-    temp7-custom_mapper = custom_mapper.
-    temp7-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
-    temp7-tab_index = tab_index.
+    CLEAR temp10.
+    temp10-path_only = path.
+    temp10-custom_filter = custom_filter.
+    temp10-custom_mapper = custom_mapper.
+    temp10-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
+    temp10-tab_index = tab_index.
     result = lo_bind->main(
       val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
       type   = z2ui5_if_core_types=>cs_bind_type-one_way
-      config = temp7 ).
+      config = temp10 ).
 
   ENDMETHOD.
 
@@ -324,21 +432,21 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_bind_edit.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp8 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp11 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    CLEAR temp8.
-    temp8-path_only = path.
-    temp8-custom_filter = custom_filter.
-    temp8-custom_filter_back = custom_filter_back.
-    temp8-custom_mapper = custom_mapper.
-    temp8-custom_mapper_back = custom_mapper_back.
-    temp8-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
-    temp8-tab_index = tab_index.
+    CLEAR temp11.
+    temp11-path_only = path.
+    temp11-custom_filter = custom_filter.
+    temp11-custom_filter_back = custom_filter_back.
+    temp11-custom_mapper = custom_mapper.
+    temp11-custom_mapper_back = custom_mapper_back.
+    temp11-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
+    temp11-tab_index = tab_index.
     result = lo_bind->main(
       val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
       type   = z2ui5_if_core_types=>cs_bind_type-two_way
-      config = temp8 ).
+      config = temp11 ).
 
   ENDMETHOD.
 
@@ -346,16 +454,16 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_bind_local.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp9 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp12 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    CLEAR temp9.
-    temp9-path_only = path.
-    temp9-custom_mapper = custom_mapper.
-    temp9-custom_filter = custom_filter.
+    CLEAR temp12.
+    temp12-path_only = path.
+    temp12-custom_mapper = custom_mapper.
+    temp12-custom_filter = custom_filter.
     result = lo_bind->main_local(
       val    = val
-      config = temp9 ).
+      config = temp12 ).
 
   ENDMETHOD.
 
@@ -368,6 +476,11 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
          val   = val
          t_arg = t_arg
          s_cnt = s_ctrl ).
+
+    IF r_data IS NOT INITIAL.
+      CREATE DATA mo_action->ms_next-r_data LIKE r_data.
+      mo_action->ms_next-r_data = z2ui5_cl_util=>conv_copy_ref_data( r_data ).
+    ENDIF.
 
   ENDMETHOD.
 
@@ -385,31 +498,69 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~set_session_stateful.
 
-    DATA temp10 TYPE REF TO z2ui5_if_app.
-    DATA lv_check_sticky LIKE temp10->check_sticky.
-      DATA temp11 TYPE REF TO z2ui5_if_app.
-      DATA temp12 TYPE REF TO z2ui5_if_app.
-    temp10 ?= mo_action->mo_app->mo_app.
+    DATA temp13 TYPE REF TO z2ui5_if_app.
+    DATA lv_check_sticky LIKE temp13->check_sticky.
+      DATA temp14 TYPE REF TO z2ui5_if_app.
+      DATA temp15 TYPE REF TO z2ui5_if_app.
+    temp13 ?= mo_action->mo_app->mo_app.
     
-    lv_check_sticky = temp10->check_sticky.
+    lv_check_sticky = temp13->check_sticky.
     IF lv_check_sticky = abap_true AND stateful = abap_true.
       RAISE EXCEPTION TYPE z2ui5_cx_util_error
         EXPORTING
           val = `STATEFUL_ALREADY_ACTIVATED_ERROR`.
     ENDIF.
     IF stateful = abap_true.
-*       mo_action->ms_next-s_set-handler_attrs-
       mo_action->ms_next-s_set-s_stateful-active = 1.
       
-      temp11 ?= mo_action->mo_app->mo_app.
-      temp11->check_sticky = abap_true.
+      temp14 ?= mo_action->mo_app->mo_app.
+      temp14->check_sticky = abap_true.
     ELSE.
       mo_action->ms_next-s_set-s_stateful-active = 0.
       
-      temp12 ?= mo_action->mo_app->mo_app.
-      temp12->check_sticky = abap_false.
+      temp15 ?= mo_action->mo_app->mo_app.
+      temp15->check_sticky = abap_false.
     ENDIF.
     mo_action->ms_next-s_set-s_stateful-switched = abap_true.
 
   ENDMETHOD.
+
+  METHOD z2ui5_if_client~check_app_prev_stack.
+
+    DATA ls_get TYPE z2ui5_if_types=>ty_s_get.
+    DATA temp1 TYPE xsdboolean.
+    ls_get = z2ui5_if_client~get( ).
+    
+    temp1 = boolc( ls_get-s_draft-id_prev_app_stack IS NOT INITIAL ).
+    result = temp1.
+
+  ENDMETHOD.
+
+  METHOD z2ui5_if_client~check_on_init.
+
+    DATA temp16 TYPE REF TO z2ui5_if_app.
+    DATA temp2 TYPE xsdboolean.
+    temp16 ?= mo_action->mo_app->mo_app.
+    
+    temp2 = boolc( temp16->check_initialized = abap_false ).
+    result = temp2.
+
+  ENDMETHOD.
+
+  METHOD z2ui5_if_client~check_on_navigated.
+
+    DATA ls_get TYPE z2ui5_if_types=>ty_s_get.
+    ls_get = z2ui5_if_client~get( ).
+    result = ls_get-check_on_navigated.
+
+  ENDMETHOD.
+
+  METHOD z2ui5_if_client~get_app_prev.
+
+    DATA ls_get TYPE z2ui5_if_types=>ty_s_get.
+    ls_get = z2ui5_if_client~get( ).
+    result = z2ui5_if_client~get_app( ls_get-s_draft-id_prev_app ).
+
+  ENDMETHOD.
+
 ENDCLASS.

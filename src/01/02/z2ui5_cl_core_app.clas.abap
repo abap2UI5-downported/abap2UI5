@@ -156,12 +156,16 @@ CLASS z2ui5_cl_core_app IMPLEMENTATION.
 
   METHOD db_save.
       DATA temp1 TYPE REF TO z2ui5_if_app.
+      DATA temp2 TYPE REF TO z2ui5_if_app.
     DATA lo_db TYPE REF TO z2ui5_cl_core_draft_srv.
 
     IF mo_app IS BOUND.
       
       temp1 ?= mo_app.
       temp1->id_draft = ms_draft-id.
+      
+      temp2 ?= mo_app.
+      temp2->check_initialized = abap_true.
     ENDIF.
 
     

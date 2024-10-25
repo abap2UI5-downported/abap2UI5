@@ -58,6 +58,31 @@ CLASS z2ui5_cl_util DEFINITION
         t_filter       TYPE ty_t_filter_multi,
       END OF ty_s_sql.
 
+    TYPES:
+      BEGIN OF ty_S_msg,
+        text TYPE string,
+        id   TYPE string,
+        no   TYPE string,
+        type TYPE string,
+        v1   TYPE string,
+        v2   TYPE string,
+        v3   TYPE string,
+        v4   TYPE string,
+      END OF ty_s_msg,
+      ty_T_msg TYPE STANDARD TABLE OF ty_S_msg WITH DEFAULT KEY.
+
+    CLASS-METHODS ui5_get_msg_type
+      IMPORTING
+        val           TYPE clike
+      RETURNING
+        VALUE(result) TYPE string.
+
+    CLASS-METHODS msg_get
+      IMPORTING
+        val           TYPE any
+      RETURNING
+        VALUE(result) TYPE ty_T_msg.
+
     CLASS-METHODS rtti_get_t_attri_by_include
       IMPORTING
         type          TYPE REF TO cl_abap_datadescr
@@ -425,6 +450,11 @@ CLASS z2ui5_cl_util DEFINITION
         VALUE(result) TYPE string.
 
     CLASS-METHODS check_raise_srtti_installed.
+    CLASS-METHODS rtti_check_clike
+      IMPORTING
+        val           TYPE any
+      RETURNING
+        VALUE(result) TYPE abap_bool.
 
   PROTECTED SECTION.
   PRIVATE SECTION.
@@ -1700,17 +1730,12 @@ DATA lt_param TYPE temp3.
 
 
   METHOD check_raise_srtti_installed.
-      DATA lv_link TYPE string.
       DATA lv_text TYPE string.
 
     IF rtti_check_class_exists( 'ZCL_SRTTI_TYPEDESCR' ) = abap_false.
 
       
-      lv_link = `https://github.com/sandraros/S-RTTI`.
-      
-      lv_text = `<p>Please install the open-source project S-RTTI by sandraros and try again: <a href="` &&
-                       lv_link && `" style="color:blue; font-weight:600;" target="_blank">(link)</a></p>`.
-
+      lv_text = `UNSUPPORTED_FEATURE - Please install the open-source project S-RTTI by sandraros and try again: https://github.com/sandraros/S-RTTI`.
       RAISE EXCEPTION TYPE z2ui5_cx_util_error
         EXPORTING
           val = lv_text.
@@ -1857,6 +1882,181 @@ CREATE OBJECT lo_range
           ir_range     = temp52.
 
     ENDLOOP.
+
+  ENDMETHOD.
+
+
+  METHOD msg_get.
+
+    DATA lv_kind TYPE string.
+        FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+        FIELD-SYMBOLS <row> LIKE LINE OF <tab>.
+          DATA lt_tab TYPE z2ui5_cl_util=>ty_t_msg.
+        DATA lt_attri TYPE abap_component_tab.
+        DATA temp53 TYPE ty_s_msg.
+        DATA ls_result LIKE temp53.
+        DATA temp54 LIKE LINE OF lt_attri.
+        DATA ls_attri LIKE REF TO temp54.
+          DATA lv_name TYPE string.
+          FIELD-SYMBOLS <comp> TYPE any.
+            DATA temp55 TYPE REF TO cx_root.
+            DATA lx LIKE temp55.
+            DATA lt_attri_o TYPE abap_attrdescr_tab.
+            DATA temp56 LIKE LINE OF lt_attri_o.
+            DATA ls_attri_o LIKE REF TO temp56.
+          DATA temp57 TYPE z2ui5_cl_util=>ty_s_msg.
+    lv_kind = z2ui5_cl_util=>rtti_get_type_kind( val ).
+    CASE lv_kind.
+
+      WHEN cl_abap_datadescr=>typekind_table.
+        
+        ASSIGN val TO <tab>.
+        
+        LOOP AT <tab> ASSIGNING <row>.
+          
+          lt_tab = msg_get( <row> ).
+          INSERT LINES OF lt_tab INTO TABLE result.
+        ENDLOOP.
+
+      WHEN cl_abap_datadescr=>typekind_struct1 OR cl_abap_datadescr=>typekind_struct2.
+
+        IF val IS INITIAL.
+          RETURN.
+        ENDIF.
+
+        
+        lt_attri = z2ui5_cl_util=>rtti_get_t_attri_by_any( val ).
+
+        
+        CLEAR temp53.
+        
+        ls_result = temp53.
+        
+        
+        LOOP AT lt_attri REFERENCE INTO ls_attri.
+          
+          lv_name = 'VAL-' && ls_attri->name.
+          
+          ASSIGN (lv_name) TO <comp>.
+          CASE ls_attri->name.
+            WHEN 'ID' OR 'MSGID'.
+              ls_result-id = <comp>.
+            WHEN 'NO' OR 'NUMBER' OR 'MSGNO'.
+              ls_result-no = <comp>.
+            WHEN 'MESSAGE' OR 'TEXT'.
+              ls_result-text = <comp>.
+            WHEN 'TYPE' OR 'MSGTY'.
+              ls_result-type = <comp>.
+            WHEN 'MESSAGE_V1' OR 'MSGV1' OR 'V1'.
+              ls_result-v1 = <comp>.
+            WHEN 'MESSAGE_V2' OR 'MSGV2' OR 'V2'.
+              ls_result-v2 = <comp>.
+            WHEN 'MESSAGE_V3' OR 'MSGV3' OR 'V3'.
+              ls_result-v3 = <comp>.
+            WHEN 'MESSAGE_V4' OR 'MSGV4' OR 'V4'.
+              ls_result-v4 = <comp>.
+          ENDCASE.
+        ENDLOOP.
+        IF ls_result-text IS INITIAL AND ls_result-id IS NOT INITIAL.
+          MESSAGE ID ls_result-id TYPE 'I' NUMBER ls_result-no
+          WITH ls_result-v1 ls_result-v2 ls_result-v3 ls_result-v4
+          INTO ls_result-text.
+        ENDIF.
+        INSERT ls_result INTO TABLE result.
+
+      WHEN cl_abap_datadescr=>typekind_oref.
+        TRY.
+            
+            temp55 ?= val.
+            
+            lx = temp55.
+            CLEAR ls_result.
+            ls_result-type = 'E'.
+            ls_result-text = lx->get_text( ).
+
+            
+            lt_attri_o = z2ui5_cl_util=>rtti_get_t_attri_by_oref( val ).
+            
+            
+            LOOP AT lt_attri_o REFERENCE INTO ls_attri_o
+         WHERE  visibility = 'U'.
+              CASE ls_attri_o->name.
+                WHEN 'ID' OR 'MSGID'.
+                  ASSIGN val->(ls_attri_o->name) TO <comp>.
+                  ls_result-id = <comp>.
+                WHEN 'NO' OR 'NUMBER' OR 'MSGNO'.
+                  ASSIGN val->(ls_attri_o->name) TO <comp>.
+                  ls_result-no = <comp>.
+                WHEN 'MESSAGE'.
+                  ASSIGN val->(ls_attri_o->name) TO <comp>.
+                  ls_result-text = <comp>.
+                WHEN 'TYPE' OR 'MSGTY'.
+                  ASSIGN val->(ls_attri_o->name) TO <comp>.
+                  ls_result-type = <comp>.
+                WHEN 'MESSAGE_V1' OR 'MSGV1'.
+                  ASSIGN val->(ls_attri_o->name) TO <comp>.
+                  ls_result-v1 = <comp>.
+                WHEN 'MESSAGE_V2' OR 'MSGV2'.
+                  ASSIGN val->(ls_attri_o->name) TO <comp>.
+                  ls_result-v2 = <comp>.
+                WHEN 'MESSAGE_V3' OR 'MSGV3'.
+                  ASSIGN val->(ls_attri_o->name) TO <comp>.
+                  ls_result-v3 = <comp>.
+                WHEN 'MESSAGE_V4' OR 'MSGV4'.
+                  ASSIGN val->(ls_attri_o->name) TO <comp>.
+                  ls_result-v4 = <comp>.
+              ENDCASE.
+
+            ENDLOOP.
+*            IF ls_result-text IS INITIAL AND ls_result-id IS NOT INITIAL.
+*              MESSAGE ID ls_result-id TYPE 'I' NUMBER ls_result-no INTO ls_result-text.
+*            ENDIF.
+            INSERT ls_result INTO TABLE result.
+          CATCH cx_root.
+        ENDTRY.
+
+      WHEN OTHERS.
+
+        IF rtti_check_clike( val ) IS NOT INITIAL.
+          
+          CLEAR temp57.
+          temp57-text = val.
+          INSERT temp57
+      INTO TABLE result.
+        ENDIF.
+    ENDCASE.
+
+  ENDMETHOD.
+
+
+  METHOD rtti_check_clike.
+
+    DATA lv_type TYPE string.
+    lv_type = rtti_get_type_kind( val ).
+    CASE lv_type.
+      WHEN cl_abap_datadescr=>typekind_char OR
+          cl_abap_datadescr=>typekind_clike OR
+          cl_abap_datadescr=>typekind_csequence OR
+          cl_abap_datadescr=>typekind_string.
+        result = abap_true.
+    ENDCASE.
+
+  ENDMETHOD.
+
+  METHOD ui5_get_msg_type.
+
+    DATA temp58 TYPE string.
+    CASE val.
+      WHEN 'E'.
+        temp58 = `Error`.
+      WHEN 'S'.
+        temp58 = `Success`.
+      WHEN `W`.
+        temp58 = `Warning`.
+      WHEN 'I'.
+        temp58 = `Information`.
+    ENDCASE.
+    result = temp58.
 
   ENDMETHOD.
 

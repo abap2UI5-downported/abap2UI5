@@ -47,8 +47,8 @@ CLASS ltcl_test_db IMPLEMENTATION.
     DATA lo_app_user TYPE REF TO ltcl_test_db.
     DATA lo_app TYPE REF TO z2ui5_cl_core_app.
     DATA lo_app_db TYPE REF TO z2ui5_cl_core_app.
-    DATA temp2 TYPE REF TO ltcl_test_db.
-    DATA lo_app_user_db LIKE temp2.
+    DATA temp3 TYPE REF TO ltcl_test_db.
+    DATA lo_app_user_db LIKE temp3.
 
     IF sy-sysid = 'ABC'.
       RETURN.
@@ -68,9 +68,9 @@ CLASS ltcl_test_db IMPLEMENTATION.
     
     lo_app_db = z2ui5_cl_core_app=>db_load( `TEST_ID` ).
     
-    temp2 ?= lo_app_db->mo_app.
+    temp3 ?= lo_app_db->mo_app.
     
-    lo_app_user_db = temp2.
+    lo_app_user_db = temp3.
 
     cl_abap_unit_assert=>assert_equals(
         act = lo_app_user_db->mv_value

@@ -28,6 +28,8 @@ CLASS z2ui5_cl_pop_to_select DEFINITION
         !i_contentheight    TYPE clike OPTIONAL
         !i_growingthreshold TYPE clike OPTIONAL
         !i_multiselect      TYPE abap_bool OPTIONAL
+        i_event_canceled    TYPE string OPTIONAL
+        i_event_confirmed   TYPE string OPTIONAL
       RETURNING
         VALUE(r_result)     TYPE REF TO z2ui5_cl_pop_to_select .
     METHODS result
@@ -46,6 +48,8 @@ CLASS z2ui5_cl_pop_to_select DEFINITION
     DATA growing_threshold TYPE string .
     DATA descending TYPE abap_bool .
     DATA multiselect TYPE abap_bool.
+    DATA event_confirmed TYPE string.
+    DATA event_canceled TYPE string.
 
     METHODS on_event .
     METHODS display .
@@ -61,15 +65,27 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
 
 
   METHOD factory.
+      DATA temp1 TYPE string.
 
     CREATE OBJECT r_result.
-    r_result->title = i_title.
+    IF i_title IS INITIAL.
+      
+      IF i_multiselect = abap_true.
+        temp1 = `Multi select`.
+      ELSE.
+        temp1 = `Single select`.
+      ENDIF.
+      r_result->title = temp1.
+    ENDIF.
+
     r_result->sort_field = i_sort_field.
     r_result->descending = i_descending.
     r_result->content_height = i_contentheight.
     r_result->content_width = i_contentwidth.
     r_result->growing_threshold = i_growingthreshold.
     r_result->multiselect = i_multiselect.
+    r_result->event_confirmed = i_event_confirmed.
+    r_result->event_canceled = i_event_canceled.
 
     r_result->mr_tab = z2ui5_cl_util=>conv_copy_ref_data( i_tab ).
     CREATE DATA r_result->ms_result-row LIKE LINE OF i_tab.
@@ -82,15 +98,15 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
 
     FIELD-SYMBOLS <tab_out> TYPE STANDARD TABLE.
     DATA popup TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp1 TYPE string_table.
     DATA temp2 TYPE string_table.
+    DATA temp1 TYPE string_table.
     DATA tab TYPE REF TO z2ui5_cl_xml_view.
     DATA lt_comp TYPE abap_component_tab.
     DATA list TYPE REF TO z2ui5_cl_xml_view.
     DATA cells TYPE REF TO z2ui5_cl_xml_view.
     DATA ls_comp LIKE LINE OF lt_comp.
     DATA columns TYPE REF TO z2ui5_cl_xml_view.
-      DATA temp3 TYPE REF TO cl_abap_elemdescr.
+      DATA temp4 TYPE REF TO cl_abap_elemdescr.
       DATA temp5 TYPE z2ui5_cl_abap_api=>ty_s_data_element_text-medium.
       DATA data_element_name TYPE string.
       DATA medium_label TYPE z2ui5_cl_abap_api=>ty_s_data_element_text-medium.
@@ -100,12 +116,12 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
     
     popup = z2ui5_cl_xml_view=>factory_popup( ).
     
-    CLEAR temp1.
-    INSERT `${$parameters>/value}` INTO TABLE temp1.
-    INSERT `${$parameters>/clearButtonPressed}` INTO TABLE temp1.
-    
     CLEAR temp2.
-    INSERT `${$parameters>/selectedContexts[0]/sPath}` INTO TABLE temp2.
+    INSERT `${$parameters>/value}` INTO TABLE temp2.
+    INSERT `${$parameters>/clearButtonPressed}` INTO TABLE temp2.
+    
+    CLEAR temp1.
+    INSERT `${$parameters>/selectedContexts[0]/sPath}` INTO TABLE temp1.
     
     tab = popup->table_select_dialog(
               items            = `{path:'`
@@ -114,8 +130,8 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
                                 && z2ui5_cl_util=>boolean_abap_2_json( me->descending )
                                 && ` } }`
               cancel           = client->_event( 'CANCEL' )
-              search           = client->_event( val = 'SEARCH'  t_arg = temp1 )
-              confirm          = client->_event( val = 'CONFIRM' t_arg = temp2 )
+              search           = client->_event( val = 'SEARCH'  t_arg = temp2 )
+              confirm          = client->_event( val = 'CONFIRM' t_arg = temp1 )
               growing          = abap_true
               contentwidth     = content_width
               contentheight    = content_height
@@ -142,10 +158,10 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
     columns = tab->columns( ).
     LOOP AT lt_comp INTO ls_comp.
       
-      temp3 ?= ls_comp-type.
+      temp4 ?= ls_comp-type.
       
       
-      data_element_name = substring_after( val = temp3->absolute_name sub = '\TYPE=' ).
+      data_element_name = substring_after( val = temp4->absolute_name sub = '\TYPE=' ).
       
       medium_label = z2ui5_cl_util=>rtti_get_data_element_texts( data_element_name )-medium.
       IF medium_label IS NOT INITIAL.
@@ -187,9 +203,11 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
         ms_result-check_confirmed = abap_true.
         on_event_confirm( ).
 
+
       WHEN 'CANCEL'.
         client->popup_destroy( ).
         client->nav_app_leave( client->get_app( client->get( )-s_draft-id_prev_app_stack ) ).
+        client->follow_up_action( client->_event( event_canceled ) ).
 
       WHEN 'SEARCH'.
         on_event_search( ).
@@ -216,19 +234,19 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
     FIELD-SYMBOLS <field> TYPE any.
     DATA lr_row TYPE REF TO data.
     DATA lo_type TYPE REF TO cl_abap_typedescr.
-    DATA temp4 TYPE REF TO cl_abap_tabledescr.
-    DATA lo_table LIKE temp4.
-        DATA temp5 TYPE REF TO cl_abap_structdescr.
-        DATA lo_struct LIKE temp5.
+    DATA temp5 TYPE REF TO cl_abap_tabledescr.
+    DATA lo_table LIKE temp5.
+        DATA temp6 TYPE REF TO cl_abap_structdescr.
+        DATA lo_struct LIKE temp6.
         DATA lt_comp TYPE abap_component_tab.
-        DATA temp6 TYPE REF TO cl_abap_elemdescr.
-        DATA lo_elem LIKE temp6.
-        DATA temp7 TYPE abap_componentdescr.
-        DATA temp10 TYPE REF TO cl_abap_datadescr.
-    DATA temp8 LIKE sy-subrc.
+        DATA temp7 TYPE REF TO cl_abap_elemdescr.
+        DATA lo_elem LIKE temp7.
+        DATA temp8 TYPE abap_componentdescr.
+        DATA temp11 TYPE REF TO cl_abap_datadescr.
+    DATA temp9 LIKE sy-subrc.
       DATA lo_type_bool TYPE REF TO cl_abap_typedescr.
-      DATA temp9 TYPE abap_componentdescr.
-      DATA temp11 TYPE REF TO cl_abap_datadescr.
+      DATA temp10 TYPE abap_componentdescr.
+      DATA temp12 TYPE REF TO cl_abap_datadescr.
     DATA lo_line_type TYPE REF TO cl_abap_structdescr.
     DATA lo_tab_type TYPE REF TO cl_abap_tabledescr.
     ASSIGN mr_tab->* TO <tab>.
@@ -236,44 +254,44 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
     
     lo_type = cl_abap_structdescr=>describe_by_data( <tab> ).
     
-    temp4 ?= lo_type.
+    temp5 ?= lo_type.
     
-    lo_table = temp4.
+    lo_table = temp5.
     TRY.
         
-        temp5 ?= lo_table->get_table_line_type( ).
+        temp6 ?= lo_table->get_table_line_type( ).
         
-        lo_struct = temp5.
+        lo_struct = temp6.
         
         lt_comp = lo_struct->get_components( ).
       CATCH cx_root.
         check_table_line = abap_true.
         
-        temp6 ?= lo_table->get_table_line_type( ).
+        temp7 ?= lo_table->get_table_line_type( ).
         
-        lo_elem = temp6.
+        lo_elem = temp7.
         
-        CLEAR temp7.
-        temp7-name = 'TAB_LINE'.
+        CLEAR temp8.
+        temp8-name = 'TAB_LINE'.
         
-        temp10 ?= lo_elem.
-        temp7-type = temp10.
-        INSERT temp7 INTO TABLE lt_comp.
+        temp11 ?= lo_elem.
+        temp8-type = temp11.
+        INSERT temp8 INTO TABLE lt_comp.
     ENDTRY.
 
     
     READ TABLE lt_comp WITH KEY name = `ZZSELKZ` TRANSPORTING NO FIELDS.
-    temp8 = sy-subrc.
-    IF NOT temp8 = 0.
+    temp9 = sy-subrc.
+    IF NOT temp9 = 0.
       
       lo_type_bool = cl_abap_structdescr=>describe_by_name( 'ABAP_BOOL' ).
       
-      CLEAR temp9.
-      temp9-name = `ZZSELKZ`.
+      CLEAR temp10.
+      temp10-name = `ZZSELKZ`.
       
-      temp11 ?= lo_type_bool.
-      temp9-type = temp11.
-      INSERT temp9 INTO TABLE lt_comp.
+      temp12 ?= lo_type_bool.
+      temp10-type = temp12.
+      INSERT temp10 INTO TABLE lt_comp.
     ENDIF.
 
     
@@ -333,10 +351,10 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
         MOVE-CORRESPONDING <row_selected> TO <row_result>.
       ENDIF.
 
+      INSERT <row_result> INTO TABLE <table_result>.
       IF multiselect = abap_false.
         EXIT.
       ELSE.
-        INSERT <row_result> INTO TABLE <table_result>.
         CLEAR <row_result>.
       ENDIF.
 
@@ -344,6 +362,7 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
 
     client->popup_destroy( ).
     client->nav_app_leave( client->get_app( client->get( )-s_draft-id_prev_app_stack ) ).
+    client->follow_up_action( client->_event( val = event_confirmed r_data = <table_result> ) ).
 
   ENDMETHOD.
 
