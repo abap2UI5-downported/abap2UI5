@@ -128,8 +128,10 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
         DATA temp8 LIKE LINE OF lt_msg.
         DATA lr_msg LIKE REF TO temp8.
           DATA temp9 TYPE string.
-          DATA temp10 LIKE LINE OF lt_msg.
-          DATA temp11 LIKE sy-tabix.
+          DATA temp12 LIKE LINE OF lt_msg.
+          DATA temp13 LIKE sy-tabix.
+        DATA temp10 LIKE LINE OF lt_msg.
+        DATA temp11 LIKE sy-tabix.
 
     IF z2ui5_cl_util=>rtti_check_clike( text ) = abap_false.
       
@@ -179,6 +181,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
         
         lv_title = temp7.
 
+
       ELSEIF lines( lt_msg ) > 1.
         lv_text = | { lines( lt_msg ) } Messages found: |.
         
@@ -193,13 +196,13 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
           
           
           
-          temp11 = sy-tabix.
-          READ TABLE lt_msg INDEX 1 INTO temp10.
-          sy-tabix = temp11.
+          temp13 = sy-tabix.
+          READ TABLE lt_msg INDEX 1 INTO temp12.
+          sy-tabix = temp13.
           IF sy-subrc <> 0.
             ASSERT 1 = 0.
           ENDIF.
-          CASE temp10-type.
+          CASE temp12-type.
             WHEN 'E'.
               temp9 = `Error`.
             WHEN 'S'.
@@ -211,6 +214,15 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
           ENDCASE.
           lv_title = temp9.
         ENDIF.
+        
+        
+        temp11 = sy-tabix.
+        READ TABLE lt_msg INDEX 1 INTO temp10.
+        sy-tabix = temp11.
+        IF sy-subrc <> 0.
+          ASSERT 1 = 0.
+        ENDIF.
+        lv_type = z2ui5_cl_util=>ui5_get_msg_type( temp10-type ).
       ELSE.
         RETURN.
       ENDIF.
@@ -219,7 +231,15 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
       lv_type = type.
       lv_title = title.
       lv_details = details.
+
+      IF lv_type = 'information'.
+        lv_type = 'show'.
+      ENDIF.
     ENDIF.
+
+    if lv_type = ''.
+      lv_type = 'show'.
+    endif.
 
     CLEAR mo_action->ms_next-s_set-s_msg_box.
     mo_action->ms_next-s_set-s_msg_box-text = lv_text.
@@ -412,19 +432,19 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_bind.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp10 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp12 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    CLEAR temp10.
-    temp10-path_only = path.
-    temp10-custom_filter = custom_filter.
-    temp10-custom_mapper = custom_mapper.
-    temp10-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
-    temp10-tab_index = tab_index.
+    CLEAR temp12.
+    temp12-path_only = path.
+    temp12-custom_filter = custom_filter.
+    temp12-custom_mapper = custom_mapper.
+    temp12-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
+    temp12-tab_index = tab_index.
     result = lo_bind->main(
       val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
       type   = z2ui5_if_core_types=>cs_bind_type-one_way
-      config = temp10 ).
+      config = temp12 ).
 
   ENDMETHOD.
 
@@ -432,21 +452,21 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_bind_edit.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp11 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp13 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    CLEAR temp11.
-    temp11-path_only = path.
-    temp11-custom_filter = custom_filter.
-    temp11-custom_filter_back = custom_filter_back.
-    temp11-custom_mapper = custom_mapper.
-    temp11-custom_mapper_back = custom_mapper_back.
-    temp11-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
-    temp11-tab_index = tab_index.
+    CLEAR temp13.
+    temp13-path_only = path.
+    temp13-custom_filter = custom_filter.
+    temp13-custom_filter_back = custom_filter_back.
+    temp13-custom_mapper = custom_mapper.
+    temp13-custom_mapper_back = custom_mapper_back.
+    temp13-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
+    temp13-tab_index = tab_index.
     result = lo_bind->main(
       val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
       type   = z2ui5_if_core_types=>cs_bind_type-two_way
-      config = temp11 ).
+      config = temp13 ).
 
   ENDMETHOD.
 
@@ -454,16 +474,16 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~_bind_local.
 
     DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
-    DATA temp12 TYPE z2ui5_if_core_types=>ty_s_bind_config.
+    DATA temp14 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
     
-    CLEAR temp12.
-    temp12-path_only = path.
-    temp12-custom_mapper = custom_mapper.
-    temp12-custom_filter = custom_filter.
+    CLEAR temp14.
+    temp14-path_only = path.
+    temp14-custom_mapper = custom_mapper.
+    temp14-custom_filter = custom_filter.
     result = lo_bind->main_local(
       val    = val
-      config = temp12 ).
+      config = temp14 ).
 
   ENDMETHOD.
 
@@ -498,13 +518,13 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~set_session_stateful.
 
-    DATA temp13 TYPE REF TO z2ui5_if_app.
-    DATA lv_check_sticky LIKE temp13->check_sticky.
-      DATA temp14 TYPE REF TO z2ui5_if_app.
-      DATA temp15 TYPE REF TO z2ui5_if_app.
-    temp13 ?= mo_action->mo_app->mo_app.
+    DATA temp15 TYPE REF TO z2ui5_if_app.
+    DATA lv_check_sticky LIKE temp15->check_sticky.
+      DATA temp16 TYPE REF TO z2ui5_if_app.
+      DATA temp17 TYPE REF TO z2ui5_if_app.
+    temp15 ?= mo_action->mo_app->mo_app.
     
-    lv_check_sticky = temp13->check_sticky.
+    lv_check_sticky = temp15->check_sticky.
     IF lv_check_sticky = abap_true AND stateful = abap_true.
       RAISE EXCEPTION TYPE z2ui5_cx_util_error
         EXPORTING
@@ -513,13 +533,13 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     IF stateful = abap_true.
       mo_action->ms_next-s_set-s_stateful-active = 1.
       
-      temp14 ?= mo_action->mo_app->mo_app.
-      temp14->check_sticky = abap_true.
+      temp16 ?= mo_action->mo_app->mo_app.
+      temp16->check_sticky = abap_true.
     ELSE.
       mo_action->ms_next-s_set-s_stateful-active = 0.
       
-      temp15 ?= mo_action->mo_app->mo_app.
-      temp15->check_sticky = abap_false.
+      temp17 ?= mo_action->mo_app->mo_app.
+      temp17->check_sticky = abap_false.
     ENDIF.
     mo_action->ms_next-s_set-s_stateful-switched = abap_true.
 
@@ -538,11 +558,11 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~check_on_init.
 
-    DATA temp16 TYPE REF TO z2ui5_if_app.
+    DATA temp18 TYPE REF TO z2ui5_if_app.
     DATA temp2 TYPE xsdboolean.
-    temp16 ?= mo_action->mo_app->mo_app.
+    temp18 ?= mo_action->mo_app->mo_app.
     
-    temp2 = boolc( temp16->check_initialized = abap_false ).
+    temp2 = boolc( temp18->check_initialized = abap_false ).
     result = temp2.
 
   ENDMETHOD.
