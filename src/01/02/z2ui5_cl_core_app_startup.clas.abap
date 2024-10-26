@@ -83,15 +83,15 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
 
   METHOD view_display_start.
 
-    DATA page2 TYPE REF TO z2ui5_cl_xml_view.
-    DATA simple_form2 TYPE REF TO z2ui5_cl_xml_view.
+    DATA page TYPE REF TO z2ui5_cl_xml_view.
+    DATA simple_form TYPE REF TO z2ui5_cl_xml_view.
     DATA lv_url_samples2 TYPE string.
       DATA temp1 TYPE string_table.
-    page2 = z2ui5_cl_xml_view=>factory( )->shell( )->page(
+    page = z2ui5_cl_xml_view=>factory( )->shell( )->page(
          title         = `abap2UI5 - Developing UI5 Apps Purely in ABAP`
          shownavbutton = abap_false ).
 
-    page2->header_content(
+    page->header_content(
       )->toolbar_spacer(
       )->button( text = `Debugging Tools` icon = `sap-icon://enablement`
         press = client->_event( `OPEN_DEBUG` )
@@ -100,7 +100,7 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
     ).
 
     
-    simple_form2 = page2->simple_form(
+    simple_form = page->simple_form(
         editable                = abap_true
         layout                  = `ResponsiveGridLayout`
         labelspanxl             = `4`
@@ -118,8 +118,8 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
         singlecontainerfullsize = abap_false
       )->content( `form` ).
 
-    simple_form2->toolbar( )->title( `Quickstart` ).
-    simple_form2->label( `Step 1`
+    simple_form->toolbar( )->title( `Quickstart` ).
+    simple_form->label( `Step 1`
       )->text( `Create a new class in your ABAP system`
       )->label( `Step 2`
       )->text( `Add the interface: Z2UI5_IF_APP`
@@ -133,7 +133,7 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
 
     IF ms_home-class_editable = abap_true.
 
-      simple_form2->input( placeholder = `fill in the class name and press 'check'`
+      simple_form->input( placeholder = `fill in the class name and press 'check'`
                       enabled          = client->_bind( ms_home-class_editable )
                       value            = client->_bind_edit( ms_home-classname )
                       submit           = client->_event( ms_home-btn_event_id )
@@ -142,15 +142,15 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
                       width            = `70%` ).
 
     ELSE.
-      simple_form2->text( ms_home-classname ).
+      simple_form->text( ms_home-classname ).
     ENDIF.
 
-    simple_form2->label( ).
-    simple_form2->button( press = client->_event( ms_home-btn_event_id )
+    simple_form->label( ).
+    simple_form->button( press = client->_event( ms_home-btn_event_id )
                      text       = client->_bind( ms_home-btn_text )
                      icon       = client->_bind( ms_home-btn_icon )
                      width      = `70%` ).
-    simple_form2->label( `Step 5`
+    simple_form->label( `Step 5`
       )->link( text  = `Link to the Application`
              target  = `_blank`
              href    = client->_bind( ms_home-url )
@@ -162,52 +162,52 @@ CLASS z2ui5_cl_core_app_startup IMPLEMENTATION.
                   client    = client
                   classname = 'z2ui5_cl_demo_app_000' ).
 
-    simple_form2->toolbar( )->title( `What's next?` ).
+    simple_form->toolbar( )->title( `What's next?` ).
 
     IF z2ui5_cl_util=>rtti_check_class_exists( `z2ui5_cl_demo_app_000` ) IS NOT INITIAL.
-      simple_form2->label( `Start Developing` ).
+      simple_form->label( `Start Developing` ).
       
       CLEAR temp1.
       INSERT lv_url_samples2 INTO TABLE temp1.
-      simple_form2->button(
+      simple_form->button(
         text      = `Explore Code Samples`
         press     = client->_event_client( val   = client->cs_event-open_new_tab
                                            t_arg = temp1 )
             width = `70%` ).
 
     ELSE.
-      simple_form2->label( `Install the sample repository` ).
-      simple_form2->link( text = `And explore more than 200 sample apps...`
+      simple_form->label( `Install the sample repository` ).
+      simple_form->link( text = `And explore more than 200 sample apps...`
               target           = `_blank`
               href             = `https://github.com/abap2UI5/abap2UI5-samples` ).
     ENDIF.
 
-    simple_form2->toolbar( )->title( `Contribution` ).
+    simple_form->toolbar( )->title( `Contribution` ).
 
-    simple_form2->label( `Open an issue` ).
-    simple_form2->link( text = `You have problems, comments or wishes?`
+    simple_form->label( `Open an issue` ).
+    simple_form->link( text = `You have problems, comments or wishes?`
                  target      = `_blank`
                  href        = `https://github.com/abap2UI5/abap2UI5/issues` ).
 
-    simple_form2->label( `Open a Pull Request` ).
-    simple_form2->link( text = `You added a new feature or fixed a bug?`
+    simple_form->label( `Open a Pull Request` ).
+    simple_form->link( text = `You added a new feature or fixed a bug?`
                target        = `_blank`
                href          = `https://github.com/abap2UI5/abap2UI5/pulls` ).
 
 
-    simple_form2->toolbar( )->title( `Social Media` ).
+    simple_form->toolbar( )->title( `Social Media` ).
 
-    simple_form2->label( ).
-    simple_form2->link( text   = `Follow us on LinkedIn`
+    simple_form->label( ).
+    simple_form->link( text   = `Follow us on LinkedIn`
                         target = `_blank`
                         href   = `https://www.linkedin.com/company/abap2ui5` ).
 
-    simple_form2->label( ).
-    simple_form2->link( text   = `www.abap2UI5.org`
+    simple_form->label( ).
+    simple_form->link( text   = `www.abap2UI5.org`
                         target = `_blank`
                         href   = `http://www.abap2UI5.org` ).
 
-    client->view_display( page2->stringify( ) ).
+    client->view_display( page->stringify( ) ).
 
   ENDMETHOD.
 
@@ -259,7 +259,7 @@ MOVE-CORRESPONDING <class> TO ms_home.
     DATA content TYPE REF TO z2ui5_cl_xml_view.
     DATA simple_form2 TYPE REF TO z2ui5_cl_xml_view.
     DATA temp4 TYPE string.
-    DATA temp1 TYPE REF TO z2ui5_cl_core_draft_srv.
+    DATA temp1 TYPE REF TO z2ui5_cl_core_srv_draft.
     DATA lv_count LIKE temp4.
     page2 = z2ui5_cl_xml_view=>factory_popup(
          )->dialog(
@@ -303,7 +303,7 @@ MOVE-CORRESPONDING <class> TO ms_home.
 
     
     
-    CREATE OBJECT temp1 TYPE z2ui5_cl_core_draft_srv.
+    CREATE OBJECT temp1 TYPE z2ui5_cl_core_srv_draft.
     temp4 = temp1->count_entries( ).
     
     lv_count = temp4.

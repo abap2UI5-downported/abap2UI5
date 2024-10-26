@@ -431,9 +431,9 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~_bind.
 
-    DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
+    DATA lo_bind TYPE REF TO z2ui5_cl_core_srv_bind.
     DATA temp12 TYPE z2ui5_if_core_types=>ty_s_bind_config.
-    CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
+    CREATE OBJECT lo_bind TYPE z2ui5_cl_core_srv_bind EXPORTING APP = mo_action->mo_app.
     
     CLEAR temp12.
     temp12-path_only = path.
@@ -451,9 +451,9 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~_bind_edit.
 
-    DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
+    DATA lo_bind TYPE REF TO z2ui5_cl_core_srv_bind.
     DATA temp13 TYPE z2ui5_if_core_types=>ty_s_bind_config.
-    CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
+    CREATE OBJECT lo_bind TYPE z2ui5_cl_core_srv_bind EXPORTING APP = mo_action->mo_app.
     
     CLEAR temp13.
     temp13-path_only = path.
@@ -473,9 +473,9 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~_bind_local.
 
-    DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
+    DATA lo_bind TYPE REF TO z2ui5_cl_core_srv_bind.
     DATA temp14 TYPE z2ui5_if_core_types=>ty_s_bind_config.
-    CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_action->mo_app.
+    CREATE OBJECT lo_bind TYPE z2ui5_cl_core_srv_bind EXPORTING APP = mo_action->mo_app.
     
     CLEAR temp14.
     temp14-path_only = path.
@@ -490,8 +490,8 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~_event.
 
-    DATA lo_ui5 TYPE REF TO z2ui5_cl_core_event_srv.
-    CREATE OBJECT lo_ui5 TYPE z2ui5_cl_core_event_srv.
+    DATA lo_ui5 TYPE REF TO z2ui5_cl_core_srv_event.
+    CREATE OBJECT lo_ui5 TYPE z2ui5_cl_core_srv_event.
     result = lo_ui5->get_event(
          val   = val
          t_arg = t_arg
@@ -507,8 +507,8 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~_event_client.
 
-    DATA lo_ui5 TYPE REF TO z2ui5_cl_core_event_srv.
-    CREATE OBJECT lo_ui5 TYPE z2ui5_cl_core_event_srv.
+    DATA lo_ui5 TYPE REF TO z2ui5_cl_core_srv_event.
+    CREATE OBJECT lo_ui5 TYPE z2ui5_cl_core_srv_event.
     result = lo_ui5->get_event_client(
          val   = val
          t_arg = t_arg ).

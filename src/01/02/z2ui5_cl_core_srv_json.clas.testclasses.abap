@@ -13,9 +13,9 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD request_json_to_abap.
 
     DATA lv_payload TYPE string.
-    DATA lo_mapper TYPE REF TO z2ui5_cl_core_json_srv.
-    DATA ls_result TYPE z2ui5_if_core_types=>ty_s_http_request_post.
-    DATA temp11 TYPE z2ui5_if_core_types=>ty_s_http_request_post.
+    DATA lo_mapper TYPE REF TO z2ui5_cl_core_srv_json.
+    DATA ls_result TYPE z2ui5_if_core_types=>ty_s_request.
+    DATA temp11 TYPE z2ui5_if_core_types=>ty_s_request.
     DATA ls_exp LIKE temp11.
     DATA temp12 TYPE z2ui5_if_ajson_types=>ty_nodes_ts.
     DATA lt_tree LIKE temp12.
@@ -25,7 +25,7 @@ CLASS ltcl_test IMPLEMENTATION.
             `,"VIEW":"MAIN","EVENT":"BUTTON_POST","T_EVENT_ARG":[]}}`.
 
     
-    CREATE OBJECT lo_mapper TYPE z2ui5_cl_core_json_srv.
+    CREATE OBJECT lo_mapper TYPE z2ui5_cl_core_srv_json.
     
     ls_result = lo_mapper->request_json_to_abap( lv_payload ).
 

@@ -1,5 +1,5 @@
 CLASS ltcl_test_dissolve DEFINITION DEFERRED.
-CLASS z2ui5_cl_core_diss_srv DEFINITION LOCAL FRIENDS ltcl_test_dissolve.
+CLASS z2ui5_cl_core_srv_diss DEFINITION LOCAL FRIENDS ltcl_test_dissolve.
 
 CLASS ltcl_test_dissolve DEFINITION FINAL FOR TESTING
   DURATION SHORT
@@ -56,7 +56,7 @@ CLASS ltcl_test_dissolve IMPLEMENTATION.
     DATA lo_app TYPE REF TO ltcl_test_dissolve.
     DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
     DATA temp11 LIKE REF TO lt_attri.
-DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
+DATA lo_model TYPE REF TO z2ui5_cl_core_srv_diss.
     DATA ls_attri LIKE LINE OF lt_attri.
     DATA temp2 LIKE LINE OF lt_attri.
     DATA temp3 LIKE sy-tabix.
@@ -67,7 +67,7 @@ DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
     
     GET REFERENCE OF lt_attri INTO temp11.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp11 app = lo_app.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_diss EXPORTING attri = temp11 app = lo_app.
 
     lo_model->main( ).
 
@@ -95,7 +95,7 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp11 app 
     DATA lo_app TYPE REF TO ltcl_test_dissolve.
     DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
     DATA temp12 LIKE REF TO lt_attri.
-DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
+DATA lo_model TYPE REF TO z2ui5_cl_core_srv_diss.
     DATA temp13 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA temp14 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA temp15 TYPE z2ui5_if_core_types=>ty_s_attri.
@@ -110,7 +110,7 @@ DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
     
     GET REFERENCE OF lt_attri INTO temp12.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp12 app = lo_app.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_diss EXPORTING attri = temp12 app = lo_app.
 
     lo_model->main( ).
     lo_model->main( ).
@@ -156,7 +156,7 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp12 app 
     DATA lo_app TYPE REF TO ltcl_test_dissolve.
     DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
     DATA temp21 LIKE REF TO lt_attri.
-DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
+DATA lo_model TYPE REF TO z2ui5_cl_core_srv_diss.
     DATA temp22 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA temp23 TYPE z2ui5_if_core_types=>ty_s_attri.
     CREATE OBJECT lo_app TYPE ltcl_test_dissolve.
@@ -167,7 +167,7 @@ DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
     
     GET REFERENCE OF lt_attri INTO temp21.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp21 app = lo_app.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_diss EXPORTING attri = temp21 app = lo_app.
 
     lo_model->main( ).
     lo_model->main( ).
@@ -189,7 +189,7 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp21 app 
     DATA lo_app2 TYPE REF TO ltcl_test_dissolve.
     DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
     DATA temp24 LIKE REF TO lt_attri.
-DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
+DATA lo_model TYPE REF TO z2ui5_cl_core_srv_diss.
     DATA temp25 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA temp26 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA temp27 TYPE z2ui5_if_core_types=>ty_s_attri.
@@ -211,7 +211,7 @@ DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
     
     GET REFERENCE OF lt_attri INTO temp24.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp24 app = lo_app2.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_diss EXPORTING attri = temp24 app = lo_app2.
 
     lo_model->main( ).
     lo_model->main( ).
@@ -257,7 +257,7 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp24 app 
     DATA lo_app TYPE REF TO ltcl_test_dissolve.
     DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
     DATA temp33 LIKE REF TO lt_attri.
-DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
+DATA lo_model TYPE REF TO z2ui5_cl_core_srv_diss.
     DATA temp34 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA temp35 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA temp36 TYPE z2ui5_if_core_types=>ty_s_attri.
@@ -269,7 +269,7 @@ DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
     
     GET REFERENCE OF lt_attri INTO temp33.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp33 app = lo_app.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_diss EXPORTING attri = temp33 app = lo_app.
 
     lo_model->main( ).
     lo_model->main( ).
@@ -310,7 +310,7 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp33 app 
     DATA lo_app2 TYPE REF TO ltcl_test_dissolve.
     DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
     DATA temp40 LIKE REF TO lt_attri.
-DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
+DATA lo_model TYPE REF TO z2ui5_cl_core_srv_diss.
     DATA temp41 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA temp42 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA temp43 TYPE z2ui5_if_core_types=>ty_s_attri.
@@ -329,7 +329,7 @@ DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
     
     GET REFERENCE OF lt_attri INTO temp40.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp40 app = lo_app.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_diss EXPORTING attri = temp40 app = lo_app.
 
     lo_model->main( ).
     lo_model->main( ).
@@ -368,7 +368,7 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp40 app 
     DATA lo_app2 TYPE REF TO ltcl_test_dissolve.
     DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
     DATA temp47 LIKE REF TO lt_attri.
-DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
+DATA lo_model TYPE REF TO z2ui5_cl_core_srv_diss.
     DATA temp48 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA temp49 TYPE z2ui5_if_core_types=>ty_s_attri.
     CREATE OBJECT lo_app TYPE ltcl_test_dissolve.
@@ -383,7 +383,7 @@ DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
     
     GET REFERENCE OF lt_attri INTO temp47.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp47 app = lo_app.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_diss EXPORTING attri = temp47 app = lo_app.
 
     lo_model->main( ).
     lo_model->main( ).
@@ -406,7 +406,7 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp47 app 
     DATA lo_app2 TYPE REF TO ltcl_test_dissolve.
     DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
     DATA temp50 LIKE REF TO lt_attri.
-DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
+DATA lo_model TYPE REF TO z2ui5_cl_core_srv_diss.
     DATA temp51 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA temp52 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA temp53 TYPE z2ui5_if_core_types=>ty_s_attri.
@@ -425,7 +425,7 @@ DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
     
     GET REFERENCE OF lt_attri INTO temp50.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp50 app = lo_app.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_diss EXPORTING attri = temp50 app = lo_app.
 
     lo_model->main( ).
     lo_model->main( ).
@@ -465,7 +465,7 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp50 app 
     DATA lo_app TYPE REF TO ltcl_test_dissolve.
     DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
     DATA temp57 LIKE REF TO lt_attri.
-DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
+DATA lo_model TYPE REF TO z2ui5_cl_core_srv_diss.
     DATA temp58 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA temp59 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA temp60 TYPE z2ui5_if_core_types=>ty_s_attri.
@@ -478,7 +478,7 @@ DATA lo_model TYPE REF TO z2ui5_cl_core_diss_srv.
     
     GET REFERENCE OF lt_attri INTO temp57.
 
-CREATE OBJECT lo_model TYPE z2ui5_cl_core_diss_srv EXPORTING attri = temp57 app = lo_app.
+CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_diss EXPORTING attri = temp57 app = lo_app.
 
     lo_model->main( ).
     lo_model->main( ).

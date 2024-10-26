@@ -1,4 +1,4 @@
-CLASS z2ui5_cl_core_diss_srv DEFINITION
+CLASS z2ui5_cl_core_srv_diss DEFINITION
   PUBLIC
   FINAL
   CREATE PUBLIC .
@@ -46,7 +46,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_core_diss_srv IMPLEMENTATION.
+CLASS z2ui5_cl_core_srv_diss IMPLEMENTATION.
 
 
   METHOD constructor.
@@ -60,12 +60,12 @@ CLASS z2ui5_cl_core_diss_srv IMPLEMENTATION.
   METHOD create_new_entry.
 
     DATA temp1 TYPE z2ui5_if_core_types=>ty_s_attri.
-    DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
+    DATA lo_model TYPE REF TO z2ui5_cl_core_srv_attri.
     CLEAR temp1.
     result  = temp1.
     result-name        = name.
     
-    CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = mt_attri app = mo_app.
+    CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_attri EXPORTING attri = mt_attri app = mo_app.
     result-r_ref       = lo_model->attri_get_val_ref( name ).
     result-o_typedescr = cl_abap_datadescr=>describe_by_data_ref( result-r_ref ).
 
@@ -77,7 +77,7 @@ CLASS z2ui5_cl_core_diss_srv IMPLEMENTATION.
     DATA temp2 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA ls_attri2 LIKE temp2.
         DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
-        DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
+        DATA lo_model TYPE REF TO z2ui5_cl_core_srv_attri.
 
     IF z2ui5_cl_util=>check_unassign_inital( ir_attri->r_ref ) IS NOT INITIAL.
       RETURN.
@@ -106,7 +106,7 @@ CLASS z2ui5_cl_core_diss_srv IMPLEMENTATION.
 
         ls_attri2-name  = ir_attri->name && `->*`.
         
-        CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = mt_attri app = mo_app.
+        CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_attri EXPORTING attri = mt_attri app = mo_app.
         ls_attri2-r_ref = lo_model->attri_get_val_ref( ls_attri2-name ).
         INSERT ls_attri2 INTO TABLE result.
 

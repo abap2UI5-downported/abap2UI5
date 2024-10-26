@@ -1,4 +1,4 @@
-CLASS z2ui5_cl_core_attri_srv DEFINITION
+CLASS z2ui5_cl_core_srv_attri DEFINITION
   PUBLIC FINAL
   CREATE PUBLIC.
 
@@ -40,7 +40,7 @@ CLASS z2ui5_cl_core_attri_srv DEFINITION
 ENDCLASS.
 
 
-CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
+CLASS z2ui5_cl_core_srv_attri IMPLEMENTATION.
 
   METHOD attri_after_load.
 
@@ -108,7 +108,7 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD attri_search_a_dissolve.
-    DATA lo_dissolve TYPE REF TO z2ui5_cl_core_diss_srv.
+    DATA lo_dissolve TYPE REF TO z2ui5_cl_core_srv_diss.
       DATA temp3 LIKE sy-subrc.
     DATA lt_attri TYPE z2ui5_if_core_types=>ty_t_attri.
         FIELD-SYMBOLS <ls_attri> LIKE LINE OF mt_attri->*.
@@ -128,7 +128,7 @@ CLASS z2ui5_cl_core_attri_srv IMPLEMENTATION.
     ENDIF.
 
     
-    CREATE OBJECT lo_dissolve TYPE z2ui5_cl_core_diss_srv EXPORTING attri = mt_attri app = mo_app.
+    CREATE OBJECT lo_dissolve TYPE z2ui5_cl_core_srv_diss EXPORTING attri = mt_attri app = mo_app.
 
     DO 5 TIMES.
 

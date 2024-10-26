@@ -5,7 +5,7 @@ CLASS z2ui5_cl_core_action DEFINITION
 
   PUBLIC SECTION.
 
-    DATA mo_http_post TYPE REF TO z2ui5_cl_core_http_post.
+    DATA mo_http_post TYPE REF TO z2ui5_cl_core_handler.
     DATA mo_app       TYPE REF TO z2ui5_cl_core_app.
 
     DATA ms_actual TYPE z2ui5_if_core_types=>ty_s_actual.
@@ -33,7 +33,7 @@ CLASS z2ui5_cl_core_action DEFINITION
 
     METHODS constructor
       IMPORTING
-        val TYPE REF TO z2ui5_cl_core_http_post.
+        val TYPE REF TO z2ui5_cl_core_handler.
 
   PROTECTED SECTION.
 
@@ -124,7 +124,7 @@ CLASS z2ui5_cl_core_action IMPLEMENTATION.
 
 
   METHOD factory_stack_leave.
-        DATA lo_draft TYPE REF TO z2ui5_cl_core_draft_srv.
+        DATA lo_draft TYPE REF TO z2ui5_cl_core_srv_draft.
         DATA ls_draft TYPE z2ui5_if_types=>ty_s_draft.
 
     result = prepare_app_stack( ms_next-o_app_leave ).
@@ -132,7 +132,7 @@ CLASS z2ui5_cl_core_action IMPLEMENTATION.
     "check for new app?
     TRY.
         
-        CREATE OBJECT lo_draft TYPE z2ui5_cl_core_draft_srv.
+        CREATE OBJECT lo_draft TYPE z2ui5_cl_core_srv_draft.
         
         ls_draft = lo_draft->read_info( ms_next-o_app_leave->id_draft ).
       CATCH cx_root.

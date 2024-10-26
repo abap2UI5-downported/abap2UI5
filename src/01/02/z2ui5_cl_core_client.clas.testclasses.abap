@@ -12,10 +12,10 @@ CLASS ltcl_test_client IMPLEMENTATION.
 
   METHOD first_test.
 
-    DATA lo_http TYPE REF TO z2ui5_cl_core_http_post.
+    DATA lo_http TYPE REF TO z2ui5_cl_core_handler.
     DATA lo_action TYPE REF TO z2ui5_cl_core_action.
     DATA lo_client TYPE REF TO z2ui5_cl_core_client.
-    CREATE OBJECT lo_http TYPE z2ui5_cl_core_http_post EXPORTING VAL = ``.
+    CREATE OBJECT lo_http TYPE z2ui5_cl_core_handler EXPORTING VAL = ``.
     
     CREATE OBJECT lo_action TYPE z2ui5_cl_core_action EXPORTING VAL = lo_http.
     

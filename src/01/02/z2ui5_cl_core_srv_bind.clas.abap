@@ -1,4 +1,4 @@
-CLASS z2ui5_cl_core_bind_srv DEFINITION
+CLASS z2ui5_cl_core_srv_bind DEFINITION
   PUBLIC
   FINAL
   CREATE PUBLIC .
@@ -63,7 +63,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
+CLASS z2ui5_cl_core_srv_bind IMPLEMENTATION.
 
 
   METHOD bind_tab_cell.
@@ -270,7 +270,7 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
 
 
   METHOD main.
-    DATA lo_model TYPE REF TO z2ui5_cl_core_attri_srv.
+    DATA lo_model TYPE REF TO z2ui5_cl_core_srv_attri.
 
     IF z2ui5_cl_util=>check_bound_a_not_inital( config-tab ) IS NOT INITIAL.
 
@@ -286,7 +286,7 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
     mv_type   = type.
 
     
-    CREATE OBJECT lo_model TYPE z2ui5_cl_core_attri_srv EXPORTING attri = mo_app->mt_attri app = mo_app->mo_app.
+    CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_attri EXPORTING attri = mo_app->mt_attri app = mo_app->mo_app.
 
     lo_model->attri_refs_update( ).
 
@@ -315,14 +315,14 @@ CLASS z2ui5_cl_core_bind_srv IMPLEMENTATION.
 
 
   METHOD main_cell.
-    DATA lo_bind TYPE REF TO z2ui5_cl_core_bind_srv.
+    DATA lo_bind TYPE REF TO z2ui5_cl_core_srv_bind.
     DATA temp14 TYPE z2ui5_if_core_types=>ty_s_bind_config.
 
     ms_config = config.
     mv_type   = type.
 
     
-    CREATE OBJECT lo_bind TYPE z2ui5_cl_core_bind_srv EXPORTING APP = mo_app.
+    CREATE OBJECT lo_bind TYPE z2ui5_cl_core_srv_bind EXPORTING APP = mo_app.
     
     CLEAR temp14.
     temp14-path_only = abap_true.

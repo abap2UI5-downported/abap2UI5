@@ -1,4 +1,4 @@
-CLASS z2ui5_cl_core_json_srv DEFINITION
+CLASS z2ui5_cl_core_srv_json DEFINITION
   PUBLIC
   FINAL
   CREATE PUBLIC .
@@ -11,11 +11,11 @@ CLASS z2ui5_cl_core_json_srv DEFINITION
       IMPORTING
         val           TYPE string
       RETURNING
-        VALUE(result) TYPE z2ui5_if_core_types=>ty_s_http_request_post .
+        VALUE(result) TYPE z2ui5_if_core_types=>ty_s_request .
 
     METHODS response_abap_to_json
       IMPORTING
-        val           TYPE z2ui5_if_core_types=>ty_s_http_response_post
+        val           TYPE z2ui5_if_core_types=>ty_s_response
       RETURNING
         VALUE(result) TYPE string .
 
@@ -37,7 +37,7 @@ ENDCLASS.
 
 
 
-CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
+CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
 
 
   METHOD model_front_to_back.
@@ -244,7 +244,7 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
   METHOD response_abap_to_json.
         DATA temp9 TYPE REF TO z2ui5_if_ajson.
         DATA ajson_result LIKE temp9.
-        DATA temp10 TYPE REF TO z2ui5_cl_core_json_srv.
+        DATA temp10 TYPE REF TO z2ui5_cl_core_srv_json.
         DATA lv_frontend TYPE string.
         DATA x TYPE REF TO cx_root.
     TRY.
@@ -256,7 +256,7 @@ CLASS z2ui5_cl_core_json_srv IMPLEMENTATION.
 
         ajson_result->set( iv_path = `/` iv_val = val-s_front ).
         
-        CREATE OBJECT temp10 TYPE z2ui5_cl_core_json_srv.
+        CREATE OBJECT temp10 TYPE z2ui5_cl_core_srv_json.
         ajson_result = ajson_result->filter( temp10 ).
         
         lv_frontend = ajson_result->stringify( ).
