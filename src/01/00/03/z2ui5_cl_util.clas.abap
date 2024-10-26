@@ -2053,7 +2053,7 @@ CREATE OBJECT lo_range
         temp58 = `Success`.
       WHEN `W`.
         temp58 = `Warning`.
-      WHEN 'I'.
+      WHEN OTHERS.
         temp58 = `Information`.
     ENDCASE.
     result = temp58.
