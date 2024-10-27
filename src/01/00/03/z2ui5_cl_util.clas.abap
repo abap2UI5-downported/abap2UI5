@@ -1,15 +1,15 @@
 CLASS z2ui5_cl_util DEFINITION
   PUBLIC
-  CREATE PUBLIC
-  INHERITING FROM z2ui5_cl_abap_api.
+  INHERITING FROM z2ui5_cl_abap_api
+  CREATE PUBLIC.
 
   PUBLIC SECTION.
 
-*  abap-toolkit - Utility Functions for ABAP Cloud & Standard ABAP
-*  version: '0.0.1'.
-*  origin: https://github.com/oblomov-dev/abap-toolkit
-*  author: https://github.com/oblomov-dev
-*  license: MIT.
+    " abap-toolkit - Utility Functions for ABAP Cloud & Standard ABAP
+    " version: '0.0.1'.
+    " origin: https://github.com/oblomov-dev/abap-toolkit
+    " author: https://github.com/oblomov-dev
+    " license: MIT.
 
     TYPES:
       BEGIN OF ty_s_name_value,
@@ -85,7 +85,7 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS rtti_get_t_attri_by_include
       IMPORTING
-        type          TYPE REF TO cl_abap_datadescr
+        !type         TYPE REF TO cl_abap_datadescr
       RETURNING
         VALUE(result) TYPE abap_component_tab.
 
@@ -153,9 +153,9 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS filter_itab
       IMPORTING
-        filter TYPE ty_t_filter_multi
+        !filter TYPE ty_t_filter_multi
       CHANGING
-        val    TYPE STANDARD TABLE.
+        val     TYPE STANDARD TABLE.
 
     CLASS-METHODS filter_get_multi_by_data
       IMPORTING
@@ -175,7 +175,6 @@ CLASS z2ui5_cl_util DEFINITION
       RETURNING
         VALUE(result) TYPE string.
 
-
     CLASS-METHODS filter_get_sql_by_sql_string
       IMPORTING
         val           TYPE clike
@@ -184,20 +183,20 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS url_param_get
       IMPORTING
-        !val          TYPE string
-        !url          TYPE string
+        val           TYPE string
+        url           TYPE string
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS url_param_create_url
       IMPORTING
-        !t_params     TYPE ty_t_name_value
+        t_params      TYPE ty_t_name_value
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS url_param_set
       IMPORTING
-        !url          TYPE string
+        url           TYPE string
         !name         TYPE string
         !value        TYPE string
       RETURNING
@@ -223,7 +222,7 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS x_check_raise
       IMPORTING
-        !v    TYPE clike DEFAULT `CX_SY_SUBRC`
+        v     TYPE clike DEFAULT `CX_SY_SUBRC`
         !when TYPE xfeld.
 
     CLASS-METHODS x_raise
@@ -237,19 +236,19 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS json_stringify
       IMPORTING
-        any           TYPE any
+        !any          TYPE any
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS xml_parse
       IMPORTING
-        xml TYPE clike
+        !xml TYPE clike
       EXPORTING
-        any TYPE any.
+        !any TYPE any.
 
     CLASS-METHODS xml_stringify
       IMPORTING
-        any           TYPE any
+        !any          TYPE any
       RETURNING
         VALUE(result) TYPE string
       RAISING
@@ -269,9 +268,9 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS json_parse
       IMPORTING
-        val  TYPE any
+        val   TYPE any
       CHANGING
-        data TYPE any.
+        !data TYPE any.
 
     CLASS-METHODS c_trim_upper
       IMPORTING
@@ -281,7 +280,7 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS xml_srtti_stringify
       IMPORTING
-        data          TYPE any
+        !data         TYPE any
       RETURNING
         VALUE(result) TYPE string.
 
@@ -297,8 +296,8 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS time_substract_seconds
       IMPORTING
-        time          TYPE timestampl
-        seconds       TYPE i
+        !time         TYPE timestampl
+        !seconds      TYPE i
       RETURNING
         VALUE(result) TYPE timestampl.
 
@@ -377,7 +376,7 @@ CLASS z2ui5_cl_util DEFINITION
     CLASS-METHODS filter_update_tokens
       IMPORTING
         val           TYPE ty_t_filter_multi
-        name          TYPE string
+        !name         TYPE string
       RETURNING
         VALUE(result) TYPE ty_t_filter_multi.
 
@@ -405,21 +404,21 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS itab_corresponding
       IMPORTING
-        val TYPE STANDARD TABLE
+        val  TYPE STANDARD TABLE
       CHANGING
-        tab TYPE STANDARD TABLE.
+        !tab TYPE STANDARD TABLE.
 
     CLASS-METHODS itab_filter_by_val
       IMPORTING
-        val TYPE clike
+        val  TYPE clike
       CHANGING
-        tab TYPE STANDARD TABLE.
+        !tab TYPE STANDARD TABLE.
 
     CLASS-METHODS itab_filter_by_t_range
       IMPORTING
-        val TYPE ty_t_filter_multi
+        val  TYPE ty_t_filter_multi
       CHANGING
-        tab TYPE STANDARD TABLE.
+        !tab TYPE STANDARD TABLE.
 
     CLASS-METHODS time_get_time_by_stampl
       IMPORTING
@@ -435,7 +434,7 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS conv_copy_ref_data
       IMPORTING
-        from          TYPE any
+        !from         TYPE any
       RETURNING
         VALUE(result) TYPE REF TO data.
 
@@ -445,11 +444,12 @@ CLASS z2ui5_cl_util DEFINITION
 
     CLASS-METHODS rtti_tab_get_relative_name
       IMPORTING
-        table         TYPE any
+        !table        TYPE any
       RETURNING
         VALUE(result) TYPE string.
 
     CLASS-METHODS check_raise_srtti_installed.
+
     CLASS-METHODS rtti_check_clike
       IMPORTING
         val           TYPE any
@@ -457,15 +457,13 @@ CLASS z2ui5_cl_util DEFINITION
         VALUE(result) TYPE abap_bool.
 
   PROTECTED SECTION.
+
   PRIVATE SECTION.
 
 ENDCLASS.
 
 
-
 CLASS z2ui5_cl_util IMPLEMENTATION.
-
-
   METHOD boolean_abap_2_json.
       DATA temp1 TYPE string.
 
@@ -483,7 +481,6 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD boolean_check_by_data.
         DATA lv_type_name TYPE string.
 
@@ -495,7 +492,6 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
     ENDTRY.
 
   ENDMETHOD.
-
 
   METHOD boolean_check_by_name.
 
@@ -514,7 +510,6 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD check_bound_a_not_inital.
     DATA temp1 TYPE xsdboolean.
 
@@ -527,7 +522,6 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
     result = temp1.
 
   ENDMETHOD.
-
 
   METHOD check_unassign_inital.
     FIELD-SYMBOLS <any> TYPE data.
@@ -547,10 +541,9 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD conv_copy_ref_data.
 
-    FIELD-SYMBOLS <from> TYPE data.
+    FIELD-SYMBOLS <from>   TYPE data.
     FIELD-SYMBOLS <result> TYPE data.
 
     IF rtti_check_ref_data( from ) IS NOT INITIAL.
@@ -565,13 +558,11 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD conv_get_as_data_ref.
 
     GET REFERENCE OF val INTO result.
 
   ENDMETHOD.
-
 
   METHOD c_trim.
 
@@ -586,7 +577,6 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD c_trim_lower.
 
     DATA temp3 TYPE string.
@@ -595,7 +585,6 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD c_trim_upper.
 
     DATA temp4 TYPE string.
@@ -603,7 +592,6 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
     result = to_upper( c_trim( temp4 ) ).
 
   ENDMETHOD.
-
 
   METHOD filter_itab.
 
@@ -632,7 +620,6 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD filter_get_multi_by_data.
 
     DATA temp5 TYPE abap_component_tab.
@@ -650,7 +637,6 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
     ENDLOOP.
 
   ENDMETHOD.
-
 
   METHOD filter_get_range_by_token.
 
@@ -713,7 +699,6 @@ CLASS z2ui5_cl_util IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD filter_update_tokens.
     FIELD-SYMBOLS <temp7> TYPE z2ui5_cl_util=>ty_s_filter_multi.
 DATA lr_filter LIKE REF TO <temp7>.
@@ -752,6 +737,7 @@ GET REFERENCE OF <temp7> INTO lr_filter.
     CLEAR lr_filter->t_token_removed.
     CLEAR lr_filter->t_token_added.
 
+    " TODO: variable is assigned but never used (ABAP cleaner)
     
     
     
@@ -784,7 +770,6 @@ GET REFERENCE OF <temp7> INTO lr_filter.
     ENDLOOP.
 
   ENDMETHOD.
-
 
   METHOD filter_get_token_range_mapping.
 
@@ -826,7 +811,6 @@ GET REFERENCE OF <temp7> INTO lr_filter.
 
   ENDMETHOD.
 
-
   METHOD filter_get_token_t_by_range_t.
 
     DATA lt_mapping TYPE z2ui5_cl_util=>ty_t_name_value.
@@ -845,11 +829,8 @@ GET REFERENCE OF <temp7> INTO lr_filter.
     
     lt_tab = temp11.
 
-    itab_corresponding(
-      EXPORTING
-        val = val
-      CHANGING
-        tab = lt_tab
+    itab_corresponding( EXPORTING val = val
+                        CHANGING  tab = lt_tab
     ).
 
     
@@ -880,7 +861,6 @@ GET REFERENCE OF <temp7> INTO lr_filter.
 
   ENDMETHOD.
 
-
   METHOD itab_filter_by_val.
 
     FIELD-SYMBOLS <row> TYPE any.
@@ -910,7 +890,6 @@ GET REFERENCE OF <temp7> INTO lr_filter.
 
   ENDMETHOD.
 
-
   METHOD itab_get_csv_by_itab.
 
     FIELD-SYMBOLS <tab> TYPE table.
@@ -925,6 +904,7 @@ GET REFERENCE OF <temp7> INTO lr_filter.
       DATA lv_index TYPE i.
         FIELD-SYMBOLS <row> TYPE data.
         FIELD-SYMBOLS <field> TYPE any.
+
     ASSIGN val TO <tab>.
     
     temp14 ?= cl_abap_typedescr=>describe_by_data( <tab> ).
@@ -941,7 +921,7 @@ GET REFERENCE OF <temp7> INTO lr_filter.
     
     
     LOOP AT temp16 REFERENCE INTO lr_comp.
-      result = result && lr_comp->name && ';'.
+      result = |{ result }{ lr_comp->name };|.
     ENDLOOP.
 
     result = result && cl_abap_char_utilities=>cr_lf.
@@ -960,13 +940,12 @@ GET REFERENCE OF <temp7> INTO lr_filter.
           EXIT.
         ENDIF.
         lv_index = lv_index + 1.
-        result = result && <field> && ';'.
+        result = |{ result }{ <field> };|.
       ENDDO.
       result = result && cl_abap_char_utilities=>cr_lf.
     ENDLOOP.
 
   ENDMETHOD.
-
 
   METHOD itab_get_itab_by_csv.
 
@@ -1004,7 +983,6 @@ DATA lt_cols TYPE temp2.
     ENDIF.
     SPLIT temp9 AT ';' INTO TABLE lt_cols.
 
-
     
     
     LOOP AT lt_cols REFERENCE INTO lr_col.
@@ -1025,10 +1003,9 @@ DATA lt_cols TYPE temp2.
     
     temp19 ?= struc.
     
-    o_table_desc = cl_abap_tabledescr=>create(
-          p_line_type  = temp19
-          p_table_kind = cl_abap_tabledescr=>tablekind_std
-          p_unique     = abap_false ).
+    o_table_desc = cl_abap_tabledescr=>create( p_line_type  = temp19
+                                                     p_table_kind = cl_abap_tabledescr=>tablekind_std
+                                                     p_unique     = abap_false ).
 
     CREATE DATA result TYPE HANDLE o_table_desc.
     ASSIGN result->* TO <tab>.
@@ -1055,23 +1032,18 @@ DATA lt_cols TYPE temp2.
 
   ENDMETHOD.
 
-
   METHOD json_parse.
         DATA x TYPE REF TO cx_root.
     TRY.
 
-        z2ui5_cl_ajson=>parse( val )->to_abap(
-          EXPORTING
-            iv_corresponding = abap_true
-          IMPORTING
-            ev_container = data ).
+        z2ui5_cl_ajson=>parse( val )->to_abap( EXPORTING iv_corresponding = abap_true
+                                               IMPORTING ev_container     = data ).
 
         
       CATCH cx_root INTO x.
         ASSERT x IS NOT BOUND.
     ENDTRY.
   ENDMETHOD.
-
 
   METHOD json_stringify.
         DATA temp21 TYPE REF TO z2ui5_if_ajson.
@@ -1083,7 +1055,8 @@ DATA lt_cols TYPE temp2.
         temp21 ?= z2ui5_cl_ajson=>create_empty( ).
         
         li_ajson = temp21.
-        result = li_ajson->set( iv_path = `/` iv_val = any )->stringify( ).
+        result = li_ajson->set( iv_path = `/`
+                                iv_val  = any )->stringify( ).
 
         
       CATCH cx_root INTO x.
@@ -1091,15 +1064,11 @@ DATA lt_cols TYPE temp2.
     ENDTRY.
   ENDMETHOD.
 
-
   METHOD rtti_check_class_exists.
 
     TRY.
-        cl_abap_classdescr=>describe_by_name(
-          EXPORTING
-            p_name        = val
-          EXCEPTIONS
-           type_not_found = 1 ).
+        cl_abap_classdescr=>describe_by_name( EXPORTING  p_name         = val
+                                              EXCEPTIONS type_not_found = 1 ).
         IF sy-subrc = 0.
           result = abap_true.
         ENDIF.
@@ -1109,7 +1078,6 @@ DATA lt_cols TYPE temp2.
     ENDTRY.
 
   ENDMETHOD.
-
 
   METHOD rtti_check_ref_data.
         DATA lo_typdescr TYPE REF TO cl_abap_typedescr.
@@ -1129,7 +1097,6 @@ DATA lt_cols TYPE temp2.
 
   ENDMETHOD.
 
-
   METHOD rtti_check_type_kind_dref.
 
     DATA lv_type_kind TYPE abap_typekind.
@@ -1141,15 +1108,14 @@ DATA lt_cols TYPE temp2.
 
   ENDMETHOD.
 
-
   METHOD rtti_get_classname_by_ref.
 
     DATA lv_classname TYPE abap_abstypename.
     lv_classname = cl_abap_classdescr=>get_class_name( in ).
-    result = substring_after( val = lv_classname sub = `\CLASS=` ).
+    result = substring_after( val = lv_classname
+                              sub = `\CLASS=` ).
 
   ENDMETHOD.
-
 
   METHOD rtti_get_intfname_by_ref.
 
@@ -1157,24 +1123,23 @@ DATA lt_cols TYPE temp2.
     DATA temp23 TYPE REF TO cl_abap_refdescr.
     DATA ref LIKE temp23.
     DATA name TYPE abap_abstypename.
-    rtti = cl_abap_typedescr=>describe_by_data(  in  ).
+    rtti = cl_abap_typedescr=>describe_by_data( in  ).
     
     temp23 ?= rtti.
     
     ref = temp23.
     
     name = ref->get_referenced_type( )->absolute_name.
-    result = substring_after( val = name sub = `\INTERFACE=` ).
+    result = substring_after( val = name
+                              sub = `\INTERFACE=` ).
 
   ENDMETHOD.
-
 
   METHOD rtti_get_type_kind.
 
     result = cl_abap_datadescr=>get_data_type_kind( val ).
 
   ENDMETHOD.
-
 
   METHOD rtti_get_type_name.
         DATA lo_descr TYPE REF TO cl_abap_typedescr.
@@ -1188,12 +1153,11 @@ DATA lt_cols TYPE temp2.
         temp24 ?= lo_descr.
         
         lo_ele = temp24.
-        result  = lo_ele->get_relative_name( ).
+        result = lo_ele->get_relative_name( ).
 
       CATCH cx_root.
     ENDTRY.
   ENDMETHOD.
-
 
   METHOD rtti_get_t_attri_by_include.
 
@@ -1238,7 +1202,6 @@ DATA lt_cols TYPE temp2.
 
   ENDMETHOD.
 
-
   METHOD rtti_get_t_attri_by_oref.
 
     DATA lo_obj_ref TYPE REF TO cl_abap_typedescr.
@@ -1249,7 +1212,6 @@ DATA lt_cols TYPE temp2.
     result = temp28->attributes.
 
   ENDMETHOD.
-
 
   METHOD rtti_get_t_attri_by_any.
         DATA lo_type TYPE REF TO cl_abap_typedescr.
@@ -1305,7 +1267,7 @@ DATA lt_cols TYPE temp2.
     
     
     LOOP AT result REFERENCE INTO lr_comp
-        WHERE as_include = abap_true.
+         WHERE as_include = abap_true.
 
       
       lt_attri = rtti_get_t_attri_by_include( lr_comp->type ).
@@ -1315,7 +1277,6 @@ DATA lt_cols TYPE temp2.
     ENDLOOP.
 
   ENDMETHOD.
-
 
   METHOD rtti_get_t_ddic_fixed_values.
         DATA temp36 TYPE string.
@@ -1345,15 +1306,13 @@ DATA lt_cols TYPE temp2.
         
         elemdescr = temp37.
 
-        result = rtti_get_t_fixvalues(
-            elemdescr = elemdescr
-            langu     = langu ).
+        result = rtti_get_t_fixvalues( elemdescr = elemdescr
+                                       langu     = langu ).
 
       CATCH cx_root.
     ENDTRY.
 
   ENDMETHOD.
-
 
   METHOD rtti_tab_get_relative_name.
 
@@ -1393,33 +1352,29 @@ DATA lt_cols TYPE temp2.
 
   ENDMETHOD.
 
-
   METHOD source_get_file_types.
 
     DATA lv_types TYPE string.
-    lv_types = `abap, abc, actionscript, ada, apache_conf, applescript, asciidoc, assembly_x86, autohotkey, batchfile, bro, c9search, c_cpp, cirru, clojure, cobol, coffee, coldfusion, csharp, css, curly, d, dart, diff, django, dockerfile, ` &&
-`dot, drools, eiffel, yaml, ejs, elixir, elm, erlang, forth, fortran, ftl, gcode, gherkin, gitignore, glsl, gobstones, golang, groovy, haml, handlebars, haskell, haskell_cabal, haxe, hjson, html, html_elixir, html_ruby, ini, io, jack, jade, java, ja` &&
-      `vascri` &&
-`pt, json, jsoniq, jsp, jsx, julia, kotlin, latex, lean, less, liquid, lisp, live_script, livescript, logiql, lsl, lua, luapage, lucene, makefile, markdown, mask, matlab, mavens_mate_log, maze, mel, mips_assembler, mipsassembler, mushcode, mysql, ni` &&
-`x, nsis, objectivec, ocaml, pascal, perl, pgsql, php, plain_text, powershell, praat, prolog, properties, protobuf, python, r, razor, rdoc, rhtml, rst, ruby, rust, sass, scad, scala, scheme, scss, sh, sjs, smarty, snippets, soy_template, space, sql,` &&
-      ` sqlserver, stylus, svg, swift, swig, tcl, tex, text, textile, toml, tsx, twig, typescript, vala, vbscript, velocity, verilog, vhdl, wollok, xml, xquery, terraform, slim, redshift, red, puppet, php_laravel_blade, mixal, jssm, fsharp, edifact,` &&
-      ` csp, cssound_score, cssound_orchestra, cssound_document`.
+    lv_types = |abap, abc, actionscript, ada, apache_conf, applescript, asciidoc, assembly_x86, autohotkey, batchfile, bro, c9search, c_cpp, cirru, clojure, cobol, coffee, coldfusion, csharp, css, curly, d, dart, diff, django, dockerfile, | &&
+|dot, drools, eiffel, yaml, ejs, elixir, elm, erlang, forth, fortran, ftl, gcode, gherkin, gitignore, glsl, gobstones, golang, groovy, haml, handlebars, haskell, haskell_cabal, haxe, hjson, html, html_elixir, html_ruby, ini, io, jack, jade, java, ja| &&
+      |vascri| &&
+|pt, json, jsoniq, jsp, jsx, julia, kotlin, latex, lean, less, liquid, lisp, live_script, livescript, logiql, lsl, lua, luapage, lucene, makefile, markdown, mask, matlab, mavens_mate_log, maze, mel, mips_assembler, mipsassembler, mushcode, mysql, ni| &&
+|x, nsis, objectivec, ocaml, pascal, perl, pgsql, php, plain_text, powershell, praat, prolog, properties, protobuf, python, r, razor, rdoc, rhtml, rst, ruby, rust, sass, scad, scala, scheme, scss, sh, sjs, smarty, snippets, soy_template, space, sql,| &&
+      | sqlserver, stylus, svg, swift, swig, tcl, tex, text, textile, toml, tsx, twig, typescript, vala, vbscript, velocity, verilog, vhdl, wollok, xml, xquery, terraform, slim, redshift, red, puppet, php_laravel_blade, mixal, jssm, fsharp, edifact,| &&
+      | csp, cssound_score, cssound_orchestra, cssound_document|.
     SPLIT lv_types AT ',' INTO TABLE result.
 
   ENDMETHOD.
 
-
   METHOD source_get_method2.
 
     DATA lt_source TYPE string_table.
-    lt_source = source_get_method(
-         iv_classname  = iv_classname
-         iv_methodname = iv_methodname ).
+    lt_source = source_get_method( iv_classname  = iv_classname
+                                         iv_methodname = iv_methodname ).
 
     result = source_method_to_file( lt_source ).
 
   ENDMETHOD.
-
 
   METHOD source_method_to_file.
 
@@ -1433,7 +1388,6 @@ DATA lt_cols TYPE temp2.
 
   ENDMETHOD.
 
-
   METHOD filter_get_sql_by_sql_string.
 
     DATA temp40 TYPE string.
@@ -1443,7 +1397,7 @@ DATA lt_cols TYPE temp2.
     temp40 = val.
     
     lv_sql = temp40.
-    REPLACE ALL OCCURRENCES OF ` ` IN lv_sql  WITH ``.
+    REPLACE ALL OCCURRENCES OF ` ` IN lv_sql WITH ``.
     lv_sql = to_upper( lv_sql ).
     
     
@@ -1454,23 +1408,21 @@ DATA lt_cols TYPE temp2.
 
   ENDMETHOD.
 
-
   METHOD time_get_date_by_stampl.
+    " TODO: variable is assigned but never used (ABAP cleaner)
     DATA lv_dummy TYPE t.
     CONVERT TIME STAMP val TIME ZONE sy-zonlo INTO DATE result TIME lv_dummy.
   ENDMETHOD.
-
 
   METHOD time_get_timestampl.
     GET TIME STAMP FIELD result.
   ENDMETHOD.
 
-
   METHOD time_get_time_by_stampl.
+    " TODO: variable is assigned but never used (ABAP cleaner)
     DATA lv_dummy TYPE d.
     CONVERT TIME STAMP val TIME ZONE sy-zonlo INTO DATE lv_dummy TIME result.
   ENDMETHOD.
-
 
   METHOD time_substract_seconds.
 
@@ -1478,36 +1430,34 @@ DATA lt_cols TYPE temp2.
                                           secs  = seconds ).
   ENDMETHOD.
 
-
   METHOD unassign_data.
 
     FIELD-SYMBOLS <unassign> TYPE any.
+
     ASSIGN val->* TO <unassign>.
     result = <unassign>.
 
   ENDMETHOD.
-
 
   METHOD unassign_object.
 
     FIELD-SYMBOLS <unassign> TYPE any.
+
     ASSIGN val->* TO <unassign>.
     result = <unassign>.
 
   ENDMETHOD.
-
 
   METHOD url_param_create_url.
 
     DATA ls_param LIKE LINE OF t_params.
     LOOP AT t_params INTO ls_param.
-      result = result && ls_param-n && `=` && ls_param-v && `&`.
+      result = |{ result }{ ls_param-n }={ ls_param-v }&|.
     ENDLOOP.
     result = shift_right( val = result
                           sub = `&` ).
 
   ENDMETHOD.
-
 
   METHOD url_param_get.
 
@@ -1528,7 +1478,6 @@ DATA lt_cols TYPE temp2.
     result = temp41.
 
   ENDMETHOD.
-
 
   METHOD url_param_get_tab.
 
@@ -1592,7 +1541,6 @@ DATA lt_param TYPE temp3.
 
   ENDMETHOD.
 
-
   METHOD url_param_set.
 
     DATA lt_params TYPE z2ui5_cl_util=>ty_t_name_value.
@@ -1607,7 +1555,7 @@ DATA lt_param TYPE temp3.
     
     
     LOOP AT lt_params REFERENCE INTO lr_params
-        WHERE n = lv_n.
+         WHERE n = lv_n.
       lr_params->v = c_trim_lower( value ).
     ENDLOOP.
     IF sy-subrc <> 0.
@@ -1622,20 +1570,17 @@ DATA lt_param TYPE temp3.
 
   ENDMETHOD.
 
-
   METHOD context_get_user_tech.
     result = sy-uname.
   ENDMETHOD.
 
-
   METHOD xml_parse.
 
     CALL TRANSFORMATION id
-        SOURCE XML xml
-        RESULT data = any.
+         SOURCE XML xml
+         RESULT data = any.
 
   ENDMETHOD.
-
 
   METHOD xml_srtti_parse.
     DATA srtti TYPE REF TO object.
@@ -1650,8 +1595,7 @@ DATA lt_param TYPE temp3.
 
     
     CALL METHOD srtti->('GET_RTTI')
-      RECEIVING
-        rtti = rtti_type.
+      RECEIVING rtti = rtti_type.
 
     
     lo_datadescr ?= rtti_type.
@@ -1663,7 +1607,6 @@ DATA lt_param TYPE temp3.
 
   ENDMETHOD.
 
-
   METHOD xml_srtti_stringify.
     DATA srtti TYPE REF TO object.
     DATA lv_classname TYPE c LENGTH 19.
@@ -1674,15 +1617,12 @@ DATA lt_param TYPE temp3.
     
     lv_classname = 'ZCL_SRTTI_TYPEDESCR'.
     CALL METHOD (lv_classname)=>('CREATE_BY_DATA_OBJECT')
-      EXPORTING
-        data_object = data
-      RECEIVING
-        srtti       = srtti.
+      EXPORTING data_object = data
+      RECEIVING srtti       = srtti.
 
     CALL TRANSFORMATION id SOURCE srtti = srtti dobj = data RESULT XML result.
 
   ENDMETHOD.
-
 
   METHOD xml_stringify.
 
@@ -1693,15 +1633,14 @@ DATA lt_param TYPE temp3.
 
   ENDMETHOD.
 
-
   METHOD x_check_raise.
 
     IF when = abap_true.
-      RAISE EXCEPTION TYPE z2ui5_cx_util_error EXPORTING val = v.
+      RAISE EXCEPTION TYPE z2ui5_cx_util_error
+        EXPORTING val = v.
     ENDIF.
 
   ENDMETHOD.
-
 
   METHOD x_get_last_t100.
 
@@ -1721,13 +1660,12 @@ DATA lt_param TYPE temp3.
 
   ENDMETHOD.
 
-
   METHOD x_raise.
 
-    RAISE EXCEPTION TYPE z2ui5_cx_util_error EXPORTING val = v.
+    RAISE EXCEPTION TYPE z2ui5_cx_util_error
+      EXPORTING val = v.
 
   ENDMETHOD.
-
 
   METHOD check_raise_srtti_installed.
       DATA lv_text TYPE string.
@@ -1737,13 +1675,11 @@ DATA lt_param TYPE temp3.
       
       lv_text = `UNSUPPORTED_FEATURE - Please install the open-source project S-RTTI by sandraros and try again: https://github.com/sandraros/S-RTTI`.
       RAISE EXCEPTION TYPE z2ui5_cx_util_error
-        EXPORTING
-          val = lv_text.
+        EXPORTING val = lv_text.
 
     ENDIF.
 
   ENDMETHOD.
-
 
   METHOD rtti_get_t_attri_by_table_name.
         DATA lo_obj TYPE REF TO cl_abap_typedescr.
@@ -1758,26 +1694,20 @@ DATA lt_param TYPE temp3.
 
     IF table_name IS INITIAL.
       RAISE EXCEPTION TYPE z2ui5_cx_util_error
-        EXPORTING
-          val = 'TABLE_NAME_INITIAL_ERROR'.
+        EXPORTING val = 'TABLE_NAME_INITIAL_ERROR'.
     ENDIF.
 
     TRY.
         
-        cl_abap_structdescr=>describe_by_name(
-          EXPORTING
-            p_name         = table_name
-          RECEIVING
-            p_descr_ref    =   lo_obj
-          EXCEPTIONS
-            type_not_found = 1
-            OTHERS         = 2
+        cl_abap_structdescr=>describe_by_name( EXPORTING  p_name         = table_name
+                                               RECEIVING  p_descr_ref    = lo_obj
+                                               EXCEPTIONS type_not_found = 1
+                                                          OTHERS         = 2
             ).
 
         IF sy-subrc <> 0.
           RAISE EXCEPTION TYPE z2ui5_cx_util_error
-            EXPORTING
-              val = 'TABLE_NOT_FOUD_NAME___' && table_name.
+            EXPORTING val = |TABLE_NOT_FOUD_NAME___{ table_name }|.
         ENDIF.
         
         temp48 ?= lo_obj.
@@ -1787,19 +1717,14 @@ DATA lt_param TYPE temp3.
       CATCH cx_root.
 
         TRY.
-            cl_abap_structdescr=>describe_by_name(
-              EXPORTING
-                p_name         = table_name
-             RECEIVING
-                p_descr_ref    = lo_obj
-              EXCEPTIONS
-                type_not_found = 1
-                OTHERS         = 2
+            cl_abap_structdescr=>describe_by_name( EXPORTING  p_name         = table_name
+                                                   RECEIVING  p_descr_ref    = lo_obj
+                                                   EXCEPTIONS type_not_found = 1
+                                                              OTHERS         = 2
             ).
             IF sy-subrc <> 0.
               RAISE EXCEPTION TYPE z2ui5_cx_util_error
-                EXPORTING
-                  val = 'TABLE_NOT_FOUD_NAME___' && table_name.
+                EXPORTING val = |TABLE_NOT_FOUD_NAME___{ table_name }|.
             ENDIF.
 
             
@@ -1831,10 +1756,9 @@ DATA lt_param TYPE temp3.
 
   ENDMETHOD.
 
-
   METHOD itab_corresponding.
 
-    FIELD-SYMBOLS <row_in> TYPE any.
+    FIELD-SYMBOLS <row_in>  TYPE any.
     FIELD-SYMBOLS <row_out> TYPE any.
         DATA lv_lines TYPE i.
 
@@ -1854,14 +1778,11 @@ DATA lt_param TYPE temp3.
 
   ENDMETHOD.
 
-
   METHOD itab_filter_by_t_range.
 
   ENDMETHOD.
 
   METHOD filter_get_data_by_multi.
-
-
 
   ENDMETHOD.
 
@@ -1872,19 +1793,16 @@ DATA lt_param TYPE temp3.
       DATA temp52 LIKE REF TO ls_filter-t_range.
     LOOP AT val INTO ls_filter.
 
+      " TODO: variable is assigned but never used (ABAP cleaner)
       
 
       
       GET REFERENCE OF ls_filter-t_range INTO temp52.
-CREATE OBJECT lo_range
-        EXPORTING
-          iv_fieldname = ls_filter-name
-          ir_range     = temp52.
+CREATE OBJECT lo_range EXPORTING iv_fieldname = ls_filter-name ir_range = temp52.
 
     ENDLOOP.
 
   ENDMETHOD.
-
 
   METHOD msg_get.
 
@@ -1935,7 +1853,7 @@ CREATE OBJECT lo_range
         
         LOOP AT lt_attri REFERENCE INTO ls_attri.
           
-          lv_name = 'VAL-' && ls_attri->name.
+          lv_name = |VAL-{ ls_attri->name }|.
           
           ASSIGN (lv_name) TO <comp>.
           CASE ls_attri->name.
@@ -1959,8 +1877,8 @@ CREATE OBJECT lo_range
         ENDLOOP.
         IF ls_result-text IS INITIAL AND ls_result-id IS NOT INITIAL.
           MESSAGE ID ls_result-id TYPE 'I' NUMBER ls_result-no
-          WITH ls_result-v1 ls_result-v2 ls_result-v3 ls_result-v4
-          INTO ls_result-text.
+                  WITH ls_result-v1 ls_result-v2 ls_result-v3 ls_result-v4
+                  INTO ls_result-text.
         ENDIF.
         INSERT ls_result INTO TABLE result.
 
@@ -1979,7 +1897,7 @@ CREATE OBJECT lo_range
             
             
             LOOP AT lt_attri_o REFERENCE INTO ls_attri_o
-         WHERE  visibility = 'U'.
+                 WHERE visibility = 'U'.
               CASE ls_attri_o->name.
                 WHEN 'ID' OR 'MSGID'.
                   ASSIGN val->(ls_attri_o->name) TO <comp>.
@@ -2022,12 +1940,11 @@ CREATE OBJECT lo_range
           CLEAR temp57.
           temp57-text = val.
           INSERT temp57
-      INTO TABLE result.
+                 INTO TABLE result.
         ENDIF.
     ENDCASE.
 
   ENDMETHOD.
-
 
   METHOD rtti_check_clike.
 
@@ -2059,5 +1976,4 @@ CREATE OBJECT lo_range
     result = temp58.
 
   ENDMETHOD.
-
 ENDCLASS.

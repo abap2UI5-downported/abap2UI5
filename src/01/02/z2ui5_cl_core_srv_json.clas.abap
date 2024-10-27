@@ -1,45 +1,42 @@
 CLASS z2ui5_cl_core_srv_json DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC .
+  PUBLIC FINAL
+  CREATE PUBLIC.
 
   PUBLIC SECTION.
 
-    INTERFACES z2ui5_if_ajson_filter .
+    INTERFACES z2ui5_if_ajson_filter.
 
     METHODS request_json_to_abap
       IMPORTING
         val           TYPE string
       RETURNING
-        VALUE(result) TYPE z2ui5_if_core_types=>ty_s_request .
+        VALUE(result) TYPE z2ui5_if_core_types=>ty_s_request.
 
     METHODS response_abap_to_json
       IMPORTING
         val           TYPE z2ui5_if_core_types=>ty_s_response
       RETURNING
-        VALUE(result) TYPE string .
+        VALUE(result) TYPE string.
 
     METHODS model_front_to_back
       IMPORTING
         view    TYPE string
         t_attri TYPE REF TO z2ui5_if_core_types=>ty_t_attri
-        model   TYPE REF TO z2ui5_if_ajson .
+        model   TYPE REF TO z2ui5_if_ajson.
 
     METHODS model_back_to_front
       IMPORTING
         t_attri       TYPE REF TO z2ui5_if_core_types=>ty_t_attri
       RETURNING
-        VALUE(result) TYPE string .
+        VALUE(result) TYPE string.
 
   PROTECTED SECTION.
+
   PRIVATE SECTION.
 ENDCLASS.
 
 
-
 CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
-
-
   METHOD model_front_to_back.
 
     DATA temp1 LIKE sy-subrc.
@@ -61,8 +58,8 @@ CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
     
     
     LOOP AT t_attri->* REFERENCE INTO lr_attri
-      WHERE bind_type = z2ui5_if_core_types=>cs_bind_type-two_way
-      AND view  = lv_view.
+         WHERE     bind_type = z2ui5_if_core_types=>cs_bind_type-two_way
+               AND view      = lv_view.
       TRY.
 
           
@@ -85,9 +82,7 @@ CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
             CONTINUE.
           ENDIF.
 
-          lo_val_front->to_abap(
-            IMPORTING
-              ev_container = <val> ).
+          lo_val_front->to_abap( IMPORTING ev_container = <val> ).
 
           
         CATCH cx_root INTO x.
@@ -95,9 +90,7 @@ CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
       ENDTRY.
     ENDLOOP.
 
-
   ENDMETHOD.
-
 
   METHOD model_back_to_front.
         DATA temp3 TYPE REF TO z2ui5_if_ajson.
@@ -141,10 +134,14 @@ CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
                 CONTINUE.
               ENDIF.
 *              ASSERT sy-subrc = 0.
-              ajson->set( iv_ignore_empty = abap_false iv_path = `/` iv_val = <attribute> ).
+              ajson->set( iv_ignore_empty = abap_false
+                          iv_path         = `/`
+                          iv_val          = <attribute> ).
 
             WHEN z2ui5_if_core_types=>cs_bind_type-one_time.
-              ajson->set( iv_ignore_empty = abap_false iv_path = `/` iv_val = lr_attri->json_bind_local ).
+              ajson->set( iv_ignore_empty = abap_false
+                          iv_path         = `/`
+                          iv_val          = lr_attri->json_bind_local ).
 
             WHEN OTHERS.
               ASSERT `` = `ERROR_UNKNOWN_BIND_MODE`.
@@ -154,7 +151,8 @@ CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
             ajson = ajson->filter( lr_attri->custom_filter ).
           ENDIF.
 
-          ajson_result->set( iv_path = lr_attri->name_client iv_val = ajson ).
+          ajson_result->set( iv_path = lr_attri->name_client
+                             iv_val  = ajson ).
         ENDLOOP.
 
         result = ajson_result->stringify( ).
@@ -172,7 +170,6 @@ CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
     ENDTRY.
   ENDMETHOD.
 
-
   METHOD request_json_to_abap.
         DATA temp8 TYPE REF TO z2ui5_if_ajson.
         DATA lo_ajson LIKE temp8.
@@ -189,20 +186,18 @@ CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
         lo_ajson = temp8.
 
         
-        lv_model_edit_name = `/` && z2ui5_if_core_types=>cs_ui5-two_way_model.
+        lv_model_edit_name = |/{ z2ui5_if_core_types=>cs_ui5-two_way_model }|.
 
         result-o_model = z2ui5_cl_ajson=>create_empty( ).
         
         lo_model = lo_ajson->slice( lv_model_edit_name ).
-        result-o_model->set( iv_path = lv_model_edit_name iv_val = lo_model ).
+        result-o_model->set( iv_path = lv_model_edit_name
+                             iv_val  = lo_model ).
         lo_ajson->delete( lv_model_edit_name ).
 
         lo_ajson = lo_ajson->slice( `/S_FRONT` ).
-        lo_ajson->to_abap(
-            EXPORTING
-               iv_corresponding = abap_true
-            IMPORTING
-                ev_container    = result-s_front ).
+        lo_ajson->to_abap( EXPORTING iv_corresponding = abap_true
+                           IMPORTING ev_container     = result-s_front ).
 
         result-s_front-o_comp_data = lo_ajson->slice( `/CONFIG/ComponentData` ).
 
@@ -230,16 +225,15 @@ CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
         ENDIF.
 
         result-s_control-app_start = z2ui5_cl_util=>c_trim_upper(
-        z2ui5_cl_util=>url_param_get( val = `app_start` url = result-s_front-search ) ).
+                                         z2ui5_cl_util=>url_param_get( val = `app_start`
+                                                                       url = result-s_front-search ) ).
 
         
       CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE z2ui5_cx_util_error
-          EXPORTING
-            val = x.
+          EXPORTING val = x.
     ENDTRY.
   ENDMETHOD.
-
 
   METHOD response_abap_to_json.
         DATA temp9 TYPE REF TO z2ui5_if_ajson.
@@ -254,24 +248,24 @@ CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
         
         ajson_result = temp9.
 
-        ajson_result->set( iv_path = `/` iv_val = val-s_front ).
+        ajson_result->set( iv_path = `/`
+                           iv_val  = val-s_front ).
         
         CREATE OBJECT temp10 TYPE z2ui5_cl_core_srv_json.
         ajson_result = ajson_result->filter( temp10 ).
         
         lv_frontend = ajson_result->stringify( ).
 
-        result = `{` &&
+        result = |\{| &&
             |"S_FRONT":{ lv_frontend },| &&
             |"MODEL":{ val-model }| &&
-          `}`.
+          |\}|.
 
         
       CATCH cx_root INTO x.
         ASSERT x IS NOT BOUND.
     ENDTRY.
   ENDMETHOD.
-
 
   METHOD z2ui5_if_ajson_filter~keep_node.
 

@@ -1,6 +1,5 @@
 CLASS z2ui5_cl_pop_table DEFINITION
-  PUBLIC
-  FINAL
+  PUBLIC FINAL
   CREATE PROTECTED.
 
   PUBLIC SECTION.
@@ -18,6 +17,7 @@ CLASS z2ui5_cl_pop_table DEFINITION
         row             TYPE REF TO data,
         check_confirmed TYPE abap_bool,
       END OF ty_s_result.
+
     DATA ms_result TYPE ty_s_result.
 
     METHODS result
@@ -28,8 +28,9 @@ CLASS z2ui5_cl_pop_table DEFINITION
 
   PROTECTED SECTION.
     DATA check_initialized TYPE abap_bool.
-    DATA title TYPE string VALUE 'Table View'.
-    DATA client TYPE REF TO z2ui5_if_client.
+    DATA title             TYPE string VALUE 'Table View'.
+    DATA client            TYPE REF TO z2ui5_if_client.
+
     METHODS on_event.
     METHODS display.
     METHODS on_event_confirm.
@@ -38,10 +39,7 @@ CLASS z2ui5_cl_pop_table DEFINITION
 ENDCLASS.
 
 
-
 CLASS z2ui5_cl_pop_table IMPLEMENTATION.
-
-
   METHOD display.
 
     FIELD-SYMBOLS <tab_out> TYPE STANDARD TABLE.
@@ -52,19 +50,18 @@ CLASS z2ui5_cl_pop_table IMPLEMENTATION.
     DATA cells TYPE REF TO z2ui5_cl_xml_view.
     DATA ls_comp LIKE LINE OF lt_comp.
     DATA columns TYPE REF TO z2ui5_cl_xml_view.
+
     ASSIGN mr_tab->* TO <tab_out>.
 
     
-    popup = z2ui5_cl_xml_view=>factory_popup( )->dialog(
-              afterclose = client->_event( 'BUTTON_CONFIRM' )
-              stretch    = abap_true
-              title      = title
-*              icon = 'sap-icon://edit'
+    popup = z2ui5_cl_xml_view=>factory_popup( )->dialog( afterclose = client->_event( 'BUTTON_CONFIRM' )
+                                                               stretch    = abap_true
+                                                               title      = title
+*                                                               icon       = 'sap-icon://edit'
           )->content( ).
 
     
-    tab = popup->table(
-       client->_bind( <tab_out> ) ).
+    tab = popup->table( client->_bind( <tab_out> ) ).
 
     
     lt_comp = z2ui5_cl_util=>rtti_get_t_attri_by_any( <tab_out> ).
@@ -76,7 +73,7 @@ CLASS z2ui5_cl_pop_table IMPLEMENTATION.
 
     
     LOOP AT lt_comp INTO ls_comp.
-      cells->text( `{` && ls_comp-name && `}` ).
+      cells->text( |\{{ ls_comp-name }\}| ).
     ENDLOOP.
 
     
@@ -87,15 +84,13 @@ CLASS z2ui5_cl_pop_table IMPLEMENTATION.
 
     popup->get_parent(
         )->buttons(
-            )->button(
-                text  = 'OK'
-                press = client->_event( 'BUTTON_CONFIRM' )
-                type  = 'Emphasized' ).
+            )->button( text  = 'OK'
+                       press = client->_event( 'BUTTON_CONFIRM' )
+                       type  = 'Emphasized' ).
 
     client->popup_display( popup->stringify( ) ).
 
   ENDMETHOD.
-
 
   METHOD factory.
     FIELD-SYMBOLS <tab> TYPE any.
@@ -112,7 +107,6 @@ CLASS z2ui5_cl_pop_table IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD on_event.
 
     CASE client->get( )-event.
@@ -125,11 +119,9 @@ CLASS z2ui5_cl_pop_table IMPLEMENTATION.
         client->popup_destroy( ).
         client->nav_app_leave( client->get_app( client->get( )-s_draft-id_prev_app_stack ) ).
 
-
     ENDCASE.
 
   ENDMETHOD.
-
 
   METHOD on_event_confirm.
 
@@ -137,7 +129,6 @@ CLASS z2ui5_cl_pop_table IMPLEMENTATION.
     client->nav_app_leave( client->get_app( client->get( )-s_draft-id_prev_app_stack ) ).
 
   ENDMETHOD.
-
 
   METHOD result.
 
@@ -147,7 +138,7 @@ CLASS z2ui5_cl_pop_table IMPLEMENTATION.
 
   METHOD z2ui5_if_app~main.
 
-    me->client     = client.
+    me->client = client.
 
     IF check_initialized = abap_false.
       check_initialized = abap_true.

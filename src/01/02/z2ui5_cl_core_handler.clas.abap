@@ -1,7 +1,6 @@
 CLASS z2ui5_cl_core_handler DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC .
+  PUBLIC FINAL
+  CREATE PUBLIC.
 
   PUBLIC SECTION.
 
@@ -33,17 +32,13 @@ CLASS z2ui5_cl_core_handler DEFINITION
 ENDCLASS.
 
 
-
 CLASS z2ui5_cl_core_handler IMPLEMENTATION.
-
-
   METHOD constructor.
 
     mv_request_json = val.
     CREATE OBJECT mo_action TYPE z2ui5_cl_core_action EXPORTING VAL = me.
 
   ENDMETHOD.
-
 
   METHOD main.
 
@@ -59,7 +54,6 @@ CLASS z2ui5_cl_core_handler IMPLEMENTATION.
     result-s_stateful = ms_response-s_front-params-s_stateful.
 
   ENDMETHOD.
-
 
   METHOD main_begin.
         DATA lo_json_mapper TYPE REF TO z2ui5_cl_core_srv_json.
@@ -90,7 +84,6 @@ CLASS z2ui5_cl_core_handler IMPLEMENTATION.
     ENDTRY.
   ENDMETHOD.
 
-
   METHOD main_end.
       DATA lo_model TYPE REF TO z2ui5_cl_core_srv_attri.
     DATA lo_json_mapper TYPE REF TO z2ui5_cl_core_srv_json.
@@ -101,16 +94,16 @@ CLASS z2ui5_cl_core_handler IMPLEMENTATION.
     ms_response-s_front-id = mo_action->mo_app->ms_draft-id.
     ms_response-s_front-app = z2ui5_cl_util=>rtti_get_classname_by_ref( mo_action->mo_app->mo_app ).
 
-    IF ms_response-s_front-params-s_view-check_update_model = abap_true
-    OR ms_response-s_front-params-s_view_nest-check_update_model = abap_true
-    OR ms_response-s_front-params-s_view_nest2-check_update_model = abap_true
-    OR ms_response-s_front-params-s_popup-check_update_model = abap_true
-    OR ms_response-s_front-params-s_popover-check_update_model = abap_true
-    OR ms_response-s_front-params-s_view-xml IS NOT INITIAL
-    OR ms_response-s_front-params-s_view_nest-xml IS NOT INITIAL
-    OR ms_response-s_front-params-s_view_nest2-xml IS NOT INITIAL
-    OR ms_response-s_front-params-s_popup-xml IS NOT INITIAL
-    OR ms_response-s_front-params-s_popover-xml IS NOT INITIAL.
+    IF    ms_response-s_front-params-s_view-check_update_model        = abap_true
+       OR ms_response-s_front-params-s_view_nest-check_update_model   = abap_true
+       OR ms_response-s_front-params-s_view_nest2-check_update_model  = abap_true
+       OR ms_response-s_front-params-s_popup-check_update_model       = abap_true
+       OR ms_response-s_front-params-s_popover-check_update_model     = abap_true
+       OR ms_response-s_front-params-s_view-xml IS NOT INITIAL
+       OR ms_response-s_front-params-s_view_nest-xml                 IS NOT INITIAL
+       OR ms_response-s_front-params-s_view_nest2-xml                IS NOT INITIAL
+       OR ms_response-s_front-params-s_popup-xml IS NOT INITIAL
+       OR ms_response-s_front-params-s_popover-xml                   IS NOT INITIAL.
 
       
       CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_attri EXPORTING attri = mo_action->mo_app->mt_attri app = mo_action->mo_app->mo_app.
@@ -134,7 +127,6 @@ CLASS z2ui5_cl_core_handler IMPLEMENTATION.
     ENDIF.
 
   ENDMETHOD.
-
 
   METHOD main_process.
         DATA li_client TYPE REF TO z2ui5_cl_core_client.

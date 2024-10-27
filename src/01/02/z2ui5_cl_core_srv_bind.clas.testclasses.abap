@@ -2,9 +2,8 @@
 CLASS ltcl_test_bind DEFINITION DEFERRED.
 CLASS z2ui5_cl_core_srv_bind DEFINITION LOCAL FRIENDS ltcl_test_bind.
 
-CLASS ltcl_test_app DEFINITION FINAL FOR TESTING
-  DURATION MEDIUM
-  RISK LEVEL HARMLESS.
+CLASS ltcl_test_app DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION MEDIUM.
 
   PUBLIC SECTION.
 
@@ -26,38 +25,40 @@ CLASS ltcl_test_app DEFINITION FINAL FOR TESTING
     DATA mv_value TYPE string ##NEEDED.
     DATA mr_value TYPE REF TO data ##NEEDED.
     DATA mr_struc TYPE REF TO s_01 ##NEEDED.
-    DATA mo_app TYPE REF TO ltcl_test_bind ##NEEDED.
+    DATA mo_app   TYPE REF TO ltcl_test_bind ##NEEDED.
 
-    DATA xx TYPE string ##NEEDED.
+    DATA xx       TYPE string ##NEEDED.
+
     METHODS constructor.
 ENDCLASS.
 
-CLASS ltcl_test_app IMPLEMENTATION.
 
+CLASS ltcl_test_app IMPLEMENTATION.
   METHOD constructor.
 
   ENDMETHOD.
-
 ENDCLASS.
 
-CLASS ltcl_test_bind DEFINITION FINAL FOR TESTING
-  DURATION MEDIUM
-  RISK LEVEL HARMLESS.
+
+CLASS ltcl_test_bind DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION MEDIUM.
 
   PUBLIC SECTION.
+
   PROTECTED SECTION.
+
   PRIVATE SECTION.
-    METHODS test_one_way      FOR TESTING RAISING cx_static_check.
-    METHODS test_one_way_w_x_error  FOR TESTING RAISING cx_static_check.
-    METHODS test_error_diff   FOR TESTING RAISING cx_static_check.
-    METHODS test_two_way      FOR TESTING RAISING cx_static_check.
-    METHODS test_local      FOR TESTING RAISING cx_static_check.
-    METHODS test_local_one      FOR TESTING RAISING cx_static_check.
+    METHODS test_one_way           FOR TESTING RAISING cx_static_check.
+    METHODS test_one_way_w_x_error FOR TESTING RAISING cx_static_check.
+    METHODS test_error_diff        FOR TESTING RAISING cx_static_check.
+    METHODS test_two_way           FOR TESTING RAISING cx_static_check.
+    METHODS test_local             FOR TESTING RAISING cx_static_check.
+    METHODS test_local_one         FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
-CLASS ltcl_test_bind IMPLEMENTATION.
 
+CLASS ltcl_test_bind IMPLEMENTATION.
   METHOD test_one_way_w_x_error.
 
     DATA lo_app_client TYPE REF TO ltcl_test_app.
@@ -75,9 +76,8 @@ CLASS ltcl_test_bind IMPLEMENTATION.
     TRY.
         
         GET REFERENCE OF lo_app_client->xx INTO temp18.
-lo_bind->main(
-            val  = temp18
-            type = z2ui5_if_core_types=>cs_bind_type-one_way ).
+lo_bind->main( val  = temp18
+                       type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
         cl_abap_unit_assert=>abort( ).
 
@@ -104,13 +104,11 @@ DATA lv_bind TYPE string.
     
     GET REFERENCE OF lo_app_client->mv_value INTO temp19.
 
-lv_bind = lo_bind->main(
-        val  = temp19
-        type = z2ui5_if_core_types=>cs_bind_type-one_way ).
+lv_bind = lo_bind->main( val  = temp19
+                                   type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
-    cl_abap_unit_assert=>assert_equals(
-       act = lv_bind
-       exp = `{/MV_VALUE}` ).
+    cl_abap_unit_assert=>assert_equals( exp = `{/MV_VALUE}`
+                                        act = lv_bind ).
 
   ENDMETHOD.
 
@@ -131,16 +129,14 @@ lv_bind = lo_bind->main(
 
     
     GET REFERENCE OF lo_app_client->mv_value INTO temp20.
-lo_bind->main(
-       val  = temp20
-       type = z2ui5_if_core_types=>cs_bind_type-one_way ).
+lo_bind->main( val  = temp20
+                   type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
     TRY.
         
         GET REFERENCE OF lo_app_client->mv_value INTO temp21.
-lo_bind->main(
-               val  = temp21
-               type = z2ui5_if_core_types=>cs_bind_type-two_way ).
+lo_bind->main( val  = temp21
+                       type = z2ui5_if_core_types=>cs_bind_type-two_way ).
 
         cl_abap_unit_assert=>abort( ).
 
@@ -148,7 +144,6 @@ lo_bind->main(
     ENDTRY.
 
   ENDMETHOD.
-
 
   METHOD test_two_way.
 
@@ -174,20 +169,17 @@ DATA lv_bind2 TYPE string.
     
     GET REFERENCE OF lo_app_client->mv_value INTO temp22.
 
-lv_bind = lo_bind->main(
-        val  = temp22
-        type = z2ui5_if_core_types=>cs_bind_type-two_way ).
+lv_bind = lo_bind->main( val  = temp22
+                                   type = z2ui5_if_core_types=>cs_bind_type-two_way ).
 
     
     GET REFERENCE OF lo_app_client->mv_value INTO temp23.
 
-lv_bind2 = lo_bind->main(
-         val  = temp23
-         type = z2ui5_if_core_types=>cs_bind_type-two_way ).
+lv_bind2 = lo_bind->main( val  = temp23
+                                    type = z2ui5_if_core_types=>cs_bind_type-two_way ).
 
-    cl_abap_unit_assert=>assert_equals(
-       act = lv_bind
-       exp = lv_bind2 ).
+    cl_abap_unit_assert=>assert_equals( exp = lv_bind2
+                                        act = lv_bind ).
 
     cl_abap_unit_assert=>assert_not_initial( lv_bind ).
 
@@ -238,20 +230,17 @@ DATA lv_bind2 TYPE string.
     
     GET REFERENCE OF lo_app_client->mv_value INTO temp24.
 
-lv_bind2 = lo_bind->main(
-      val  = temp24
-      type = z2ui5_if_core_types=>cs_bind_type-two_way ).
+lv_bind2 = lo_bind->main( val  = temp24
+                                    type = z2ui5_if_core_types=>cs_bind_type-two_way ).
 
     cl_abap_unit_assert=>assert_not_initial( lv_bind2 ).
 
   ENDMETHOD.
-
 ENDCLASS.
 
 
-CLASS ltcl_test_main_structure DEFINITION FINAL FOR TESTING
-  DURATION MEDIUM
-  RISK LEVEL HARMLESS.
+CLASS ltcl_test_main_structure DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION MEDIUM.
 
   PUBLIC SECTION.
 
@@ -273,16 +262,15 @@ CLASS ltcl_test_main_structure DEFINITION FINAL FOR TESTING
 
   PRIVATE SECTION.
 
-    METHODS test_one_way_lev1 FOR TESTING RAISING cx_static_check.
-    METHODS test_one_way_lev2 FOR TESTING RAISING cx_static_check.
-    METHODS test_one_way_lev3 FOR TESTING RAISING cx_static_check.
+    METHODS test_one_way_lev1           FOR TESTING RAISING cx_static_check.
+    METHODS test_one_way_lev2           FOR TESTING RAISING cx_static_check.
+    METHODS test_one_way_lev3           FOR TESTING RAISING cx_static_check.
     METHODS test_one_way_lev4_long_name FOR TESTING RAISING cx_static_check.
-
 
 ENDCLASS.
 
-CLASS ltcl_test_main_structure IMPLEMENTATION.
 
+CLASS ltcl_test_main_structure IMPLEMENTATION.
   METHOD test_one_way_lev1.
 
     DATA lo_test_app TYPE REF TO ltcl_test_main_structure.
@@ -302,27 +290,23 @@ DATA temp1 TYPE z2ui5_if_core_types=>ty_s_bind_config.
     
     GET REFERENCE OF lo_test_app->ms_struc-input INTO temp25.
 
-lv_result = lo_bind->main(
-        val  = temp25
-        type = z2ui5_if_core_types=>cs_bind_type-one_way ).
+lv_result = lo_bind->main( val  = temp25
+                                     type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
-    cl_abap_unit_assert=>assert_equals(
-        act = lv_result
-        exp = `{/MS_STRUC/INPUT}` ).
+    cl_abap_unit_assert=>assert_equals( exp = `{/MS_STRUC/INPUT}`
+                                        act = lv_result ).
 
     
     GET REFERENCE OF lo_test_app->ms_struc-input INTO temp26.
 
 CLEAR temp1.
 temp1-path_only = abap_true.
-lv_result = lo_bind->main(
-        val    = temp26
-        config = temp1
-        type   = z2ui5_if_core_types=>cs_bind_type-one_way ).
+lv_result = lo_bind->main( val    = temp26
+                               config = temp1
+                               type   = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
-    cl_abap_unit_assert=>assert_equals(
-        act = lv_result
-        exp = `/MS_STRUC/INPUT` ).
+    cl_abap_unit_assert=>assert_equals( exp = `/MS_STRUC/INPUT`
+                                        act = lv_result ).
 
   ENDMETHOD.
 
@@ -343,13 +327,11 @@ DATA lv_result TYPE string.
     
     GET REFERENCE OF lo_test_app->ms_struc-s_02-input INTO temp27.
 
-lv_result = lo_bind->main(
-        val  = temp27
-        type = z2ui5_if_core_types=>cs_bind_type-one_way ).
+lv_result = lo_bind->main( val  = temp27
+                                     type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
-    cl_abap_unit_assert=>assert_equals(
-        act = lv_result
-        exp = `{/MS_STRUC/S_02/INPUT}` ).
+    cl_abap_unit_assert=>assert_equals( exp = `{/MS_STRUC/S_02/INPUT}`
+                                        act = lv_result ).
 
   ENDMETHOD.
 
@@ -370,13 +352,11 @@ DATA lv_result TYPE string.
     
     GET REFERENCE OF lo_test_app->ms_struc-s_02-s_03-input INTO temp28.
 
-lv_result = lo_bind->main(
-        val  = temp28
-        type = z2ui5_if_core_types=>cs_bind_type-one_way ).
+lv_result = lo_bind->main( val  = temp28
+                                     type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
-    cl_abap_unit_assert=>assert_equals(
-      act = lv_result
-      exp = `{/MS_STRUC/S_02/S_03/INPUT}` ).
+    cl_abap_unit_assert=>assert_equals( exp = `{/MS_STRUC/S_02/S_03/INPUT}`
+                                        act = lv_result ).
 
   ENDMETHOD.
 
@@ -397,26 +377,22 @@ DATA lv_result TYPE string.
     
     GET REFERENCE OF lo_test_app->ms_struc-s_02-s_03-s_04-input INTO temp29.
 
-lv_result = lo_bind->main(
-        val  = temp29
-        type = z2ui5_if_core_types=>cs_bind_type-one_way ).
+lv_result = lo_bind->main( val  = temp29
+                                     type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
-    cl_abap_unit_assert=>assert_equals(
-      act = lv_result
-      exp = `{/MS_STRUC/S_02/S_03/S_04/INPUT}` ).
+    cl_abap_unit_assert=>assert_equals( exp = `{/MS_STRUC/S_02/S_03/S_04/INPUT}`
+                                        act = lv_result ).
 
   ENDMETHOD.
-
 ENDCLASS.
 
 
-CLASS ltcl_test_main_object DEFINITION FINAL FOR TESTING
-  DURATION MEDIUM
-  RISK LEVEL HARMLESS.
+CLASS ltcl_test_main_object DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION MEDIUM.
 
   PUBLIC SECTION.
 
-    DATA mo_obj TYPE REF TO ltcl_test_main_object.
+    DATA mo_obj   TYPE REF TO ltcl_test_main_object.
     DATA mv_value TYPE string.
 
     TYPES:
@@ -440,11 +416,10 @@ CLASS ltcl_test_main_object DEFINITION FINAL FOR TESTING
     METHODS test_one_way_value FOR TESTING RAISING cx_static_check.
     METHODS test_one_way_struc FOR TESTING RAISING cx_static_check.
 
-
 ENDCLASS.
 
-CLASS ltcl_test_main_object IMPLEMENTATION.
 
+CLASS ltcl_test_main_object IMPLEMENTATION.
   METHOD test_one_way_value.
 
     DATA lo_test_app TYPE REF TO ltcl_test_main_object.
@@ -464,13 +439,11 @@ DATA lv_result TYPE string.
     
     GET REFERENCE OF lo_test_app->mo_obj->mv_value INTO temp30.
 
-lv_result = lo_bind->main(
-        val  = temp30
-        type = z2ui5_if_core_types=>cs_bind_type-one_way ).
+lv_result = lo_bind->main( val  = temp30
+                                     type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
-    cl_abap_unit_assert=>assert_equals(
-      act = lv_result
-      exp = `{/MO_OBJ/MV_VALUE}` ).
+    cl_abap_unit_assert=>assert_equals( exp = `{/MO_OBJ/MV_VALUE}`
+                                        act = lv_result ).
 
   ENDMETHOD.
 
@@ -492,14 +465,11 @@ DATA lv_result TYPE string.
     
     GET REFERENCE OF lo_test_app->mo_obj->ms_struc-input INTO temp31.
 
-lv_result = lo_bind->main(
-        val  = temp31
-        type = z2ui5_if_core_types=>cs_bind_type-one_way ).
+lv_result = lo_bind->main( val  = temp31
+                                     type = z2ui5_if_core_types=>cs_bind_type-one_way ).
 
-    cl_abap_unit_assert=>assert_equals(
-      act = lv_result
-      exp = `{/MO_OBJ/MS_STRUC/INPUT}` ).
+    cl_abap_unit_assert=>assert_equals( exp = `{/MO_OBJ/MS_STRUC/INPUT}`
+                                        act = lv_result ).
 
   ENDMETHOD.
-
 ENDCLASS.

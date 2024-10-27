@@ -1,6 +1,5 @@
-CLASS ltcl_test DEFINITION FINAL FOR TESTING
-  DURATION LONG
-  RISK LEVEL HARMLESS.
+CLASS ltcl_test DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION LONG.
 
   PUBLIC SECTION.
 
@@ -8,12 +7,12 @@ CLASS ltcl_test DEFINITION FINAL FOR TESTING
     METHODS test_create FOR TESTING.
 
   PROTECTED SECTION.
+
   PRIVATE SECTION.
 ENDCLASS.
 
 
 CLASS ltcl_test IMPLEMENTATION.
-
   METHOD constructor.
 
   ENDMETHOD.
@@ -28,18 +27,15 @@ CLASS ltcl_test IMPLEMENTATION.
     
     CLEAR temp2.
     temp2-id = `TEST_ID`.
-    lo_draft->create(
-        draft     = temp2
-        model_xml = `my xml`
+    lo_draft->create( draft     = temp2
+                      model_xml = `my xml`
     ).
 
     
     ls_db = lo_draft->read_draft( `TEST_ID` ).
 
-    cl_abap_unit_assert=>assert_equals(
-        act = ls_db-data
-        exp = `my xml` ).
+    cl_abap_unit_assert=>assert_equals( exp = `my xml`
+                                        act = ls_db-data ).
 
   ENDMETHOD.
-
 ENDCLASS.

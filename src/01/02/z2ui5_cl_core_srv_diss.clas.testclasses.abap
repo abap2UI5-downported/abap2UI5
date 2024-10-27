@@ -1,9 +1,8 @@
 CLASS ltcl_test_dissolve DEFINITION DEFERRED.
 CLASS z2ui5_cl_core_srv_diss DEFINITION LOCAL FRIENDS ltcl_test_dissolve.
 
-CLASS ltcl_test_dissolve DEFINITION FINAL FOR TESTING
-  DURATION SHORT
-  RISK LEVEL HARMLESS.
+CLASS ltcl_test_dissolve DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
 
   PUBLIC SECTION.
 
@@ -27,30 +26,29 @@ CLASS ltcl_test_dissolve DEFINITION FINAL FOR TESTING
         s_01  TYPE s_01,
       END OF ty_s_struc.
 
-    DATA ms_struc TYPE s_01 ##NEEDED.
-    DATA mv_value TYPE string ##NEEDED.
-    DATA mr_value TYPE REF TO data.
-    DATA mr_struc TYPE REF TO s_01.
-    DATA mo_app TYPE REF TO ltcl_test_dissolve.
+    DATA ms_struc  TYPE s_01 ##NEEDED.
+    DATA mv_value  TYPE string ##NEEDED.
+    DATA mr_value  TYPE REF TO data.
+    DATA mr_struc  TYPE REF TO s_01.
+    DATA mo_app    TYPE REF TO ltcl_test_dissolve.
 
     DATA ms_struc2 TYPE ty_s_struc.
 
   PRIVATE SECTION.
-    METHODS test_init  FOR TESTING RAISING cx_static_check.
-    METHODS test_struc FOR TESTING RAISING cx_static_check.
-    METHODS test_dref  FOR TESTING RAISING cx_static_check.
-    METHODS test_struc_dref  FOR TESTING RAISING cx_static_check.
-    METHODS test_oref  FOR TESTING RAISING cx_static_check.
-    METHODS test_ref   FOR TESTING RAISING cx_static_check.
-    METHODS test_oref_dref_struc   FOR TESTING RAISING cx_static_check.
-    METHODS test_oref_dref   FOR TESTING RAISING cx_static_check.
-    METHODS test_dref_struc   FOR TESTING RAISING cx_static_check.
+    METHODS test_init            FOR TESTING RAISING cx_static_check.
+    METHODS test_struc           FOR TESTING RAISING cx_static_check.
+    METHODS test_dref            FOR TESTING RAISING cx_static_check.
+    METHODS test_struc_dref      FOR TESTING RAISING cx_static_check.
+    METHODS test_oref            FOR TESTING RAISING cx_static_check.
+    METHODS test_ref             FOR TESTING RAISING cx_static_check.
+    METHODS test_oref_dref_struc FOR TESTING RAISING cx_static_check.
+    METHODS test_oref_dref       FOR TESTING RAISING cx_static_check.
+    METHODS test_dref_struc      FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
+
 CLASS ltcl_test_dissolve IMPLEMENTATION.
-
-
   METHOD test_ref.
 
     DATA lo_app TYPE REF TO ltcl_test_dissolve.
@@ -459,7 +457,6 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_diss EXPORTING attri = temp50 app 
 
   ENDMETHOD.
 
-
   METHOD test_struc_dref.
 
     DATA lo_app TYPE REF TO ltcl_test_dissolve.
@@ -503,5 +500,4 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_diss EXPORTING attri = temp57 app 
     cl_abap_unit_assert=>assert_not_initial( temp60 ).
 
   ENDMETHOD.
-
 ENDCLASS.

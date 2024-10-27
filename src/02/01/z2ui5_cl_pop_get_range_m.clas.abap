@@ -24,9 +24,10 @@ CLASS z2ui5_cl_pop_get_range_m DEFINITION
         VALUE(result) TYPE ty_s_result.
 
   PROTECTED SECTION.
-    DATA client                 TYPE REF TO z2ui5_if_client.
-    DATA check_initialized      TYPE abap_bool.
-    DATA mv_popup_name TYPE LINE OF string_table.
+    DATA client            TYPE REF TO z2ui5_if_client.
+    DATA check_initialized TYPE abap_bool.
+    DATA mv_popup_name     TYPE LINE OF string_table.
+
     METHODS popup_display.
 
     METHODS init.
@@ -35,9 +36,7 @@ CLASS z2ui5_cl_pop_get_range_m DEFINITION
 ENDCLASS.
 
 
-
-CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
-
+CLASS z2ui5_cl_pop_get_range_m IMPLEMENTATION.
   METHOD factory.
 
     CREATE OBJECT r_result.
@@ -45,13 +44,11 @@ CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD init.
 
     popup_display( ).
 
   ENDMETHOD.
-
 
   METHOD popup_display.
 
@@ -85,9 +82,10 @@ CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
     
     CLEAR temp1.
     INSERT `${NAME}` INTO TABLE temp1.
-    grid->multi_input( tokens = `{T_TOKEN}`
-        enabled               = abap_false
-             valuehelprequest = client->_event( val = `LIST_OPEN` t_arg = temp1 )
+    grid->multi_input( tokens           = `{T_TOKEN}`
+                       enabled          = abap_false
+                       valuehelprequest = client->_event( val   = `LIST_OPEN`
+                                                          t_arg = temp1 )
             )->tokens(
                  )->token( key      = `{KEY}`
                            text     = `{TEXT}`
@@ -99,14 +97,16 @@ CLASS Z2UI5_CL_POP_GET_RANGE_M IMPLEMENTATION.
     CLEAR temp3.
     INSERT `${NAME}` INTO TABLE temp3.
     grid->button( text  = `Select`
-                  press = client->_event( val = `LIST_OPEN` t_arg = temp3 ) ).
+                  press = client->_event( val   = `LIST_OPEN`
+                                          t_arg = temp3 ) ).
     
     CLEAR temp5.
     INSERT `${NAME}` INTO TABLE temp5.
     grid->button( icon  = 'sap-icon://delete'
                   type  = `Transparent`
                   text  = `Clear`
-                  press = client->_event( val = `LIST_DELETE` t_arg = temp5 ) ).
+                  press = client->_event( val   = `LIST_DELETE`
+                                          t_arg = temp5 ) ).
 
     lo_popup->buttons(
         )->button( text  = `Clear All`

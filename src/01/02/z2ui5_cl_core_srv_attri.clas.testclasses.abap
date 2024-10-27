@@ -1,44 +1,40 @@
 
-CLASS ltcl_test_app2 DEFINITION FINAL FOR TESTING
-  DURATION MEDIUM
-  RISK LEVEL HARMLESS.
+CLASS ltcl_test_app2 DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION MEDIUM.
 
   PUBLIC SECTION.
 
-    DATA mv_value TYPE string ##NEEDED.
-    DATA mr_value TYPE REF TO data.
+    DATA mv_value  TYPE string ##NEEDED.
+    DATA mr_value  TYPE REF TO data.
     DATA mr_value2 TYPE REF TO data.
-    DATA mo_app TYPE REF TO ltcl_test_app2.
+    DATA mo_app    TYPE REF TO ltcl_test_app2.
 
-    DATA xx TYPE string ##NEEDED.
+    DATA xx        TYPE string ##NEEDED.
+
     METHODS constructor.
 ENDCLASS.
 
-CLASS ltcl_test_app2 IMPLEMENTATION.
 
+CLASS ltcl_test_app2 IMPLEMENTATION.
   METHOD constructor.
 
   ENDMETHOD.
-
 ENDCLASS.
 
 
-
-CLASS ltcl_test_search_attri DEFINITION FINAL FOR TESTING
-  DURATION SHORT
-  RISK LEVEL HARMLESS.
+CLASS ltcl_test_search_attri DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
 
   PRIVATE SECTION.
-    METHODS first_test FOR TESTING RAISING cx_static_check.
+    METHODS first_test  FOR TESTING RAISING cx_static_check.
     METHODS second_test FOR TESTING RAISING cx_static_check.
-    METHODS third_test FOR TESTING RAISING cx_static_check.
+    METHODS third_test  FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS z2ui5_cl_core_srv_attri DEFINITION LOCAL FRIENDS ltcl_test_search_attri.
 
 CLASS ltcl_test_search_attri IMPLEMENTATION.
-
   METHOD first_test.
 
     DATA lo_app_client TYPE REF TO ltcl_test_app2.
@@ -58,7 +54,8 @@ DATA lr_attri TYPE REF TO z2ui5_if_core_types=>ty_s_attri.
     CLEAR temp14.
     
     temp15-r_ref = lr_value.
-    temp15-o_typedescr = cl_abap_datadescr=>describe_by_data_ref( lr_value ).
+    temp15-o_typedescr = cl_abap_datadescr=>describe_by_data_ref(
+lr_value ).
     INSERT temp15 INTO TABLE temp14.
     
     lt_attri = temp14.
@@ -101,7 +98,8 @@ DATA lr_attri TYPE REF TO z2ui5_if_core_types=>ty_s_attri.
 CLEAR temp1.
 
 temp2-r_ref = temp18.
-temp2-o_typedescr = cl_abap_datadescr=>describe_by_data_ref( lr_value ).
+temp2-o_typedescr = cl_abap_datadescr=>describe_by_data_ref(
+lr_value ).
 INSERT temp2 INTO TABLE temp1.
 
 lt_attri = temp1.
@@ -179,13 +177,11 @@ GET REFERENCE OF <temp22> INTO lr_attri.
     ENDIF.
 
   ENDMETHOD.
-
 ENDCLASS.
 
 
-CLASS ltcl_test_app_sub DEFINITION FINAL FOR TESTING
-  DURATION MEDIUM
-  RISK LEVEL HARMLESS.
+CLASS ltcl_test_app_sub DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION MEDIUM.
 
   PUBLIC SECTION.
 
@@ -196,50 +192,48 @@ CLASS ltcl_test_app_sub DEFINITION FINAL FOR TESTING
     METHODS constructor.
 ENDCLASS.
 
-CLASS ltcl_test_app_sub IMPLEMENTATION.
 
+CLASS ltcl_test_app_sub IMPLEMENTATION.
   METHOD constructor.
 
   ENDMETHOD.
-
 ENDCLASS.
 
-CLASS ltcl_test_app3 DEFINITION FINAL FOR TESTING
-  DURATION MEDIUM
-  RISK LEVEL HARMLESS.
+
+CLASS ltcl_test_app3 DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION MEDIUM.
 
   PUBLIC SECTION.
 
     DATA mv_value TYPE string ##NEEDED.
     DATA mr_value TYPE REF TO string.
 *    DATA mr_value2 TYPE REF TO data.
-    DATA mo_app TYPE REF TO ltcl_test_app_sub.
+    DATA mo_app   TYPE REF TO ltcl_test_app_sub.
 
     METHODS constructor.
 ENDCLASS.
 
-CLASS ltcl_test_app3 IMPLEMENTATION.
 
+CLASS ltcl_test_app3 IMPLEMENTATION.
   METHOD constructor.
     CREATE OBJECT mo_app.
   ENDMETHOD.
-
 ENDCLASS.
 
-CLASS ltcl_test_get_attri DEFINITION FINAL FOR TESTING
-  DURATION SHORT
-  RISK LEVEL HARMLESS.
+
+CLASS ltcl_test_get_attri DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
 
   PRIVATE SECTION.
-    METHODS first_test FOR TESTING RAISING cx_static_check.
+    METHODS first_test  FOR TESTING RAISING cx_static_check.
     METHODS second_test FOR TESTING RAISING cx_static_check.
-    METHODS third_test FOR TESTING RAISING cx_static_check.
-    METHODS test4 FOR TESTING RAISING cx_static_check.
+    METHODS third_test  FOR TESTING RAISING cx_static_check.
+    METHODS test4       FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
-CLASS ltcl_test_get_attri IMPLEMENTATION.
 
+CLASS ltcl_test_get_attri IMPLEMENTATION.
   METHOD first_test.
 
     DATA lo_app_client TYPE REF TO ltcl_test_app3.
@@ -251,6 +245,7 @@ DATA lo_model TYPE REF TO z2ui5_cl_core_srv_attri.
     DATA lr_attri TYPE REF TO data.
     DATA temp25 LIKE REF TO lo_app_client->mv_value.
     CREATE OBJECT lo_app_client TYPE ltcl_test_app3.
+    " TODO: variable is assigned but never used (ABAP cleaner)
     
     GET REFERENCE OF lo_app_client->mv_value INTO lr_value.
 
@@ -363,6 +358,4 @@ CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_attri EXPORTING attri = temp32 app
     ENDIF.
 
   ENDMETHOD.
-
-
 ENDCLASS.

@@ -1,10 +1,10 @@
 CLASS z2ui5_cl_core_client DEFINITION
   PUBLIC
-  CREATE PUBLIC .
+  CREATE PUBLIC.
 
   PUBLIC SECTION.
 
-    INTERFACES z2ui5_if_client .
+    INTERFACES z2ui5_if_client.
 
     DATA mo_action TYPE REF TO z2ui5_cl_core_action.
 
@@ -13,27 +13,23 @@ CLASS z2ui5_cl_core_client DEFINITION
         !action TYPE REF TO z2ui5_cl_core_action.
 
   PROTECTED SECTION.
+
   PRIVATE SECTION.
 ENDCLASS.
 
 
-
 CLASS z2ui5_cl_core_client IMPLEMENTATION.
-
-
   METHOD constructor.
 
     mo_action = action.
 
   ENDMETHOD.
 
-
   METHOD z2ui5_if_client~follow_up_action.
 
     mo_action->ms_next-s_set-s_follow_up_action-custom_js = val.
 
   ENDMETHOD.
-
 
   METHOD z2ui5_if_client~get.
         DATA lo_params TYPE REF TO z2ui5_if_ajson.
@@ -59,8 +55,8 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
         
         
         LOOP AT lo_params->mt_json_tree
-            REFERENCE INTO lr_comp
-            WHERE name = `1`.
+             REFERENCE INTO lr_comp
+             WHERE name = `1`.
 
           
           CLEAR temp2.
@@ -110,7 +106,6 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     ENDIF.
 
   ENDMETHOD.
-
 
   METHOD z2ui5_if_client~message_box_display.
       DATA lt_msg TYPE z2ui5_cl_util=>ty_t_msg.
@@ -181,7 +176,6 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
         
         lv_title = temp7.
 
-
       ELSEIF lines( lt_msg ) > 1.
         lv_text = | { lines( lt_msg ) } Messages found: |.
         
@@ -189,9 +183,9 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
         
         
         LOOP AT lt_msg REFERENCE INTO lr_msg.
-          lv_details = lv_details && |<li>|  && lr_msg->text && |</li>|.
+          lv_details = |{ lv_details }<li>{ lr_msg->text }</li>|.
         ENDLOOP.
-        lv_details = lv_details && |</ul>|.
+        lv_details = |{ lv_details }</ul>|.
         IF title IS INITIAL.
           
           
@@ -260,7 +254,6 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD z2ui5_if_client~message_toast_display.
 
     CLEAR mo_action->ms_next-s_set-s_msg_toast.
@@ -281,7 +274,6 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD z2ui5_if_client~nav_app_call.
 
     IF app IS NOT BOUND.
@@ -295,7 +287,6 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     ENDIF.
     result = app->id_app.
   ENDMETHOD.
-
 
   METHOD z2ui5_if_client~nav_app_leave.
 
@@ -316,23 +307,20 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD z2ui5_if_client~nest2_view_destroy.
 
     mo_action->ms_next-s_set-s_view_nest2-check_update_model = abap_true.
 
   ENDMETHOD.
 
-
   METHOD z2ui5_if_client~nest2_view_display.
 
-    mo_action->ms_next-s_set-s_view_nest2-xml = val.
-    mo_action->ms_next-s_set-s_view_nest2-id = id.
+    mo_action->ms_next-s_set-s_view_nest2-xml            = val.
+    mo_action->ms_next-s_set-s_view_nest2-id             = id.
     mo_action->ms_next-s_set-s_view_nest2-method_destroy = method_destroy.
-    mo_action->ms_next-s_set-s_view_nest2-method_insert = method_insert.
+    mo_action->ms_next-s_set-s_view_nest2-method_insert  = method_insert.
 
   ENDMETHOD.
-
 
   METHOD z2ui5_if_client~nest2_view_model_update.
 
@@ -340,23 +328,20 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD z2ui5_if_client~nest_view_destroy.
 
     mo_action->ms_next-s_set-s_view_nest-check_update_model = abap_true.
 
   ENDMETHOD.
 
-
   METHOD z2ui5_if_client~nest_view_display.
 
-    mo_action->ms_next-s_set-s_view_nest-xml = val.
-    mo_action->ms_next-s_set-s_view_nest-id = id.
+    mo_action->ms_next-s_set-s_view_nest-xml            = val.
+    mo_action->ms_next-s_set-s_view_nest-id             = id.
     mo_action->ms_next-s_set-s_view_nest-method_destroy = method_destroy.
-    mo_action->ms_next-s_set-s_view_nest-method_insert = method_insert.
+    mo_action->ms_next-s_set-s_view_nest-method_insert  = method_insert.
 
   ENDMETHOD.
-
 
   METHOD z2ui5_if_client~nest_view_model_update.
 
@@ -364,29 +349,25 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD z2ui5_if_client~popover_destroy.
 
     mo_action->ms_next-s_set-s_popover-check_destroy = abap_true.
 
   ENDMETHOD.
 
-
   METHOD z2ui5_if_client~popover_display.
 
     mo_action->ms_next-s_set-s_popover-check_destroy = abap_false.
-    mo_action->ms_next-s_set-s_popover-xml = xml.
-    mo_action->ms_next-s_set-s_popover-open_by_id = by_id.
+    mo_action->ms_next-s_set-s_popover-xml           = xml.
+    mo_action->ms_next-s_set-s_popover-open_by_id    = by_id.
 
   ENDMETHOD.
-
 
   METHOD z2ui5_if_client~popover_model_update.
 
     mo_action->ms_next-s_set-s_popover-check_update_model = abap_true.
 
   ENDMETHOD.
-
 
   METHOD z2ui5_if_client~popup_destroy.
 
@@ -395,14 +376,12 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD z2ui5_if_client~popup_display.
 
     mo_action->ms_next-s_set-s_popup-check_destroy = abap_false.
-    mo_action->ms_next-s_set-s_popup-xml = val.
+    mo_action->ms_next-s_set-s_popup-xml           = val.
 
   ENDMETHOD.
-
 
   METHOD z2ui5_if_client~popup_model_update.
 
@@ -410,13 +389,11 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD z2ui5_if_client~view_destroy.
 
     mo_action->ms_next-s_set-s_view-check_destroy = abap_true.
 
   ENDMETHOD.
-
 
   METHOD z2ui5_if_client~view_display.
 
@@ -424,13 +401,11 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD z2ui5_if_client~view_model_update.
 
     mo_action->ms_next-s_set-s_view-check_update_model = abap_true.
 
   ENDMETHOD.
-
 
   METHOD z2ui5_if_client~_bind.
 
@@ -444,13 +419,11 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     temp12-custom_mapper = custom_mapper.
     temp12-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
     temp12-tab_index = tab_index.
-    result = lo_bind->main(
-      val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
-      type   = z2ui5_if_core_types=>cs_bind_type-one_way
-      config = temp12 ).
+    result = lo_bind->main( val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
+                            type   = z2ui5_if_core_types=>cs_bind_type-one_way
+                            config = temp12 ).
 
   ENDMETHOD.
-
 
   METHOD z2ui5_if_client~_bind_edit.
 
@@ -466,13 +439,11 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     temp13-custom_mapper_back = custom_mapper_back.
     temp13-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
     temp13-tab_index = tab_index.
-    result = lo_bind->main(
-      val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
-      type   = z2ui5_if_core_types=>cs_bind_type-two_way
-      config = temp13 ).
+    result = lo_bind->main( val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
+                            type   = z2ui5_if_core_types=>cs_bind_type-two_way
+                            config = temp13 ).
 
   ENDMETHOD.
-
 
   METHOD z2ui5_if_client~_bind_local.
 
@@ -484,21 +455,18 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     temp14-path_only = path.
     temp14-custom_mapper = custom_mapper.
     temp14-custom_filter = custom_filter.
-    result = lo_bind->main_local(
-      val    = val
-      config = temp14 ).
+    result = lo_bind->main_local( val    = val
+                                  config = temp14 ).
 
   ENDMETHOD.
-
 
   METHOD z2ui5_if_client~_event.
 
     DATA lo_ui5 TYPE REF TO z2ui5_cl_core_srv_event.
     CREATE OBJECT lo_ui5 TYPE z2ui5_cl_core_srv_event.
-    result = lo_ui5->get_event(
-         val   = val
-         t_arg = t_arg
-         s_cnt = s_ctrl ).
+    result = lo_ui5->get_event( val   = val
+                                t_arg = t_arg
+                                s_cnt = s_ctrl ).
 
     IF r_data IS NOT INITIAL.
       CREATE DATA mo_action->ms_next-r_data LIKE r_data.
@@ -507,17 +475,14 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD z2ui5_if_client~_event_client.
 
     DATA lo_ui5 TYPE REF TO z2ui5_cl_core_srv_event.
     CREATE OBJECT lo_ui5 TYPE z2ui5_cl_core_srv_event.
-    result = lo_ui5->get_event_client(
-         val   = val
-         t_arg = t_arg ).
+    result = lo_ui5->get_event_client( val   = val
+                                       t_arg = t_arg ).
 
   ENDMETHOD.
-
 
   METHOD z2ui5_if_client~set_session_stateful.
 
@@ -530,8 +495,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     lv_check_sticky = temp15->check_sticky.
     IF lv_check_sticky = abap_true AND stateful = abap_true.
       RAISE EXCEPTION TYPE z2ui5_cx_util_error
-        EXPORTING
-          val = `STATEFUL_ALREADY_ACTIVATED_ERROR`.
+        EXPORTING val = `STATEFUL_ALREADY_ACTIVATED_ERROR`.
     ENDIF.
     IF stateful = abap_true.
       mo_action->ms_next-s_set-s_stateful-active = 1.
@@ -585,5 +549,4 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     result = z2ui5_if_client~get_app( ls_get-s_draft-id_prev_app ).
 
   ENDMETHOD.
-
 ENDCLASS.

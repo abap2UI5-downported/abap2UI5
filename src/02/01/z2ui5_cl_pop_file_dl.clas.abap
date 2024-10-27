@@ -1,7 +1,6 @@
 CLASS z2ui5_cl_pop_file_dl DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC .
+  PUBLIC FINAL
+  CREATE PUBLIC.
 
   PUBLIC SECTION.
 
@@ -18,10 +17,10 @@ CLASS z2ui5_cl_pop_file_dl DEFINITION
       RETURNING
         VALUE(r_result)       TYPE REF TO z2ui5_cl_pop_file_dl.
 
-    DATA mv_name TYPE string.
-    DATA mv_type TYPE string.
-    DATA mv_size TYPE string.
-    DATA mv_value TYPE string.
+    DATA mv_name           TYPE string.
+    DATA mv_type           TYPE string.
+    DATA mv_size           TYPE string.
+    DATA mv_value          TYPE string.
     DATA mv_check_download TYPE abap_bool.
 
     METHODS result
@@ -29,44 +28,41 @@ CLASS z2ui5_cl_pop_file_dl DEFINITION
         VALUE(result) TYPE abap_bool.
 
   PROTECTED SECTION.
-    DATA check_confirmed TYPE abap_bool.
-    DATA client TYPE REF TO z2ui5_if_client.
-    DATA title TYPE string.
-    DATA icon TYPE string.
-    DATA question_text TYPE string.
+    DATA check_confirmed     TYPE abap_bool.
+    DATA client              TYPE REF TO z2ui5_if_client.
+    DATA title               TYPE string.
+    DATA icon                TYPE string.
+    DATA question_text       TYPE string.
     DATA button_text_confirm TYPE string.
-    DATA button_text_cancel TYPE string.
-    DATA check_initialized TYPE abap_bool.
+    DATA button_text_cancel  TYPE string.
+    DATA check_initialized   TYPE abap_bool.
+
     METHODS view_display.
+
   PRIVATE SECTION.
 ENDCLASS.
 
 
-
-CLASS Z2UI5_CL_POP_FILE_DL IMPLEMENTATION.
-
-
+CLASS z2ui5_cl_pop_file_dl IMPLEMENTATION.
   METHOD factory.
 
     CREATE OBJECT r_result.
-    r_result->title = i_title.
+    r_result->title               = i_title.
 
-    r_result->question_text = i_text.
+    r_result->question_text       = i_text.
     r_result->button_text_confirm = i_button_text_confirm.
-    r_result->button_text_cancel = i_button_text_cancel.
-    r_result->mv_type = i_type.
-    r_result->mv_value = i_file.
-    r_result->mv_size = strlen( i_file ) / 1000.
+    r_result->button_text_cancel  = i_button_text_cancel.
+    r_result->mv_type             = i_type.
+    r_result->mv_value            = i_file.
+    r_result->mv_size             = strlen( i_file ) / 1000.
 
   ENDMETHOD.
-
 
   METHOD result.
 
     result = check_confirmed.
 
   ENDMETHOD.
-
 
   METHOD view_display.
 
@@ -75,10 +71,9 @@ CLASS Z2UI5_CL_POP_FILE_DL IMPLEMENTATION.
       DATA lv_base64 TYPE string.
       DATA temp1 TYPE z2ui5_if_types=>ty_t_name_value.
       DATA temp2 LIKE LINE OF temp1.
-    popup = z2ui5_cl_xml_view=>factory_popup( )->dialog(
-                  title       = title
-                  icon        = icon
-                   afterclose = client->_event( 'BUTTON_CANCEL' )
+    popup = z2ui5_cl_xml_view=>factory_popup( )->dialog( title      = title
+                                                               icon       = icon
+                                                               afterclose = client->_event( 'BUTTON_CANCEL' )
               )->content( ).
 
     IF mv_check_download = abap_true.
@@ -115,18 +110,15 @@ CLASS Z2UI5_CL_POP_FILE_DL IMPLEMENTATION.
                 enabled = abap_false
       )->get_parent( )->get_parent(
       )->buttons(
-      )->button(
-        text  = button_text_cancel
-        press = client->_event( 'BUTTON_CANCEL' )
-      )->button(
-        text  = `Download`
-        press = client->_event( 'BUTTON_CONFIRM' )
-        type  = 'Emphasized' ).
+      )->button( text  = button_text_cancel
+                 press = client->_event( 'BUTTON_CANCEL' )
+      )->button( text  = `Download`
+                 press = client->_event( 'BUTTON_CONFIRM' )
+                 type  = 'Emphasized' ).
 
     client->popup_display( popup->stringify( ) ).
 
   ENDMETHOD.
-
 
   METHOD z2ui5_if_app~main.
 

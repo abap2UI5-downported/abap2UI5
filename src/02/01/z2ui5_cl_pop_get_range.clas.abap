@@ -1,7 +1,6 @@
 CLASS z2ui5_cl_pop_get_range DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC .
+  PUBLIC FINAL
+  CREATE PUBLIC.
 
   PUBLIC SECTION.
     INTERFACES z2ui5_if_app.
@@ -13,6 +12,7 @@ CLASS z2ui5_cl_pop_get_range DEFINITION
         high   TYPE string,
         key    TYPE string,
       END OF ty_s_filter_pop.
+
     DATA mt_filter TYPE STANDARD TABLE OF ty_s_filter_pop WITH DEFAULT KEY.
 
     CLASS-METHODS factory
@@ -26,6 +26,7 @@ CLASS z2ui5_cl_pop_get_range DEFINITION
         t_range         TYPE z2ui5_cl_util=>ty_t_range,
         check_confirmed TYPE abap_bool,
       END OF ty_s_result.
+
     DATA ms_result TYPE ty_s_result.
 
     METHODS result
@@ -33,29 +34,26 @@ CLASS z2ui5_cl_pop_get_range DEFINITION
         VALUE(result) TYPE ty_s_result.
 
     DATA mt_mapping TYPE z2ui5_if_types=>ty_t_name_value.
+
   PROTECTED SECTION.
 
-    DATA client TYPE REF TO z2ui5_if_client.
+    DATA client            TYPE REF TO z2ui5_if_client.
     DATA check_initialized TYPE abap_bool.
+
     METHODS view_display.
+
   PRIVATE SECTION.
 ENDCLASS.
 
 
-
-CLASS Z2UI5_CL_POP_GET_RANGE IMPLEMENTATION.
-
-
+CLASS z2ui5_cl_pop_get_range IMPLEMENTATION.
   METHOD factory.
     DATA temp1 TYPE z2ui5_cl_util=>ty_s_range.
 
     CREATE OBJECT r_result.
 
-    z2ui5_cl_util=>itab_corresponding(
-      EXPORTING
-        val = t_range
-      CHANGING
-        tab = r_result->ms_result-t_range
+    z2ui5_cl_util=>itab_corresponding( EXPORTING val = t_range
+                                       CHANGING  tab = r_result->ms_result-t_range
     ).
 
     
@@ -64,16 +62,13 @@ CLASS Z2UI5_CL_POP_GET_RANGE IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD result.
 
     result = ms_result.
 
   ENDMETHOD.
 
-
   METHOD view_display.
-
 
     DATA lo_popup TYPE REF TO z2ui5_cl_xml_view.
     DATA vbox TYPE REF TO z2ui5_cl_xml_view.
@@ -82,21 +77,19 @@ CLASS Z2UI5_CL_POP_GET_RANGE IMPLEMENTATION.
     DATA temp2 TYPE string_table.
     lo_popup = z2ui5_cl_xml_view=>factory_popup( ).
 
-    lo_popup = lo_popup->dialog(
-      afterclose    = client->_event( 'BUTTON_CANCEL' )
-      contentheight = `50%`
-      contentwidth  = `50%`
-        title       = 'Define Filter Conditons' ).
+    lo_popup = lo_popup->dialog( afterclose    = client->_event( 'BUTTON_CANCEL' )
+                                 contentheight = `50%`
+                                 contentwidth  = `50%`
+                                 title         = 'Define Filter Conditons' ).
 
     
     vbox = lo_popup->vbox( height         = `100%`
                                  justifycontent = 'SpaceBetween' ).
 
     
-    item = vbox->list(
-              nodata         = `no conditions defined`
-             items           = client->_bind_edit( mt_filter )
-             selectionchange = client->_event( 'SELCHANGE' )
+    item = vbox->list( nodata          = `no conditions defined`
+                             items           = client->_bind_edit( mt_filter )
+                             selectionchange = client->_event( 'SELCHANGE' )
                 )->custom_list_item( ).
 
     
@@ -105,12 +98,10 @@ CLASS Z2UI5_CL_POP_GET_RANGE IMPLEMENTATION.
     
     CLEAR temp2.
     INSERT `${KEY}` INTO TABLE temp2.
-    grid->combobox(
-                 selectedkey = `{OPTION}`
-                 items       = client->_bind( mt_mapping )
-             )->item(
-                     key  = '{N}'
-                     text = '{N}'
+    grid->combobox( selectedkey = `{OPTION}`
+                    items       = client->_bind( mt_mapping )
+             )->item( key  = '{N}'
+                      text = '{N}'
              )->get_parent(
              )->input( value  = `{LOW}`
                        submit = client->_event( 'BUTTON_CONFIRM' )
@@ -119,7 +110,8 @@ CLASS Z2UI5_CL_POP_GET_RANGE IMPLEMENTATION.
                        submit  = client->_event( 'BUTTON_CONFIRM' )
              )->button( icon  = 'sap-icon://decline'
                         type  = `Transparent`
-                        press = client->_event( val = `POPUP_DELETE` t_arg = temp2 ) ).
+                        press = client->_event( val   = `POPUP_DELETE`
+                                                t_arg = temp2 ) ).
 
     lo_popup->buttons(
         )->button( text  = `Delete All`
@@ -129,18 +121,15 @@ CLASS Z2UI5_CL_POP_GET_RANGE IMPLEMENTATION.
         )->button( text  = `Add Item`
                    icon  = `sap-icon://add`
                    press = client->_event( val = `POPUP_ADD` )
-       )->button(
-            text  = 'Cancel'
-            press = client->_event( 'BUTTON_CANCEL' )
-       )->button(
-            text  = 'OK'
-            press = client->_event( 'BUTTON_CONFIRM' )
-            type  = 'Emphasized' ).
+       )->button( text  = 'Cancel'
+                  press = client->_event( 'BUTTON_CANCEL' )
+       )->button( text  = 'OK'
+                  press = client->_event( 'BUTTON_CONFIRM' )
+                  type  = 'Emphasized' ).
 
     client->popup_display( lo_popup->stringify( ) ).
 
   ENDMETHOD.
-
 
   METHOD z2ui5_if_app~main.
       DATA temp4 LIKE LINE OF ms_result-t_range.

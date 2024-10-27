@@ -1,16 +1,16 @@
 CLASS z2ui5_cl_core_srv_diss DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC .
+  PUBLIC FINAL
+  CREATE PUBLIC.
 
   PUBLIC SECTION.
 
     METHODS constructor
       IMPORTING
-        !attri TYPE REF TO z2ui5_if_core_types=>ty_t_attri
-        !app   TYPE REF TO object.
+        attri TYPE REF TO z2ui5_if_core_types=>ty_t_attri
+        app   TYPE REF TO object.
 
-    METHODS main .
+    METHODS main.
+
   PROTECTED SECTION.
 
     DATA mt_attri TYPE REF TO z2ui5_if_core_types=>ty_t_attri.
@@ -32,12 +32,14 @@ CLASS z2ui5_cl_core_srv_diss DEFINITION
         VALUE(result) TYPE z2ui5_if_core_types=>ty_t_attri.
 
     METHODS diss_oref
-      IMPORTING ir_attri      TYPE REF TO z2ui5_if_core_types=>ty_s_attri
-      RETURNING VALUE(result) TYPE z2ui5_if_core_types=>ty_t_attri.
+      IMPORTING
+        ir_attri      TYPE REF TO z2ui5_if_core_types=>ty_s_attri
+      RETURNING
+        VALUE(result) TYPE z2ui5_if_core_types=>ty_t_attri.
 
     METHODS create_new_entry
       IMPORTING
-        name          TYPE string
+        !name         TYPE string
       RETURNING
         VALUE(result) TYPE z2ui5_if_core_types=>ty_s_attri.
 
@@ -45,10 +47,7 @@ CLASS z2ui5_cl_core_srv_diss DEFINITION
 ENDCLASS.
 
 
-
 CLASS z2ui5_cl_core_srv_diss IMPLEMENTATION.
-
-
   METHOD constructor.
 
     mt_attri = attri.
@@ -56,21 +55,19 @@ CLASS z2ui5_cl_core_srv_diss IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD create_new_entry.
 
     DATA temp1 TYPE z2ui5_if_core_types=>ty_s_attri.
     DATA lo_model TYPE REF TO z2ui5_cl_core_srv_attri.
     CLEAR temp1.
-    result  = temp1.
-    result-name        = name.
+    result = temp1.
+    result-name = name.
     
     CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_attri EXPORTING attri = mt_attri app = mo_app.
     result-r_ref       = lo_model->attri_get_val_ref( name ).
     result-o_typedescr = cl_abap_datadescr=>describe_by_data_ref( result-r_ref ).
 
   ENDMETHOD.
-
 
   METHOD diss_dref.
     DATA lr_ref TYPE REF TO data.
@@ -104,7 +101,7 @@ CLASS z2ui5_cl_core_srv_diss IMPLEMENTATION.
 
       WHEN OTHERS.
 
-        ls_attri2-name  = ir_attri->name && `->*`.
+        ls_attri2-name = |{ ir_attri->name }->*|.
         
         CREATE OBJECT lo_model TYPE z2ui5_cl_core_srv_attri EXPORTING attri = mt_attri app = mo_app.
         ls_attri2-r_ref = lo_model->attri_get_val_ref( ls_attri2-name ).
@@ -113,7 +110,6 @@ CLASS z2ui5_cl_core_srv_diss IMPLEMENTATION.
     ENDCASE.
 
   ENDMETHOD.
-
 
   METHOD diss_oref.
     DATA lr_ref TYPE REF TO object.
@@ -136,13 +132,13 @@ CLASS z2ui5_cl_core_srv_diss IMPLEMENTATION.
     
     
     LOOP AT lt_attri REFERENCE INTO lr_attri
-        WHERE visibility = cl_abap_objectdescr=>public
-        AND is_interface = abap_false
-        AND is_constant  = abap_false.
+         WHERE     visibility   = cl_abap_objectdescr=>public
+               AND is_interface = abap_false
+               AND is_constant  = abap_false.
       TRY.
           
           IF ir_attri->name IS NOT INITIAL.
-            temp4 = ir_attri->name && `->`.
+            temp4 = |{ ir_attri->name }->|.
           ELSE.
             CLEAR temp4.
           ENDIF.
@@ -158,7 +154,6 @@ CLASS z2ui5_cl_core_srv_diss IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD diss_struc.
       DATA lv_name TYPE string.
       DATA lr_ref TYPE REF TO data.
@@ -168,11 +163,11 @@ CLASS z2ui5_cl_core_srv_diss IMPLEMENTATION.
 
     IF ir_attri->o_typedescr->kind = cl_abap_typedescr=>kind_ref.
       
-      lv_name = ir_attri->name && `->`.
+      lv_name = |{ ir_attri->name }->|.
       
       lr_ref = z2ui5_cl_util=>unassign_data( ir_attri->r_ref ).
     ELSE.
-      lv_name = ir_attri->name && `-`.
+      lv_name = |{ ir_attri->name }-|.
       lr_ref = ir_attri->r_ref.
     ENDIF.
 
@@ -187,7 +182,6 @@ CLASS z2ui5_cl_core_srv_diss IMPLEMENTATION.
     ENDLOOP.
 
   ENDMETHOD.
-
 
   METHOD main.
         DATA temp5 LIKE sy-subrc.
@@ -218,7 +212,6 @@ CLASS z2ui5_cl_core_srv_diss IMPLEMENTATION.
 
   ENDMETHOD.
 
-
   METHOD main_init.
     DATA temp7 LIKE REF TO mo_app.
 DATA temp1 TYPE z2ui5_if_core_types=>ty_s_attri.
@@ -228,7 +221,7 @@ DATA lt_init TYPE z2ui5_if_core_types=>ty_t_attri.
 
     IF mt_attri->* IS NOT INITIAL.
       LOOP AT mt_attri->* TRANSPORTING NO FIELDS
-        WHERE bind_type <> z2ui5_if_core_types=>cs_bind_type-one_time.
+           WHERE bind_type <> z2ui5_if_core_types=>cs_bind_type-one_time.
       ENDLOOP.
       IF sy-subrc = 0.
         RETURN.
@@ -250,7 +243,6 @@ lt_init = diss_oref( temp8 ).
 
   ENDMETHOD.
 
-
   METHOD main_run.
 
     DATA temp9 TYPE z2ui5_if_core_types=>ty_t_attri.
@@ -268,8 +260,8 @@ lt_init = diss_oref( temp8 ).
     
     
     LOOP AT mt_attri->* REFERENCE INTO lr_attri
-         WHERE check_dissolved = abap_false
-         AND bind_type <> z2ui5_if_core_types=>cs_bind_type-one_time.
+         WHERE     check_dissolved  = abap_false
+               AND bind_type       <> z2ui5_if_core_types=>cs_bind_type-one_time.
 
       lr_attri->check_dissolved = abap_true.
 
@@ -277,7 +269,7 @@ lt_init = diss_oref( temp8 ).
         
         ls_entry = create_new_entry( lr_attri->name ).
         lr_attri->o_typedescr = ls_entry-o_typedescr.
-        lr_attri->r_ref = ls_entry-r_ref.
+        lr_attri->r_ref       = ls_entry-r_ref.
       ENDIF.
 
       CASE lr_attri->o_typedescr->kind.

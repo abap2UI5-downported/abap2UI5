@@ -1,44 +1,42 @@
-CLASS ltcl_test DEFINITION FINAL FOR TESTING
-  DURATION SHORT
-  RISK LEVEL HARMLESS.
+CLASS ltcl_test DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
 
   PRIVATE SECTION.
-    METHODS
-      first_test FOR TESTING RAISING cx_static_check.
+    METHODS first_test FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS z2ui5_cl_core_app DEFINITION LOCAL FRIENDS ltcl_test.
 
 CLASS ltcl_test IMPLEMENTATION.
-
   METHOD first_test.
 
     DATA lo_action TYPE REF TO z2ui5_cl_core_app.
     CREATE OBJECT lo_action TYPE z2ui5_cl_core_app.
 
   ENDMETHOD.
-
 ENDCLASS.
 
-CLASS ltcl_test_db DEFINITION FINAL FOR TESTING
-  DURATION LONG
-  RISK LEVEL HARMLESS.
+
+CLASS ltcl_test_db DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION LONG.
 
   PUBLIC SECTION.
 
     DATA mv_value TYPE string.
+
     INTERFACES z2ui5_if_app.
+
     METHODS constructor.
 
     METHODS test_db_save FOR TESTING.
 
   PROTECTED SECTION.
+
   PRIVATE SECTION.
 ENDCLASS.
 
 
 CLASS ltcl_test_db IMPLEMENTATION.
-
   METHOD constructor.
 
   ENDMETHOD.
@@ -72,14 +70,12 @@ CLASS ltcl_test_db IMPLEMENTATION.
     
     lo_app_user_db = temp3.
 
-    cl_abap_unit_assert=>assert_equals(
-        act = lo_app_user_db->mv_value
-        exp = lo_app_user->mv_value ).
+    cl_abap_unit_assert=>assert_equals( exp = lo_app_user->mv_value
+                                        act = lo_app_user_db->mv_value ).
 
   ENDMETHOD.
 
   METHOD z2ui5_if_app~main.
 
   ENDMETHOD.
-
 ENDCLASS.

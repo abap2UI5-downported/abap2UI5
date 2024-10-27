@@ -1,6 +1,5 @@
-CLASS ltcl_test DEFINITION FINAL FOR TESTING
-  DURATION SHORT
-  RISK LEVEL HARMLESS.
+CLASS ltcl_test DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
 
   PRIVATE SECTION.
     METHODS request_json_to_abap FOR TESTING RAISING cx_static_check.
@@ -9,7 +8,6 @@ ENDCLASS.
 
 
 CLASS ltcl_test IMPLEMENTATION.
-
   METHOD request_json_to_abap.
 
     DATA lv_payload TYPE string.
@@ -21,8 +19,8 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lt_tree LIKE temp12.
     DATA temp13 LIKE LINE OF lt_tree.
     DATA temp14 LIKE sy-tabix.
-    lv_payload = `{"XX":{"NAME":"test"},"S_FRONT":{"ID":"ID_NR","EDIT":{"NAME":"test"},"ORIGIN":"ORIGIN","PATHNAME":"PATHNAME","SEARCH":"SEARCH"` &&
-            `,"VIEW":"MAIN","EVENT":"BUTTON_POST","T_EVENT_ARG":[]}}`.
+    lv_payload = |\{"XX":\{"NAME":"test"\},"S_FRONT":\{"ID":"ID_NR","EDIT":\{"NAME":"test"\},"ORIGIN":"ORIGIN","PATHNAME":"PATHNAME","SEARCH":"SEARCH"| &&
+            |,"VIEW":"MAIN","EVENT":"BUTTON_POST","T_EVENT_ARG":[]\}\}|.
 
     
     CREATE OBJECT lo_mapper TYPE z2ui5_cl_core_srv_json.
@@ -41,9 +39,8 @@ CLASS ltcl_test IMPLEMENTATION.
     
     ls_exp = temp11.
 
-    cl_abap_unit_assert=>assert_equals(
-        act = ls_result-s_front
-        exp = ls_exp-s_front ).
+    cl_abap_unit_assert=>assert_equals( exp = ls_exp-s_front
+                                        act = ls_result-s_front ).
 
     
     CLEAR temp12.
@@ -59,14 +56,11 @@ CLASS ltcl_test IMPLEMENTATION.
     IF sy-subrc <> 0.
       ASSERT 1 = 0.
     ENDIF.
-    cl_abap_unit_assert=>assert_equals(
-       act = temp13-value
-       exp = `test` ).
+    cl_abap_unit_assert=>assert_equals( exp = `test`
+                                        act = temp13-value ).
 
-    cl_abap_unit_assert=>assert_equals(
-       act = lines( lt_tree )
-       exp = 3 ).
+    cl_abap_unit_assert=>assert_equals( exp = 3
+                                        act = lines( lt_tree ) ).
 
   ENDMETHOD.
-
 ENDCLASS.

@@ -41,7 +41,6 @@ ENDCLASS.
 
 
 CLASS z2ui5_cl_core_srv_attri IMPLEMENTATION.
-
   METHOD attri_after_load.
 
     DATA temp1 LIKE LINE OF mt_attri->*.
@@ -49,7 +48,7 @@ CLASS z2ui5_cl_core_srv_attri IMPLEMENTATION.
             FIELD-SYMBOLS <val> TYPE data.
     LOOP AT mt_attri->* REFERENCE INTO lr_attri.
       TRY.
-          lr_attri->r_ref = attri_get_val_ref( lr_attri->name ).
+          lr_attri->r_ref       = attri_get_val_ref( lr_attri->name ).
           lr_attri->o_typedescr = cl_abap_datadescr=>describe_by_data_ref( lr_attri->r_ref ).
 
           IF lr_attri->srtti_data IS NOT INITIAL.
@@ -176,7 +175,7 @@ CLASS z2ui5_cl_core_srv_attri IMPLEMENTATION.
             IF sy-subrc <> 0.
               ASSERT 1 = 0.
             ENDIF.
-            <ls_attri>-bind_type = temp5-bind_type.
+            <ls_attri>-bind_type   = temp5-bind_type.
             
             
             temp8 = sy-tabix.
@@ -194,7 +193,7 @@ CLASS z2ui5_cl_core_srv_attri IMPLEMENTATION.
             IF sy-subrc <> 0.
               ASSERT 1 = 0.
             ENDIF.
-            <ls_attri>-view = temp9-view.
+            <ls_attri>-view        = temp9-view.
           ENDIF.
         ENDLOOP.
         RETURN.
@@ -209,7 +208,6 @@ CLASS z2ui5_cl_core_srv_attri IMPLEMENTATION.
 
       EXIT.
     ENDDO.
-
 
     """""
 
@@ -226,8 +224,7 @@ CLASS z2ui5_cl_core_srv_attri IMPLEMENTATION.
 
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE z2ui5_cx_util_error
-        EXPORTING
-          val = `DEREF_FAILED_TARGET_INITIAL`.
+        EXPORTING val = `DEREF_FAILED_TARGET_INITIAL`.
     ENDIF.
 
     GET REFERENCE OF <attri> INTO result.
@@ -243,7 +240,7 @@ CLASS z2ui5_cl_core_srv_attri IMPLEMENTATION.
     DATA lr_attri LIKE REF TO temp12.
     LOOP AT mt_attri->* REFERENCE INTO lr_attri.
       TRY.
-          lr_attri->r_ref = attri_get_val_ref( lr_attri->name ).
+          lr_attri->r_ref       = attri_get_val_ref( lr_attri->name ).
           lr_attri->o_typedescr = cl_abap_datadescr=>describe_by_data_ref( lr_attri->r_ref ).
 
 *          TRY.
@@ -274,9 +271,9 @@ CLASS z2ui5_cl_core_srv_attri IMPLEMENTATION.
     LOOP AT mt_attri->* REFERENCE INTO lr_attri
          WHERE o_typedescr IS BOUND.
 
-      IF lr_attri->o_typedescr->kind <> cl_abap_typedescr=>kind_elem
+      IF     lr_attri->o_typedescr->kind <> cl_abap_typedescr=>kind_elem
          AND lr_attri->o_typedescr->kind <> cl_abap_typedescr=>kind_struct
-            AND lr_attri->o_typedescr->kind <> cl_abap_typedescr=>kind_table.
+         AND lr_attri->o_typedescr->kind <> cl_abap_typedescr=>kind_table.
         CONTINUE.
       ENDIF.
 
@@ -287,7 +284,5 @@ CLASS z2ui5_cl_core_srv_attri IMPLEMENTATION.
     ENDLOOP.
 
   ENDMETHOD.
-
-
 ENDCLASS.
 
