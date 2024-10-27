@@ -156,7 +156,7 @@ CLASS z2ui5_cl_core_action IMPLEMENTATION.
 
     result->mo_app->ms_draft-id          = z2ui5_cl_util=>uuid_get_c32( ).
     result->ms_actual-check_on_navigated = abap_true.
-    result->mo_app->mo_app               = z2ui5_cl_core_app_startup=>factory( ).
+    result->mo_app->mo_app               = z2ui5_cl_app_startup=>factory( ).
 
     
     temp2 ?= result->mo_app->mo_app.

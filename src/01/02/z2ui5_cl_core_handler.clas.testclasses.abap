@@ -15,7 +15,7 @@ CLASS ltcl_test_handler_post IMPLEMENTATION.
   METHOD load_startup_app.
     DATA lv_payload TYPE string.
     DATA lo_post TYPE REF TO z2ui5_cl_core_handler.
-    DATA temp4 TYPE REF TO z2ui5_cl_core_app_startup.
+    DATA temp4 TYPE REF TO z2ui5_cl_app_startup.
     DATA lo_startup LIKE temp4.
 
     IF sy-sysid = 'ABC'.
