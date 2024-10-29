@@ -84,6 +84,7 @@ ENDCLASS.
 
 
 CLASS z2ui5_cl_http_handler IMPLEMENTATION.
+
   METHOD main.
 
     ms_config = s_config.
@@ -349,4 +350,5 @@ CLASS z2ui5_cl_http_handler IMPLEMENTATION.
     ENDIF.
 
   ENDMETHOD.
+
 ENDCLASS.

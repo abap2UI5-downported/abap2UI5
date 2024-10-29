@@ -40,6 +40,7 @@ ENDCLASS.
 
 
 CLASS z2ui5_cl_app_startup IMPLEMENTATION.
+
   METHOD factory.
 
     CREATE OBJECT result.
@@ -113,13 +114,12 @@ CLASS z2ui5_cl_app_startup IMPLEMENTATION.
       )->content( `form` ).
 
     simple_form->toolbar( )->title( `Quickstart` ).
-    " TODO: check spelling: behaviour (BE) -> behavior (ABAP cleaner)
     simple_form->label( `Step 1`
       )->text( `Create a new class in your ABAP system`
       )->label( `Step 2`
       )->text( `Add the interface: Z2UI5_IF_APP`
       )->label( `Step 3`
-      )->text( `Define the view, implement behaviour`
+      )->text( `Define the view, implement behavior`
       )->label(
       )->link( text   = `(Example)`
                target = `_blank`
@@ -362,4 +362,5 @@ MOVE-CORRESPONDING <class> TO ms_home.
     ms_home-classname      = z2ui5_cl_util=>rtti_get_classname_by_ref( temp5 ).
 
   ENDMETHOD.
+
 ENDCLASS.
