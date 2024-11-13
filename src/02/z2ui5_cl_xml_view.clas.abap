@@ -681,6 +681,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         valuestatetext   TYPE clike OPTIONAL
         placeholder      TYPE clike OPTIONAL
         showsuggestion   TYPE clike OPTIONAL
+        VISIBLE          type CLIKE optional
       RETURNING
         VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
 
@@ -10864,6 +10865,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp281 INTO TABLE temp280.
     temp281-n = `class`.
     temp281-v = class.
+    INSERT temp281 INTO TABLE temp280.
+    temp281-n = `visible`.
+    temp281-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp281 INTO TABLE temp280.
     temp281-n = `required`.
     temp281-v = required.
