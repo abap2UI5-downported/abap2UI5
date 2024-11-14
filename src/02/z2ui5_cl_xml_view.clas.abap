@@ -1117,14 +1117,19 @@ CLASS z2ui5_cl_xml_view DEFINITION
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS barcode_scanner_button
-      IMPORTING
-        id              TYPE clike OPTIONAL
-        scansuccess     TYPE clike OPTIONAL
-        scanfail        TYPE clike OPTIONAL
-        inputliveupdate TYPE clike OPTIONAL
-        dialogtitle     TYPE clike OPTIONAL
-      RETURNING
-        VALUE(result)   TYPE REF TO z2ui5_cl_xml_view.
+      IMPORTING !id                       TYPE clike OPTIONAL
+                scansuccess               TYPE clike OPTIONAL
+                scanfail                  TYPE clike OPTIONAL
+                inputliveupdate           TYPE clike OPTIONAL
+                dialogtitle               TYPE clike OPTIONAL
+                disableBarcodeInputDialog TYPE clike OPTIONAL
+                frameRate                 TYPE clike OPTIONAL
+                keepCameraScan            TYPE clike OPTIONAL
+                preferFrontCamera         TYPE clike OPTIONAL
+                provideFallback           TYPE clike OPTIONAL
+                !width                    TYPE clike OPTIONAL
+                zoom                      TYPE clike OPTIONAL
+      RETURNING VALUE(result)             TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS message_popover
       IMPORTING
@@ -5320,10 +5325,30 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp16-n = `dialogTitle`.
     temp16-v = dialogtitle.
     INSERT temp16 INTO TABLE temp15.
+    temp16-n = `disableBarcodeInputDialog`.
+    temp16-v = disableBarcodeInputDialog.
+    INSERT temp16 INTO TABLE temp15.
+    temp16-n = `frameRate`.
+    temp16-v = frameRate.
+    INSERT temp16 INTO TABLE temp15.
+    temp16-n = `keepCameraScan`.
+    temp16-v = keepCameraScan.
+    INSERT temp16 INTO TABLE temp15.
+    temp16-n = `preferFrontCamera`.
+    temp16-v = preferFrontCamera.
+    INSERT temp16 INTO TABLE temp15.
+    temp16-n = `provideFallback`.
+    temp16-v = provideFallback.
+    INSERT temp16 INTO TABLE temp15.
+    temp16-n = `width`.
+    temp16-v = width.
+    INSERT temp16 INTO TABLE temp15.
+    temp16-n = `zoom`.
+    temp16-v = zoom.
+    INSERT temp16 INTO TABLE temp15.
     result = _generic( name   = `BarcodeScannerButton`
                        ns     = 'ndc'
                        t_prop = temp15 ).
-
   ENDMETHOD.
 
   METHOD bars.
