@@ -6777,7 +6777,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp90-v = key.
     INSERT temp90 INTO TABLE temp89.
     temp90-n = `writeToDom`.
-    temp90-v = writetodom.
+    temp90-v = z2ui5_cl_util=>boolean_abap_2_json( writetodom ).
     INSERT temp90 INTO TABLE temp89.
     _generic( name   = `CustomData`
               ns     = `core`
