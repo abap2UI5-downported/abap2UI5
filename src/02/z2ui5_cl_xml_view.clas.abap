@@ -1419,6 +1419,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         wrappingtype  TYPE clike OPTIONAL
         id            TYPE clike OPTIONAL
         class         TYPE clike OPTIONAL
+        visible       TYPE clike OPTIONAL
                   PREFERRED PARAMETER text
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
@@ -9737,6 +9738,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp220 INTO TABLE temp219.
     temp220-n = `labelFor`.
     temp220-v = labelfor.
+    INSERT temp220 INTO TABLE temp219.
+    temp220-n = `visible`.
+    temp220-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp220 INTO TABLE temp219.
     _generic( name   = `Label`
               t_prop = temp219 ).
