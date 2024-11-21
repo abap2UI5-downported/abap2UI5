@@ -1034,6 +1034,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
       IMPORTING
         key           TYPE clike OPTIONAL
         value         TYPE clike OPTIONAL
+        writetodom    TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -6773,6 +6774,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp90 INTO TABLE temp89.
     temp90-n = `key`.
     temp90-v = key.
+    INSERT temp90 INTO TABLE temp89.
+    temp90-n = `writeToDom`.
+    temp90-v = writetodom.
     INSERT temp90 INTO TABLE temp89.
     _generic( name   = `CustomData`
               ns     = `core`
