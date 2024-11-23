@@ -1069,3 +1069,277 @@ DATA BEGIN OF ms_struc2.INCLUDE TYPE ty_struc.INCLUDE TYPE ty_struc_incl.DATA EN
 
   ENDMETHOD.
 ENDCLASS.
+
+CLASS ltcl_unit_test_msg_mapper DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+
+  PRIVATE SECTION.
+
+    METHODS test_bal            FOR TESTING RAISING cx_static_check.
+    METHODS test_cx            FOR TESTING RAISING cx_static_check.
+    METHODS test_bapiret       FOR TESTING RAISING cx_static_check.
+    METHODS test_bapirettab       FOR TESTING RAISING cx_static_check.
+    METHODS test_sy       FOR TESTING RAISING cx_static_check.
+
+
+ENDCLASS.
+
+CLASS ltcl_unit_test_msg_mapper IMPLEMENTATION.
+
+  METHOD test_sy.
+    DATA lv_dummy TYPE string.
+    DATA lt_result TYPE z2ui5_cl_util=>ty_t_msg.
+   DATA temp100 LIKE LINE OF lt_result.
+   DATA temp101 LIKE sy-tabix.
+    DATA temp102 LIKE LINE OF lt_result.
+    DATA temp103 LIKE sy-tabix.
+    DATA temp104 LIKE LINE OF lt_result.
+    DATA temp105 LIKE sy-tabix.
+
+    IF sy-sysid = 'ABC'.
+      RETURN.
+    ENDIF.
+
+    
+    MESSAGE ID 'NET' TYPE 'I' NUMBER '001' INTO lv_dummy.
+    
+    lt_result = lcl_msp_mapper=>msg_get( sy ).
+
+   
+   
+   temp101 = sy-tabix.
+   READ TABLE lt_result INDEX 1 INTO temp100.
+   sy-tabix = temp101.
+   IF sy-subrc <> 0.
+     ASSERT 1 = 0.
+   ENDIF.
+   cl_abap_unit_assert=>assert_equals( exp = `NET`
+                                        act = temp100-id ).
+
+    
+    
+    temp103 = sy-tabix.
+    READ TABLE lt_result INDEX 1 INTO temp102.
+    sy-tabix = temp103.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    cl_abap_unit_assert=>assert_equals( exp = `001`
+                                    act = temp102-no ).
+
+    
+    
+    temp105 = sy-tabix.
+    READ TABLE lt_result INDEX 1 INTO temp104.
+    sy-tabix = temp105.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    cl_abap_unit_assert=>assert_equals( exp = `I`
+                                        act = temp104-type ).
+
+  ENDMETHOD.
+
+  METHOD test_bapiret.
+    DATA temp106 TYPE bapirettab.
+    DATA temp107 LIKE LINE OF temp106.
+    DATA lt_msg LIKE temp106.
+    DATA lt_result TYPE z2ui5_cl_util=>ty_t_msg.
+    DATA temp15 LIKE LINE OF lt_msg.
+    DATA temp16 LIKE sy-tabix.
+    DATA temp108 LIKE LINE OF lt_result.
+    DATA temp109 LIKE sy-tabix.
+    DATA temp110 LIKE LINE OF lt_result.
+    DATA temp111 LIKE sy-tabix.
+    DATA temp112 LIKE LINE OF lt_result.
+    DATA temp113 LIKE sy-tabix.
+
+    IF sy-sysid = 'ABC'.
+      RETURN.
+    ENDIF.
+
+    
+    CLEAR temp106.
+    
+    temp107-type = 'E'.
+    temp107-id = 'MSG1'.
+    temp107-number = '001'.
+    temp107-message = 'An empty Report field causes an empty XML Message to be sent'.
+    INSERT temp107 INTO TABLE temp106.
+    
+    lt_msg = temp106.
+
+    
+    
+    
+    temp16 = sy-tabix.
+    READ TABLE lt_msg INDEX 1 INTO temp15.
+    sy-tabix = temp16.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    lt_result = lcl_msp_mapper=>msg_get( temp15 ).
+
+    
+    
+    temp109 = sy-tabix.
+    READ TABLE lt_result INDEX 1 INTO temp108.
+    sy-tabix = temp109.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    cl_abap_unit_assert=>assert_equals( exp = `MSG1`
+                                        act = temp108-id ).
+
+    
+    
+    temp111 = sy-tabix.
+    READ TABLE lt_result INDEX 1 INTO temp110.
+    sy-tabix = temp111.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    cl_abap_unit_assert=>assert_equals( exp = `001`
+                                    act = temp110-no ).
+
+    
+    
+    temp113 = sy-tabix.
+    READ TABLE lt_result INDEX 1 INTO temp112.
+    sy-tabix = temp113.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    cl_abap_unit_assert=>assert_equals( exp = `E`
+                                        act = temp112-type ).
+
+  ENDMETHOD.
+
+  METHOD test_bapirettab.
+    DATA temp114 TYPE bapirettab.
+    DATA temp115 LIKE LINE OF temp114.
+    DATA lt_msg LIKE temp114.
+    DATA lt_result TYPE z2ui5_cl_util=>ty_t_msg.
+   DATA temp116 LIKE LINE OF lt_result.
+   DATA temp117 LIKE sy-tabix.
+    DATA temp118 LIKE LINE OF lt_result.
+    DATA temp119 LIKE sy-tabix.
+    DATA temp120 LIKE LINE OF lt_result.
+    DATA temp121 LIKE sy-tabix.
+
+    IF sy-sysid = 'ABC'.
+      RETURN.
+    ENDIF.
+
+    
+    CLEAR temp114.
+    
+    temp115-type = 'E'.
+    temp115-id = 'MSG1'.
+    temp115-number = '001'.
+    temp115-message = 'An empty Report field causes an empty XML Message to be sent'.
+    INSERT temp115 INTO TABLE temp114.
+    temp115-type = 'I'.
+    temp115-id = 'MSG2'.
+    temp115-number = '002'.
+    temp115-message = 'Product already in use'.
+    INSERT temp115 INTO TABLE temp114.
+    
+    lt_msg = temp114.
+
+    
+    lt_result = lcl_msp_mapper=>msg_get( lt_msg ).
+
+   
+   
+   temp117 = sy-tabix.
+   READ TABLE lt_result INDEX 1 INTO temp116.
+   sy-tabix = temp117.
+   IF sy-subrc <> 0.
+     ASSERT 1 = 0.
+   ENDIF.
+   cl_abap_unit_assert=>assert_equals( exp = `MSG1`
+                                        act = temp116-id ).
+
+    
+    
+    temp119 = sy-tabix.
+    READ TABLE lt_result INDEX 1 INTO temp118.
+    sy-tabix = temp119.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    cl_abap_unit_assert=>assert_equals( exp = `001`
+                                    act = temp118-no ).
+
+    
+    
+    temp121 = sy-tabix.
+    READ TABLE lt_result INDEX 1 INTO temp120.
+    sy-tabix = temp121.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    cl_abap_unit_assert=>assert_equals( exp = `E`
+                                        act = temp120-type ).
+
+  ENDMETHOD.
+
+  METHOD test_cx.
+        DATA lv_val TYPE i.
+        DATA lx TYPE REF TO cx_root.
+        DATA lt_result TYPE z2ui5_cl_util=>ty_t_msg.
+    DATA temp122 LIKE LINE OF lt_result.
+    DATA temp123 LIKE sy-tabix.
+
+    TRY.
+        
+        lv_val = 1 / 0.
+        
+      CATCH cx_root INTO lx.
+        
+        lt_result = lcl_msp_mapper=>msg_get( lx ).
+    ENDTRY.
+
+    
+    
+    temp123 = sy-tabix.
+    READ TABLE lt_result INDEX 1 INTO temp122.
+    sy-tabix = temp123.
+    IF sy-subrc <> 0.
+      ASSERT 1 = 0.
+    ENDIF.
+    cl_abap_unit_assert=>assert_equals( exp = `E`
+                                        act = temp122-type ).
+
+
+  ENDMETHOD.
+
+  method test_bal.
+
+  TYPES: BEGIN OF ty_log_entry,
+         msgnumber   TYPE n LENGTH 6,      " Application Log: Internal Message Serial Number
+         msgty       TYPE c LENGTH 1,      " Message Type
+         msgid       TYPE c LENGTH 20,     " Message Class
+         msgno       TYPE n LENGTH 3,      " Message Number
+         msgv1       TYPE c LENGTH 50,     " Message Variable
+         msgv2       TYPE c LENGTH 50,     " Message Variable
+         msgv3       TYPE c LENGTH 50,     " Message Variable
+         msgv4       TYPE c LENGTH 50,     " Message Variable
+         msgv1_src   TYPE c LENGTH 15,     " Origin of a Message Variable
+         msgv2_src   TYPE c LENGTH 15,     " Origin of a Message Variable
+         msgv3_src   TYPE c LENGTH 15,     " Origin of a Message Variable
+         msgv4_src   TYPE c LENGTH 15,     " Origin of a Message Variable
+         detlevel    TYPE c LENGTH 1,      " Level of Detail
+         probclass   TYPE c LENGTH 1,      " Problem Class
+         alsort      TYPE c LENGTH 3,      " Sort Criterion/Grouping
+         time_stmp   TYPE p LENGTH 8 DECIMALS 7, " Message Time Stamp
+         msg_count   TYPE i,               " Cumulated Message Count
+         context     TYPE c LENGTH 255,    " Context (Generic Placeholder)
+         params      TYPE c LENGTH 255,    " Parameters (Generic Placeholder)
+         msg_txt     TYPE string,          " Message Text
+       END OF ty_log_entry.
+
+  endmethod.
+
+ENDCLASS.
