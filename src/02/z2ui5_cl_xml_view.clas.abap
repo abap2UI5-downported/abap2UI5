@@ -1711,6 +1711,10 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING
         VALUE(result)  TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS grid_box_layout
+      IMPORTING boxMinWidth   TYPE clike OPTIONAL
+      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS grid_data
       IMPORTING
         span          TYPE clike OPTIONAL
@@ -1720,6 +1724,63 @@ CLASS z2ui5_cl_xml_view DEFINITION
                   PREFERRED PARAMETER span
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS grid_drop_info
+      IMPORTING targetAggregation TYPE clike OPTIONAL
+                dropPosition      TYPE clike OPTIONAL
+                dropLayout        TYPE clike OPTIONAL
+                drop              TYPE clike OPTIONAL
+                dragEnter         TYPE clike OPTIONAL
+                dragOver          TYPE clike OPTIONAL
+      RETURNING VALUE(result)     TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS grid_list
+      IMPORTING !id                    TYPE clike     OPTIONAL
+                busy                   TYPE abap_bool OPTIONAL
+                busyIndicatorDelay     TYPE clike     OPTIONAL
+                busyIndicatorSize      TYPE clike     OPTIONAL
+                enableBusyIndicator    TYPE abap_bool OPTIONAL
+                fieldGroupIds          TYPE clike     OPTIONAL
+                footerText             TYPE clike     OPTIONAL
+                growing                TYPE abap_bool OPTIONAL
+                growingDirection       TYPE clike     OPTIONAL
+                growingScrollToLoad    TYPE abap_bool OPTIONAL
+                growingThreshold       TYPE clike     OPTIONAL
+                growingTriggerText     TYPE clike     OPTIONAL
+                headerLevel            TYPE clike     OPTIONAL
+                headerText             TYPE clike     OPTIONAL
+                includeItemInSelection TYPE abap_bool OPTIONAL
+                inset                  TYPE abap_bool OPTIONAL
+                keyboardMode           TYPE clike     OPTIONAL
+                !mode                  TYPE clike     OPTIONAL
+                modeAnimationOn        TYPE abap_bool OPTIONAL
+                multiSelectMode        TYPE clike     OPTIONAL
+                noDataText             TYPE clike     OPTIONAL
+                rememberSelections     TYPE abap_bool OPTIONAL
+                showNoData             TYPE abap_bool OPTIONAL
+                showSeparators         TYPE clike     OPTIONAL
+                showUnread             TYPE abap_bool OPTIONAL
+                sticky                 TYPE clike     OPTIONAL
+                swipeDirection         TYPE clike     OPTIONAL
+                !visible               TYPE abap_bool default abap_true
+                !width                 TYPE clike     OPTIONAL
+                items                  TYPE clike     OPTIONAL
+      RETURNING VALUE(result)          TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS grid_list_item
+      IMPORTING busy               TYPE clike OPTIONAL
+                busyIndicatorDelay TYPE clike OPTIONAL
+                busyIndicatorSize  TYPE clike OPTIONAL
+                counter            TYPE clike OPTIONAL
+                fieldGroupIds      TYPE clike OPTIONAL
+                highlight          TYPE clike OPTIONAL
+                highlightText      TYPE clike OPTIONAL
+                navigated          TYPE clike OPTIONAL
+                selected           TYPE clike OPTIONAL
+                !type              TYPE clike OPTIONAL
+                unread             TYPE clike OPTIONAL
+                !visible           TYPE clike OPTIONAL
+      RETURNING VALUE(result)      TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS text_area
       IMPORTING
@@ -4209,6 +4270,8 @@ CLASS z2ui5_cl_xml_view DEFINITION
         VALUE(result)           TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS custom_layout
+      IMPORTING
+        ns            TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -4312,6 +4375,13 @@ CLASS z2ui5_cl_xml_view DEFINITION
         visible        TYPE clike OPTIONAL
       RETURNING
         VALUE(result)  TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS drag_info
+      IMPORTING sourceAggregation TYPE clike OPTIONAL
+      RETURNING VALUE(result)     TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS drag_drop_config
+      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS html_map
       IMPORTING
@@ -6826,7 +6896,8 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD custom_layout.
-    result = _generic( `customLayout` ).
+    result = _generic( name = `customLayout`
+                       ns   = ns  ).
   ENDMETHOD.
 
   METHOD custom_list_item.
@@ -7112,43 +7183,63 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
                        t_prop = temp101 ).
   ENDMETHOD.
 
-  METHOD dynamic_page.
+  METHOD drag_info.
     DATA temp103 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp104 LIKE LINE OF temp103.
+    result = me.
+    
     CLEAR temp103.
     
-    temp104-n = `headerExpanded`.
-    temp104-v = z2ui5_cl_util=>boolean_abap_2_json( headerexpanded ).
+    temp104-n = `sourceAggregation`.
+    temp104-v = sourceAggregation.
     INSERT temp104 INTO TABLE temp103.
-    temp104-n = `headerPinned`.
-    temp104-v = z2ui5_cl_util=>boolean_abap_2_json( headerpinned ).
-    INSERT temp104 INTO TABLE temp103.
-    temp104-n = `showFooter`.
-    temp104-v = z2ui5_cl_util=>boolean_abap_2_json( showfooter ).
-    INSERT temp104 INTO TABLE temp103.
-    temp104-n = `toggleHeaderOnTitleClick`.
-    temp104-v = toggleheaderontitleclick.
-    INSERT temp104 INTO TABLE temp103.
-    temp104-n = `class`.
-    temp104-v = class.
-    INSERT temp104 INTO TABLE temp103.
-    result = _generic( name   = `DynamicPage`
-                       ns     = `f`
-                       t_prop = temp103 ).
+    _generic( name   = `DragInfo`
+              ns     = `dnd`
+              t_prop = temp103 ).
   ENDMETHOD.
 
-  METHOD dynamic_page_header.
+  METHOD drag_drop_config.
+    result = _generic( name = `dragDropConfig`
+                       ns   = `f` ).
+  ENDMETHOD.
+
+  METHOD dynamic_page.
     DATA temp105 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp106 LIKE LINE OF temp105.
     CLEAR temp105.
     
-    temp106-n = `pinnable`.
-    temp106-v = z2ui5_cl_util=>boolean_abap_2_json( pinnable ).
+    temp106-n = `headerExpanded`.
+    temp106-v = z2ui5_cl_util=>boolean_abap_2_json( headerexpanded ).
     INSERT temp106 INTO TABLE temp105.
+    temp106-n = `headerPinned`.
+    temp106-v = z2ui5_cl_util=>boolean_abap_2_json( headerpinned ).
+    INSERT temp106 INTO TABLE temp105.
+    temp106-n = `showFooter`.
+    temp106-v = z2ui5_cl_util=>boolean_abap_2_json( showfooter ).
+    INSERT temp106 INTO TABLE temp105.
+    temp106-n = `toggleHeaderOnTitleClick`.
+    temp106-v = toggleheaderontitleclick.
+    INSERT temp106 INTO TABLE temp105.
+    temp106-n = `class`.
+    temp106-v = class.
+    INSERT temp106 INTO TABLE temp105.
+    result = _generic( name   = `DynamicPage`
+                       ns     = `f`
+                       t_prop = temp105 ).
+  ENDMETHOD.
+
+  METHOD dynamic_page_header.
+    DATA temp107 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp108 LIKE LINE OF temp107.
+    CLEAR temp107.
+    
+    temp108-n = `pinnable`.
+    temp108-v = z2ui5_cl_util=>boolean_abap_2_json( pinnable ).
+    INSERT temp108 INTO TABLE temp107.
     result = _generic(
                  name   = `DynamicPageHeader`
                  ns     = `f`
-                 t_prop = temp105 ).
+                 t_prop = temp107 ).
   ENDMETHOD.
 
   METHOD dynamic_page_title.
@@ -7157,43 +7248,43 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD dynamic_side_content.
-    DATA temp107 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp108 LIKE LINE OF temp107.
-    CLEAR temp107.
+    DATA temp109 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp110 LIKE LINE OF temp109.
+    CLEAR temp109.
     
-    temp108-n = `id`.
-    temp108-v = id.
-    INSERT temp108 INTO TABLE temp107.
-    temp108-n = `class`.
-    temp108-v = class.
-    INSERT temp108 INTO TABLE temp107.
-    temp108-n = `sideContentVisibility`.
-    temp108-v = sidecontentvisibility.
-    INSERT temp108 INTO TABLE temp107.
-    temp108-n = `showSideContent`.
-    temp108-v = showsidecontent.
-    INSERT temp108 INTO TABLE temp107.
-    temp108-n = `containerQuery`.
-    temp108-v = containerquery.
-    INSERT temp108 INTO TABLE temp107.
+    temp110-n = `id`.
+    temp110-v = id.
+    INSERT temp110 INTO TABLE temp109.
+    temp110-n = `class`.
+    temp110-v = class.
+    INSERT temp110 INTO TABLE temp109.
+    temp110-n = `sideContentVisibility`.
+    temp110-v = sidecontentvisibility.
+    INSERT temp110 INTO TABLE temp109.
+    temp110-n = `showSideContent`.
+    temp110-v = showsidecontent.
+    INSERT temp110 INTO TABLE temp109.
+    temp110-n = `containerQuery`.
+    temp110-v = containerquery.
+    INSERT temp110 INTO TABLE temp109.
     result = _generic( name   = `DynamicSideContent`
                        ns     = 'layout'
-                       t_prop = temp107 ).
+                       t_prop = temp109 ).
 
   ENDMETHOD.
 
   METHOD element_attribute.
-    DATA temp109 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp110 LIKE LINE OF temp109.
+    DATA temp111 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp112 LIKE LINE OF temp111.
     DATA temp1 TYPE string.
-    CLEAR temp109.
+    CLEAR temp111.
     
-    temp110-n = `label`.
-    temp110-v = label.
-    INSERT temp110 INTO TABLE temp109.
-    temp110-n = `value`.
-    temp110-v = value.
-    INSERT temp110 INTO TABLE temp109.
+    temp112-n = `label`.
+    temp112-v = label.
+    INSERT temp112 INTO TABLE temp111.
+    temp112-n = `value`.
+    temp112-v = value.
+    INSERT temp112 INTO TABLE temp111.
     
     CASE ns.
       WHEN ''.
@@ -7203,7 +7294,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     ENDCASE.
     result = _generic( name   = `ElementAttribute`
                        ns     = temp1
-                       t_prop = temp109 ).
+                       t_prop = temp111 ).
   ENDMETHOD.
 
   METHOD embedded_control.
@@ -7223,46 +7314,46 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD expandable_text.
-    DATA temp111 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp112 LIKE LINE OF temp111.
-    CLEAR temp111.
+    DATA temp113 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp114 LIKE LINE OF temp113.
+    CLEAR temp113.
     
-    temp112-n = `id`.
-    temp112-v = id.
-    INSERT temp112 INTO TABLE temp111.
-    temp112-n = `emptyIndicatorMode`.
-    temp112-v = emptyindicatormode.
-    INSERT temp112 INTO TABLE temp111.
-    temp112-n = `maxCharacters`.
-    temp112-v = maxcharacters.
-    INSERT temp112 INTO TABLE temp111.
-    temp112-n = `overflowMode`.
-    temp112-v = overflowmode.
-    INSERT temp112 INTO TABLE temp111.
-    temp112-n = `renderWhitespace`.
-    temp112-v = z2ui5_cl_util=>boolean_abap_2_json( renderwhitespace ).
-    INSERT temp112 INTO TABLE temp111.
-    temp112-n = `text`.
-    temp112-v = text.
-    INSERT temp112 INTO TABLE temp111.
-    temp112-n = `textAlign`.
-    temp112-v = textalign.
-    INSERT temp112 INTO TABLE temp111.
-    temp112-n = `textDirection`.
-    temp112-v = textdirection.
-    INSERT temp112 INTO TABLE temp111.
-    temp112-n = `wrappingType`.
-    temp112-v = wrappingtype.
-    INSERT temp112 INTO TABLE temp111.
-    temp112-n = `visible`.
-    temp112-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp112 INTO TABLE temp111.
-    temp112-n = `class`.
-    temp112-v = class.
-    INSERT temp112 INTO TABLE temp111.
+    temp114-n = `id`.
+    temp114-v = id.
+    INSERT temp114 INTO TABLE temp113.
+    temp114-n = `emptyIndicatorMode`.
+    temp114-v = emptyindicatormode.
+    INSERT temp114 INTO TABLE temp113.
+    temp114-n = `maxCharacters`.
+    temp114-v = maxcharacters.
+    INSERT temp114 INTO TABLE temp113.
+    temp114-n = `overflowMode`.
+    temp114-v = overflowmode.
+    INSERT temp114 INTO TABLE temp113.
+    temp114-n = `renderWhitespace`.
+    temp114-v = z2ui5_cl_util=>boolean_abap_2_json( renderwhitespace ).
+    INSERT temp114 INTO TABLE temp113.
+    temp114-n = `text`.
+    temp114-v = text.
+    INSERT temp114 INTO TABLE temp113.
+    temp114-n = `textAlign`.
+    temp114-v = textalign.
+    INSERT temp114 INTO TABLE temp113.
+    temp114-n = `textDirection`.
+    temp114-v = textdirection.
+    INSERT temp114 INTO TABLE temp113.
+    temp114-n = `wrappingType`.
+    temp114-v = wrappingtype.
+    INSERT temp114 INTO TABLE temp113.
+    temp114-n = `visible`.
+    temp114-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp114 INTO TABLE temp113.
+    temp114-n = `class`.
+    temp114-v = class.
+    INSERT temp114 INTO TABLE temp113.
     result = _generic(
                  name   = `ExpandableText`
-                 t_prop = temp111 ).
+                 t_prop = temp113 ).
   ENDMETHOD.
 
   METHOD expanded_content.
@@ -7276,51 +7367,6 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD facet_filter.
-    DATA temp113 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp114 LIKE LINE OF temp113.
-    CLEAR temp113.
-    
-    temp114-n = `id`.
-    temp114-v = id.
-    INSERT temp114 INTO TABLE temp113.
-    temp114-n = `class`.
-    temp114-v = class.
-    INSERT temp114 INTO TABLE temp113.
-    temp114-n = `liveSearch`.
-    temp114-v = z2ui5_cl_util=>boolean_abap_2_json( livesearch ).
-    INSERT temp114 INTO TABLE temp113.
-    temp114-n = `showPersonalization`.
-    temp114-v = z2ui5_cl_util=>boolean_abap_2_json( showpersonalization ).
-    INSERT temp114 INTO TABLE temp113.
-    temp114-n = `showPopoverOKButton`.
-    temp114-v = z2ui5_cl_util=>boolean_abap_2_json( showpopoverokbutton ).
-    INSERT temp114 INTO TABLE temp113.
-    temp114-n = `showReset`.
-    temp114-v = z2ui5_cl_util=>boolean_abap_2_json( showreset ).
-    INSERT temp114 INTO TABLE temp113.
-    temp114-n = `showSummaryBar`.
-    temp114-v = z2ui5_cl_util=>boolean_abap_2_json( showsummarybar ).
-    INSERT temp114 INTO TABLE temp113.
-    temp114-n = `type`.
-    temp114-v = type.
-    INSERT temp114 INTO TABLE temp113.
-    temp114-n = `confirm`.
-    temp114-v = confirm.
-    INSERT temp114 INTO TABLE temp113.
-    temp114-n = `reset`.
-    temp114-v = reset.
-    INSERT temp114 INTO TABLE temp113.
-    temp114-n = `lists`.
-    temp114-v = lists.
-    INSERT temp114 INTO TABLE temp113.
-    temp114-n = `visible`.
-    temp114-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp114 INTO TABLE temp113.
-    result = _generic( name   = `FacetFilter`
-                       t_prop = temp113 ).
-  ENDMETHOD.
-
-  METHOD facet_filter_item.
     DATA temp115 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp116 LIKE LINE OF temp115.
     CLEAR temp115.
@@ -7331,51 +7377,41 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp116-n = `class`.
     temp116-v = class.
     INSERT temp116 INTO TABLE temp115.
-    temp116-n = `count`.
-    temp116-v = count.
+    temp116-n = `liveSearch`.
+    temp116-v = z2ui5_cl_util=>boolean_abap_2_json( livesearch ).
     INSERT temp116 INTO TABLE temp115.
-    temp116-n = `counter`.
-    temp116-v = counter.
+    temp116-n = `showPersonalization`.
+    temp116-v = z2ui5_cl_util=>boolean_abap_2_json( showpersonalization ).
     INSERT temp116 INTO TABLE temp115.
-    temp116-n = `highlight`.
-    temp116-v = highlight.
+    temp116-n = `showPopoverOKButton`.
+    temp116-v = z2ui5_cl_util=>boolean_abap_2_json( showpopoverokbutton ).
     INSERT temp116 INTO TABLE temp115.
-    temp116-n = `highlightText`.
-    temp116-v = highlighttext.
+    temp116-n = `showReset`.
+    temp116-v = z2ui5_cl_util=>boolean_abap_2_json( showreset ).
     INSERT temp116 INTO TABLE temp115.
-    temp116-n = `key`.
-    temp116-v = key.
-    INSERT temp116 INTO TABLE temp115.
-    temp116-n = `navigated`.
-    temp116-v = z2ui5_cl_util=>boolean_abap_2_json( navigated ).
-    INSERT temp116 INTO TABLE temp115.
-    temp116-n = `selected`.
-    temp116-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
-    INSERT temp116 INTO TABLE temp115.
-    temp116-n = `unread`.
-    temp116-v = z2ui5_cl_util=>boolean_abap_2_json( unread ).
-    INSERT temp116 INTO TABLE temp115.
-    temp116-n = `text`.
-    temp116-v = text.
+    temp116-n = `showSummaryBar`.
+    temp116-v = z2ui5_cl_util=>boolean_abap_2_json( showsummarybar ).
     INSERT temp116 INTO TABLE temp115.
     temp116-n = `type`.
     temp116-v = type.
     INSERT temp116 INTO TABLE temp115.
-    temp116-n = `detailPress`.
-    temp116-v = detailpress.
+    temp116-n = `confirm`.
+    temp116-v = confirm.
     INSERT temp116 INTO TABLE temp115.
-    temp116-n = `press`.
-    temp116-v = press.
+    temp116-n = `reset`.
+    temp116-v = reset.
+    INSERT temp116 INTO TABLE temp115.
+    temp116-n = `lists`.
+    temp116-v = lists.
     INSERT temp116 INTO TABLE temp115.
     temp116-n = `visible`.
     temp116-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp116 INTO TABLE temp115.
-    result = _generic(
-                 name   = `FacetFilterItem`
-                 t_prop = temp115 ).
+    result = _generic( name   = `FacetFilter`
+                       t_prop = temp115 ).
   ENDMETHOD.
 
-  METHOD facet_filter_list.
+  METHOD facet_filter_item.
     DATA temp117 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp118 LIKE LINE OF temp117.
     CLEAR temp117.
@@ -7386,140 +7422,195 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp118-n = `class`.
     temp118-v = class.
     INSERT temp118 INTO TABLE temp117.
-    temp118-n = `active`.
-    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( active ).
+    temp118-n = `count`.
+    temp118-v = count.
     INSERT temp118 INTO TABLE temp117.
-    temp118-n = `allCount`.
-    temp118-v = allcount.
+    temp118-n = `counter`.
+    temp118-v = counter.
     INSERT temp118 INTO TABLE temp117.
-    temp118-n = `backgroundDesign`.
-    temp118-v = backgrounddesign.
+    temp118-n = `highlight`.
+    temp118-v = highlight.
     INSERT temp118 INTO TABLE temp117.
-    temp118-n = `dataType`.
-    temp118-v = datatype.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `enableBusyIndicator`.
-    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( enablebusyindicator ).
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `enableCaseInsensitiveSearch`.
-    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( enablecaseinsensitivesearch ).
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `footerText`.
-    temp118-v = footertext.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `growing`.
-    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( growing ).
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `growingDirection`.
-    temp118-v = growingdirection.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `growingScrollToLoad`.
-    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( growingscrolltoload ).
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `growingThreshold`.
-    temp118-v = growingthreshold.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `growingTriggerText`.
-    temp118-v = growingtriggertext.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `headerLevel`.
-    temp118-v = headerlevel.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `includeItemInSelection`.
-    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( includeiteminselection ).
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `inset`.
-    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( inset ).
+    temp118-n = `highlightText`.
+    temp118-v = highlighttext.
     INSERT temp118 INTO TABLE temp117.
     temp118-n = `key`.
     temp118-v = key.
     INSERT temp118 INTO TABLE temp117.
-    temp118-n = `swipedirection`.
-    temp118-v = swipedirection.
+    temp118-n = `navigated`.
+    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( navigated ).
     INSERT temp118 INTO TABLE temp117.
-    temp118-n = `headerText`.
-    temp118-v = headertext.
+    temp118-n = `selected`.
+    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
     INSERT temp118 INTO TABLE temp117.
-    temp118-n = `keyboardMode`.
-    temp118-v = keyboardmode.
+    temp118-n = `unread`.
+    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( unread ).
     INSERT temp118 INTO TABLE temp117.
-    temp118-n = `mode`.
-    temp118-v = mode.
+    temp118-n = `text`.
+    temp118-v = text.
     INSERT temp118 INTO TABLE temp117.
-    temp118-n = `modeAnimationOn`.
-    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( modeanimationon ).
+    temp118-n = `type`.
+    temp118-v = type.
     INSERT temp118 INTO TABLE temp117.
-    temp118-n = `multiSelectMode`.
-    temp118-v = multiselectmode.
+    temp118-n = `detailPress`.
+    temp118-v = detailpress.
     INSERT temp118 INTO TABLE temp117.
-    temp118-n = `noDataText`.
-    temp118-v = nodatatext.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `rememberSelections`.
-    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( rememberselections ).
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `retainListSequence`.
-    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( retainlistsequence ).
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `sequence`.
-    temp118-v = sequence.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `showNoData`.
-    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( shownodata ).
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `showRemoveFacetIcon`.
-    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( showremovefaceticon ).
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `showSeparators`.
-    temp118-v = showseparators.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `showUnread`.
-    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( showunread ).
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `sticky`.
-    temp118-v = sticky.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `title`.
-    temp118-v = title.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `width`.
-    temp118-v = width.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `wordWrap`.
-    temp118-v = z2ui5_cl_util=>boolean_abap_2_json( wordwrap ).
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `listClose`.
-    temp118-v = listclose.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `listOpen`.
-    temp118-v = listopen.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `search`.
-    temp118-v = search.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `selectionChange`.
-    temp118-v = selectionchange.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `delete`.
-    temp118-v = delete.
-    INSERT temp118 INTO TABLE temp117.
-    temp118-n = `items`.
-    temp118-v = items.
+    temp118-n = `press`.
+    temp118-v = press.
     INSERT temp118 INTO TABLE temp117.
     temp118-n = `visible`.
     temp118-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp118 INTO TABLE temp117.
     result = _generic(
+                 name   = `FacetFilterItem`
+                 t_prop = temp117 ).
+  ENDMETHOD.
+
+  METHOD facet_filter_list.
+    DATA temp119 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp120 LIKE LINE OF temp119.
+    CLEAR temp119.
+    
+    temp120-n = `id`.
+    temp120-v = id.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `class`.
+    temp120-v = class.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `active`.
+    temp120-v = z2ui5_cl_util=>boolean_abap_2_json( active ).
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `allCount`.
+    temp120-v = allcount.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `backgroundDesign`.
+    temp120-v = backgrounddesign.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `dataType`.
+    temp120-v = datatype.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `enableBusyIndicator`.
+    temp120-v = z2ui5_cl_util=>boolean_abap_2_json( enablebusyindicator ).
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `enableCaseInsensitiveSearch`.
+    temp120-v = z2ui5_cl_util=>boolean_abap_2_json( enablecaseinsensitivesearch ).
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `footerText`.
+    temp120-v = footertext.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `growing`.
+    temp120-v = z2ui5_cl_util=>boolean_abap_2_json( growing ).
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `growingDirection`.
+    temp120-v = growingdirection.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `growingScrollToLoad`.
+    temp120-v = z2ui5_cl_util=>boolean_abap_2_json( growingscrolltoload ).
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `growingThreshold`.
+    temp120-v = growingthreshold.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `growingTriggerText`.
+    temp120-v = growingtriggertext.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `headerLevel`.
+    temp120-v = headerlevel.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `includeItemInSelection`.
+    temp120-v = z2ui5_cl_util=>boolean_abap_2_json( includeiteminselection ).
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `inset`.
+    temp120-v = z2ui5_cl_util=>boolean_abap_2_json( inset ).
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `key`.
+    temp120-v = key.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `swipedirection`.
+    temp120-v = swipedirection.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `headerText`.
+    temp120-v = headertext.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `keyboardMode`.
+    temp120-v = keyboardmode.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `mode`.
+    temp120-v = mode.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `modeAnimationOn`.
+    temp120-v = z2ui5_cl_util=>boolean_abap_2_json( modeanimationon ).
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `multiSelectMode`.
+    temp120-v = multiselectmode.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `noDataText`.
+    temp120-v = nodatatext.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `rememberSelections`.
+    temp120-v = z2ui5_cl_util=>boolean_abap_2_json( rememberselections ).
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `retainListSequence`.
+    temp120-v = z2ui5_cl_util=>boolean_abap_2_json( retainlistsequence ).
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `sequence`.
+    temp120-v = sequence.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `showNoData`.
+    temp120-v = z2ui5_cl_util=>boolean_abap_2_json( shownodata ).
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `showRemoveFacetIcon`.
+    temp120-v = z2ui5_cl_util=>boolean_abap_2_json( showremovefaceticon ).
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `showSeparators`.
+    temp120-v = showseparators.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `showUnread`.
+    temp120-v = z2ui5_cl_util=>boolean_abap_2_json( showunread ).
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `sticky`.
+    temp120-v = sticky.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `title`.
+    temp120-v = title.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `width`.
+    temp120-v = width.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `wordWrap`.
+    temp120-v = z2ui5_cl_util=>boolean_abap_2_json( wordwrap ).
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `listClose`.
+    temp120-v = listclose.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `listOpen`.
+    temp120-v = listopen.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `search`.
+    temp120-v = search.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `selectionChange`.
+    temp120-v = selectionchange.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `delete`.
+    temp120-v = delete.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `items`.
+    temp120-v = items.
+    INSERT temp120 INTO TABLE temp119.
+    temp120-n = `visible`.
+    temp120-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp120 INTO TABLE temp119.
+    result = _generic(
         name   = `FacetFilterList`
-        t_prop = temp117 ).
+        t_prop = temp119 ).
   ENDMETHOD.
 
   METHOD factory.
-    DATA temp119 LIKE result->mt_prop.
-    DATA temp120 LIKE LINE OF temp119.
-    DATA temp121 TYPE z2ui5_if_types=>ty_s_name_value.
-    DATA temp122 TYPE z2ui5_if_types=>ty_s_name_value.
+    DATA temp121 LIKE result->mt_prop.
+    DATA temp122 LIKE LINE OF temp121.
     DATA temp123 TYPE z2ui5_if_types=>ty_s_name_value.
+    DATA temp124 TYPE z2ui5_if_types=>ty_s_name_value.
+    DATA temp125 TYPE z2ui5_if_types=>ty_s_name_value.
 
     CREATE OBJECT result.
 
@@ -7528,16 +7619,16 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     ENDIF.
 
     
-    CLEAR temp119.
-    temp119 = result->mt_prop.
+    CLEAR temp121.
+    temp121 = result->mt_prop.
     
-    temp120-n = 'displayBlock'.
-    temp120-v = 'true'.
-    INSERT temp120 INTO TABLE temp119.
-    temp120-n = 'height'.
-    temp120-v = '100%'.
-    INSERT temp120 INTO TABLE temp119.
-    result->mt_prop   = temp119.
+    temp122-n = 'displayBlock'.
+    temp122-v = 'true'.
+    INSERT temp122 INTO TABLE temp121.
+    temp122-n = 'height'.
+    temp122-v = '100%'.
+    INSERT temp122 INTO TABLE temp121.
+    result->mt_prop   = temp121.
 
     result->mv_name   = `View`.
     result->mv_ns     = `mvc`.
@@ -7545,20 +7636,20 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     result->mo_parent = result.
 
     
-    CLEAR temp121.
-    temp121-n = `xmlns`.
-    temp121-v = `sap.m`.
-    INSERT temp121 INTO TABLE result->mt_prop.
-    
-    CLEAR temp122.
-    temp122-n = `xmlns:mvc`.
-    temp122-v = `sap.ui.core.mvc`.
-    INSERT temp122 INTO TABLE result->mt_prop.
-    
     CLEAR temp123.
-    temp123-n = `xmlns:core`.
-    temp123-v = `sap.ui.core`.
+    temp123-n = `xmlns`.
+    temp123-v = `sap.m`.
     INSERT temp123 INTO TABLE result->mt_prop.
+    
+    CLEAR temp124.
+    temp124-n = `xmlns:mvc`.
+    temp124-v = `sap.ui.core.mvc`.
+    INSERT temp124 INTO TABLE result->mt_prop.
+    
+    CLEAR temp125.
+    temp125-n = `xmlns:core`.
+    temp125-v = `sap.ui.core`.
+    INSERT temp125 INTO TABLE result->mt_prop.
 
   ENDMETHOD.
 
@@ -7572,8 +7663,8 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD factory_popup.
-    DATA temp124 TYPE z2ui5_if_types=>ty_s_name_value.
-    DATA temp125 TYPE z2ui5_if_types=>ty_s_name_value.
+    DATA temp126 TYPE z2ui5_if_types=>ty_s_name_value.
+    DATA temp127 TYPE z2ui5_if_types=>ty_s_name_value.
 
     CREATE OBJECT result.
 
@@ -7587,15 +7678,15 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     result->mo_parent = result.
 
     
-    CLEAR temp124.
-    temp124-n = `xmlns`.
-    temp124-v = `sap.m`.
-    INSERT temp124 INTO TABLE result->mt_prop.
+    CLEAR temp126.
+    temp126-n = `xmlns`.
+    temp126-v = `sap.m`.
+    INSERT temp126 INTO TABLE result->mt_prop.
     
-    CLEAR temp125.
-    temp125-n = `xmlns:core`.
-    temp125-v = `sap.ui.core`.
-    INSERT temp125 INTO TABLE result->mt_prop.
+    CLEAR temp127.
+    temp127-n = `xmlns:core`.
+    temp127-v = `sap.ui.core`.
+    INSERT temp127 INTO TABLE result->mt_prop.
 
   ENDMETHOD.
 
@@ -7605,83 +7696,21 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD feed_input.
-    DATA temp126 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp127 LIKE LINE OF temp126.
-    CLEAR temp126.
-    
-    temp127-n = `buttonTooltip`.
-    temp127-v = buttontooltip.
-    INSERT temp127 INTO TABLE temp126.
-    temp127-n = `enabled`.
-    temp127-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp127 INTO TABLE temp126.
-    temp127-n = `growing`.
-    temp127-v = z2ui5_cl_util=>boolean_abap_2_json( growing ).
-    INSERT temp127 INTO TABLE temp126.
-    temp127-n = `growingMaxLines`.
-    temp127-v = growingmaxlines.
-    INSERT temp127 INTO TABLE temp126.
-    temp127-n = `icon`.
-    temp127-v = icon.
-    INSERT temp127 INTO TABLE temp126.
-    temp127-n = `iconDensityAware`.
-    temp127-v = z2ui5_cl_util=>boolean_abap_2_json( icondensityaware ).
-    INSERT temp127 INTO TABLE temp126.
-    temp127-n = `iconDisplayShape`.
-    temp127-v = icondisplayshape.
-    INSERT temp127 INTO TABLE temp126.
-    temp127-n = `iconInitials`.
-    temp127-v = iconinitials.
-    INSERT temp127 INTO TABLE temp126.
-    temp127-n = `iconSize`.
-    temp127-v = iconsize.
-    INSERT temp127 INTO TABLE temp126.
-    temp127-n = `maxLength`.
-    temp127-v = maxlength.
-    INSERT temp127 INTO TABLE temp126.
-    temp127-n = `placeholder`.
-    temp127-v = placeholder.
-    INSERT temp127 INTO TABLE temp126.
-    temp127-n = `rows`.
-    temp127-v = rows.
-    INSERT temp127 INTO TABLE temp126.
-    temp127-n = `showExceededText`.
-    temp127-v = z2ui5_cl_util=>boolean_abap_2_json( showexceededtext ).
-    INSERT temp127 INTO TABLE temp126.
-    temp127-n = `showIcon`.
-    temp127-v = z2ui5_cl_util=>boolean_abap_2_json( showicon ).
-    INSERT temp127 INTO TABLE temp126.
-    temp127-n = `value`.
-    temp127-v = value.
-    INSERT temp127 INTO TABLE temp126.
-    temp127-n = `class`.
-    temp127-v = class.
-    INSERT temp127 INTO TABLE temp126.
-    temp127-n = `post`.
-    temp127-v = post.
-    INSERT temp127 INTO TABLE temp126.
-    result = _generic(
-                 name   = `FeedInput`
-                 t_prop = temp126 ).
-
-  ENDMETHOD.
-
-  METHOD feed_list_item.
     DATA temp128 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp129 LIKE LINE OF temp128.
     CLEAR temp128.
     
-    temp129-n = `activeIcon`.
-    temp129-v = activeicon.
+    temp129-n = `buttonTooltip`.
+    temp129-v = buttontooltip.
     INSERT temp129 INTO TABLE temp128.
-    temp129-n = `convertedLinksDefaultTarget`.
-    temp129-v = convertedlinksdefaulttarget.
+    temp129-n = `enabled`.
+    temp129-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
     INSERT temp129 INTO TABLE temp128.
-    temp129-n = `convertLinksToAnchorTags`.
-    temp129-v = convertlinkstoanchortags.
+    temp129-n = `growing`.
+    temp129-v = z2ui5_cl_util=>boolean_abap_2_json( growing ).
     INSERT temp129 INTO TABLE temp128.
-    temp129-n = `iconActive`.
-    temp129-v = z2ui5_cl_util=>boolean_abap_2_json( iconactive ).
+    temp129-n = `growingMaxLines`.
+    temp129-v = growingmaxlines.
     INSERT temp129 INTO TABLE temp128.
     temp129-n = `icon`.
     temp129-v = icon.
@@ -7698,180 +7727,242 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp129-n = `iconSize`.
     temp129-v = iconsize.
     INSERT temp129 INTO TABLE temp128.
-    temp129-n = `info`.
-    temp129-v = info.
+    temp129-n = `maxLength`.
+    temp129-v = maxlength.
     INSERT temp129 INTO TABLE temp128.
-    temp129-n = `lessLabel`.
-    temp129-v = lesslabel.
+    temp129-n = `placeholder`.
+    temp129-v = placeholder.
     INSERT temp129 INTO TABLE temp128.
-    temp129-n = `maxCharacters`.
-    temp129-v = maxcharacters.
+    temp129-n = `rows`.
+    temp129-v = rows.
     INSERT temp129 INTO TABLE temp128.
-    temp129-n = `moreLabel`.
-    temp129-v = morelabel.
-    INSERT temp129 INTO TABLE temp128.
-    temp129-n = `sender`.
-    temp129-v = sender.
-    INSERT temp129 INTO TABLE temp128.
-    temp129-n = `senderActive`.
-    temp129-v = z2ui5_cl_util=>boolean_abap_2_json( senderactive ).
+    temp129-n = `showExceededText`.
+    temp129-v = z2ui5_cl_util=>boolean_abap_2_json( showexceededtext ).
     INSERT temp129 INTO TABLE temp128.
     temp129-n = `showIcon`.
     temp129-v = z2ui5_cl_util=>boolean_abap_2_json( showicon ).
     INSERT temp129 INTO TABLE temp128.
-    temp129-n = `text`.
-    temp129-v = text.
+    temp129-n = `value`.
+    temp129-v = value.
     INSERT temp129 INTO TABLE temp128.
-    temp129-n = `senderPress`.
-    temp129-v = senderpress.
+    temp129-n = `class`.
+    temp129-v = class.
     INSERT temp129 INTO TABLE temp128.
-    temp129-n = `iconPress`.
-    temp129-v = iconpress.
-    INSERT temp129 INTO TABLE temp128.
-    temp129-n = `timestamp`.
-    temp129-v = timestamp.
+    temp129-n = `post`.
+    temp129-v = post.
     INSERT temp129 INTO TABLE temp128.
     result = _generic(
-                 name   = `FeedListItem`
+                 name   = `FeedInput`
                  t_prop = temp128 ).
+
   ENDMETHOD.
 
-  METHOD feed_list_item_action.
+  METHOD feed_list_item.
     DATA temp130 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp131 LIKE LINE OF temp130.
     CLEAR temp130.
     
-    temp131-n = `enabled`.
-    temp131-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    temp131-n = `activeIcon`.
+    temp131-v = activeicon.
+    INSERT temp131 INTO TABLE temp130.
+    temp131-n = `convertedLinksDefaultTarget`.
+    temp131-v = convertedlinksdefaulttarget.
+    INSERT temp131 INTO TABLE temp130.
+    temp131-n = `convertLinksToAnchorTags`.
+    temp131-v = convertlinkstoanchortags.
+    INSERT temp131 INTO TABLE temp130.
+    temp131-n = `iconActive`.
+    temp131-v = z2ui5_cl_util=>boolean_abap_2_json( iconactive ).
     INSERT temp131 INTO TABLE temp130.
     temp131-n = `icon`.
     temp131-v = icon.
     INSERT temp131 INTO TABLE temp130.
-    temp131-n = `key`.
-    temp131-v = key.
+    temp131-n = `iconDensityAware`.
+    temp131-v = z2ui5_cl_util=>boolean_abap_2_json( icondensityaware ).
+    INSERT temp131 INTO TABLE temp130.
+    temp131-n = `iconDisplayShape`.
+    temp131-v = icondisplayshape.
+    INSERT temp131 INTO TABLE temp130.
+    temp131-n = `iconInitials`.
+    temp131-v = iconinitials.
+    INSERT temp131 INTO TABLE temp130.
+    temp131-n = `iconSize`.
+    temp131-v = iconsize.
+    INSERT temp131 INTO TABLE temp130.
+    temp131-n = `info`.
+    temp131-v = info.
+    INSERT temp131 INTO TABLE temp130.
+    temp131-n = `lessLabel`.
+    temp131-v = lesslabel.
+    INSERT temp131 INTO TABLE temp130.
+    temp131-n = `maxCharacters`.
+    temp131-v = maxcharacters.
+    INSERT temp131 INTO TABLE temp130.
+    temp131-n = `moreLabel`.
+    temp131-v = morelabel.
+    INSERT temp131 INTO TABLE temp130.
+    temp131-n = `sender`.
+    temp131-v = sender.
+    INSERT temp131 INTO TABLE temp130.
+    temp131-n = `senderActive`.
+    temp131-v = z2ui5_cl_util=>boolean_abap_2_json( senderactive ).
+    INSERT temp131 INTO TABLE temp130.
+    temp131-n = `showIcon`.
+    temp131-v = z2ui5_cl_util=>boolean_abap_2_json( showicon ).
     INSERT temp131 INTO TABLE temp130.
     temp131-n = `text`.
     temp131-v = text.
     INSERT temp131 INTO TABLE temp130.
-    temp131-n = `press`.
-    temp131-v = press.
+    temp131-n = `senderPress`.
+    temp131-v = senderpress.
     INSERT temp131 INTO TABLE temp130.
-    temp131-n = `visible`.
-    temp131-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    temp131-n = `iconPress`.
+    temp131-v = iconpress.
     INSERT temp131 INTO TABLE temp130.
-    result = _generic( name   = `FeedListItemAction`
-                       t_prop = temp130 ).
+    temp131-n = `timestamp`.
+    temp131-v = timestamp.
+    INSERT temp131 INTO TABLE temp130.
+    result = _generic(
+                 name   = `FeedListItem`
+                 t_prop = temp130 ).
   ENDMETHOD.
 
-  METHOD filter_bar.
-
+  METHOD feed_list_item_action.
     DATA temp132 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp133 LIKE LINE OF temp132.
     CLEAR temp132.
     
-    temp133-n = 'useToolbar'.
-    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( usetoolbar ).
+    temp133-n = `enabled`.
+    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
     INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'search'.
-    temp133-v = search.
+    temp133-n = `icon`.
+    temp133-v = icon.
     INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'id'.
-    temp133-v = id.
+    temp133-n = `key`.
+    temp133-v = key.
     INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'persistencyKey'.
-    temp133-v = persistencykey.
+    temp133-n = `text`.
+    temp133-v = text.
     INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'afterVariantLoad'.
-    temp133-v = aftervariantload.
+    temp133-n = `press`.
+    temp133-v = press.
     INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'afterVariantSave'.
-    temp133-v = aftervariantsave.
+    temp133-n = `visible`.
+    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'assignedFiltersChanged'.
-    temp133-v = assignedfilterschanged.
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'beforeVariantFetch'.
-    temp133-v = beforevariantfetch.
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'cancel'.
-    temp133-v = cancel.
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'clear'.
-    temp133-v = clear.
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'filtersDialogBeforeOpen'.
-    temp133-v = filtersdialogbeforeopen.
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'filtersDialogCancel'.
-    temp133-v = filtersdialogcancel.
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'filtersDialogClosed'.
-    temp133-v = filtersdialogclosed.
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'initialise'.
-    temp133-v = initialise.
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'initialized'.
-    temp133-v = initialized.
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'reset'.
-    temp133-v = reset.
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'filterContainerWidth'.
-    temp133-v = filtercontainerwidth.
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'header'.
-    temp133-v = header.
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'advancedMode'.
-    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( advancedmode ).
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'isRunningInValueHelpDialog'.
-    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( isrunninginvaluehelpdialog ).
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'showAllFilters'.
-    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( showallfilters ).
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'showClearOnFB'.
-    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( showclearonfb ).
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'showFilterConfiguration'.
-    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( showfilterconfiguration ).
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'showGoOnFB'.
-    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( showgoonfb ).
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'showRestoreButton'.
-    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( showrestorebutton ).
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'showRestoreOnFB'.
-    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( showrestoreonfb ).
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'useSnapshot'.
-    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( usesnapshot ).
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'searchEnabled'.
-    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( searchenabled ).
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'considerGroupTitle'.
-    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( considergrouptitle ).
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'deltaVariantMode'.
-    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( deltavariantmode ).
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'disableSearchMatchesPatternWarning'.
-    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( disablesearchmatchespatternw ).
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'filterBarExpanded'.
-    temp133-v = z2ui5_cl_util=>boolean_abap_2_json( filterbarexpanded ).
-    INSERT temp133 INTO TABLE temp132.
-    temp133-n = 'filterChange'.
-    temp133-v = filterchange.
-    INSERT temp133 INTO TABLE temp132.
+    result = _generic( name   = `FeedListItemAction`
+                       t_prop = temp132 ).
+  ENDMETHOD.
+
+  METHOD filter_bar.
+
+    DATA temp134 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp135 LIKE LINE OF temp134.
+    CLEAR temp134.
+    
+    temp135-n = 'useToolbar'.
+    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( usetoolbar ).
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'search'.
+    temp135-v = search.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'id'.
+    temp135-v = id.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'persistencyKey'.
+    temp135-v = persistencykey.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'afterVariantLoad'.
+    temp135-v = aftervariantload.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'afterVariantSave'.
+    temp135-v = aftervariantsave.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'assignedFiltersChanged'.
+    temp135-v = assignedfilterschanged.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'beforeVariantFetch'.
+    temp135-v = beforevariantfetch.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'cancel'.
+    temp135-v = cancel.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'clear'.
+    temp135-v = clear.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'filtersDialogBeforeOpen'.
+    temp135-v = filtersdialogbeforeopen.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'filtersDialogCancel'.
+    temp135-v = filtersdialogcancel.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'filtersDialogClosed'.
+    temp135-v = filtersdialogclosed.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'initialise'.
+    temp135-v = initialise.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'initialized'.
+    temp135-v = initialized.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'reset'.
+    temp135-v = reset.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'filterContainerWidth'.
+    temp135-v = filtercontainerwidth.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'header'.
+    temp135-v = header.
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'advancedMode'.
+    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( advancedmode ).
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'isRunningInValueHelpDialog'.
+    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( isrunninginvaluehelpdialog ).
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'showAllFilters'.
+    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( showallfilters ).
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'showClearOnFB'.
+    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( showclearonfb ).
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'showFilterConfiguration'.
+    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( showfilterconfiguration ).
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'showGoOnFB'.
+    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( showgoonfb ).
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'showRestoreButton'.
+    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( showrestorebutton ).
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'showRestoreOnFB'.
+    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( showrestoreonfb ).
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'useSnapshot'.
+    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( usesnapshot ).
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'searchEnabled'.
+    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( searchenabled ).
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'considerGroupTitle'.
+    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( considergrouptitle ).
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'deltaVariantMode'.
+    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( deltavariantmode ).
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'disableSearchMatchesPatternWarning'.
+    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( disablesearchmatchespatternw ).
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'filterBarExpanded'.
+    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( filterbarexpanded ).
+    INSERT temp135 INTO TABLE temp134.
+    temp135-n = 'filterChange'.
+    temp135-v = filterchange.
+    INSERT temp135 INTO TABLE temp134.
     result = _generic(
         name   = `FilterBar`
         ns     = 'fb'
-        t_prop = temp132 ).
+        t_prop = temp134 ).
   ENDMETHOD.
 
   METHOD filter_control.
@@ -7880,53 +7971,53 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD filter_group_item.
-    DATA temp134 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp135 LIKE LINE OF temp134.
-    CLEAR temp134.
+    DATA temp136 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp137 LIKE LINE OF temp136.
+    CLEAR temp136.
     
-    temp135-n = 'name'.
-    temp135-v = name.
-    INSERT temp135 INTO TABLE temp134.
-    temp135-n = 'label'.
-    temp135-v = label.
-    INSERT temp135 INTO TABLE temp134.
-    temp135-n = 'groupName'.
-    temp135-v = groupname.
-    INSERT temp135 INTO TABLE temp134.
-    temp135-n = 'controlTooltip'.
-    temp135-v = controltooltip.
-    INSERT temp135 INTO TABLE temp134.
-    temp135-n = 'entitySetName'.
-    temp135-v = entitysetname.
-    INSERT temp135 INTO TABLE temp134.
-    temp135-n = 'entityTypeName'.
-    temp135-v = entitytypename.
-    INSERT temp135 INTO TABLE temp134.
-    temp135-n = 'groupTitle'.
-    temp135-v = grouptitle.
-    INSERT temp135 INTO TABLE temp134.
-    temp135-n = 'labelTooltip'.
-    temp135-v = labeltooltip.
-    INSERT temp135 INTO TABLE temp134.
-    temp135-n = 'change'.
-    temp135-v = change.
-    INSERT temp135 INTO TABLE temp134.
-    temp135-n = 'visibleInFilterBar'.
-    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( visibleinfilterbar ).
-    INSERT temp135 INTO TABLE temp134.
-    temp135-n = 'mandatory'.
-    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( mandatory ).
-    INSERT temp135 INTO TABLE temp134.
-    temp135-n = 'hiddenFilter'.
-    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( hiddenfilter ).
-    INSERT temp135 INTO TABLE temp134.
-    temp135-n = 'visible'.
-    temp135-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp135 INTO TABLE temp134.
+    temp137-n = 'name'.
+    temp137-v = name.
+    INSERT temp137 INTO TABLE temp136.
+    temp137-n = 'label'.
+    temp137-v = label.
+    INSERT temp137 INTO TABLE temp136.
+    temp137-n = 'groupName'.
+    temp137-v = groupname.
+    INSERT temp137 INTO TABLE temp136.
+    temp137-n = 'controlTooltip'.
+    temp137-v = controltooltip.
+    INSERT temp137 INTO TABLE temp136.
+    temp137-n = 'entitySetName'.
+    temp137-v = entitysetname.
+    INSERT temp137 INTO TABLE temp136.
+    temp137-n = 'entityTypeName'.
+    temp137-v = entitytypename.
+    INSERT temp137 INTO TABLE temp136.
+    temp137-n = 'groupTitle'.
+    temp137-v = grouptitle.
+    INSERT temp137 INTO TABLE temp136.
+    temp137-n = 'labelTooltip'.
+    temp137-v = labeltooltip.
+    INSERT temp137 INTO TABLE temp136.
+    temp137-n = 'change'.
+    temp137-v = change.
+    INSERT temp137 INTO TABLE temp136.
+    temp137-n = 'visibleInFilterBar'.
+    temp137-v = z2ui5_cl_util=>boolean_abap_2_json( visibleinfilterbar ).
+    INSERT temp137 INTO TABLE temp136.
+    temp137-n = 'mandatory'.
+    temp137-v = z2ui5_cl_util=>boolean_abap_2_json( mandatory ).
+    INSERT temp137 INTO TABLE temp136.
+    temp137-n = 'hiddenFilter'.
+    temp137-v = z2ui5_cl_util=>boolean_abap_2_json( hiddenfilter ).
+    INSERT temp137 INTO TABLE temp136.
+    temp137-n = 'visible'.
+    temp137-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp137 INTO TABLE temp136.
     result = _generic(
         name   = `FilterGroupItem`
         ns     = 'fb'
-        t_prop = temp134 ).
+        t_prop = temp136 ).
 
   ENDMETHOD.
 
@@ -7945,151 +8036,151 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD flexible_column_layout.
 
-    DATA temp136 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp137 LIKE LINE OF temp136.
-    CLEAR temp136.
-    
-    temp137-n = `layout`.
-    temp137-v = layout.
-    INSERT temp137 INTO TABLE temp136.
-    temp137-n = `id`.
-    temp137-v = id.
-    INSERT temp137 INTO TABLE temp136.
-    temp137-n = `class`.
-    temp137-v = class.
-    INSERT temp137 INTO TABLE temp136.
-    temp137-n = `afterBeginColumnNavigate`.
-    temp137-v = afterbegincolumnnavigate.
-    INSERT temp137 INTO TABLE temp136.
-    temp137-n = `afterEndColumnNavigate`.
-    temp137-v = afterendcolumnnavigate.
-    INSERT temp137 INTO TABLE temp136.
-    temp137-n = `afterMidColumnNavigate`.
-    temp137-v = aftermidcolumnnavigate.
-    INSERT temp137 INTO TABLE temp136.
-    temp137-n = `beginColumnNavigate`.
-    temp137-v = begincolumnnavigate.
-    INSERT temp137 INTO TABLE temp136.
-    temp137-n = `columnResize`.
-    temp137-v = columnresize.
-    INSERT temp137 INTO TABLE temp136.
-    temp137-n = `endColumnNavigate`.
-    temp137-v = endcolumnnavigate.
-    INSERT temp137 INTO TABLE temp136.
-    temp137-n = `midColumnNavigate`.
-    temp137-v = midcolumnnavigate.
-    INSERT temp137 INTO TABLE temp136.
-    temp137-n = `stateChange`.
-    temp137-v = statechange.
-    INSERT temp137 INTO TABLE temp136.
-    temp137-n = `backgroundDesign`.
-    temp137-v = backgrounddesign.
-    INSERT temp137 INTO TABLE temp136.
-    temp137-n = `defaultTransitionNameBeginColumn`.
-    temp137-v = defaulttransitionnamebegincol.
-    INSERT temp137 INTO TABLE temp136.
-    temp137-n = `defaultTransitionNameEndColumn`.
-    temp137-v = defaulttransitionnameendcol.
-    INSERT temp137 INTO TABLE temp136.
-    temp137-n = `defaultTransitionNameMidColumn`.
-    temp137-v = defaulttransitionnamemidcol.
-    INSERT temp137 INTO TABLE temp136.
-    temp137-n = `autoFocus`.
-    temp137-v = z2ui5_cl_util=>boolean_abap_2_json( autofocus ).
-    INSERT temp137 INTO TABLE temp136.
-    temp137-n = `restoreFocusOnBackNavigation`.
-    temp137-v = z2ui5_cl_util=>boolean_abap_2_json( restorefocusonbacknavigation ).
-    INSERT temp137 INTO TABLE temp136.
-    result = _generic(
-        name   = `FlexibleColumnLayout`
-        ns     = `f`
-        t_prop = temp136 ).
-
-  ENDMETHOD.
-
-  METHOD flex_box.
     DATA temp138 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp139 LIKE LINE OF temp138.
     CLEAR temp138.
     
-    temp139-n = `class`.
-    temp139-v = class.
+    temp139-n = `layout`.
+    temp139-v = layout.
     INSERT temp139 INTO TABLE temp138.
     temp139-n = `id`.
     temp139-v = id.
     INSERT temp139 INTO TABLE temp138.
-    temp139-n = `renderType`.
-    temp139-v = rendertype.
+    temp139-n = `class`.
+    temp139-v = class.
     INSERT temp139 INTO TABLE temp138.
-    temp139-n = `width`.
-    temp139-v = width.
+    temp139-n = `afterBeginColumnNavigate`.
+    temp139-v = afterbegincolumnnavigate.
     INSERT temp139 INTO TABLE temp138.
-    temp139-n = `height`.
-    temp139-v = height.
+    temp139-n = `afterEndColumnNavigate`.
+    temp139-v = afterendcolumnnavigate.
     INSERT temp139 INTO TABLE temp138.
-    temp139-n = `alignItems`.
-    temp139-v = alignitems.
+    temp139-n = `afterMidColumnNavigate`.
+    temp139-v = aftermidcolumnnavigate.
     INSERT temp139 INTO TABLE temp138.
-    temp139-n = `fitContainer`.
-    temp139-v = z2ui5_cl_util=>boolean_abap_2_json( fitcontainer ).
+    temp139-n = `beginColumnNavigate`.
+    temp139-v = begincolumnnavigate.
     INSERT temp139 INTO TABLE temp138.
-    temp139-n = `justifyContent`.
-    temp139-v = justifycontent.
+    temp139-n = `columnResize`.
+    temp139-v = columnresize.
     INSERT temp139 INTO TABLE temp138.
-    temp139-n = `wrap`.
-    temp139-v = wrap.
+    temp139-n = `endColumnNavigate`.
+    temp139-v = endcolumnnavigate.
     INSERT temp139 INTO TABLE temp138.
-    temp139-n = `items`.
-    temp139-v = items.
+    temp139-n = `midColumnNavigate`.
+    temp139-v = midcolumnnavigate.
     INSERT temp139 INTO TABLE temp138.
-    temp139-n = `direction`.
-    temp139-v = direction.
-    INSERT temp139 INTO TABLE temp138.
-    temp139-n = `alignContent`.
-    temp139-v = aligncontent.
+    temp139-n = `stateChange`.
+    temp139-v = statechange.
     INSERT temp139 INTO TABLE temp138.
     temp139-n = `backgroundDesign`.
     temp139-v = backgrounddesign.
     INSERT temp139 INTO TABLE temp138.
-    temp139-n = `displayInline`.
-    temp139-v = z2ui5_cl_util=>boolean_abap_2_json( displayinline ).
+    temp139-n = `defaultTransitionNameBeginColumn`.
+    temp139-v = defaulttransitionnamebegincol.
     INSERT temp139 INTO TABLE temp138.
-    temp139-n = `visible`.
-    temp139-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    temp139-n = `defaultTransitionNameEndColumn`.
+    temp139-v = defaulttransitionnameendcol.
+    INSERT temp139 INTO TABLE temp138.
+    temp139-n = `defaultTransitionNameMidColumn`.
+    temp139-v = defaulttransitionnamemidcol.
+    INSERT temp139 INTO TABLE temp138.
+    temp139-n = `autoFocus`.
+    temp139-v = z2ui5_cl_util=>boolean_abap_2_json( autofocus ).
+    INSERT temp139 INTO TABLE temp138.
+    temp139-n = `restoreFocusOnBackNavigation`.
+    temp139-v = z2ui5_cl_util=>boolean_abap_2_json( restorefocusonbacknavigation ).
     INSERT temp139 INTO TABLE temp138.
     result = _generic(
-                 name   = `FlexBox`
-                 t_prop = temp138 ).
+        name   = `FlexibleColumnLayout`
+        ns     = `f`
+        t_prop = temp138 ).
+
   ENDMETHOD.
 
-  METHOD flex_item_data.
+  METHOD flex_box.
     DATA temp140 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp141 LIKE LINE OF temp140.
-    result = me.
-
-    
     CLEAR temp140.
     
-    temp141-n = `growFactor`.
-    temp141-v = growfactor.
+    temp141-n = `class`.
+    temp141-v = class.
     INSERT temp141 INTO TABLE temp140.
-    temp141-n = `baseSize`.
-    temp141-v = basesize.
+    temp141-n = `id`.
+    temp141-v = id.
+    INSERT temp141 INTO TABLE temp140.
+    temp141-n = `renderType`.
+    temp141-v = rendertype.
+    INSERT temp141 INTO TABLE temp140.
+    temp141-n = `width`.
+    temp141-v = width.
+    INSERT temp141 INTO TABLE temp140.
+    temp141-n = `height`.
+    temp141-v = height.
+    INSERT temp141 INTO TABLE temp140.
+    temp141-n = `alignItems`.
+    temp141-v = alignitems.
+    INSERT temp141 INTO TABLE temp140.
+    temp141-n = `fitContainer`.
+    temp141-v = z2ui5_cl_util=>boolean_abap_2_json( fitcontainer ).
+    INSERT temp141 INTO TABLE temp140.
+    temp141-n = `justifyContent`.
+    temp141-v = justifycontent.
+    INSERT temp141 INTO TABLE temp140.
+    temp141-n = `wrap`.
+    temp141-v = wrap.
+    INSERT temp141 INTO TABLE temp140.
+    temp141-n = `items`.
+    temp141-v = items.
+    INSERT temp141 INTO TABLE temp140.
+    temp141-n = `direction`.
+    temp141-v = direction.
+    INSERT temp141 INTO TABLE temp140.
+    temp141-n = `alignContent`.
+    temp141-v = aligncontent.
     INSERT temp141 INTO TABLE temp140.
     temp141-n = `backgroundDesign`.
     temp141-v = backgrounddesign.
     INSERT temp141 INTO TABLE temp140.
-    temp141-n = `styleClass`.
-    temp141-v = styleclass.
+    temp141-n = `displayInline`.
+    temp141-v = z2ui5_cl_util=>boolean_abap_2_json( displayinline ).
     INSERT temp141 INTO TABLE temp140.
-    temp141-n = `order`.
-    temp141-v = order.
+    temp141-n = `visible`.
+    temp141-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp141 INTO TABLE temp140.
-    temp141-n = `shrinkFactor`.
-    temp141-v = shrinkfactor.
-    INSERT temp141 INTO TABLE temp140.
+    result = _generic(
+                 name   = `FlexBox`
+                 t_prop = temp140 ).
+  ENDMETHOD.
+
+  METHOD flex_item_data.
+    DATA temp142 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp143 LIKE LINE OF temp142.
+    result = me.
+
+    
+    CLEAR temp142.
+    
+    temp143-n = `growFactor`.
+    temp143-v = growfactor.
+    INSERT temp143 INTO TABLE temp142.
+    temp143-n = `baseSize`.
+    temp143-v = basesize.
+    INSERT temp143 INTO TABLE temp142.
+    temp143-n = `backgroundDesign`.
+    temp143-v = backgrounddesign.
+    INSERT temp143 INTO TABLE temp142.
+    temp143-n = `styleClass`.
+    temp143-v = styleclass.
+    INSERT temp143 INTO TABLE temp142.
+    temp143-n = `order`.
+    temp143-v = order.
+    INSERT temp143 INTO TABLE temp142.
+    temp143-n = `shrinkFactor`.
+    temp143-v = shrinkfactor.
+    INSERT temp143 INTO TABLE temp142.
     _generic( name   = `FlexItemData`
-              t_prop = temp140 ).
+              t_prop = temp142 ).
   ENDMETHOD.
 
   METHOD footer.
@@ -8098,34 +8189,6 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD force_based_layout.
-    DATA temp142 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp143 LIKE LINE OF temp142.
-    CLEAR temp142.
-    
-    temp143-n = `id`.
-    temp143-v = id.
-    INSERT temp143 INTO TABLE temp142.
-    temp143-n = `class`.
-    temp143-v = class.
-    INSERT temp143 INTO TABLE temp142.
-    temp143-n = `alpha`.
-    temp143-v = alpha.
-    INSERT temp143 INTO TABLE temp142.
-    temp143-n = `charge`.
-    temp143-v = charge.
-    INSERT temp143 INTO TABLE temp142.
-    temp143-n = `friction`.
-    temp143-v = friction.
-    INSERT temp143 INTO TABLE temp142.
-    temp143-n = `maximumDuration`.
-    temp143-v = maximumduration.
-    INSERT temp143 INTO TABLE temp142.
-    result = _generic( name   = `ForceBasedLayout`
-                       ns     = `nglayout`
-                       t_prop = temp142 ).
-  ENDMETHOD.
-
-  METHOD force_directed_layout.
     DATA temp144 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp145 LIKE LINE OF temp144.
     CLEAR temp144.
@@ -8136,71 +8199,99 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp145-n = `class`.
     temp145-v = class.
     INSERT temp145 INTO TABLE temp144.
-    temp145-n = `coolDownStep`.
-    temp145-v = cooldownstep.
+    temp145-n = `alpha`.
+    temp145-v = alpha.
     INSERT temp145 INTO TABLE temp144.
-    temp145-n = `initialTemperature`.
-    temp145-v = initialtemperature.
+    temp145-n = `charge`.
+    temp145-v = charge.
     INSERT temp145 INTO TABLE temp144.
-    temp145-n = `maxIterations`.
-    temp145-v = maxiterations.
+    temp145-n = `friction`.
+    temp145-v = friction.
     INSERT temp145 INTO TABLE temp144.
-    temp145-n = `maxTime`.
-    temp145-v = maxtime.
+    temp145-n = `maximumDuration`.
+    temp145-v = maximumduration.
     INSERT temp145 INTO TABLE temp144.
-    temp145-n = `optimalDistanceConstant`.
-    temp145-v = optimaldistanceconstant.
-    INSERT temp145 INTO TABLE temp144.
-    temp145-n = `staticNodes`.
-    temp145-v = staticnodes.
-    INSERT temp145 INTO TABLE temp144.
-    result = _generic( name   = `ForceDirectedLayout`
+    result = _generic( name   = `ForceBasedLayout`
                        ns     = `nglayout`
                        t_prop = temp144 ).
   ENDMETHOD.
 
-  METHOD formatted_text.
+  METHOD force_directed_layout.
     DATA temp146 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp147 LIKE LINE OF temp146.
-    result = me.
-    
     CLEAR temp146.
     
-    temp147-n = `htmlText`.
-    temp147-v = htmltext.
-    INSERT temp147 INTO TABLE temp146.
-    temp147-n = `convertedLinksDefaultTarget`.
-    temp147-v = convertedlinksdefaulttarget.
-    INSERT temp147 INTO TABLE temp146.
-    temp147-n = `convertLinksToAnchorTags`.
-    temp147-v = convertlinkstoanchortags.
-    INSERT temp147 INTO TABLE temp146.
-    temp147-n = `height`.
-    temp147-v = height.
-    INSERT temp147 INTO TABLE temp146.
-    temp147-n = `textAlign`.
-    temp147-v = textalign.
-    INSERT temp147 INTO TABLE temp146.
-    temp147-n = `textDirection`.
-    temp147-v = textdirection.
-    INSERT temp147 INTO TABLE temp146.
-    temp147-n = `visible`.
-    temp147-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp147 INTO TABLE temp146.
-    temp147-n = `width`.
-    temp147-v = width.
+    temp147-n = `id`.
+    temp147-v = id.
     INSERT temp147 INTO TABLE temp146.
     temp147-n = `class`.
     temp147-v = class.
     INSERT temp147 INTO TABLE temp146.
-    temp147-n = `id`.
-    temp147-v = id.
+    temp147-n = `coolDownStep`.
+    temp147-v = cooldownstep.
     INSERT temp147 INTO TABLE temp146.
-    temp147-n = `controls`.
-    temp147-v = controls.
+    temp147-n = `initialTemperature`.
+    temp147-v = initialtemperature.
     INSERT temp147 INTO TABLE temp146.
+    temp147-n = `maxIterations`.
+    temp147-v = maxiterations.
+    INSERT temp147 INTO TABLE temp146.
+    temp147-n = `maxTime`.
+    temp147-v = maxtime.
+    INSERT temp147 INTO TABLE temp146.
+    temp147-n = `optimalDistanceConstant`.
+    temp147-v = optimaldistanceconstant.
+    INSERT temp147 INTO TABLE temp146.
+    temp147-n = `staticNodes`.
+    temp147-v = staticnodes.
+    INSERT temp147 INTO TABLE temp146.
+    result = _generic( name   = `ForceDirectedLayout`
+                       ns     = `nglayout`
+                       t_prop = temp146 ).
+  ENDMETHOD.
+
+  METHOD formatted_text.
+    DATA temp148 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp149 LIKE LINE OF temp148.
+    result = me.
+    
+    CLEAR temp148.
+    
+    temp149-n = `htmlText`.
+    temp149-v = htmltext.
+    INSERT temp149 INTO TABLE temp148.
+    temp149-n = `convertedLinksDefaultTarget`.
+    temp149-v = convertedlinksdefaulttarget.
+    INSERT temp149 INTO TABLE temp148.
+    temp149-n = `convertLinksToAnchorTags`.
+    temp149-v = convertlinkstoanchortags.
+    INSERT temp149 INTO TABLE temp148.
+    temp149-n = `height`.
+    temp149-v = height.
+    INSERT temp149 INTO TABLE temp148.
+    temp149-n = `textAlign`.
+    temp149-v = textalign.
+    INSERT temp149 INTO TABLE temp148.
+    temp149-n = `textDirection`.
+    temp149-v = textdirection.
+    INSERT temp149 INTO TABLE temp148.
+    temp149-n = `visible`.
+    temp149-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp149 INTO TABLE temp148.
+    temp149-n = `width`.
+    temp149-v = width.
+    INSERT temp149 INTO TABLE temp148.
+    temp149-n = `class`.
+    temp149-v = class.
+    INSERT temp149 INTO TABLE temp148.
+    temp149-n = `id`.
+    temp149-v = id.
+    INSERT temp149 INTO TABLE temp148.
+    temp149-n = `controls`.
+    temp149-v = controls.
+    INSERT temp149 INTO TABLE temp148.
     _generic( name   = `FormattedText`
-              t_prop = temp146 ).
+              t_prop = temp148 ).
   ENDMETHOD.
 
   METHOD form_toolbar.
@@ -8214,45 +8305,45 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD gantt_chart_with_table.
-    DATA temp148 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp149 LIKE LINE OF temp148.
-    CLEAR temp148.
-    
-    temp149-n = `id`.
-    temp149-v = id.
-    INSERT temp149 INTO TABLE temp148.
-    temp149-n = `shapeSelectionMode`.
-    temp149-v = shapeselectionmode.
-    INSERT temp149 INTO TABLE temp148.
-    temp149-n = `isConnectorDetailsVisible`.
-    temp149-v = z2ui5_cl_util=>boolean_abap_2_json( isconnectordetailsvisible ).
-    INSERT temp149 INTO TABLE temp148.
-    result = _generic(
-        name   = `GanttChartWithTable`
-        ns     = `gantt`
-        t_prop = temp148 ).
-  ENDMETHOD.
-
-  METHOD gantt_row_settings.
     DATA temp150 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp151 LIKE LINE OF temp150.
     CLEAR temp150.
     
-    temp151-n = `rowId`.
-    temp151-v = rowid.
+    temp151-n = `id`.
+    temp151-v = id.
     INSERT temp151 INTO TABLE temp150.
-    temp151-n = `shapes1`.
-    temp151-v = shapes1.
+    temp151-n = `shapeSelectionMode`.
+    temp151-v = shapeselectionmode.
     INSERT temp151 INTO TABLE temp150.
-    temp151-n = `shapes2`.
-    temp151-v = shapes2.
+    temp151-n = `isConnectorDetailsVisible`.
+    temp151-v = z2ui5_cl_util=>boolean_abap_2_json( isconnectordetailsvisible ).
     INSERT temp151 INTO TABLE temp150.
-    temp151-n = `relationships`.
-    temp151-v = relationships.
-    INSERT temp151 INTO TABLE temp150.
+    result = _generic(
+        name   = `GanttChartWithTable`
+        ns     = `gantt`
+        t_prop = temp150 ).
+  ENDMETHOD.
+
+  METHOD gantt_row_settings.
+    DATA temp152 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp153 LIKE LINE OF temp152.
+    CLEAR temp152.
+    
+    temp153-n = `rowId`.
+    temp153-v = rowid.
+    INSERT temp153 INTO TABLE temp152.
+    temp153-n = `shapes1`.
+    temp153-v = shapes1.
+    INSERT temp153 INTO TABLE temp152.
+    temp153-n = `shapes2`.
+    temp153-v = shapes2.
+    INSERT temp153 INTO TABLE temp152.
+    temp153-n = `relationships`.
+    temp153-v = relationships.
+    INSERT temp153 INTO TABLE temp152.
     result = _generic( name   = `GanttRowSettings`
                        ns     = `gantt`
-                       t_prop = temp150 ).
+                       t_prop = temp152 ).
   ENDMETHOD.
 
   METHOD gantt_table.
@@ -8267,142 +8358,142 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD generic_tag.
 
-    DATA temp152 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp153 LIKE LINE OF temp152.
-    CLEAR temp152.
+    DATA temp154 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp155 LIKE LINE OF temp154.
+    CLEAR temp154.
     
-    temp153-n = `ariaLabelledBy`.
-    temp153-v = arialabelledby.
-    INSERT temp153 INTO TABLE temp152.
-    temp153-n = `class`.
-    temp153-v = class.
-    INSERT temp153 INTO TABLE temp152.
-    temp153-n = `design`.
-    temp153-v = design.
-    INSERT temp153 INTO TABLE temp152.
-    temp153-n = `status`.
-    temp153-v = status.
-    INSERT temp153 INTO TABLE temp152.
-    temp153-n = `id`.
-    temp153-v = id.
-    INSERT temp153 INTO TABLE temp152.
-    temp153-n = `press`.
-    temp153-v = press.
-    INSERT temp153 INTO TABLE temp152.
-    temp153-n = `text`.
-    temp153-v = text.
-    INSERT temp153 INTO TABLE temp152.
-    temp153-n = `valueState`.
-    temp153-v = valuestate.
-    INSERT temp153 INTO TABLE temp152.
+    temp155-n = `ariaLabelledBy`.
+    temp155-v = arialabelledby.
+    INSERT temp155 INTO TABLE temp154.
+    temp155-n = `class`.
+    temp155-v = class.
+    INSERT temp155 INTO TABLE temp154.
+    temp155-n = `design`.
+    temp155-v = design.
+    INSERT temp155 INTO TABLE temp154.
+    temp155-n = `status`.
+    temp155-v = status.
+    INSERT temp155 INTO TABLE temp154.
+    temp155-n = `id`.
+    temp155-v = id.
+    INSERT temp155 INTO TABLE temp154.
+    temp155-n = `press`.
+    temp155-v = press.
+    INSERT temp155 INTO TABLE temp154.
+    temp155-n = `text`.
+    temp155-v = text.
+    INSERT temp155 INTO TABLE temp154.
+    temp155-n = `valueState`.
+    temp155-v = valuestate.
+    INSERT temp155 INTO TABLE temp154.
     result = _generic( name   = `GenericTag`
-                       t_prop = temp152 ).
+                       t_prop = temp154 ).
 
   ENDMETHOD.
 
   METHOD generic_tile.
 
-    DATA temp154 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp155 LIKE LINE OF temp154.
-    CLEAR temp154.
+    DATA temp156 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp157 LIKE LINE OF temp156.
+    CLEAR temp156.
     
-    temp155-n = `class`.
-    temp155-v = class.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `id`.
-    temp155-v = id.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `header`.
-    temp155-v = header.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `mode`.
-    temp155-v = mode.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `additionalTooltip`.
-    temp155-v = additionaltooltip.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `appShortcut`.
-    temp155-v = appshortcut.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `backgroundColor`.
-    temp155-v = backgroundcolor.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `backgroundImage`.
-    temp155-v = backgroundimage.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `dropAreaOffset`.
-    temp155-v = dropareaoffset.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `press`.
-    temp155-v = press.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `frameType`.
-    temp155-v = frametype.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `failedText`.
-    temp155-v = failedtext.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `headerImage`.
-    temp155-v = headerimage.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `scope`.
-    temp155-v = scope.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `sizeBehavior`.
-    temp155-v = sizebehavior.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `state`.
-    temp155-v = state.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `systemInfo`.
-    temp155-v = systeminfo.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `tileBadge`.
-    temp155-v = tilebadge.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `tileIcon`.
-    temp155-v = tileicon.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `url`.
-    temp155-v = url.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `valueColor`.
-    temp155-v = valuecolor.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `width`.
-    temp155-v = width.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `wrappingType`.
-    temp155-v = wrappingtype.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `imageDescription`.
-    temp155-v = imagedescription.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `navigationButtonText`.
-    temp155-v = navigationbuttontext.
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `visible`.
-    temp155-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `renderOnThemeChange`.
-    temp155-v = z2ui5_cl_util=>boolean_abap_2_json( renderonthemechange ).
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `enableNavigationButton`.
-    temp155-v = z2ui5_cl_util=>boolean_abap_2_json( enablenavigationbutton ).
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `pressEnabled`.
-    temp155-v = z2ui5_cl_util=>boolean_abap_2_json( pressenabled ).
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `iconLoaded`.
-    temp155-v = z2ui5_cl_util=>boolean_abap_2_json( iconloaded ).
-    INSERT temp155 INTO TABLE temp154.
-    temp155-n = `subheader`.
-    temp155-v = subheader.
-    INSERT temp155 INTO TABLE temp154.
+    temp157-n = `class`.
+    temp157-v = class.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `id`.
+    temp157-v = id.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `header`.
+    temp157-v = header.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `mode`.
+    temp157-v = mode.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `additionalTooltip`.
+    temp157-v = additionaltooltip.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `appShortcut`.
+    temp157-v = appshortcut.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `backgroundColor`.
+    temp157-v = backgroundcolor.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `backgroundImage`.
+    temp157-v = backgroundimage.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `dropAreaOffset`.
+    temp157-v = dropareaoffset.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `press`.
+    temp157-v = press.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `frameType`.
+    temp157-v = frametype.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `failedText`.
+    temp157-v = failedtext.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `headerImage`.
+    temp157-v = headerimage.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `scope`.
+    temp157-v = scope.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `sizeBehavior`.
+    temp157-v = sizebehavior.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `state`.
+    temp157-v = state.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `systemInfo`.
+    temp157-v = systeminfo.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `tileBadge`.
+    temp157-v = tilebadge.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `tileIcon`.
+    temp157-v = tileicon.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `url`.
+    temp157-v = url.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `valueColor`.
+    temp157-v = valuecolor.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `width`.
+    temp157-v = width.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `wrappingType`.
+    temp157-v = wrappingtype.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `imageDescription`.
+    temp157-v = imagedescription.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `navigationButtonText`.
+    temp157-v = navigationbuttontext.
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `visible`.
+    temp157-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `renderOnThemeChange`.
+    temp157-v = z2ui5_cl_util=>boolean_abap_2_json( renderonthemechange ).
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `enableNavigationButton`.
+    temp157-v = z2ui5_cl_util=>boolean_abap_2_json( enablenavigationbutton ).
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `pressEnabled`.
+    temp157-v = z2ui5_cl_util=>boolean_abap_2_json( pressenabled ).
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `iconLoaded`.
+    temp157-v = z2ui5_cl_util=>boolean_abap_2_json( iconloaded ).
+    INSERT temp157 INTO TABLE temp156.
+    temp157-n = `subheader`.
+    temp157-v = subheader.
+    INSERT temp157 INTO TABLE temp156.
     result = _generic(
                  name   = `GenericTile`
                  ns     = ``
-                 t_prop = temp154 ).
+                 t_prop = temp156 ).
 
   ENDMETHOD.
 
@@ -8422,15 +8513,15 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_child.
-    DATA temp156 LIKE LINE OF mt_child.
-    DATA temp157 LIKE sy-tabix.
-    temp157 = sy-tabix.
-    READ TABLE mt_child INDEX index INTO temp156.
-    sy-tabix = temp157.
+    DATA temp158 LIKE LINE OF mt_child.
+    DATA temp159 LIKE sy-tabix.
+    temp159 = sy-tabix.
+    READ TABLE mt_child INDEX index INTO temp158.
+    sy-tabix = temp159.
     IF sy-subrc <> 0.
       ASSERT 1 = 0.
     ENDIF.
-    result = temp156.
+    result = temp158.
   ENDMETHOD.
 
   METHOD get_parent.
@@ -8443,123 +8534,315 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD grid.
 
-    DATA temp158 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp159 LIKE LINE OF temp158.
-    CLEAR temp158.
+    DATA temp160 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp161 LIKE LINE OF temp160.
+    CLEAR temp160.
     
-    temp159-n = `defaultSpan`.
-    temp159-v = default_span.
-    INSERT temp159 INTO TABLE temp158.
-    temp159-n = `class`.
-    temp159-v = class.
-    INSERT temp159 INTO TABLE temp158.
-    temp159-n = `containerQuery`.
-    temp159-v = z2ui5_cl_util=>boolean_abap_2_json( containerquery ).
-    INSERT temp159 INTO TABLE temp158.
-    temp159-n = `hSpacing`.
-    temp159-v = hspacing.
-    INSERT temp159 INTO TABLE temp158.
-    temp159-n = `vSpacing`.
-    temp159-v = vspacing.
-    INSERT temp159 INTO TABLE temp158.
-    temp159-n = `width`.
-    temp159-v = width.
-    INSERT temp159 INTO TABLE temp158.
+    temp161-n = `defaultSpan`.
+    temp161-v = default_span.
+    INSERT temp161 INTO TABLE temp160.
+    temp161-n = `class`.
+    temp161-v = class.
+    INSERT temp161 INTO TABLE temp160.
+    temp161-n = `containerQuery`.
+    temp161-v = z2ui5_cl_util=>boolean_abap_2_json( containerquery ).
+    INSERT temp161 INTO TABLE temp160.
+    temp161-n = `hSpacing`.
+    temp161-v = hspacing.
+    INSERT temp161 INTO TABLE temp160.
+    temp161-n = `vSpacing`.
+    temp161-v = vspacing.
+    INSERT temp161 INTO TABLE temp160.
+    temp161-n = `width`.
+    temp161-v = width.
+    INSERT temp161 INTO TABLE temp160.
     result = _generic(
                  name   = `Grid`
                  ns     = `layout`
-                 t_prop = temp158 ).
+                 t_prop = temp160 ).
+  ENDMETHOD.
+
+  METHOD grid_box_layout.
+    DATA temp162 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp163 LIKE LINE OF temp162.
+    result = me.
+    
+    CLEAR temp162.
+    
+    temp163-n = `boxMinWidth`.
+    temp163-v = boxMinWidth.
+    INSERT temp163 INTO TABLE temp162.
+    _generic( name   = `GridBoxLayout`
+              ns     = `grid`
+              t_prop = temp162 ).
   ENDMETHOD.
 
   METHOD grid_data.
-    DATA temp160 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp161 LIKE LINE OF temp160.
+    DATA temp164 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp165 LIKE LINE OF temp164.
     result = me.
     
-    CLEAR temp160.
+    CLEAR temp164.
     
-    temp161-n = `span`.
-    temp161-v = span.
-    INSERT temp161 INTO TABLE temp160.
-    temp161-n = `linebreak`.
-    temp161-v = z2ui5_cl_util=>boolean_abap_2_json( linebreak ).
-    INSERT temp161 INTO TABLE temp160.
-    temp161-n = `indentL`.
-    temp161-v = indentl.
-    INSERT temp161 INTO TABLE temp160.
-    temp161-n = `indentM`.
-    temp161-v = indentm.
-    INSERT temp161 INTO TABLE temp160.
+    temp165-n = `span`.
+    temp165-v = span.
+    INSERT temp165 INTO TABLE temp164.
+    temp165-n = `linebreak`.
+    temp165-v = z2ui5_cl_util=>boolean_abap_2_json( linebreak ).
+    INSERT temp165 INTO TABLE temp164.
+    temp165-n = `indentL`.
+    temp165-v = indentl.
+    INSERT temp165 INTO TABLE temp164.
+    temp165-n = `indentM`.
+    temp165-v = indentm.
+    INSERT temp165 INTO TABLE temp164.
     _generic( name   = `GridData`
               ns     = `layout`
-              t_prop = temp160 ).
+              t_prop = temp164 ).
+  ENDMETHOD.
+
+  METHOD grid_drop_info.
+    DATA temp166 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp167 LIKE LINE OF temp166.
+    result = me.
+    
+    CLEAR temp166.
+    
+    temp167-n = `targetAggregation`.
+    temp167-v = targetAggregation.
+    INSERT temp167 INTO TABLE temp166.
+    temp167-n = `dropPosition`.
+    temp167-v = dropPosition.
+    INSERT temp167 INTO TABLE temp166.
+    temp167-n = `dropLayout`.
+    temp167-v = dropLayout.
+    INSERT temp167 INTO TABLE temp166.
+    temp167-n = `drop`.
+    temp167-v = drop.
+    INSERT temp167 INTO TABLE temp166.
+    temp167-n = `dragEnter`.
+    temp167-v = dragEnter.
+    INSERT temp167 INTO TABLE temp166.
+    temp167-n = `dragOver`.
+    temp167-v = dragOver.
+    INSERT temp167 INTO TABLE temp166.
+    _generic( name   = `GridDropInfo`
+              ns     = `dnd-grid`
+              t_prop = temp166 ).
+  ENDMETHOD.
+
+  METHOD grid_list.
+    DATA temp168 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp169 LIKE LINE OF temp168.
+    CLEAR temp168.
+    
+    temp169-n = `id`.
+    temp169-v = id.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `busy`.
+    temp169-v = z2ui5_cl_util=>boolean_abap_2_json( busy ).
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `busyIndicatorDelay`.
+    temp169-v = busyIndicatorDelay.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `busyIndicatorSize`.
+    temp169-v = busyIndicatorSize.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `enableBusyIndicator`.
+    temp169-v = z2ui5_cl_util=>boolean_abap_2_json( enableBusyIndicator ).
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `fieldGroupIds`.
+    temp169-v = fieldGroupIds.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `footerText`.
+    temp169-v = footerText.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `growing`.
+    temp169-v = z2ui5_cl_util=>boolean_abap_2_json( growing ).
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `growingDirection`.
+    temp169-v = growingDirection.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `growingScrollToLoad`.
+    temp169-v = z2ui5_cl_util=>boolean_abap_2_json( growingScrollToLoad ).
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `growingThreshold`.
+    temp169-v = growingThreshold.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `growingTriggerText`.
+    temp169-v = growingTriggerText.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `headerLevel`.
+    temp169-v = headerLevel.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `headerText`.
+    temp169-v = headerText.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `includeItemInSelection`.
+    temp169-v = z2ui5_cl_util=>boolean_abap_2_json( includeItemInSelection ).
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `inset`.
+    temp169-v = z2ui5_cl_util=>boolean_abap_2_json( inset ).
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `keyboardMode`.
+    temp169-v = keyboardMode.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `mode`.
+    temp169-v = mode.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `modeAnimationOn`.
+    temp169-v = modeAnimationOn.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `multiSelectMode`.
+    temp169-v = multiSelectMode.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `noDataText`.
+    temp169-v = noDataText.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `rememberSelections`.
+    temp169-v = z2ui5_cl_util=>boolean_abap_2_json( rememberSelections ).
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `showNoData`.
+    temp169-v = z2ui5_cl_util=>boolean_abap_2_json( showNoData ).
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `showSeparators`.
+    temp169-v = showSeparators.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `showUnread`.
+    temp169-v = z2ui5_cl_util=>boolean_abap_2_json( showUnread ).
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `sticky`.
+    temp169-v = sticky.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `swipeDirection`.
+    temp169-v = swipeDirection.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `visible`.
+    temp169-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `width`.
+    temp169-v = width.
+    INSERT temp169 INTO TABLE temp168.
+    temp169-n = `items`.
+    temp169-v = items.
+    INSERT temp169 INTO TABLE temp168.
+    result = _generic(
+                 name   = `GridList`
+                 ns     = `f`
+                 t_prop = temp168 ).
+  ENDMETHOD.
+
+  METHOD grid_list_item.
+    DATA temp170 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp171 LIKE LINE OF temp170.
+    CLEAR temp170.
+    
+    temp171-n = `busy`.
+    temp171-v = z2ui5_cl_util=>boolean_abap_2_json( busy ).
+    INSERT temp171 INTO TABLE temp170.
+    temp171-n = `busyIndicatorDelay`.
+    temp171-v = busyIndicatorDelay.
+    INSERT temp171 INTO TABLE temp170.
+    temp171-n = `busyIndicatorSize`.
+    temp171-v = busyIndicatorSize.
+    INSERT temp171 INTO TABLE temp170.
+    temp171-n = `counter`.
+    temp171-v = counter.
+    INSERT temp171 INTO TABLE temp170.
+    temp171-n = `fieldGroupIds`.
+    temp171-v = fieldGroupIds.
+    INSERT temp171 INTO TABLE temp170.
+    temp171-n = `highlight`.
+    temp171-v = highlight.
+    INSERT temp171 INTO TABLE temp170.
+    temp171-n = `highlightText`.
+    temp171-v = highlightText.
+    INSERT temp171 INTO TABLE temp170.
+    temp171-n = `navigated`.
+    temp171-v = z2ui5_cl_util=>boolean_abap_2_json( navigated ).
+    INSERT temp171 INTO TABLE temp170.
+    temp171-n = `selected`.
+    temp171-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    INSERT temp171 INTO TABLE temp170.
+    temp171-n = `type`.
+    temp171-v = type.
+    INSERT temp171 INTO TABLE temp170.
+    temp171-n = `unread`.
+    temp171-v = z2ui5_cl_util=>boolean_abap_2_json( unread ).
+    INSERT temp171 INTO TABLE temp170.
+    temp171-n = `visible`.
+    temp171-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp171 INTO TABLE temp170.
+    result = _generic( name   = `GridListItem`
+                       ns     = `f`
+                       t_prop = temp170 ).
   ENDMETHOD.
 
   METHOD group.
-    DATA temp162 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp163 LIKE LINE OF temp162.
-    CLEAR temp162.
+    DATA temp172 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp173 LIKE LINE OF temp172.
+    CLEAR temp172.
     
-    temp163-n = `collapsed`.
-    temp163-v = z2ui5_cl_util=>boolean_abap_2_json( collapsed ).
-    INSERT temp163 INTO TABLE temp162.
-    temp163-n = `id`.
-    temp163-v = id.
-    INSERT temp163 INTO TABLE temp162.
-    temp163-n = `class`.
-    temp163-v = class.
-    INSERT temp163 INTO TABLE temp162.
-    temp163-n = `description`.
-    temp163-v = description.
-    INSERT temp163 INTO TABLE temp162.
-    temp163-n = `headerCheckBoxState`.
-    temp163-v = headercheckboxstate.
-    INSERT temp163 INTO TABLE temp162.
-    temp163-n = `icon`.
-    temp163-v = icon.
-    INSERT temp163 INTO TABLE temp162.
-    temp163-n = `key`.
-    temp163-v = key.
-    INSERT temp163 INTO TABLE temp162.
-    temp163-n = `minWidth`.
-    temp163-v = minwidth.
-    INSERT temp163 INTO TABLE temp162.
-    temp163-n = `parentGroupKey`.
-    temp163-v = parentgroupkey.
-    INSERT temp163 INTO TABLE temp162.
-    temp163-n = `status`.
-    temp163-v = status.
-    INSERT temp163 INTO TABLE temp162.
-    temp163-n = `title`.
-    temp163-v = title.
-    INSERT temp163 INTO TABLE temp162.
-    temp163-n = `collapseExpand`.
-    temp163-v = collapseexpand.
-    INSERT temp163 INTO TABLE temp162.
-    temp163-n = `showDetail`.
-    temp163-v = showdetail.
-    INSERT temp163 INTO TABLE temp162.
-    temp163-n = `visible`.
-    temp163-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp163 INTO TABLE temp162.
-    temp163-n = `headerCheckBoxPress`.
-    temp163-v = headercheckboxpress.
-    INSERT temp163 INTO TABLE temp162.
+    temp173-n = `collapsed`.
+    temp173-v = z2ui5_cl_util=>boolean_abap_2_json( collapsed ).
+    INSERT temp173 INTO TABLE temp172.
+    temp173-n = `id`.
+    temp173-v = id.
+    INSERT temp173 INTO TABLE temp172.
+    temp173-n = `class`.
+    temp173-v = class.
+    INSERT temp173 INTO TABLE temp172.
+    temp173-n = `description`.
+    temp173-v = description.
+    INSERT temp173 INTO TABLE temp172.
+    temp173-n = `headerCheckBoxState`.
+    temp173-v = headercheckboxstate.
+    INSERT temp173 INTO TABLE temp172.
+    temp173-n = `icon`.
+    temp173-v = icon.
+    INSERT temp173 INTO TABLE temp172.
+    temp173-n = `key`.
+    temp173-v = key.
+    INSERT temp173 INTO TABLE temp172.
+    temp173-n = `minWidth`.
+    temp173-v = minwidth.
+    INSERT temp173 INTO TABLE temp172.
+    temp173-n = `parentGroupKey`.
+    temp173-v = parentgroupkey.
+    INSERT temp173 INTO TABLE temp172.
+    temp173-n = `status`.
+    temp173-v = status.
+    INSERT temp173 INTO TABLE temp172.
+    temp173-n = `title`.
+    temp173-v = title.
+    INSERT temp173 INTO TABLE temp172.
+    temp173-n = `collapseExpand`.
+    temp173-v = collapseexpand.
+    INSERT temp173 INTO TABLE temp172.
+    temp173-n = `showDetail`.
+    temp173-v = showdetail.
+    INSERT temp173 INTO TABLE temp172.
+    temp173-n = `visible`.
+    temp173-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp173 INTO TABLE temp172.
+    temp173-n = `headerCheckBoxPress`.
+    temp173-v = headercheckboxpress.
+    INSERT temp173 INTO TABLE temp172.
     result = _generic( name   = `group`
                        ns     = `networkgraph`
-                       t_prop = temp162 ).
+                       t_prop = temp172 ).
   ENDMETHOD.
 
   METHOD groups.
-    DATA temp164 TYPE string.
+    DATA temp174 TYPE string.
     CASE ns.
       WHEN ``.
-        temp164 = `networkgraph`.
+        temp174 = `networkgraph`.
       WHEN OTHERS.
-        temp164 = ns.
+        temp174 = ns.
     ENDCASE.
     result = _generic( name = `groups`
-                       ns   = temp164 ).
+                       ns   = temp174 ).
   ENDMETHOD.
 
   METHOD group_items.
@@ -8567,106 +8850,106 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD harvey_ball_micro_chart.
-    DATA temp165 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp166 LIKE LINE OF temp165.
+    DATA temp175 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp176 LIKE LINE OF temp175.
     result = me.
     
-    CLEAR temp165.
+    CLEAR temp175.
     
-    temp166-n = `colorPalette`.
-    temp166-v = colorpalette.
-    INSERT temp166 INTO TABLE temp165.
-    temp166-n = `press`.
-    temp166-v = press.
-    INSERT temp166 INTO TABLE temp165.
-    temp166-n = `size`.
-    temp166-v = size.
-    INSERT temp166 INTO TABLE temp165.
-    temp166-n = `height`.
-    temp166-v = height.
-    INSERT temp166 INTO TABLE temp165.
-    temp166-n = `width`.
-    temp166-v = width.
-    INSERT temp166 INTO TABLE temp165.
-    temp166-n = `total`.
-    temp166-v = total.
-    INSERT temp166 INTO TABLE temp165.
-    temp166-n = `totalLabel`.
-    temp166-v = totallabel.
-    INSERT temp166 INTO TABLE temp165.
-    temp166-n = `alignContent`.
-    temp166-v = aligncontent.
-    INSERT temp166 INTO TABLE temp165.
-    temp166-n = `hideOnNoData`.
-    temp166-v = z2ui5_cl_util=>boolean_abap_2_json( hideonnodata ).
-    INSERT temp166 INTO TABLE temp165.
-    temp166-n = `formattedLabel`.
-    temp166-v = z2ui5_cl_util=>boolean_abap_2_json( formattedlabel ).
-    INSERT temp166 INTO TABLE temp165.
-    temp166-n = `showFractions`.
-    temp166-v = z2ui5_cl_util=>boolean_abap_2_json( showfractions ).
-    INSERT temp166 INTO TABLE temp165.
-    temp166-n = `showTotal`.
-    temp166-v = z2ui5_cl_util=>boolean_abap_2_json( showtotal ).
-    INSERT temp166 INTO TABLE temp165.
-    temp166-n = `totalScale`.
-    temp166-v = totalscale.
-    INSERT temp166 INTO TABLE temp165.
+    temp176-n = `colorPalette`.
+    temp176-v = colorpalette.
+    INSERT temp176 INTO TABLE temp175.
+    temp176-n = `press`.
+    temp176-v = press.
+    INSERT temp176 INTO TABLE temp175.
+    temp176-n = `size`.
+    temp176-v = size.
+    INSERT temp176 INTO TABLE temp175.
+    temp176-n = `height`.
+    temp176-v = height.
+    INSERT temp176 INTO TABLE temp175.
+    temp176-n = `width`.
+    temp176-v = width.
+    INSERT temp176 INTO TABLE temp175.
+    temp176-n = `total`.
+    temp176-v = total.
+    INSERT temp176 INTO TABLE temp175.
+    temp176-n = `totalLabel`.
+    temp176-v = totallabel.
+    INSERT temp176 INTO TABLE temp175.
+    temp176-n = `alignContent`.
+    temp176-v = aligncontent.
+    INSERT temp176 INTO TABLE temp175.
+    temp176-n = `hideOnNoData`.
+    temp176-v = z2ui5_cl_util=>boolean_abap_2_json( hideonnodata ).
+    INSERT temp176 INTO TABLE temp175.
+    temp176-n = `formattedLabel`.
+    temp176-v = z2ui5_cl_util=>boolean_abap_2_json( formattedlabel ).
+    INSERT temp176 INTO TABLE temp175.
+    temp176-n = `showFractions`.
+    temp176-v = z2ui5_cl_util=>boolean_abap_2_json( showfractions ).
+    INSERT temp176 INTO TABLE temp175.
+    temp176-n = `showTotal`.
+    temp176-v = z2ui5_cl_util=>boolean_abap_2_json( showtotal ).
+    INSERT temp176 INTO TABLE temp175.
+    temp176-n = `totalScale`.
+    temp176-v = totalscale.
+    INSERT temp176 INTO TABLE temp175.
     _generic( name   = `HarveyBallMicroChart`
               ns     = `mchart`
-              t_prop = temp165 ).
+              t_prop = temp175 ).
   ENDMETHOD.
 
   METHOD hbox.
-    DATA temp167 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp168 LIKE LINE OF temp167.
-    CLEAR temp167.
+    DATA temp177 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp178 LIKE LINE OF temp177.
+    CLEAR temp177.
     
-    temp168-n = `class`.
-    temp168-v = class.
-    INSERT temp168 INTO TABLE temp167.
-    temp168-n = `alignContent`.
-    temp168-v = aligncontent.
-    INSERT temp168 INTO TABLE temp167.
-    temp168-n = `alignItems`.
-    temp168-v = alignitems.
-    INSERT temp168 INTO TABLE temp167.
-    temp168-n = `width`.
-    temp168-v = width.
-    INSERT temp168 INTO TABLE temp167.
-    temp168-n = `id`.
-    temp168-v = id.
-    INSERT temp168 INTO TABLE temp167.
-    temp168-n = `renderType`.
-    temp168-v = rendertype.
-    INSERT temp168 INTO TABLE temp167.
-    temp168-n = `height`.
-    temp168-v = height.
-    INSERT temp168 INTO TABLE temp167.
-    temp168-n = `wrap`.
-    temp168-v = wrap.
-    INSERT temp168 INTO TABLE temp167.
-    temp168-n = `backgroundDesign`.
-    temp168-v = backgrounddesign.
-    INSERT temp168 INTO TABLE temp167.
-    temp168-n = `direction`.
-    temp168-v = direction.
-    INSERT temp168 INTO TABLE temp167.
-    temp168-n = `displayInline`.
-    temp168-v = z2ui5_cl_util=>boolean_abap_2_json( displayinline ).
-    INSERT temp168 INTO TABLE temp167.
-    temp168-n = `fitContainer`.
-    temp168-v = z2ui5_cl_util=>boolean_abap_2_json( fitcontainer ).
-    INSERT temp168 INTO TABLE temp167.
-    temp168-n = `visible`.
-    temp168-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp168 INTO TABLE temp167.
-    temp168-n = `justifyContent`.
-    temp168-v = justifycontent.
-    INSERT temp168 INTO TABLE temp167.
+    temp178-n = `class`.
+    temp178-v = class.
+    INSERT temp178 INTO TABLE temp177.
+    temp178-n = `alignContent`.
+    temp178-v = aligncontent.
+    INSERT temp178 INTO TABLE temp177.
+    temp178-n = `alignItems`.
+    temp178-v = alignitems.
+    INSERT temp178 INTO TABLE temp177.
+    temp178-n = `width`.
+    temp178-v = width.
+    INSERT temp178 INTO TABLE temp177.
+    temp178-n = `id`.
+    temp178-v = id.
+    INSERT temp178 INTO TABLE temp177.
+    temp178-n = `renderType`.
+    temp178-v = rendertype.
+    INSERT temp178 INTO TABLE temp177.
+    temp178-n = `height`.
+    temp178-v = height.
+    INSERT temp178 INTO TABLE temp177.
+    temp178-n = `wrap`.
+    temp178-v = wrap.
+    INSERT temp178 INTO TABLE temp177.
+    temp178-n = `backgroundDesign`.
+    temp178-v = backgrounddesign.
+    INSERT temp178 INTO TABLE temp177.
+    temp178-n = `direction`.
+    temp178-v = direction.
+    INSERT temp178 INTO TABLE temp177.
+    temp178-n = `displayInline`.
+    temp178-v = z2ui5_cl_util=>boolean_abap_2_json( displayinline ).
+    INSERT temp178 INTO TABLE temp177.
+    temp178-n = `fitContainer`.
+    temp178-v = z2ui5_cl_util=>boolean_abap_2_json( fitcontainer ).
+    INSERT temp178 INTO TABLE temp177.
+    temp178-n = `visible`.
+    temp178-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp178 INTO TABLE temp177.
+    temp178-n = `justifyContent`.
+    temp178-v = justifycontent.
+    INSERT temp178 INTO TABLE temp177.
     result = _generic(
         name   = `HBox`
-        t_prop = temp167 ).
+        t_prop = temp177 ).
 
   ENDMETHOD.
 
@@ -8676,76 +8959,76 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD header_container.
-    DATA temp169 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp170 LIKE LINE OF temp169.
-    CLEAR temp169.
+    DATA temp179 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp180 LIKE LINE OF temp179.
+    CLEAR temp179.
     
-    temp170-n = `scrollStep`.
-    temp170-v = scrollstep.
-    INSERT temp170 INTO TABLE temp169.
-    temp170-n = `scrollTime`.
-    temp170-v = scrolltime.
-    INSERT temp170 INTO TABLE temp169.
-    temp170-n = `orientation`.
-    temp170-v = orientation.
-    INSERT temp170 INTO TABLE temp169.
-    temp170-n = `height`.
-    temp170-v = height.
-    INSERT temp170 INTO TABLE temp169.
+    temp180-n = `scrollStep`.
+    temp180-v = scrollstep.
+    INSERT temp180 INTO TABLE temp179.
+    temp180-n = `scrollTime`.
+    temp180-v = scrolltime.
+    INSERT temp180 INTO TABLE temp179.
+    temp180-n = `orientation`.
+    temp180-v = orientation.
+    INSERT temp180 INTO TABLE temp179.
+    temp180-n = `height`.
+    temp180-v = height.
+    INSERT temp180 INTO TABLE temp179.
     result = _generic( name   = `HeaderContainer`
-                       t_prop = temp169 ).
+                       t_prop = temp179 ).
   ENDMETHOD.
 
   METHOD header_container_control.
-    DATA temp171 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp172 LIKE LINE OF temp171.
-    CLEAR temp171.
+    DATA temp181 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp182 LIKE LINE OF temp181.
+    CLEAR temp181.
     
-    temp172-n = `backgroundDesign`.
-    temp172-v = backgrounddesign.
-    INSERT temp172 INTO TABLE temp171.
-    temp172-n = `gridLayout`.
-    temp172-v = z2ui5_cl_util=>boolean_abap_2_json( gridlayout ).
-    INSERT temp172 INTO TABLE temp171.
-    temp172-n = `height`.
-    temp172-v = height.
-    INSERT temp172 INTO TABLE temp171.
-    temp172-n = `orientation`.
-    temp172-v = orientation.
-    INSERT temp172 INTO TABLE temp171.
-    temp172-n = `scrollStep`.
-    temp172-v = scrollstep.
-    INSERT temp172 INTO TABLE temp171.
-    temp172-n = `scrollStepByItem`.
-    temp172-v = scrollstepbyitem.
-    INSERT temp172 INTO TABLE temp171.
-    temp172-n = `scrollTime`.
-    temp172-v = scrolltime.
-    INSERT temp172 INTO TABLE temp171.
-    temp172-n = `showDividers`.
-    temp172-v = z2ui5_cl_util=>boolean_abap_2_json( showdividers ).
-    INSERT temp172 INTO TABLE temp171.
-    temp172-n = `showOverflowItem`.
-    temp172-v = z2ui5_cl_util=>boolean_abap_2_json( showoverflowitem ).
-    INSERT temp172 INTO TABLE temp171.
-    temp172-n = `visible`.
-    temp172-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp172 INTO TABLE temp171.
-    temp172-n = `snapToRow `.
-    temp172-v = z2ui5_cl_util=>boolean_abap_2_json( snaptorow ).
-    INSERT temp172 INTO TABLE temp171.
-    temp172-n = `width`.
-    temp172-v = width.
-    INSERT temp172 INTO TABLE temp171.
-    temp172-n = `id`.
-    temp172-v = id.
-    INSERT temp172 INTO TABLE temp171.
-    temp172-n = `scroll`.
-    temp172-v = scroll.
-    INSERT temp172 INTO TABLE temp171.
+    temp182-n = `backgroundDesign`.
+    temp182-v = backgrounddesign.
+    INSERT temp182 INTO TABLE temp181.
+    temp182-n = `gridLayout`.
+    temp182-v = z2ui5_cl_util=>boolean_abap_2_json( gridlayout ).
+    INSERT temp182 INTO TABLE temp181.
+    temp182-n = `height`.
+    temp182-v = height.
+    INSERT temp182 INTO TABLE temp181.
+    temp182-n = `orientation`.
+    temp182-v = orientation.
+    INSERT temp182 INTO TABLE temp181.
+    temp182-n = `scrollStep`.
+    temp182-v = scrollstep.
+    INSERT temp182 INTO TABLE temp181.
+    temp182-n = `scrollStepByItem`.
+    temp182-v = scrollstepbyitem.
+    INSERT temp182 INTO TABLE temp181.
+    temp182-n = `scrollTime`.
+    temp182-v = scrolltime.
+    INSERT temp182 INTO TABLE temp181.
+    temp182-n = `showDividers`.
+    temp182-v = z2ui5_cl_util=>boolean_abap_2_json( showdividers ).
+    INSERT temp182 INTO TABLE temp181.
+    temp182-n = `showOverflowItem`.
+    temp182-v = z2ui5_cl_util=>boolean_abap_2_json( showoverflowitem ).
+    INSERT temp182 INTO TABLE temp181.
+    temp182-n = `visible`.
+    temp182-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp182 INTO TABLE temp181.
+    temp182-n = `snapToRow `.
+    temp182-v = z2ui5_cl_util=>boolean_abap_2_json( snaptorow ).
+    INSERT temp182 INTO TABLE temp181.
+    temp182-n = `width`.
+    temp182-v = width.
+    INSERT temp182 INTO TABLE temp181.
+    temp182-n = `id`.
+    temp182-v = id.
+    INSERT temp182 INTO TABLE temp181.
+    temp182-n = `scroll`.
+    temp182-v = scroll.
+    INSERT temp182 INTO TABLE temp181.
     result = _generic(
                  name   = `HeaderContainer`
-                 t_prop = temp171 ).
+                 t_prop = temp181 ).
   ENDMETHOD.
 
   METHOD header_content.
@@ -8777,885 +9060,885 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD horizontal_layout.
-    DATA temp173 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp174 LIKE LINE OF temp173.
-    CLEAR temp173.
-    
-    temp174-n = `class`.
-    temp174-v = class.
-    INSERT temp174 INTO TABLE temp173.
-    temp174-n = `allowWrapping`.
-    temp174-v = z2ui5_cl_util=>boolean_abap_2_json( allowwrapping ).
-    INSERT temp174 INTO TABLE temp173.
-    temp174-n = `id`.
-    temp174-v = id.
-    INSERT temp174 INTO TABLE temp173.
-    temp174-n = `visible`.
-    temp174-v = visible.
-    INSERT temp174 INTO TABLE temp173.
-    result = _generic(
-                 name   = `HorizontalLayout`
-                 ns     = `layout`
-                 t_prop = temp173 ).
-  ENDMETHOD.
-
-  METHOD html.
-
-    DATA temp175 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp176 LIKE LINE OF temp175.
-    CLEAR temp175.
-    
-    temp176-n = 'id'.
-    temp176-v = id.
-    INSERT temp176 INTO TABLE temp175.
-    temp176-n = 'content'.
-    temp176-v = content.
-    INSERT temp176 INTO TABLE temp175.
-    temp176-n = 'afterRendering'.
-    temp176-v = afterrendering.
-    INSERT temp176 INTO TABLE temp175.
-    temp176-n = 'preferDOM'.
-    temp176-v = z2ui5_cl_util=>boolean_abap_2_json( preferdom ).
-    INSERT temp176 INTO TABLE temp175.
-    temp176-n = 'sanitizeContent'.
-    temp176-v = z2ui5_cl_util=>boolean_abap_2_json( sanitizecontent ).
-    INSERT temp176 INTO TABLE temp175.
-    temp176-n = 'visible'.
-    temp176-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp176 INTO TABLE temp175.
-    result = _generic( name   = `HTML`
-                       ns     = `core`
-                       t_prop = temp175 ).
-
-  ENDMETHOD.
-
-  METHOD html_area.
-    DATA temp177 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp178 LIKE LINE OF temp177.
-    CLEAR temp177.
-    
-    temp178-n = `id`.
-    temp178-v = id.
-    INSERT temp178 INTO TABLE temp177.
-    temp178-n = `shape`.
-    temp178-v = shape.
-    INSERT temp178 INTO TABLE temp177.
-    temp178-n = `coords`.
-    temp178-v = coords.
-    INSERT temp178 INTO TABLE temp177.
-    temp178-n = `alt`.
-    temp178-v = alt.
-    INSERT temp178 INTO TABLE temp177.
-    temp178-n = `target`.
-    temp178-v = target.
-    INSERT temp178 INTO TABLE temp177.
-    temp178-n = `href`.
-    temp178-v = href.
-    INSERT temp178 INTO TABLE temp177.
-    temp178-n = `onclick`.
-    temp178-v = onclick.
-    INSERT temp178 INTO TABLE temp177.
-    result = _generic( name   = `area`
-                       ns     = 'html'
-                       t_prop = temp177 ).
-  ENDMETHOD.
-
-  METHOD html_canvas.
-    DATA temp179 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp180 LIKE LINE OF temp179.
-    CLEAR temp179.
-    
-    temp180-n = `id`.
-    temp180-v = id.
-    INSERT temp180 INTO TABLE temp179.
-    temp180-n = `class`.
-    temp180-v = class.
-    INSERT temp180 INTO TABLE temp179.
-    temp180-n = `width`.
-    temp180-v = width.
-    INSERT temp180 INTO TABLE temp179.
-    temp180-n = `height`.
-    temp180-v = height.
-    INSERT temp180 INTO TABLE temp179.
-    temp180-n = `style`.
-    temp180-v = style.
-    INSERT temp180 INTO TABLE temp179.
-    result = _generic( name   = `canvas`
-                       ns     = `html`
-                       t_prop = temp179 ).
-  ENDMETHOD.
-
-  METHOD html_map.
-    DATA temp181 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp182 LIKE LINE OF temp181.
-    CLEAR temp181.
-    
-    temp182-n = `id`.
-    temp182-v = id.
-    INSERT temp182 INTO TABLE temp181.
-    temp182-n = `class`.
-    temp182-v = class.
-    INSERT temp182 INTO TABLE temp181.
-    temp182-n = `name`.
-    temp182-v = name.
-    INSERT temp182 INTO TABLE temp181.
-    result = _generic( name   = `map`
-                       ns     = 'html'
-                       t_prop = temp181 ).
-  ENDMETHOD.
-
-  METHOD icon.
     DATA temp183 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp184 LIKE LINE OF temp183.
-
-    result = me.
-    
     CLEAR temp183.
     
-    temp184-n = `size`.
-    temp184-v = size.
-    INSERT temp184 INTO TABLE temp183.
-    temp184-n = `color`.
-    temp184-v = color.
-    INSERT temp184 INTO TABLE temp183.
     temp184-n = `class`.
     temp184-v = class.
     INSERT temp184 INTO TABLE temp183.
-    temp184-n = `src`.
-    temp184-v = src.
-    INSERT temp184 INTO TABLE temp183.
-    temp184-n = `activeColor`.
-    temp184-v = activecolor.
-    INSERT temp184 INTO TABLE temp183.
-    temp184-n = `activeBackgroundColor`.
-    temp184-v = activebackgroundcolor.
-    INSERT temp184 INTO TABLE temp183.
-    temp184-n = `alt`.
-    temp184-v = alt.
-    INSERT temp184 INTO TABLE temp183.
-    temp184-n = `backgroundColor`.
-    temp184-v = backgroundcolor.
-    INSERT temp184 INTO TABLE temp183.
-    temp184-n = `height`.
-    temp184-v = height.
-    INSERT temp184 INTO TABLE temp183.
-    temp184-n = `width`.
-    temp184-v = width.
+    temp184-n = `allowWrapping`.
+    temp184-v = z2ui5_cl_util=>boolean_abap_2_json( allowwrapping ).
     INSERT temp184 INTO TABLE temp183.
     temp184-n = `id`.
     temp184-v = id.
     INSERT temp184 INTO TABLE temp183.
-    temp184-n = `press`.
-    temp184-v = press.
-    INSERT temp184 INTO TABLE temp183.
-    temp184-n = `hoverBackgroundColor`.
-    temp184-v = hoverbackgroundcolor.
-    INSERT temp184 INTO TABLE temp183.
-    temp184-n = `hoverColor`.
-    temp184-v = hovercolor.
-    INSERT temp184 INTO TABLE temp183.
     temp184-n = `visible`.
-    temp184-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    temp184-v = visible.
     INSERT temp184 INTO TABLE temp183.
-    temp184-n = `decorative`.
-    temp184-v = z2ui5_cl_util=>boolean_abap_2_json( decorative ).
-    INSERT temp184 INTO TABLE temp183.
-    temp184-n = `noTabStop`.
-    temp184-v = z2ui5_cl_util=>boolean_abap_2_json( notabstop ).
-    INSERT temp184 INTO TABLE temp183.
-    temp184-n = `useIconTooltip`.
-    temp184-v = z2ui5_cl_util=>boolean_abap_2_json( useicontooltip ).
-    INSERT temp184 INTO TABLE temp183.
-    _generic( name   = `Icon`
-              ns     = `core`
-              t_prop = temp183 ).
-
+    result = _generic(
+                 name   = `HorizontalLayout`
+                 ns     = `layout`
+                 t_prop = temp183 ).
   ENDMETHOD.
 
-  METHOD icon_tab_bar.
+  METHOD html.
 
     DATA temp185 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp186 LIKE LINE OF temp185.
     CLEAR temp185.
     
-    temp186-n = `class`.
-    temp186-v = class.
-    INSERT temp186 INTO TABLE temp185.
-    temp186-n = `select`.
-    temp186-v = select.
-    INSERT temp186 INTO TABLE temp185.
-    temp186-n = `expand`.
-    temp186-v = expand.
-    INSERT temp186 INTO TABLE temp185.
-    temp186-n = `expandable`.
-    temp186-v = z2ui5_cl_util=>boolean_abap_2_json( expandable ).
-    INSERT temp186 INTO TABLE temp185.
-    temp186-n = `expanded`.
-    temp186-v = z2ui5_cl_util=>boolean_abap_2_json( expanded ).
-    INSERT temp186 INTO TABLE temp185.
-    temp186-n = `applyContentPadding`.
-    temp186-v = z2ui5_cl_util=>boolean_abap_2_json( applycontentpadding ).
-    INSERT temp186 INTO TABLE temp185.
-    temp186-n = `backgroundDesign`.
-    temp186-v = backgrounddesign.
-    INSERT temp186 INTO TABLE temp185.
-    temp186-n = `enableTabReordering`.
-    temp186-v = z2ui5_cl_util=>boolean_abap_2_json( enabletabreordering ).
-    INSERT temp186 INTO TABLE temp185.
-    temp186-n = `headerBackgroundDesign`.
-    temp186-v = headerbackgrounddesign.
-    INSERT temp186 INTO TABLE temp185.
-    temp186-n = `stretchContentHeight`.
-    temp186-v = z2ui5_cl_util=>boolean_abap_2_json( stretchcontentheight ).
-    INSERT temp186 INTO TABLE temp185.
-    temp186-n = `headerMode`.
-    temp186-v = headermode.
-    INSERT temp186 INTO TABLE temp185.
-    temp186-n = `maxNestingLevel`.
-    temp186-v = maxnestinglevel.
-    INSERT temp186 INTO TABLE temp185.
-    temp186-n = `tabDensityMode`.
-    temp186-v = tabdensitymode.
-    INSERT temp186 INTO TABLE temp185.
-    temp186-n = `tabsOverflowMode`.
-    temp186-v = tabsoverflowmode.
-    INSERT temp186 INTO TABLE temp185.
-    temp186-n = `items`.
-    temp186-v = items.
-    INSERT temp186 INTO TABLE temp185.
-    temp186-n = `id`.
+    temp186-n = 'id'.
     temp186-v = id.
     INSERT temp186 INTO TABLE temp185.
-    temp186-n = `content`.
+    temp186-n = 'content'.
     temp186-v = content.
     INSERT temp186 INTO TABLE temp185.
-    temp186-n = `upperCase`.
-    temp186-v = z2ui5_cl_util=>boolean_abap_2_json( uppercase ).
+    temp186-n = 'afterRendering'.
+    temp186-v = afterrendering.
     INSERT temp186 INTO TABLE temp185.
-    temp186-n = `selectedKey`.
-    temp186-v = selectedkey.
+    temp186-n = 'preferDOM'.
+    temp186-v = z2ui5_cl_util=>boolean_abap_2_json( preferdom ).
     INSERT temp186 INTO TABLE temp185.
-    result = _generic(
-                 name   = `IconTabBar`
-                 t_prop = temp185 ).
+    temp186-n = 'sanitizeContent'.
+    temp186-v = z2ui5_cl_util=>boolean_abap_2_json( sanitizecontent ).
+    INSERT temp186 INTO TABLE temp185.
+    temp186-n = 'visible'.
+    temp186-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp186 INTO TABLE temp185.
+    result = _generic( name   = `HTML`
+                       ns     = `core`
+                       t_prop = temp185 ).
+
   ENDMETHOD.
 
-  METHOD icon_tab_filter.
-
+  METHOD html_area.
     DATA temp187 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp188 LIKE LINE OF temp187.
     CLEAR temp187.
     
-    temp188-n = `icon`.
-    temp188-v = icon.
-    INSERT temp188 INTO TABLE temp187.
-    temp188-n = `items`.
-    temp188-v = items.
-    INSERT temp188 INTO TABLE temp187.
-    temp188-n = `design`.
-    temp188-v = design.
-    INSERT temp188 INTO TABLE temp187.
-    temp188-n = `iconColor`.
-    temp188-v = iconcolor.
-    INSERT temp188 INTO TABLE temp187.
-    temp188-n = `showAll`.
-    temp188-v = z2ui5_cl_util=>boolean_abap_2_json( showall ).
-    INSERT temp188 INTO TABLE temp187.
-    temp188-n = `iconDensityAware`.
-    temp188-v = z2ui5_cl_util=>boolean_abap_2_json( icondensityaware ).
-    INSERT temp188 INTO TABLE temp187.
-    temp188-n = `visible`.
-    temp188-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp188 INTO TABLE temp187.
-    temp188-n = `count`.
-    temp188-v = count.
-    INSERT temp188 INTO TABLE temp187.
-    temp188-n = `text`.
-    temp188-v = text.
-    INSERT temp188 INTO TABLE temp187.
     temp188-n = `id`.
     temp188-v = id.
     INSERT temp188 INTO TABLE temp187.
-    temp188-n = `textDirection`.
-    temp188-v = textdirection.
+    temp188-n = `shape`.
+    temp188-v = shape.
     INSERT temp188 INTO TABLE temp187.
-    temp188-n = `class`.
-    temp188-v = class.
+    temp188-n = `coords`.
+    temp188-v = coords.
     INSERT temp188 INTO TABLE temp187.
-    temp188-n = `key`.
-    temp188-v = key.
+    temp188-n = `alt`.
+    temp188-v = alt.
     INSERT temp188 INTO TABLE temp187.
-    result = _generic(
-        name   = `IconTabFilter`
-        t_prop = temp187 ).
+    temp188-n = `target`.
+    temp188-v = target.
+    INSERT temp188 INTO TABLE temp187.
+    temp188-n = `href`.
+    temp188-v = href.
+    INSERT temp188 INTO TABLE temp187.
+    temp188-n = `onclick`.
+    temp188-v = onclick.
+    INSERT temp188 INTO TABLE temp187.
+    result = _generic( name   = `area`
+                       ns     = 'html'
+                       t_prop = temp187 ).
   ENDMETHOD.
 
-  METHOD icon_tab_header.
-
+  METHOD html_canvas.
     DATA temp189 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp190 LIKE LINE OF temp189.
     CLEAR temp189.
     
-    temp190-n = `selectedKey`.
-    temp190-v = selectedkey.
-    INSERT temp190 INTO TABLE temp189.
-    temp190-n = `items`.
-    temp190-v = items.
-    INSERT temp190 INTO TABLE temp189.
-    temp190-n = `select`.
-    temp190-v = select.
-    INSERT temp190 INTO TABLE temp189.
-    temp190-n = `ariaTexts`.
-    temp190-v = ariatexts.
-    INSERT temp190 INTO TABLE temp189.
-    temp190-n = `backgroundDesign`.
-    temp190-v = backgrounddesign.
-    INSERT temp190 INTO TABLE temp189.
-    temp190-n = `enableTabReordering`.
-    temp190-v = z2ui5_cl_util=>boolean_abap_2_json( enabletabreordering ).
-    INSERT temp190 INTO TABLE temp189.
-    temp190-n = `maxNestingLevel`.
-    temp190-v = maxnestinglevel.
-    INSERT temp190 INTO TABLE temp189.
-    temp190-n = `tabDensityMode`.
-    temp190-v = tabdensitymode.
-    INSERT temp190 INTO TABLE temp189.
-    temp190-n = `tabsOverflowMode`.
-    temp190-v = tabsoverflowmode.
-    INSERT temp190 INTO TABLE temp189.
     temp190-n = `id`.
     temp190-v = id.
     INSERT temp190 INTO TABLE temp189.
-    temp190-n = `visible`.
-    temp190-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    temp190-n = `class`.
+    temp190-v = class.
     INSERT temp190 INTO TABLE temp189.
-    temp190-n = `mode`.
-    temp190-v = mode.
+    temp190-n = `width`.
+    temp190-v = width.
     INSERT temp190 INTO TABLE temp189.
-    result = _generic(
-        name   = `IconTabHeader`
-        t_prop = temp189 ).
-
+    temp190-n = `height`.
+    temp190-v = height.
+    INSERT temp190 INTO TABLE temp189.
+    temp190-n = `style`.
+    temp190-v = style.
+    INSERT temp190 INTO TABLE temp189.
+    result = _generic( name   = `canvas`
+                       ns     = `html`
+                       t_prop = temp189 ).
   ENDMETHOD.
 
-  METHOD icon_tab_separator.
-
+  METHOD html_map.
     DATA temp191 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp192 LIKE LINE OF temp191.
     CLEAR temp191.
     
-    temp192-n = `icon`.
-    temp192-v = icon.
-    INSERT temp192 INTO TABLE temp191.
-    temp192-n = `iconDensityAware`.
-    temp192-v = icondensityaware.
-    INSERT temp192 INTO TABLE temp191.
     temp192-n = `id`.
     temp192-v = id.
     INSERT temp192 INTO TABLE temp191.
     temp192-n = `class`.
     temp192-v = class.
     INSERT temp192 INTO TABLE temp191.
-    temp192-n = `visible`.
-    temp192-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    temp192-n = `name`.
+    temp192-v = name.
     INSERT temp192 INTO TABLE temp191.
-    result = _generic( name   = `IconTabSeparator`
+    result = _generic( name   = `map`
+                       ns     = 'html'
                        t_prop = temp191 ).
-
   ENDMETHOD.
 
-  METHOD illustrated_message.
-
+  METHOD icon.
     DATA temp193 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp194 LIKE LINE OF temp193.
-    CLEAR temp193.
-    
-    temp194-n = `enableVerticalResponsiveness`.
-    temp194-v = enableverticalresponsiveness.
-    INSERT temp194 INTO TABLE temp193.
-    temp194-n = `illustrationType`.
-    temp194-v = illustrationtype.
-    INSERT temp194 INTO TABLE temp193.
-    temp194-n = `enableFormattedText`.
-    temp194-v = z2ui5_cl_util=>boolean_abap_2_json( enableformattedtext ).
-    INSERT temp194 INTO TABLE temp193.
-    temp194-n = `illustrationSize`.
-    temp194-v = illustrationsize.
-    INSERT temp194 INTO TABLE temp193.
-    temp194-n = `description`.
-    temp194-v = description.
-    INSERT temp194 INTO TABLE temp193.
-    temp194-n = `title`.
-    temp194-v = title.
-    INSERT temp194 INTO TABLE temp193.
-    result = _generic(
-        name   = `IllustratedMessage`
-        t_prop = temp193 ).
-  ENDMETHOD.
 
-  METHOD image.
-    DATA temp195 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp196 LIKE LINE OF temp195.
     result = me.
     
+    CLEAR temp193.
+    
+    temp194-n = `size`.
+    temp194-v = size.
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `color`.
+    temp194-v = color.
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `class`.
+    temp194-v = class.
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `src`.
+    temp194-v = src.
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `activeColor`.
+    temp194-v = activecolor.
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `activeBackgroundColor`.
+    temp194-v = activebackgroundcolor.
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `alt`.
+    temp194-v = alt.
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `backgroundColor`.
+    temp194-v = backgroundcolor.
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `height`.
+    temp194-v = height.
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `width`.
+    temp194-v = width.
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `id`.
+    temp194-v = id.
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `press`.
+    temp194-v = press.
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `hoverBackgroundColor`.
+    temp194-v = hoverbackgroundcolor.
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `hoverColor`.
+    temp194-v = hovercolor.
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `visible`.
+    temp194-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `decorative`.
+    temp194-v = z2ui5_cl_util=>boolean_abap_2_json( decorative ).
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `noTabStop`.
+    temp194-v = z2ui5_cl_util=>boolean_abap_2_json( notabstop ).
+    INSERT temp194 INTO TABLE temp193.
+    temp194-n = `useIconTooltip`.
+    temp194-v = z2ui5_cl_util=>boolean_abap_2_json( useicontooltip ).
+    INSERT temp194 INTO TABLE temp193.
+    _generic( name   = `Icon`
+              ns     = `core`
+              t_prop = temp193 ).
+
+  ENDMETHOD.
+
+  METHOD icon_tab_bar.
+
+    DATA temp195 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp196 LIKE LINE OF temp195.
     CLEAR temp195.
     
-    temp196-n = `id`.
-    temp196-v = id.
-    INSERT temp196 INTO TABLE temp195.
-    temp196-n = `src`.
-    temp196-v = src.
-    INSERT temp196 INTO TABLE temp195.
     temp196-n = `class`.
     temp196-v = class.
     INSERT temp196 INTO TABLE temp195.
-    temp196-n = `height`.
-    temp196-v = height.
+    temp196-n = `select`.
+    temp196-v = select.
     INSERT temp196 INTO TABLE temp195.
-    temp196-n = `alt`.
-    temp196-v = alt.
+    temp196-n = `expand`.
+    temp196-v = expand.
     INSERT temp196 INTO TABLE temp195.
-    temp196-n = `activeSrc`.
-    temp196-v = activesrc.
+    temp196-n = `expandable`.
+    temp196-v = z2ui5_cl_util=>boolean_abap_2_json( expandable ).
     INSERT temp196 INTO TABLE temp195.
-    temp196-n = `ariaHasPopup`.
-    temp196-v = ariahaspopup.
+    temp196-n = `expanded`.
+    temp196-v = z2ui5_cl_util=>boolean_abap_2_json( expanded ).
     INSERT temp196 INTO TABLE temp195.
-    temp196-n = `backgroundPosition`.
-    temp196-v = backgroundposition.
+    temp196-n = `applyContentPadding`.
+    temp196-v = z2ui5_cl_util=>boolean_abap_2_json( applycontentpadding ).
     INSERT temp196 INTO TABLE temp195.
-    temp196-n = `backgroundRepeat`.
-    temp196-v = backgroundrepeat.
+    temp196-n = `backgroundDesign`.
+    temp196-v = backgrounddesign.
     INSERT temp196 INTO TABLE temp195.
-    temp196-n = `backgroundSize`.
-    temp196-v = backgroundsize.
+    temp196-n = `enableTabReordering`.
+    temp196-v = z2ui5_cl_util=>boolean_abap_2_json( enabletabreordering ).
     INSERT temp196 INTO TABLE temp195.
-    temp196-n = `mode`.
-    temp196-v = mode.
+    temp196-n = `headerBackgroundDesign`.
+    temp196-v = headerbackgrounddesign.
     INSERT temp196 INTO TABLE temp195.
-    temp196-n = `useMap`.
-    temp196-v = usemap.
+    temp196-n = `stretchContentHeight`.
+    temp196-v = z2ui5_cl_util=>boolean_abap_2_json( stretchcontentheight ).
     INSERT temp196 INTO TABLE temp195.
-    temp196-n = `width`.
-    temp196-v = width.
+    temp196-n = `headerMode`.
+    temp196-v = headermode.
     INSERT temp196 INTO TABLE temp195.
-    temp196-n = `error`.
-    temp196-v = error.
+    temp196-n = `maxNestingLevel`.
+    temp196-v = maxnestinglevel.
     INSERT temp196 INTO TABLE temp195.
-    temp196-n = `press`.
-    temp196-v = press.
+    temp196-n = `tabDensityMode`.
+    temp196-v = tabdensitymode.
     INSERT temp196 INTO TABLE temp195.
-    temp196-n = `load`.
-    temp196-v = load.
+    temp196-n = `tabsOverflowMode`.
+    temp196-v = tabsoverflowmode.
     INSERT temp196 INTO TABLE temp195.
-    temp196-n = `decorative`.
-    temp196-v = z2ui5_cl_util=>boolean_abap_2_json( decorative ).
+    temp196-n = `items`.
+    temp196-v = items.
     INSERT temp196 INTO TABLE temp195.
-    temp196-n = `densityAware`.
-    temp196-v = z2ui5_cl_util=>boolean_abap_2_json( densityaware ).
+    temp196-n = `id`.
+    temp196-v = id.
     INSERT temp196 INTO TABLE temp195.
-    temp196-n = `lazyLoading`.
-    temp196-v = z2ui5_cl_util=>boolean_abap_2_json( lazyloading ).
+    temp196-n = `content`.
+    temp196-v = content.
     INSERT temp196 INTO TABLE temp195.
-    _generic( name   = `Image`
-              t_prop = temp195 ).
+    temp196-n = `upperCase`.
+    temp196-v = z2ui5_cl_util=>boolean_abap_2_json( uppercase ).
+    INSERT temp196 INTO TABLE temp195.
+    temp196-n = `selectedKey`.
+    temp196-v = selectedkey.
+    INSERT temp196 INTO TABLE temp195.
+    result = _generic(
+                 name   = `IconTabBar`
+                 t_prop = temp195 ).
   ENDMETHOD.
 
-  METHOD image_content.
+  METHOD icon_tab_filter.
 
     DATA temp197 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp198 LIKE LINE OF temp197.
     CLEAR temp197.
     
-    temp198-n = `src`.
-    temp198-v = src.
+    temp198-n = `icon`.
+    temp198-v = icon.
     INSERT temp198 INTO TABLE temp197.
-    temp198-n = `description`.
-    temp198-v = description.
+    temp198-n = `items`.
+    temp198-v = items.
+    INSERT temp198 INTO TABLE temp197.
+    temp198-n = `design`.
+    temp198-v = design.
+    INSERT temp198 INTO TABLE temp197.
+    temp198-n = `iconColor`.
+    temp198-v = iconcolor.
+    INSERT temp198 INTO TABLE temp197.
+    temp198-n = `showAll`.
+    temp198-v = z2ui5_cl_util=>boolean_abap_2_json( showall ).
+    INSERT temp198 INTO TABLE temp197.
+    temp198-n = `iconDensityAware`.
+    temp198-v = z2ui5_cl_util=>boolean_abap_2_json( icondensityaware ).
     INSERT temp198 INTO TABLE temp197.
     temp198-n = `visible`.
     temp198-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp198 INTO TABLE temp197.
+    temp198-n = `count`.
+    temp198-v = count.
+    INSERT temp198 INTO TABLE temp197.
+    temp198-n = `text`.
+    temp198-v = text.
+    INSERT temp198 INTO TABLE temp197.
+    temp198-n = `id`.
+    temp198-v = id.
+    INSERT temp198 INTO TABLE temp197.
+    temp198-n = `textDirection`.
+    temp198-v = textdirection.
+    INSERT temp198 INTO TABLE temp197.
     temp198-n = `class`.
     temp198-v = class.
     INSERT temp198 INTO TABLE temp197.
-    temp198-n = `press`.
-    temp198-v = press.
+    temp198-n = `key`.
+    temp198-v = key.
     INSERT temp198 INTO TABLE temp197.
-    result = _generic( name   = `ImageContent`
-                       t_prop = temp197 ).
-
+    result = _generic(
+        name   = `IconTabFilter`
+        t_prop = temp197 ).
   ENDMETHOD.
 
-  METHOD info_label.
+  METHOD icon_tab_header.
+
     DATA temp199 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp200 LIKE LINE OF temp199.
     CLEAR temp199.
     
+    temp200-n = `selectedKey`.
+    temp200-v = selectedkey.
+    INSERT temp200 INTO TABLE temp199.
+    temp200-n = `items`.
+    temp200-v = items.
+    INSERT temp200 INTO TABLE temp199.
+    temp200-n = `select`.
+    temp200-v = select.
+    INSERT temp200 INTO TABLE temp199.
+    temp200-n = `ariaTexts`.
+    temp200-v = ariatexts.
+    INSERT temp200 INTO TABLE temp199.
+    temp200-n = `backgroundDesign`.
+    temp200-v = backgrounddesign.
+    INSERT temp200 INTO TABLE temp199.
+    temp200-n = `enableTabReordering`.
+    temp200-v = z2ui5_cl_util=>boolean_abap_2_json( enabletabreordering ).
+    INSERT temp200 INTO TABLE temp199.
+    temp200-n = `maxNestingLevel`.
+    temp200-v = maxnestinglevel.
+    INSERT temp200 INTO TABLE temp199.
+    temp200-n = `tabDensityMode`.
+    temp200-v = tabdensitymode.
+    INSERT temp200 INTO TABLE temp199.
+    temp200-n = `tabsOverflowMode`.
+    temp200-v = tabsoverflowmode.
+    INSERT temp200 INTO TABLE temp199.
     temp200-n = `id`.
     temp200-v = id.
-    INSERT temp200 INTO TABLE temp199.
-    temp200-n = `class`.
-    temp200-v = class.
-    INSERT temp200 INTO TABLE temp199.
-    temp200-n = `text`.
-    temp200-v = text.
-    INSERT temp200 INTO TABLE temp199.
-    temp200-n = `renderMode `.
-    temp200-v = rendermode.
-    INSERT temp200 INTO TABLE temp199.
-    temp200-n = `colorScheme`.
-    temp200-v = colorscheme.
-    INSERT temp200 INTO TABLE temp199.
-    temp200-n = `displayOnly`.
-    temp200-v = z2ui5_cl_util=>boolean_abap_2_json( displayonly ).
-    INSERT temp200 INTO TABLE temp199.
-    temp200-n = `icon`.
-    temp200-v = icon.
-    INSERT temp200 INTO TABLE temp199.
-    temp200-n = `textDirection`.
-    temp200-v = textdirection.
     INSERT temp200 INTO TABLE temp199.
     temp200-n = `visible`.
     temp200-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp200 INTO TABLE temp199.
-    temp200-n = `width`.
-    temp200-v = width.
+    temp200-n = `mode`.
+    temp200-v = mode.
     INSERT temp200 INTO TABLE temp199.
-    result = _generic( name   = `InfoLabel`
-                       ns     = 'tnt'
-                       t_prop = temp199 ).
+    result = _generic(
+        name   = `IconTabHeader`
+        t_prop = temp199 ).
 
   ENDMETHOD.
 
-  METHOD input.
+  METHOD icon_tab_separator.
+
     DATA temp201 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp202 LIKE LINE OF temp201.
-    result = me.
-    
     CLEAR temp201.
     
+    temp202-n = `icon`.
+    temp202-v = icon.
+    INSERT temp202 INTO TABLE temp201.
+    temp202-n = `iconDensityAware`.
+    temp202-v = icondensityaware.
+    INSERT temp202 INTO TABLE temp201.
     temp202-n = `id`.
     temp202-v = id.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `placeholder`.
-    temp202-v = placeholder.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `type`.
-    temp202-v = type.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `maxLength`.
-    temp202-v = maxlength.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `showClearIcon`.
-    temp202-v = z2ui5_cl_util=>boolean_abap_2_json( showclearicon ).
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `description`.
-    temp202-v = description.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `editable`.
-    temp202-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `enabled`.
-    temp202-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `visible`.
-    temp202-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `enableTableAutoPopinMode`.
-    temp202-v = z2ui5_cl_util=>boolean_abap_2_json( enabletableautopopinmode ).
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `enableSuggestionsHighlighting`.
-    temp202-v = z2ui5_cl_util=>boolean_abap_2_json( enablesuggestionshighlighting ).
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `showTableSuggestionValueHelp`.
-    temp202-v = z2ui5_cl_util=>boolean_abap_2_json( showtablesuggestionvaluehelp ).
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `valueState`.
-    temp202-v = valuestate.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `valueStateText`.
-    temp202-v = valuestatetext.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `value`.
-    temp202-v = value.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `required`.
-    temp202-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `suggest`.
-    temp202-v = suggest.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `suggestionItems`.
-    temp202-v = suggestionitems.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `suggestionRows`.
-    temp202-v = suggestionrows.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `showSuggestion`.
-    temp202-v = z2ui5_cl_util=>boolean_abap_2_json( showsuggestion ).
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `valueHelpRequest`.
-    temp202-v = valuehelprequest.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `autocomplete`.
-    temp202-v = z2ui5_cl_util=>boolean_abap_2_json( autocomplete ).
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `valueLiveUpdate`.
-    temp202-v = z2ui5_cl_util=>boolean_abap_2_json( valueliveupdate ).
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `submit`.
-    temp202-v = z2ui5_cl_util=>boolean_abap_2_json( submit ).
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `showValueHelp`.
-    temp202-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluehelp ).
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `valueHelpOnly`.
-    temp202-v = z2ui5_cl_util=>boolean_abap_2_json( valuehelponly ).
     INSERT temp202 INTO TABLE temp201.
     temp202-n = `class`.
     temp202-v = class.
     INSERT temp202 INTO TABLE temp201.
-    temp202-n = `change`.
-    temp202-v = change.
+    temp202-n = `visible`.
+    temp202-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp202 INTO TABLE temp201.
-    temp202-n = `maxSuggestionWidth`.
-    temp202-v = maxsuggestionwidth.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `width`.
-    temp202-v = width.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `textFormatter`.
-    temp202-v = textformatter.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `startSuggestion`.
-    temp202-v = startsuggestion.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `valueHelpIconSrc`.
-    temp202-v = valuehelpiconsrc.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `textFormatMode`.
-    temp202-v = textformatmode.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `fieldWidth`.
-    temp202-v = fieldwidth.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `ariaLabelledBy`.
-    temp202-v = arialabelledby.
-    INSERT temp202 INTO TABLE temp201.
-    temp202-n = `ariaDescribedBy`.
-    temp202-v = ariadescribedby.
-    INSERT temp202 INTO TABLE temp201.
-    _generic(
-        name   = `Input`
-        t_prop = temp201 ).
+    result = _generic( name   = `IconTabSeparator`
+                       t_prop = temp201 ).
+
   ENDMETHOD.
 
-  METHOD input_list_item.
+  METHOD illustrated_message.
+
     DATA temp203 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp204 LIKE LINE OF temp203.
     CLEAR temp203.
     
-    temp204-n = `label`.
-    temp204-v = label.
+    temp204-n = `enableVerticalResponsiveness`.
+    temp204-v = enableverticalresponsiveness.
     INSERT temp204 INTO TABLE temp203.
-    result = _generic( name   = `InputListItem`
-                       t_prop = temp203 ).
+    temp204-n = `illustrationType`.
+    temp204-v = illustrationtype.
+    INSERT temp204 INTO TABLE temp203.
+    temp204-n = `enableFormattedText`.
+    temp204-v = z2ui5_cl_util=>boolean_abap_2_json( enableformattedtext ).
+    INSERT temp204 INTO TABLE temp203.
+    temp204-n = `illustrationSize`.
+    temp204-v = illustrationsize.
+    INSERT temp204 INTO TABLE temp203.
+    temp204-n = `description`.
+    temp204-v = description.
+    INSERT temp204 INTO TABLE temp203.
+    temp204-n = `title`.
+    temp204-v = title.
+    INSERT temp204 INTO TABLE temp203.
+    result = _generic(
+        name   = `IllustratedMessage`
+        t_prop = temp203 ).
   ENDMETHOD.
 
-  METHOD interact_bar_chart.
+  METHOD image.
     DATA temp205 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp206 LIKE LINE OF temp205.
+    result = me.
+    
     CLEAR temp205.
     
-    temp206-n = `selectionChanged`.
-    temp206-v = selectionchanged.
+    temp206-n = `id`.
+    temp206-v = id.
     INSERT temp206 INTO TABLE temp205.
-    temp206-n = `selectionEnabled`.
-    temp206-v = z2ui5_cl_util=>boolean_abap_2_json( selectionenabled ).
+    temp206-n = `src`.
+    temp206-v = src.
     INSERT temp206 INTO TABLE temp205.
-    temp206-n = `showError`.
-    temp206-v = z2ui5_cl_util=>boolean_abap_2_json( showerror ).
+    temp206-n = `class`.
+    temp206-v = class.
+    INSERT temp206 INTO TABLE temp205.
+    temp206-n = `height`.
+    temp206-v = height.
+    INSERT temp206 INTO TABLE temp205.
+    temp206-n = `alt`.
+    temp206-v = alt.
+    INSERT temp206 INTO TABLE temp205.
+    temp206-n = `activeSrc`.
+    temp206-v = activesrc.
+    INSERT temp206 INTO TABLE temp205.
+    temp206-n = `ariaHasPopup`.
+    temp206-v = ariahaspopup.
+    INSERT temp206 INTO TABLE temp205.
+    temp206-n = `backgroundPosition`.
+    temp206-v = backgroundposition.
+    INSERT temp206 INTO TABLE temp205.
+    temp206-n = `backgroundRepeat`.
+    temp206-v = backgroundrepeat.
+    INSERT temp206 INTO TABLE temp205.
+    temp206-n = `backgroundSize`.
+    temp206-v = backgroundsize.
+    INSERT temp206 INTO TABLE temp205.
+    temp206-n = `mode`.
+    temp206-v = mode.
+    INSERT temp206 INTO TABLE temp205.
+    temp206-n = `useMap`.
+    temp206-v = usemap.
+    INSERT temp206 INTO TABLE temp205.
+    temp206-n = `width`.
+    temp206-v = width.
+    INSERT temp206 INTO TABLE temp205.
+    temp206-n = `error`.
+    temp206-v = error.
     INSERT temp206 INTO TABLE temp205.
     temp206-n = `press`.
     temp206-v = press.
     INSERT temp206 INTO TABLE temp205.
-    temp206-n = `labelWidth`.
-    temp206-v = labelwidth.
+    temp206-n = `load`.
+    temp206-v = load.
     INSERT temp206 INTO TABLE temp205.
-    temp206-n = `bars`.
-    temp206-v = bars.
+    temp206-n = `decorative`.
+    temp206-v = z2ui5_cl_util=>boolean_abap_2_json( decorative ).
     INSERT temp206 INTO TABLE temp205.
-    temp206-n = `errorMessageTitle`.
-    temp206-v = errormessagetitle.
+    temp206-n = `densityAware`.
+    temp206-v = z2ui5_cl_util=>boolean_abap_2_json( densityaware ).
     INSERT temp206 INTO TABLE temp205.
-    temp206-n = `displayedBars`.
-    temp206-v = displayedbars.
+    temp206-n = `lazyLoading`.
+    temp206-v = z2ui5_cl_util=>boolean_abap_2_json( lazyloading ).
     INSERT temp206 INTO TABLE temp205.
-    temp206-n = `min`.
-    temp206-v = min.
-    INSERT temp206 INTO TABLE temp205.
-    temp206-n = `max`.
-    temp206-v = max.
-    INSERT temp206 INTO TABLE temp205.
-    temp206-n = `errorMessage`.
-    temp206-v = errormessage.
-    INSERT temp206 INTO TABLE temp205.
-    result = _generic(
-        name   = `InteractiveBarChart`
-        ns     = `mchart`
-        t_prop = temp205 ).
+    _generic( name   = `Image`
+              t_prop = temp205 ).
   ENDMETHOD.
 
-  METHOD interact_bar_chart_bar.
+  METHOD image_content.
+
     DATA temp207 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp208 LIKE LINE OF temp207.
     CLEAR temp207.
     
-    temp208-n = `label`.
-    temp208-v = label.
+    temp208-n = `src`.
+    temp208-v = src.
     INSERT temp208 INTO TABLE temp207.
-    temp208-n = `displayedValue`.
-    temp208-v = displayedvalue.
+    temp208-n = `description`.
+    temp208-v = description.
     INSERT temp208 INTO TABLE temp207.
-    temp208-n = `value`.
-    temp208-v = value.
+    temp208-n = `visible`.
+    temp208-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp208 INTO TABLE temp207.
-    temp208-n = `selected`.
-    temp208-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    temp208-n = `class`.
+    temp208-v = class.
     INSERT temp208 INTO TABLE temp207.
-    temp208-n = `color`.
-    temp208-v = color.
+    temp208-n = `press`.
+    temp208-v = press.
     INSERT temp208 INTO TABLE temp207.
-    result = _generic( name   = `InteractiveBarChartBar`
-                       ns     = `mchart`
+    result = _generic( name   = `ImageContent`
                        t_prop = temp207 ).
+
   ENDMETHOD.
 
-  METHOD interact_donut_chart.
+  METHOD info_label.
     DATA temp209 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp210 LIKE LINE OF temp209.
     CLEAR temp209.
     
-    temp210-n = `selectionChanged`.
-    temp210-v = selectionchanged.
+    temp210-n = `id`.
+    temp210-v = id.
     INSERT temp210 INTO TABLE temp209.
-    temp210-n = `selectionEnabled`.
-    temp210-v = z2ui5_cl_util=>boolean_abap_2_json( selectionenabled ).
+    temp210-n = `class`.
+    temp210-v = class.
     INSERT temp210 INTO TABLE temp209.
-    temp210-n = `showError`.
-    temp210-v = z2ui5_cl_util=>boolean_abap_2_json( showerror ).
+    temp210-n = `text`.
+    temp210-v = text.
     INSERT temp210 INTO TABLE temp209.
-    temp210-n = `errorMessageTitle`.
-    temp210-v = errormessagetitle.
+    temp210-n = `renderMode `.
+    temp210-v = rendermode.
     INSERT temp210 INTO TABLE temp209.
-    temp210-n = `errorMessage`.
-    temp210-v = errormessage.
+    temp210-n = `colorScheme`.
+    temp210-v = colorscheme.
     INSERT temp210 INTO TABLE temp209.
-    temp210-n = `displayedSegments`.
-    temp210-v = displayedsegments.
+    temp210-n = `displayOnly`.
+    temp210-v = z2ui5_cl_util=>boolean_abap_2_json( displayonly ).
     INSERT temp210 INTO TABLE temp209.
-    temp210-n = `segments`.
-    temp210-v = segments.
+    temp210-n = `icon`.
+    temp210-v = icon.
     INSERT temp210 INTO TABLE temp209.
-    temp210-n = `press`.
-    temp210-v = press.
+    temp210-n = `textDirection`.
+    temp210-v = textdirection.
     INSERT temp210 INTO TABLE temp209.
-    result = _generic(
-        name   = `InteractiveDonutChart`
-        ns     = `mchart`
-        t_prop = temp209 ).
+    temp210-n = `visible`.
+    temp210-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp210 INTO TABLE temp209.
+    temp210-n = `width`.
+    temp210-v = width.
+    INSERT temp210 INTO TABLE temp209.
+    result = _generic( name   = `InfoLabel`
+                       ns     = 'tnt'
+                       t_prop = temp209 ).
+
   ENDMETHOD.
 
-  METHOD interact_donut_chart_segment.
+  METHOD input.
     DATA temp211 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp212 LIKE LINE OF temp211.
+    result = me.
+    
     CLEAR temp211.
     
-    temp212-n = `label`.
-    temp212-v = label.
+    temp212-n = `id`.
+    temp212-v = id.
     INSERT temp212 INTO TABLE temp211.
-    temp212-n = `displayedValue`.
-    temp212-v = displayedvalue.
+    temp212-n = `placeholder`.
+    temp212-v = placeholder.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `type`.
+    temp212-v = type.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `maxLength`.
+    temp212-v = maxlength.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `showClearIcon`.
+    temp212-v = z2ui5_cl_util=>boolean_abap_2_json( showclearicon ).
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `description`.
+    temp212-v = description.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `editable`.
+    temp212-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `enabled`.
+    temp212-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `visible`.
+    temp212-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `enableTableAutoPopinMode`.
+    temp212-v = z2ui5_cl_util=>boolean_abap_2_json( enabletableautopopinmode ).
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `enableSuggestionsHighlighting`.
+    temp212-v = z2ui5_cl_util=>boolean_abap_2_json( enablesuggestionshighlighting ).
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `showTableSuggestionValueHelp`.
+    temp212-v = z2ui5_cl_util=>boolean_abap_2_json( showtablesuggestionvaluehelp ).
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `valueState`.
+    temp212-v = valuestate.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `valueStateText`.
+    temp212-v = valuestatetext.
     INSERT temp212 INTO TABLE temp211.
     temp212-n = `value`.
     temp212-v = value.
     INSERT temp212 INTO TABLE temp211.
-    temp212-n = `selected`.
-    temp212-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    temp212-n = `required`.
+    temp212-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
     INSERT temp212 INTO TABLE temp211.
-    temp212-n = `color`.
-    temp212-v = color.
+    temp212-n = `suggest`.
+    temp212-v = suggest.
     INSERT temp212 INTO TABLE temp211.
-    result = _generic( name   = `InteractiveDonutChartSegment`
-                       ns     = `mchart`
-                       t_prop = temp211 ).
+    temp212-n = `suggestionItems`.
+    temp212-v = suggestionitems.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `suggestionRows`.
+    temp212-v = suggestionrows.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `showSuggestion`.
+    temp212-v = z2ui5_cl_util=>boolean_abap_2_json( showsuggestion ).
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `valueHelpRequest`.
+    temp212-v = valuehelprequest.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `autocomplete`.
+    temp212-v = z2ui5_cl_util=>boolean_abap_2_json( autocomplete ).
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `valueLiveUpdate`.
+    temp212-v = z2ui5_cl_util=>boolean_abap_2_json( valueliveupdate ).
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `submit`.
+    temp212-v = z2ui5_cl_util=>boolean_abap_2_json( submit ).
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `showValueHelp`.
+    temp212-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluehelp ).
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `valueHelpOnly`.
+    temp212-v = z2ui5_cl_util=>boolean_abap_2_json( valuehelponly ).
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `class`.
+    temp212-v = class.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `change`.
+    temp212-v = change.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `maxSuggestionWidth`.
+    temp212-v = maxsuggestionwidth.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `width`.
+    temp212-v = width.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `textFormatter`.
+    temp212-v = textformatter.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `startSuggestion`.
+    temp212-v = startsuggestion.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `valueHelpIconSrc`.
+    temp212-v = valuehelpiconsrc.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `textFormatMode`.
+    temp212-v = textformatmode.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `fieldWidth`.
+    temp212-v = fieldwidth.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `ariaLabelledBy`.
+    temp212-v = arialabelledby.
+    INSERT temp212 INTO TABLE temp211.
+    temp212-n = `ariaDescribedBy`.
+    temp212-v = ariadescribedby.
+    INSERT temp212 INTO TABLE temp211.
+    _generic(
+        name   = `Input`
+        t_prop = temp211 ).
   ENDMETHOD.
 
-  METHOD interact_line_chart.
+  METHOD input_list_item.
     DATA temp213 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp214 LIKE LINE OF temp213.
     CLEAR temp213.
     
-    temp214-n = `selectionChanged`.
-    temp214-v = selectionchanged.
+    temp214-n = `label`.
+    temp214-v = label.
     INSERT temp214 INTO TABLE temp213.
-    temp214-n = `showError`.
-    temp214-v = z2ui5_cl_util=>boolean_abap_2_json( showerror ).
-    INSERT temp214 INTO TABLE temp213.
-    temp214-n = `press`.
-    temp214-v = press.
-    INSERT temp214 INTO TABLE temp213.
-    temp214-n = `errorMessageTitle`.
-    temp214-v = errormessagetitle.
-    INSERT temp214 INTO TABLE temp213.
-    temp214-n = `errorMessage`.
-    temp214-v = errormessage.
-    INSERT temp214 INTO TABLE temp213.
-    temp214-n = `precedingPoint`.
-    temp214-v = precedingpoint.
-    INSERT temp214 INTO TABLE temp213.
-    temp214-n = `points`.
-    temp214-v = points.
-    INSERT temp214 INTO TABLE temp213.
-    temp214-n = `succeedingPoint`.
-    temp214-v = succeddingpoint.
-    INSERT temp214 INTO TABLE temp213.
-    temp214-n = `displayedPoints`.
-    temp214-v = displayedpoints.
-    INSERT temp214 INTO TABLE temp213.
-    temp214-n = `selectionEnabled`.
-    temp214-v = selectionenabled.
-    INSERT temp214 INTO TABLE temp213.
-    result = _generic( name   = `InteractiveLineChart`
-                       ns     = `mchart`
+    result = _generic( name   = `InputListItem`
                        t_prop = temp213 ).
   ENDMETHOD.
 
-  METHOD interact_line_chart_point.
+  METHOD interact_bar_chart.
     DATA temp215 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp216 LIKE LINE OF temp215.
     CLEAR temp215.
     
-    temp216-n = `label`.
-    temp216-v = label.
+    temp216-n = `selectionChanged`.
+    temp216-v = selectionchanged.
     INSERT temp216 INTO TABLE temp215.
-    temp216-n = `secondaryLabel`.
-    temp216-v = secondarylabel.
+    temp216-n = `selectionEnabled`.
+    temp216-v = z2ui5_cl_util=>boolean_abap_2_json( selectionenabled ).
     INSERT temp216 INTO TABLE temp215.
-    temp216-n = `value`.
-    temp216-v = value.
+    temp216-n = `showError`.
+    temp216-v = z2ui5_cl_util=>boolean_abap_2_json( showerror ).
     INSERT temp216 INTO TABLE temp215.
-    temp216-n = `displayedValue`.
-    temp216-v = displayedvalue.
+    temp216-n = `press`.
+    temp216-v = press.
     INSERT temp216 INTO TABLE temp215.
-    temp216-n = `selected`.
-    temp216-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    temp216-n = `labelWidth`.
+    temp216-v = labelwidth.
     INSERT temp216 INTO TABLE temp215.
+    temp216-n = `bars`.
+    temp216-v = bars.
+    INSERT temp216 INTO TABLE temp215.
+    temp216-n = `errorMessageTitle`.
+    temp216-v = errormessagetitle.
+    INSERT temp216 INTO TABLE temp215.
+    temp216-n = `displayedBars`.
+    temp216-v = displayedbars.
+    INSERT temp216 INTO TABLE temp215.
+    temp216-n = `min`.
+    temp216-v = min.
+    INSERT temp216 INTO TABLE temp215.
+    temp216-n = `max`.
+    temp216-v = max.
+    INSERT temp216 INTO TABLE temp215.
+    temp216-n = `errorMessage`.
+    temp216-v = errormessage.
+    INSERT temp216 INTO TABLE temp215.
+    result = _generic(
+        name   = `InteractiveBarChart`
+        ns     = `mchart`
+        t_prop = temp215 ).
+  ENDMETHOD.
+
+  METHOD interact_bar_chart_bar.
+    DATA temp217 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp218 LIKE LINE OF temp217.
+    CLEAR temp217.
+    
+    temp218-n = `label`.
+    temp218-v = label.
+    INSERT temp218 INTO TABLE temp217.
+    temp218-n = `displayedValue`.
+    temp218-v = displayedvalue.
+    INSERT temp218 INTO TABLE temp217.
+    temp218-n = `value`.
+    temp218-v = value.
+    INSERT temp218 INTO TABLE temp217.
+    temp218-n = `selected`.
+    temp218-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    INSERT temp218 INTO TABLE temp217.
+    temp218-n = `color`.
+    temp218-v = color.
+    INSERT temp218 INTO TABLE temp217.
+    result = _generic( name   = `InteractiveBarChartBar`
+                       ns     = `mchart`
+                       t_prop = temp217 ).
+  ENDMETHOD.
+
+  METHOD interact_donut_chart.
+    DATA temp219 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp220 LIKE LINE OF temp219.
+    CLEAR temp219.
+    
+    temp220-n = `selectionChanged`.
+    temp220-v = selectionchanged.
+    INSERT temp220 INTO TABLE temp219.
+    temp220-n = `selectionEnabled`.
+    temp220-v = z2ui5_cl_util=>boolean_abap_2_json( selectionenabled ).
+    INSERT temp220 INTO TABLE temp219.
+    temp220-n = `showError`.
+    temp220-v = z2ui5_cl_util=>boolean_abap_2_json( showerror ).
+    INSERT temp220 INTO TABLE temp219.
+    temp220-n = `errorMessageTitle`.
+    temp220-v = errormessagetitle.
+    INSERT temp220 INTO TABLE temp219.
+    temp220-n = `errorMessage`.
+    temp220-v = errormessage.
+    INSERT temp220 INTO TABLE temp219.
+    temp220-n = `displayedSegments`.
+    temp220-v = displayedsegments.
+    INSERT temp220 INTO TABLE temp219.
+    temp220-n = `segments`.
+    temp220-v = segments.
+    INSERT temp220 INTO TABLE temp219.
+    temp220-n = `press`.
+    temp220-v = press.
+    INSERT temp220 INTO TABLE temp219.
+    result = _generic(
+        name   = `InteractiveDonutChart`
+        ns     = `mchart`
+        t_prop = temp219 ).
+  ENDMETHOD.
+
+  METHOD interact_donut_chart_segment.
+    DATA temp221 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp222 LIKE LINE OF temp221.
+    CLEAR temp221.
+    
+    temp222-n = `label`.
+    temp222-v = label.
+    INSERT temp222 INTO TABLE temp221.
+    temp222-n = `displayedValue`.
+    temp222-v = displayedvalue.
+    INSERT temp222 INTO TABLE temp221.
+    temp222-n = `value`.
+    temp222-v = value.
+    INSERT temp222 INTO TABLE temp221.
+    temp222-n = `selected`.
+    temp222-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    INSERT temp222 INTO TABLE temp221.
+    temp222-n = `color`.
+    temp222-v = color.
+    INSERT temp222 INTO TABLE temp221.
+    result = _generic( name   = `InteractiveDonutChartSegment`
+                       ns     = `mchart`
+                       t_prop = temp221 ).
+  ENDMETHOD.
+
+  METHOD interact_line_chart.
+    DATA temp223 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp224 LIKE LINE OF temp223.
+    CLEAR temp223.
+    
+    temp224-n = `selectionChanged`.
+    temp224-v = selectionchanged.
+    INSERT temp224 INTO TABLE temp223.
+    temp224-n = `showError`.
+    temp224-v = z2ui5_cl_util=>boolean_abap_2_json( showerror ).
+    INSERT temp224 INTO TABLE temp223.
+    temp224-n = `press`.
+    temp224-v = press.
+    INSERT temp224 INTO TABLE temp223.
+    temp224-n = `errorMessageTitle`.
+    temp224-v = errormessagetitle.
+    INSERT temp224 INTO TABLE temp223.
+    temp224-n = `errorMessage`.
+    temp224-v = errormessage.
+    INSERT temp224 INTO TABLE temp223.
+    temp224-n = `precedingPoint`.
+    temp224-v = precedingpoint.
+    INSERT temp224 INTO TABLE temp223.
+    temp224-n = `points`.
+    temp224-v = points.
+    INSERT temp224 INTO TABLE temp223.
+    temp224-n = `succeedingPoint`.
+    temp224-v = succeddingpoint.
+    INSERT temp224 INTO TABLE temp223.
+    temp224-n = `displayedPoints`.
+    temp224-v = displayedpoints.
+    INSERT temp224 INTO TABLE temp223.
+    temp224-n = `selectionEnabled`.
+    temp224-v = selectionenabled.
+    INSERT temp224 INTO TABLE temp223.
+    result = _generic( name   = `InteractiveLineChart`
+                       ns     = `mchart`
+                       t_prop = temp223 ).
+  ENDMETHOD.
+
+  METHOD interact_line_chart_point.
+    DATA temp225 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp226 LIKE LINE OF temp225.
+    CLEAR temp225.
+    
+    temp226-n = `label`.
+    temp226-v = label.
+    INSERT temp226 INTO TABLE temp225.
+    temp226-n = `secondaryLabel`.
+    temp226-v = secondarylabel.
+    INSERT temp226 INTO TABLE temp225.
+    temp226-n = `value`.
+    temp226-v = value.
+    INSERT temp226 INTO TABLE temp225.
+    temp226-n = `displayedValue`.
+    temp226-v = displayedvalue.
+    INSERT temp226 INTO TABLE temp225.
+    temp226-n = `selected`.
+    temp226-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    INSERT temp226 INTO TABLE temp225.
     result = _generic(
                  name   = `InteractiveLineChartPoint`
                  ns     = `mchart`
-                 t_prop = temp215 ).
+                 t_prop = temp225 ).
   ENDMETHOD.
 
   METHOD intermediary.
@@ -9668,21 +9951,21 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD item.
-    DATA temp217 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp218 LIKE LINE OF temp217.
+    DATA temp227 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp228 LIKE LINE OF temp227.
     result = me.
     
-    CLEAR temp217.
+    CLEAR temp227.
     
-    temp218-n = `key`.
-    temp218-v = key.
-    INSERT temp218 INTO TABLE temp217.
-    temp218-n = `text`.
-    temp218-v = text.
-    INSERT temp218 INTO TABLE temp217.
+    temp228-n = `key`.
+    temp228-v = key.
+    INSERT temp228 INTO TABLE temp227.
+    temp228-n = `text`.
+    temp228-v = text.
+    INSERT temp228 INTO TABLE temp227.
     _generic( name   = `Item`
               ns     = `core`
-              t_prop = temp217 ).
+              t_prop = temp227 ).
   ENDMETHOD.
 
   METHOD items.
@@ -9691,59 +9974,59 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD label.
-    DATA temp219 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp220 LIKE LINE OF temp219.
+    DATA temp229 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp230 LIKE LINE OF temp229.
     result = me.
     
-    CLEAR temp219.
+    CLEAR temp229.
     
-    temp220-n = `text`.
-    temp220-v = text.
-    INSERT temp220 INTO TABLE temp219.
-    temp220-n = `displayOnly`.
-    temp220-v = z2ui5_cl_util=>boolean_abap_2_json( displayonly ).
-    INSERT temp220 INTO TABLE temp219.
-    temp220-n = `required`.
-    temp220-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
-    INSERT temp220 INTO TABLE temp219.
-    temp220-n = `showColon`.
-    temp220-v = z2ui5_cl_util=>boolean_abap_2_json( showcolon ).
-    INSERT temp220 INTO TABLE temp219.
-    temp220-n = `textAlign`.
-    temp220-v = textalign.
-    INSERT temp220 INTO TABLE temp219.
-    temp220-n = `textDirection`.
-    temp220-v = textdirection.
-    INSERT temp220 INTO TABLE temp219.
-    temp220-n = `vAlign`.
-    temp220-v = valign.
-    INSERT temp220 INTO TABLE temp219.
-    temp220-n = `width`.
-    temp220-v = width.
-    INSERT temp220 INTO TABLE temp219.
-    temp220-n = `wrapping`.
-    temp220-v = z2ui5_cl_util=>boolean_abap_2_json( wrapping ).
-    INSERT temp220 INTO TABLE temp219.
-    temp220-n = `wrappingType`.
-    temp220-v = wrappingtype.
-    INSERT temp220 INTO TABLE temp219.
-    temp220-n = `design`.
-    temp220-v = design.
-    INSERT temp220 INTO TABLE temp219.
-    temp220-n = `id`.
-    temp220-v = id.
-    INSERT temp220 INTO TABLE temp219.
-    temp220-n = `class`.
-    temp220-v = class.
-    INSERT temp220 INTO TABLE temp219.
-    temp220-n = `labelFor`.
-    temp220-v = labelfor.
-    INSERT temp220 INTO TABLE temp219.
-    temp220-n = `visible`.
-    temp220-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp220 INTO TABLE temp219.
+    temp230-n = `text`.
+    temp230-v = text.
+    INSERT temp230 INTO TABLE temp229.
+    temp230-n = `displayOnly`.
+    temp230-v = z2ui5_cl_util=>boolean_abap_2_json( displayonly ).
+    INSERT temp230 INTO TABLE temp229.
+    temp230-n = `required`.
+    temp230-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
+    INSERT temp230 INTO TABLE temp229.
+    temp230-n = `showColon`.
+    temp230-v = z2ui5_cl_util=>boolean_abap_2_json( showcolon ).
+    INSERT temp230 INTO TABLE temp229.
+    temp230-n = `textAlign`.
+    temp230-v = textalign.
+    INSERT temp230 INTO TABLE temp229.
+    temp230-n = `textDirection`.
+    temp230-v = textdirection.
+    INSERT temp230 INTO TABLE temp229.
+    temp230-n = `vAlign`.
+    temp230-v = valign.
+    INSERT temp230 INTO TABLE temp229.
+    temp230-n = `width`.
+    temp230-v = width.
+    INSERT temp230 INTO TABLE temp229.
+    temp230-n = `wrapping`.
+    temp230-v = z2ui5_cl_util=>boolean_abap_2_json( wrapping ).
+    INSERT temp230 INTO TABLE temp229.
+    temp230-n = `wrappingType`.
+    temp230-v = wrappingtype.
+    INSERT temp230 INTO TABLE temp229.
+    temp230-n = `design`.
+    temp230-v = design.
+    INSERT temp230 INTO TABLE temp229.
+    temp230-n = `id`.
+    temp230-v = id.
+    INSERT temp230 INTO TABLE temp229.
+    temp230-n = `class`.
+    temp230-v = class.
+    INSERT temp230 INTO TABLE temp229.
+    temp230-n = `labelFor`.
+    temp230-v = labelfor.
+    INSERT temp230 INTO TABLE temp229.
+    temp230-n = `visible`.
+    temp230-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp230 INTO TABLE temp229.
     _generic( name   = `Label`
-              t_prop = temp219 ).
+              t_prop = temp229 ).
   ENDMETHOD.
 
   METHOD lanes.
@@ -9752,31 +10035,31 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD layered_layout.
-    DATA temp221 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp222 LIKE LINE OF temp221.
-    CLEAR temp221.
+    DATA temp231 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp232 LIKE LINE OF temp231.
+    CLEAR temp231.
     
-    temp222-n = `id`.
-    temp222-v = id.
-    INSERT temp222 INTO TABLE temp221.
-    temp222-n = `class`.
-    temp222-v = class.
-    INSERT temp222 INTO TABLE temp221.
-    temp222-n = `lineSpacingFactor`.
-    temp222-v = linespacingfactor.
-    INSERT temp222 INTO TABLE temp221.
-    temp222-n = `nodePlacement`.
-    temp222-v = nodeplacement.
-    INSERT temp222 INTO TABLE temp221.
-    temp222-n = `nodeSpacing`.
-    temp222-v = nodespacing.
-    INSERT temp222 INTO TABLE temp221.
-    temp222-n = `mergeEdges`.
-    temp222-v = z2ui5_cl_util=>boolean_abap_2_json( mergeedges ).
-    INSERT temp222 INTO TABLE temp221.
+    temp232-n = `id`.
+    temp232-v = id.
+    INSERT temp232 INTO TABLE temp231.
+    temp232-n = `class`.
+    temp232-v = class.
+    INSERT temp232 INTO TABLE temp231.
+    temp232-n = `lineSpacingFactor`.
+    temp232-v = linespacingfactor.
+    INSERT temp232 INTO TABLE temp231.
+    temp232-n = `nodePlacement`.
+    temp232-v = nodeplacement.
+    INSERT temp232 INTO TABLE temp231.
+    temp232-n = `nodeSpacing`.
+    temp232-v = nodespacing.
+    INSERT temp232 INTO TABLE temp231.
+    temp232-n = `mergeEdges`.
+    temp232-v = z2ui5_cl_util=>boolean_abap_2_json( mergeedges ).
+    INSERT temp232 INTO TABLE temp231.
     result = _generic( name   = `LayeredLayout`
                        ns     = `nglayout`
-                       t_prop = temp221 ).
+                       t_prop = temp231 ).
   ENDMETHOD.
 
   METHOD layout_algorithm.
@@ -9791,43 +10074,43 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD legend.
 
-    DATA temp223 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp224 LIKE LINE OF temp223.
-    CLEAR temp223.
+    DATA temp233 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp234 LIKE LINE OF temp233.
+    CLEAR temp233.
     
-    temp224-n = `id`.
-    temp224-v = id.
-    INSERT temp224 INTO TABLE temp223.
-    temp224-n = `caption`.
-    temp224-v = caption.
-    INSERT temp224 INTO TABLE temp223.
-    temp224-n = `items`.
-    temp224-v = items.
-    INSERT temp224 INTO TABLE temp223.
+    temp234-n = `id`.
+    temp234-v = id.
+    INSERT temp234 INTO TABLE temp233.
+    temp234-n = `caption`.
+    temp234-v = caption.
+    INSERT temp234 INTO TABLE temp233.
+    temp234-n = `items`.
+    temp234-v = items.
+    INSERT temp234 INTO TABLE temp233.
     result = _generic( name   = `Legend`
                        ns     = `vbm`
-                       t_prop = temp223 ).
+                       t_prop = temp233 ).
 
   ENDMETHOD.
 
   METHOD legenditem.
 
-    DATA temp225 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp226 LIKE LINE OF temp225.
-    CLEAR temp225.
+    DATA temp235 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp236 LIKE LINE OF temp235.
+    CLEAR temp235.
     
-    temp226-n = `id`.
-    temp226-v = id.
-    INSERT temp226 INTO TABLE temp225.
-    temp226-n = `text`.
-    temp226-v = text.
-    INSERT temp226 INTO TABLE temp225.
-    temp226-n = `color`.
-    temp226-v = color.
-    INSERT temp226 INTO TABLE temp225.
+    temp236-n = `id`.
+    temp236-v = id.
+    INSERT temp236 INTO TABLE temp235.
+    temp236-n = `text`.
+    temp236-v = text.
+    INSERT temp236 INTO TABLE temp235.
+    temp236-n = `color`.
+    temp236-v = color.
+    INSERT temp236 INTO TABLE temp235.
     result = _generic( name   = `LegendItem`
                        ns     = `vbm`
-                       t_prop = temp225 ).
+                       t_prop = temp235 ).
 
   ENDMETHOD.
 
@@ -9839,529 +10122,529 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD library_shape.
-    DATA temp227 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp228 LIKE LINE OF temp227.
-    CLEAR temp227.
+    DATA temp237 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp238 LIKE LINE OF temp237.
+    CLEAR temp237.
     
-    temp228-n = `id`.
-    temp228-v = id.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `class`.
-    temp228-v = class.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `animationOnChange`.
-    temp228-v = z2ui5_cl_util=>boolean_abap_2_json( animationonchange ).
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `definition`.
-    temp228-v = definition.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `fillColor`.
-    temp228-v = fillcolor.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `fillingAngle`.
-    temp228-v = fillingangle.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `fillingDirection`.
-    temp228-v = fillingdirection.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `fillingType`.
-    temp228-v = fillingtype.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `height`.
-    temp228-v = height.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `horizontalAlignment`.
-    temp228-v = horizontalalignment.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `shapeId`.
-    temp228-v = shapeid.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `strokeColor`.
-    temp228-v = strokecolor.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `strokeWidth`.
-    temp228-v = strokewidth.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `verticalAlignment`.
-    temp228-v = verticalalignment.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `width`.
-    temp228-v = width.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `x`.
-    temp228-v = x.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `y`.
-    temp228-v = y.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `afterShapeLoaded`.
-    temp228-v = aftershapeloaded.
-    INSERT temp228 INTO TABLE temp227.
-    temp228-n = `visible`.
-    temp228-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp228 INTO TABLE temp227.
+    temp238-n = `id`.
+    temp238-v = id.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `class`.
+    temp238-v = class.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `animationOnChange`.
+    temp238-v = z2ui5_cl_util=>boolean_abap_2_json( animationonchange ).
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `definition`.
+    temp238-v = definition.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `fillColor`.
+    temp238-v = fillcolor.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `fillingAngle`.
+    temp238-v = fillingangle.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `fillingDirection`.
+    temp238-v = fillingdirection.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `fillingType`.
+    temp238-v = fillingtype.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `height`.
+    temp238-v = height.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `horizontalAlignment`.
+    temp238-v = horizontalalignment.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `shapeId`.
+    temp238-v = shapeid.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `strokeColor`.
+    temp238-v = strokecolor.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `strokeWidth`.
+    temp238-v = strokewidth.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `verticalAlignment`.
+    temp238-v = verticalalignment.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `width`.
+    temp238-v = width.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `x`.
+    temp238-v = x.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `y`.
+    temp238-v = y.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `afterShapeLoaded`.
+    temp238-v = aftershapeloaded.
+    INSERT temp238 INTO TABLE temp237.
+    temp238-n = `visible`.
+    temp238-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp238 INTO TABLE temp237.
     result = _generic(
         name   = `LibraryShape`
         ns     = `si`
-        t_prop = temp227 ).
+        t_prop = temp237 ).
   ENDMETHOD.
 
   METHOD light_box.
-    DATA temp229 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp230 LIKE LINE OF temp229.
-    CLEAR temp229.
+    DATA temp239 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp240 LIKE LINE OF temp239.
+    CLEAR temp239.
     
-    temp230-n = `id`.
-    temp230-v = id.
-    INSERT temp230 INTO TABLE temp229.
-    temp230-n = `class`.
-    temp230-v = class.
-    INSERT temp230 INTO TABLE temp229.
-    temp230-n = `visible`.
-    temp230-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp230 INTO TABLE temp229.
+    temp240-n = `id`.
+    temp240-v = id.
+    INSERT temp240 INTO TABLE temp239.
+    temp240-n = `class`.
+    temp240-v = class.
+    INSERT temp240 INTO TABLE temp239.
+    temp240-n = `visible`.
+    temp240-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp240 INTO TABLE temp239.
     result = _generic( name   = `LightBox`
-                       t_prop = temp229 ).
+                       t_prop = temp239 ).
   ENDMETHOD.
 
   METHOD light_box_item.
-    DATA temp231 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp232 LIKE LINE OF temp231.
-    CLEAR temp231.
+    DATA temp241 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp242 LIKE LINE OF temp241.
+    CLEAR temp241.
     
-    temp232-n = `alt`.
-    temp232-v = alt.
-    INSERT temp232 INTO TABLE temp231.
-    temp232-n = `imageSrc`.
-    temp232-v = imagesrc.
-    INSERT temp232 INTO TABLE temp231.
-    temp232-n = `subtitle`.
-    temp232-v = subtitle.
-    INSERT temp232 INTO TABLE temp231.
-    temp232-n = `title`.
-    temp232-v = title.
-    INSERT temp232 INTO TABLE temp231.
+    temp242-n = `alt`.
+    temp242-v = alt.
+    INSERT temp242 INTO TABLE temp241.
+    temp242-n = `imageSrc`.
+    temp242-v = imagesrc.
+    INSERT temp242 INTO TABLE temp241.
+    temp242-n = `subtitle`.
+    temp242-v = subtitle.
+    INSERT temp242 INTO TABLE temp241.
+    temp242-n = `title`.
+    temp242-v = title.
+    INSERT temp242 INTO TABLE temp241.
     result = _generic( name   = `LightBoxItem`
-                       t_prop = temp231 ).
+                       t_prop = temp241 ).
   ENDMETHOD.
 
   METHOD line.
 
-    DATA temp233 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp234 LIKE LINE OF temp233.
-    CLEAR temp233.
+    DATA temp243 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp244 LIKE LINE OF temp243.
+    CLEAR temp243.
     
-    temp234-n = `id`.
-    temp234-v = id.
-    INSERT temp234 INTO TABLE temp233.
-    temp234-n = `class`.
-    temp234-v = class.
-    INSERT temp234 INTO TABLE temp233.
-    temp234-n = `arrowOrientation`.
-    temp234-v = arroworientation.
-    INSERT temp234 INTO TABLE temp233.
-    temp234-n = `arrowPosition`.
-    temp234-v = arrowposition.
-    INSERT temp234 INTO TABLE temp233.
-    temp234-n = `description`.
-    temp234-v = description.
-    INSERT temp234 INTO TABLE temp233.
-    temp234-n = `from`.
-    temp234-v = from.
-    INSERT temp234 INTO TABLE temp233.
-    temp234-n = `lineType`.
-    temp234-v = linetype.
-    INSERT temp234 INTO TABLE temp233.
-    temp234-n = `status`.
-    temp234-v = status.
-    INSERT temp234 INTO TABLE temp233.
-    temp234-n = `title`.
-    temp234-v = title.
-    INSERT temp234 INTO TABLE temp233.
-    temp234-n = `to`.
-    temp234-v = to.
-    INSERT temp234 INTO TABLE temp233.
-    temp234-n = `hover`.
-    temp234-v = hover.
-    INSERT temp234 INTO TABLE temp233.
-    temp234-n = `press`.
-    temp234-v = press.
-    INSERT temp234 INTO TABLE temp233.
-    temp234-n = `stretchToCenter`.
-    temp234-v = z2ui5_cl_util=>boolean_abap_2_json( stretchtocenter ).
-    INSERT temp234 INTO TABLE temp233.
-    temp234-n = `selected`.
-    temp234-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
-    INSERT temp234 INTO TABLE temp233.
-    temp234-n = `visible`.
-    temp234-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp234 INTO TABLE temp233.
+    temp244-n = `id`.
+    temp244-v = id.
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `class`.
+    temp244-v = class.
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `arrowOrientation`.
+    temp244-v = arroworientation.
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `arrowPosition`.
+    temp244-v = arrowposition.
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `description`.
+    temp244-v = description.
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `from`.
+    temp244-v = from.
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `lineType`.
+    temp244-v = linetype.
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `status`.
+    temp244-v = status.
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `title`.
+    temp244-v = title.
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `to`.
+    temp244-v = to.
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `hover`.
+    temp244-v = hover.
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `press`.
+    temp244-v = press.
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `stretchToCenter`.
+    temp244-v = z2ui5_cl_util=>boolean_abap_2_json( stretchtocenter ).
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `selected`.
+    temp244-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    INSERT temp244 INTO TABLE temp243.
+    temp244-n = `visible`.
+    temp244-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp244 INTO TABLE temp243.
     result = _generic( name   = `Line`
                        ns     = `networkgraph`
-                       t_prop = temp233 ).
+                       t_prop = temp243 ).
 
   ENDMETHOD.
 
   METHOD lines.
-    DATA temp235 TYPE string.
+    DATA temp245 TYPE string.
     CASE ns.
       WHEN ''.
-        temp235 = `networkgraph`.
+        temp245 = `networkgraph`.
       WHEN OTHERS.
-        temp235 = ns.
+        temp245 = ns.
     ENDCASE.
     result = _generic( name = `lines`
-                       ns   = temp235 ).
+                       ns   = temp245 ).
   ENDMETHOD.
 
   METHOD line_micro_chart.
-    DATA temp236 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp237 LIKE LINE OF temp236.
+    DATA temp246 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp247 LIKE LINE OF temp246.
     result = me.
     
-    CLEAR temp236.
+    CLEAR temp246.
     
-    temp237-n = `color`.
-    temp237-v = color.
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `height`.
-    temp237-v = height.
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `leftBottomLabel`.
-    temp237-v = leftbottomlabel.
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `leftTopLabel`.
-    temp237-v = lefttoplabel.
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `maxXValue`.
-    temp237-v = maxxvalue.
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `minXValue`.
-    temp237-v = minxvalue.
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `minYValue`.
-    temp237-v = minyvalue.
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `rightBottomLabel`.
-    temp237-v = rightbottomlabel.
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `rightTopLabel`.
-    temp237-v = righttoplabel.
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `size`.
-    temp237-v = size.
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `threshold`.
-    temp237-v = threshold.
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `thresholdDisplayValue`.
-    temp237-v = thresholddisplayvalue.
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `width`.
-    temp237-v = width.
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `press`.
-    temp237-v = press.
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `hideOnNoData`.
-    temp237-v = z2ui5_cl_util=>boolean_abap_2_json( hideonnodata ).
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `showBottomLabels`.
-    temp237-v = z2ui5_cl_util=>boolean_abap_2_json( showbottomlabels ).
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `showPoints`.
-    temp237-v = z2ui5_cl_util=>boolean_abap_2_json( showpoints ).
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `showThresholdLine`.
-    temp237-v = z2ui5_cl_util=>boolean_abap_2_json( showthresholdline ).
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `showThresholdValue`.
-    temp237-v = z2ui5_cl_util=>boolean_abap_2_json( showthresholdvalue ).
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `showTopLabels`.
-    temp237-v = z2ui5_cl_util=>boolean_abap_2_json( showtoplabels ).
-    INSERT temp237 INTO TABLE temp236.
-    temp237-n = `maxYValue`.
-    temp237-v = maxyvalue.
-    INSERT temp237 INTO TABLE temp236.
+    temp247-n = `color`.
+    temp247-v = color.
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `height`.
+    temp247-v = height.
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `leftBottomLabel`.
+    temp247-v = leftbottomlabel.
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `leftTopLabel`.
+    temp247-v = lefttoplabel.
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `maxXValue`.
+    temp247-v = maxxvalue.
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `minXValue`.
+    temp247-v = minxvalue.
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `minYValue`.
+    temp247-v = minyvalue.
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `rightBottomLabel`.
+    temp247-v = rightbottomlabel.
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `rightTopLabel`.
+    temp247-v = righttoplabel.
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `size`.
+    temp247-v = size.
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `threshold`.
+    temp247-v = threshold.
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `thresholdDisplayValue`.
+    temp247-v = thresholddisplayvalue.
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `width`.
+    temp247-v = width.
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `press`.
+    temp247-v = press.
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `hideOnNoData`.
+    temp247-v = z2ui5_cl_util=>boolean_abap_2_json( hideonnodata ).
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `showBottomLabels`.
+    temp247-v = z2ui5_cl_util=>boolean_abap_2_json( showbottomlabels ).
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `showPoints`.
+    temp247-v = z2ui5_cl_util=>boolean_abap_2_json( showpoints ).
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `showThresholdLine`.
+    temp247-v = z2ui5_cl_util=>boolean_abap_2_json( showthresholdline ).
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `showThresholdValue`.
+    temp247-v = z2ui5_cl_util=>boolean_abap_2_json( showthresholdvalue ).
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `showTopLabels`.
+    temp247-v = z2ui5_cl_util=>boolean_abap_2_json( showtoplabels ).
+    INSERT temp247 INTO TABLE temp246.
+    temp247-n = `maxYValue`.
+    temp247-v = maxyvalue.
+    INSERT temp247 INTO TABLE temp246.
     _generic(
         name   = `LineMicroChart`
         ns     = `mchart`
-        t_prop = temp236 ).
+        t_prop = temp246 ).
   ENDMETHOD.
 
   METHOD line_micro_chart_empszd_point.
-    DATA temp238 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp239 LIKE LINE OF temp238.
-    CLEAR temp238.
-    
-    temp239-n = `x`.
-    temp239-v = x.
-    INSERT temp239 INTO TABLE temp238.
-    temp239-n = `y`.
-    temp239-v = y.
-    INSERT temp239 INTO TABLE temp238.
-    temp239-n = `color`.
-    temp239-v = color.
-    INSERT temp239 INTO TABLE temp238.
-    temp239-n = `show`.
-    temp239-v = z2ui5_cl_util=>boolean_abap_2_json( show ).
-    INSERT temp239 INTO TABLE temp238.
-    result = _generic( name   = `LineMicroChartEmphasizedPoint`
-                       ns     = `mchart`
-                       t_prop = temp238 ).
-  ENDMETHOD.
-
-  METHOD line_micro_chart_line.
-    DATA temp240 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp241 LIKE LINE OF temp240.
-    CLEAR temp240.
-    
-    temp241-n = `points`.
-    temp241-v = points.
-    INSERT temp241 INTO TABLE temp240.
-    temp241-n = `color`.
-    temp241-v = color.
-    INSERT temp241 INTO TABLE temp240.
-    temp241-n = `type`.
-    temp241-v = type.
-    INSERT temp241 INTO TABLE temp240.
-    result = _generic( name   = `LineMicroChartLine`
-                       ns     = `mchart`
-                       t_prop = temp240 ).
-  ENDMETHOD.
-
-  METHOD line_micro_chart_point.
-    DATA temp242 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp243 LIKE LINE OF temp242.
-    CLEAR temp242.
-    
-    temp243-n = `x`.
-    temp243-v = x.
-    INSERT temp243 INTO TABLE temp242.
-    temp243-n = `y`.
-    temp243-v = y.
-    INSERT temp243 INTO TABLE temp242.
-    result = _generic( name   = `LineMicroChartPoint`
-                       ns     = `mchart`
-                       t_prop = temp242 ).
-  ENDMETHOD.
-
-  METHOD link.
-    DATA temp244 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp245 LIKE LINE OF temp244.
-    result = me.
-    
-    CLEAR temp244.
-    
-    temp245-n = `text`.
-    temp245-v = text.
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `target`.
-    temp245-v = target.
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `href`.
-    temp245-v = href.
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `press`.
-    temp245-v = press.
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `id`.
-    temp245-v = id.
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `class`.
-    temp245-v = class.
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `accessibleRole`.
-    temp245-v = accessiblerole.
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `ariaHasPopup`.
-    temp245-v = ariahaspopup.
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `emptyIndicatorMode`.
-    temp245-v = emptyindicatormode.
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `rel`.
-    temp245-v = rel.
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `subtle`.
-    temp245-v = z2ui5_cl_util=>boolean_abap_2_json( subtle ).
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `textAlign`.
-    temp245-v = textalign.
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `textDirection`.
-    temp245-v = textdirection.
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `validateUrl`.
-    temp245-v = z2ui5_cl_util=>boolean_abap_2_json( validateurl ).
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `width`.
-    temp245-v = width.
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `wrapping`.
-    temp245-v = z2ui5_cl_util=>boolean_abap_2_json( wrapping ).
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `emphasized`.
-    temp245-v = z2ui5_cl_util=>boolean_abap_2_json( emphasized ).
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `enabled`.
-    temp245-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `endIcon`.
-    temp245-v = endicon.
-    INSERT temp245 INTO TABLE temp244.
-    temp245-n = `icon`.
-    temp245-v = icon.
-    INSERT temp245 INTO TABLE temp244.
-    _generic( name   = `Link`
-              ns     = ns
-              t_prop = temp244 ).
-  ENDMETHOD.
-
-  METHOD link_tile_content.
-    DATA temp246 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp247 LIKE LINE OF temp246.
-    CLEAR temp246.
-    
-    temp247-n = `iconSrc`.
-    temp247-v = iconsrc.
-    INSERT temp247 INTO TABLE temp246.
-    temp247-n = `linkHref`.
-    temp247-v = linkhref.
-    INSERT temp247 INTO TABLE temp246.
-    temp247-n = `linkText`.
-    temp247-v = linktext.
-    INSERT temp247 INTO TABLE temp246.
-    temp247-n = `linkPress`.
-    temp247-v = linkpress.
-    INSERT temp247 INTO TABLE temp246.
-    result = _generic( name   = `LinkTileContent`
-                       t_prop = temp246 ).
-  ENDMETHOD.
-
-  METHOD list.
     DATA temp248 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp249 LIKE LINE OF temp248.
     CLEAR temp248.
     
-    temp249-n = `headerText`.
-    temp249-v = headertext.
+    temp249-n = `x`.
+    temp249-v = x.
     INSERT temp249 INTO TABLE temp248.
-    temp249-n = `items`.
-    temp249-v = items.
+    temp249-n = `y`.
+    temp249-v = y.
     INSERT temp249 INTO TABLE temp248.
-    temp249-n = `mode`.
-    temp249-v = mode.
+    temp249-n = `color`.
+    temp249-v = color.
     INSERT temp249 INTO TABLE temp248.
-    temp249-n = `class`.
-    temp249-v = class.
+    temp249-n = `show`.
+    temp249-v = z2ui5_cl_util=>boolean_abap_2_json( show ).
     INSERT temp249 INTO TABLE temp248.
-    temp249-n = `itemPress`.
-    temp249-v = itempress.
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `select`.
-    temp249-v = select.
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `selectionChange`.
-    temp249-v = selectionchange.
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `showSeparators`.
-    temp249-v = showseparators.
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `footerText`.
-    temp249-v = footertext.
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `growingDirection`.
-    temp249-v = growingdirection.
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `growingThreshold`.
-    temp249-v = growingthreshold.
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `growingTriggerText`.
-    temp249-v = growingtriggertext.
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `headerLevel`.
-    temp249-v = headerlevel.
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `multiSelectMode`.
-    temp249-v = multiselectmode.
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `noDataText`.
-    temp249-v = nodatatext.
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `id`.
-    temp249-v = id.
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `sticky`.
-    temp249-v = sticky.
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `delete`.
-    temp249-v = delete.
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `backgroundDesign`.
-    temp249-v = backgrounddesign.
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `modeAnimationOn`.
-    temp249-v = z2ui5_cl_util=>boolean_abap_2_json( modeanimationon ).
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `growingScrollToLoad`.
-    temp249-v = z2ui5_cl_util=>boolean_abap_2_json( growingscrolltoload ).
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `includeItemInSelection`.
-    temp249-v = z2ui5_cl_util=>boolean_abap_2_json( includeiteminselection ).
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `growing`.
-    temp249-v = z2ui5_cl_util=>boolean_abap_2_json( growing ).
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `inset`.
-    temp249-v = z2ui5_cl_util=>boolean_abap_2_json( inset ).
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `rememberSelections`.
-    temp249-v = z2ui5_cl_util=>boolean_abap_2_json( rememberselections ).
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `showUnread`.
-    temp249-v = z2ui5_cl_util=>boolean_abap_2_json( showunread ).
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `visible`.
-    temp249-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp249 INTO TABLE temp248.
-    temp249-n = `noData`.
-    temp249-v = nodata.
-    INSERT temp249 INTO TABLE temp248.
+    result = _generic( name   = `LineMicroChartEmphasizedPoint`
+                       ns     = `mchart`
+                       t_prop = temp248 ).
+  ENDMETHOD.
+
+  METHOD line_micro_chart_line.
+    DATA temp250 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp251 LIKE LINE OF temp250.
+    CLEAR temp250.
+    
+    temp251-n = `points`.
+    temp251-v = points.
+    INSERT temp251 INTO TABLE temp250.
+    temp251-n = `color`.
+    temp251-v = color.
+    INSERT temp251 INTO TABLE temp250.
+    temp251-n = `type`.
+    temp251-v = type.
+    INSERT temp251 INTO TABLE temp250.
+    result = _generic( name   = `LineMicroChartLine`
+                       ns     = `mchart`
+                       t_prop = temp250 ).
+  ENDMETHOD.
+
+  METHOD line_micro_chart_point.
+    DATA temp252 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp253 LIKE LINE OF temp252.
+    CLEAR temp252.
+    
+    temp253-n = `x`.
+    temp253-v = x.
+    INSERT temp253 INTO TABLE temp252.
+    temp253-n = `y`.
+    temp253-v = y.
+    INSERT temp253 INTO TABLE temp252.
+    result = _generic( name   = `LineMicroChartPoint`
+                       ns     = `mchart`
+                       t_prop = temp252 ).
+  ENDMETHOD.
+
+  METHOD link.
+    DATA temp254 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp255 LIKE LINE OF temp254.
+    result = me.
+    
+    CLEAR temp254.
+    
+    temp255-n = `text`.
+    temp255-v = text.
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `target`.
+    temp255-v = target.
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `href`.
+    temp255-v = href.
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `press`.
+    temp255-v = press.
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `id`.
+    temp255-v = id.
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `class`.
+    temp255-v = class.
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `accessibleRole`.
+    temp255-v = accessiblerole.
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `ariaHasPopup`.
+    temp255-v = ariahaspopup.
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `emptyIndicatorMode`.
+    temp255-v = emptyindicatormode.
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `rel`.
+    temp255-v = rel.
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `subtle`.
+    temp255-v = z2ui5_cl_util=>boolean_abap_2_json( subtle ).
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `textAlign`.
+    temp255-v = textalign.
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `textDirection`.
+    temp255-v = textdirection.
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `validateUrl`.
+    temp255-v = z2ui5_cl_util=>boolean_abap_2_json( validateurl ).
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `width`.
+    temp255-v = width.
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `wrapping`.
+    temp255-v = z2ui5_cl_util=>boolean_abap_2_json( wrapping ).
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `emphasized`.
+    temp255-v = z2ui5_cl_util=>boolean_abap_2_json( emphasized ).
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `enabled`.
+    temp255-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `endIcon`.
+    temp255-v = endicon.
+    INSERT temp255 INTO TABLE temp254.
+    temp255-n = `icon`.
+    temp255-v = icon.
+    INSERT temp255 INTO TABLE temp254.
+    _generic( name   = `Link`
+              ns     = ns
+              t_prop = temp254 ).
+  ENDMETHOD.
+
+  METHOD link_tile_content.
+    DATA temp256 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp257 LIKE LINE OF temp256.
+    CLEAR temp256.
+    
+    temp257-n = `iconSrc`.
+    temp257-v = iconsrc.
+    INSERT temp257 INTO TABLE temp256.
+    temp257-n = `linkHref`.
+    temp257-v = linkhref.
+    INSERT temp257 INTO TABLE temp256.
+    temp257-n = `linkText`.
+    temp257-v = linktext.
+    INSERT temp257 INTO TABLE temp256.
+    temp257-n = `linkPress`.
+    temp257-v = linkpress.
+    INSERT temp257 INTO TABLE temp256.
+    result = _generic( name   = `LinkTileContent`
+                       t_prop = temp256 ).
+  ENDMETHOD.
+
+  METHOD list.
+    DATA temp258 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp259 LIKE LINE OF temp258.
+    CLEAR temp258.
+    
+    temp259-n = `headerText`.
+    temp259-v = headertext.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `items`.
+    temp259-v = items.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `mode`.
+    temp259-v = mode.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `class`.
+    temp259-v = class.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `itemPress`.
+    temp259-v = itempress.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `select`.
+    temp259-v = select.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `selectionChange`.
+    temp259-v = selectionchange.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `showSeparators`.
+    temp259-v = showseparators.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `footerText`.
+    temp259-v = footertext.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `growingDirection`.
+    temp259-v = growingdirection.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `growingThreshold`.
+    temp259-v = growingthreshold.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `growingTriggerText`.
+    temp259-v = growingtriggertext.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `headerLevel`.
+    temp259-v = headerlevel.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `multiSelectMode`.
+    temp259-v = multiselectmode.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `noDataText`.
+    temp259-v = nodatatext.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `id`.
+    temp259-v = id.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `sticky`.
+    temp259-v = sticky.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `delete`.
+    temp259-v = delete.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `backgroundDesign`.
+    temp259-v = backgrounddesign.
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `modeAnimationOn`.
+    temp259-v = z2ui5_cl_util=>boolean_abap_2_json( modeanimationon ).
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `growingScrollToLoad`.
+    temp259-v = z2ui5_cl_util=>boolean_abap_2_json( growingscrolltoload ).
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `includeItemInSelection`.
+    temp259-v = z2ui5_cl_util=>boolean_abap_2_json( includeiteminselection ).
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `growing`.
+    temp259-v = z2ui5_cl_util=>boolean_abap_2_json( growing ).
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `inset`.
+    temp259-v = z2ui5_cl_util=>boolean_abap_2_json( inset ).
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `rememberSelections`.
+    temp259-v = z2ui5_cl_util=>boolean_abap_2_json( rememberselections ).
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `showUnread`.
+    temp259-v = z2ui5_cl_util=>boolean_abap_2_json( showunread ).
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `visible`.
+    temp259-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp259 INTO TABLE temp258.
+    temp259-n = `noData`.
+    temp259-v = nodata.
+    INSERT temp259 INTO TABLE temp258.
     result = _generic(
                  name   = `List`
-                 t_prop = temp248 ).
+                 t_prop = temp258 ).
   ENDMETHOD.
 
   METHOD list_item.
-    DATA temp250 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp251 LIKE LINE OF temp250.
+    DATA temp260 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp261 LIKE LINE OF temp260.
     result = me.
     
-    CLEAR temp250.
+    CLEAR temp260.
     
-    temp251-n = `text`.
-    temp251-v = text.
-    INSERT temp251 INTO TABLE temp250.
-    temp251-n = `icon`.
-    temp251-v = icon.
-    INSERT temp251 INTO TABLE temp250.
-    temp251-n = `key`.
-    temp251-v = key.
-    INSERT temp251 INTO TABLE temp250.
-    temp251-n = `textDirection`.
-    temp251-v = textdirection.
-    INSERT temp251 INTO TABLE temp250.
-    temp251-n = `enabled`.
-    temp251-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp251 INTO TABLE temp250.
-    temp251-n = `additionalText`.
-    temp251-v = additionaltext.
-    INSERT temp251 INTO TABLE temp250.
+    temp261-n = `text`.
+    temp261-v = text.
+    INSERT temp261 INTO TABLE temp260.
+    temp261-n = `icon`.
+    temp261-v = icon.
+    INSERT temp261 INTO TABLE temp260.
+    temp261-n = `key`.
+    temp261-v = key.
+    INSERT temp261 INTO TABLE temp260.
+    temp261-n = `textDirection`.
+    temp261-v = textdirection.
+    INSERT temp261 INTO TABLE temp260.
+    temp261-n = `enabled`.
+    temp261-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp261 INTO TABLE temp260.
+    temp261-n = `additionalText`.
+    temp261-v = additionaltext.
+    INSERT temp261 INTO TABLE temp260.
     _generic( name   = `ListItem`
               ns     = `core`
-              t_prop = temp250 ).
+              t_prop = temp260 ).
   ENDMETHOD.
 
   METHOD main_content.
@@ -10378,19 +10661,19 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD map_container.
 
-    DATA temp252 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp253 LIKE LINE OF temp252.
-    CLEAR temp252.
+    DATA temp262 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp263 LIKE LINE OF temp262.
+    CLEAR temp262.
     
-    temp253-n = `id`.
-    temp253-v = id.
-    INSERT temp253 INTO TABLE temp252.
-    temp253-n = `autoAdjustHeight`.
-    temp253-v = z2ui5_cl_util=>boolean_abap_2_json( autoadjustheight ).
-    INSERT temp253 INTO TABLE temp252.
+    temp263-n = `id`.
+    temp263-v = id.
+    INSERT temp263 INTO TABLE temp262.
+    temp263-n = `autoAdjustHeight`.
+    temp263-v = z2ui5_cl_util=>boolean_abap_2_json( autoadjustheight ).
+    INSERT temp263 INTO TABLE temp262.
     result = _generic( name   = `MapContainer`
                        ns     = `vk`
-                       t_prop = temp252 ).
+                       t_prop = temp262 ).
 
   ENDMETHOD.
 
@@ -10405,80 +10688,80 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD mask_input.
-    DATA temp254 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp255 LIKE LINE OF temp254.
+    DATA temp264 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp265 LIKE LINE OF temp264.
     result = me.
     
-    CLEAR temp254.
+    CLEAR temp264.
     
-    temp255-n = `placeholder`.
-    temp255-v = placeholder.
-    INSERT temp255 INTO TABLE temp254.
-    temp255-n = `mask`.
-    temp255-v = mask.
-    INSERT temp255 INTO TABLE temp254.
-    temp255-n = `name`.
-    temp255-v = name.
-    INSERT temp255 INTO TABLE temp254.
-    temp255-n = `textAlign`.
-    temp255-v = textalign.
-    INSERT temp255 INTO TABLE temp254.
-    temp255-n = `textDirection`.
-    temp255-v = textdirection.
-    INSERT temp255 INTO TABLE temp254.
-    temp255-n = `value`.
-    temp255-v = value.
-    INSERT temp255 INTO TABLE temp254.
-    temp255-n = `width`.
-    temp255-v = width.
-    INSERT temp255 INTO TABLE temp254.
-    temp255-n = `liveChange`.
-    temp255-v = livechange.
-    INSERT temp255 INTO TABLE temp254.
-    temp255-n = `change`.
-    temp255-v = change.
-    INSERT temp255 INTO TABLE temp254.
-    temp255-n = `valueState`.
-    temp255-v = valuestate.
-    INSERT temp255 INTO TABLE temp254.
-    temp255-n = `valueStateText`.
-    temp255-v = valuestatetext.
-    INSERT temp255 INTO TABLE temp254.
-    temp255-n = `placeholderSymbol`.
-    temp255-v = placeholdersymbol.
-    INSERT temp255 INTO TABLE temp254.
-    temp255-n = `required`.
-    temp255-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
-    INSERT temp255 INTO TABLE temp254.
-    temp255-n = `showClearIcon`.
-    temp255-v = z2ui5_cl_util=>boolean_abap_2_json( showclearicon ).
-    INSERT temp255 INTO TABLE temp254.
-    temp255-n = `showValueStateMessage`.
-    temp255-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluestatemessage ).
-    INSERT temp255 INTO TABLE temp254.
-    temp255-n = `visible`.
-    temp255-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp255 INTO TABLE temp254.
-    temp255-n = `fieldWidth`.
-    temp255-v = fieldwidth.
-    INSERT temp255 INTO TABLE temp254.
+    temp265-n = `placeholder`.
+    temp265-v = placeholder.
+    INSERT temp265 INTO TABLE temp264.
+    temp265-n = `mask`.
+    temp265-v = mask.
+    INSERT temp265 INTO TABLE temp264.
+    temp265-n = `name`.
+    temp265-v = name.
+    INSERT temp265 INTO TABLE temp264.
+    temp265-n = `textAlign`.
+    temp265-v = textalign.
+    INSERT temp265 INTO TABLE temp264.
+    temp265-n = `textDirection`.
+    temp265-v = textdirection.
+    INSERT temp265 INTO TABLE temp264.
+    temp265-n = `value`.
+    temp265-v = value.
+    INSERT temp265 INTO TABLE temp264.
+    temp265-n = `width`.
+    temp265-v = width.
+    INSERT temp265 INTO TABLE temp264.
+    temp265-n = `liveChange`.
+    temp265-v = livechange.
+    INSERT temp265 INTO TABLE temp264.
+    temp265-n = `change`.
+    temp265-v = change.
+    INSERT temp265 INTO TABLE temp264.
+    temp265-n = `valueState`.
+    temp265-v = valuestate.
+    INSERT temp265 INTO TABLE temp264.
+    temp265-n = `valueStateText`.
+    temp265-v = valuestatetext.
+    INSERT temp265 INTO TABLE temp264.
+    temp265-n = `placeholderSymbol`.
+    temp265-v = placeholdersymbol.
+    INSERT temp265 INTO TABLE temp264.
+    temp265-n = `required`.
+    temp265-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
+    INSERT temp265 INTO TABLE temp264.
+    temp265-n = `showClearIcon`.
+    temp265-v = z2ui5_cl_util=>boolean_abap_2_json( showclearicon ).
+    INSERT temp265 INTO TABLE temp264.
+    temp265-n = `showValueStateMessage`.
+    temp265-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluestatemessage ).
+    INSERT temp265 INTO TABLE temp264.
+    temp265-n = `visible`.
+    temp265-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp265 INTO TABLE temp264.
+    temp265-n = `fieldWidth`.
+    temp265-v = fieldwidth.
+    INSERT temp265 INTO TABLE temp264.
     _generic( name   = `MaskInput`
-              t_prop = temp254 ).
+              t_prop = temp264 ).
   ENDMETHOD.
 
   METHOD mask_input_rule.
-    DATA temp256 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp257 LIKE LINE OF temp256.
-    CLEAR temp256.
+    DATA temp266 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp267 LIKE LINE OF temp266.
+    CLEAR temp266.
     
-    temp257-n = `maskFormatSymbol`.
-    temp257-v = maskformatsymbol.
-    INSERT temp257 INTO TABLE temp256.
-    temp257-n = `regex`.
-    temp257-v = regex.
-    INSERT temp257 INTO TABLE temp256.
+    temp267-n = `maskFormatSymbol`.
+    temp267-v = maskformatsymbol.
+    INSERT temp267 INTO TABLE temp266.
+    temp267-n = `regex`.
+    temp267-v = regex.
+    INSERT temp267 INTO TABLE temp266.
     result = _generic( name   = `MaskInputRule`
-                       t_prop = temp256 ).
+                       t_prop = temp266 ).
   ENDMETHOD.
 
   METHOD master_pages.
@@ -10486,480 +10769,229 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD menu_button.
-    DATA temp258 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp259 LIKE LINE OF temp258.
-    CLEAR temp258.
-    
-    temp259-n = `buttonMode`.
-    temp259-v = buttonmode.
-    INSERT temp259 INTO TABLE temp258.
-    temp259-n = `defaultAction`.
-    temp259-v = defaultaction.
-    INSERT temp259 INTO TABLE temp258.
-    temp259-n = `text`.
-    temp259-v = text.
-    INSERT temp259 INTO TABLE temp258.
-    temp259-n = `enabled`.
-    temp259-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp259 INTO TABLE temp258.
-    temp259-n = `activeIcon`.
-    temp259-v = activeicon.
-    INSERT temp259 INTO TABLE temp258.
-    temp259-n = `type`.
-    temp259-v = type.
-    INSERT temp259 INTO TABLE temp258.
-    result = _generic( name   = `MenuButton`
-                       t_prop = temp258 ).
-  ENDMETHOD.
-
-  METHOD menu_item.
-    DATA temp260 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp261 LIKE LINE OF temp260.
-    result = me.
-    
-    CLEAR temp260.
-    
-    temp261-n = `press`.
-    temp261-v = press.
-    INSERT temp261 INTO TABLE temp260.
-    temp261-n = `text`.
-    temp261-v = text.
-    INSERT temp261 INTO TABLE temp260.
-    temp261-n = `icon`.
-    temp261-v = icon.
-    INSERT temp261 INTO TABLE temp260.
-    _generic( name   = `MenuItem`
-              t_prop = temp260 ).
-  ENDMETHOD.
-
-  METHOD message_item.
-    DATA temp262 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp263 LIKE LINE OF temp262.
-    CLEAR temp262.
-    
-    temp263-n = `type`.
-    temp263-v = type.
-    INSERT temp263 INTO TABLE temp262.
-    temp263-n = `title`.
-    temp263-v = title.
-    INSERT temp263 INTO TABLE temp262.
-    temp263-n = `subtitle`.
-    temp263-v = subtitle.
-    INSERT temp263 INTO TABLE temp262.
-    temp263-n = `description`.
-    temp263-v = description.
-    INSERT temp263 INTO TABLE temp262.
-    temp263-n = `longtextUrl`.
-    temp263-v = longtexturl.
-    INSERT temp263 INTO TABLE temp262.
-    temp263-n = `textDirection`.
-    temp263-v = textdirection.
-    INSERT temp263 INTO TABLE temp262.
-    temp263-n = `groupName`.
-    temp263-v = groupname.
-    INSERT temp263 INTO TABLE temp262.
-    temp263-n = `activeTitle`.
-    temp263-v = z2ui5_cl_util=>boolean_abap_2_json( activetitle ).
-    INSERT temp263 INTO TABLE temp262.
-    temp263-n = `counter`.
-    temp263-v = counter.
-    INSERT temp263 INTO TABLE temp262.
-    temp263-n = `markupDescription`.
-    temp263-v = z2ui5_cl_util=>boolean_abap_2_json( markupdescription ).
-    INSERT temp263 INTO TABLE temp262.
-    result = _generic(
-        name   = `MessageItem`
-        t_prop = temp262 ).
-  ENDMETHOD.
-
-  METHOD message_page.
-    DATA temp264 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp265 LIKE LINE OF temp264.
-    CLEAR temp264.
-    
-    temp265-n = `showHeader`.
-    temp265-v = z2ui5_cl_util=>boolean_abap_2_json( show_header ).
-    INSERT temp265 INTO TABLE temp264.
-    temp265-n = `description`.
-    temp265-v = description.
-    INSERT temp265 INTO TABLE temp264.
-    temp265-n = `icon`.
-    temp265-v = icon.
-    INSERT temp265 INTO TABLE temp264.
-    temp265-n = `text`.
-    temp265-v = text.
-    INSERT temp265 INTO TABLE temp264.
-    temp265-n = `enableFormattedText`.
-    temp265-v = z2ui5_cl_util=>boolean_abap_2_json( enableformattedtext ).
-    INSERT temp265 INTO TABLE temp264.
-    result = _generic(
-                 name   = `MessagePage`
-                 t_prop = temp264 ).
-  ENDMETHOD.
-
-  METHOD message_popover.
-    DATA temp266 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp267 LIKE LINE OF temp266.
-    CLEAR temp266.
-    
-    temp267-n = `items`.
-    temp267-v = items.
-    INSERT temp267 INTO TABLE temp266.
-    temp267-n = `activeTitlePress`.
-    temp267-v = activetitlepress.
-    INSERT temp267 INTO TABLE temp266.
-    temp267-n = `placement`.
-    temp267-v = placement.
-    INSERT temp267 INTO TABLE temp266.
-    temp267-n = `listSelect`.
-    temp267-v = listselect.
-    INSERT temp267 INTO TABLE temp266.
-    temp267-n = `afterClose`.
-    temp267-v = afterclose.
-    INSERT temp267 INTO TABLE temp266.
-    temp267-n = `beforeClose`.
-    temp267-v = beforeclose.
-    INSERT temp267 INTO TABLE temp266.
-    temp267-n = `initiallyExpanded`.
-    temp267-v = z2ui5_cl_util=>boolean_abap_2_json( initiallyexpanded ).
-    INSERT temp267 INTO TABLE temp266.
-    temp267-n = `groupItems`.
-    temp267-v = z2ui5_cl_util=>boolean_abap_2_json( groupitems ).
-    INSERT temp267 INTO TABLE temp266.
-    result = _generic(
-        name   = `MessagePopover`
-        t_prop = temp266 ).
-  ENDMETHOD.
-
-  METHOD message_strip.
     DATA temp268 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp269 LIKE LINE OF temp268.
-    result = me.
-    
     CLEAR temp268.
     
+    temp269-n = `buttonMode`.
+    temp269-v = buttonmode.
+    INSERT temp269 INTO TABLE temp268.
+    temp269-n = `defaultAction`.
+    temp269-v = defaultaction.
+    INSERT temp269 INTO TABLE temp268.
     temp269-n = `text`.
     temp269-v = text.
+    INSERT temp269 INTO TABLE temp268.
+    temp269-n = `enabled`.
+    temp269-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp269 INTO TABLE temp268.
+    temp269-n = `activeIcon`.
+    temp269-v = activeicon.
     INSERT temp269 INTO TABLE temp268.
     temp269-n = `type`.
     temp269-v = type.
     INSERT temp269 INTO TABLE temp268.
-    temp269-n = `showIcon`.
-    temp269-v = z2ui5_cl_util=>boolean_abap_2_json( showicon ).
-    INSERT temp269 INTO TABLE temp268.
-    temp269-n = `customIcon`.
-    temp269-v = customicon.
-    INSERT temp269 INTO TABLE temp268.
-    temp269-n = `visible`.
-    temp269-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp269 INTO TABLE temp268.
-    temp269-n = `showCloseButton`.
-    temp269-v = z2ui5_cl_util=>boolean_abap_2_json( showclosebutton ).
-    INSERT temp269 INTO TABLE temp268.
-    temp269-n = `class`.
-    temp269-v = class.
-    INSERT temp269 INTO TABLE temp268.
-    temp269-n = `enableFormattedText`.
-    temp269-v = z2ui5_cl_util=>boolean_abap_2_json( enableformattedtext ).
-    INSERT temp269 INTO TABLE temp268.
-    _generic(
-        name   = `MessageStrip`
-        t_prop = temp268 ).
+    result = _generic( name   = `MenuButton`
+                       t_prop = temp268 ).
   ENDMETHOD.
 
-  METHOD message_view.
-
+  METHOD menu_item.
     DATA temp270 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp271 LIKE LINE OF temp270.
+    result = me.
+    
     CLEAR temp270.
     
-    temp271-n = `items`.
-    temp271-v = items.
+    temp271-n = `press`.
+    temp271-v = press.
     INSERT temp271 INTO TABLE temp270.
-    temp271-n = `groupItems`.
-    temp271-v = z2ui5_cl_util=>boolean_abap_2_json( groupitems ).
+    temp271-n = `text`.
+    temp271-v = text.
     INSERT temp271 INTO TABLE temp270.
-    result = _generic( name   = `MessageView`
-                       t_prop = temp270 ).
+    temp271-n = `icon`.
+    temp271-v = icon.
+    INSERT temp271 INTO TABLE temp270.
+    _generic( name   = `MenuItem`
+              t_prop = temp270 ).
   ENDMETHOD.
 
-  METHOD micro_process_flow.
+  METHOD message_item.
     DATA temp272 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp273 LIKE LINE OF temp272.
     CLEAR temp272.
     
-    temp273-n = `id`.
-    temp273-v = id.
+    temp273-n = `type`.
+    temp273-v = type.
     INSERT temp273 INTO TABLE temp272.
-    temp273-n = `class`.
-    temp273-v = class.
+    temp273-n = `title`.
+    temp273-v = title.
     INSERT temp273 INTO TABLE temp272.
-    temp273-n = `renderType`.
-    temp273-v = rendertype.
+    temp273-n = `subtitle`.
+    temp273-v = subtitle.
     INSERT temp273 INTO TABLE temp272.
-    temp273-n = `width`.
-    temp273-v = width.
+    temp273-n = `description`.
+    temp273-v = description.
     INSERT temp273 INTO TABLE temp272.
-    temp273-n = `ariaLabel`.
-    temp273-v = arialabel.
+    temp273-n = `longtextUrl`.
+    temp273-v = longtexturl.
     INSERT temp273 INTO TABLE temp272.
-    result = _generic( name   = `MicroProcessFlow`
-                       ns     = `commons`
-                       t_prop = temp272 ).
+    temp273-n = `textDirection`.
+    temp273-v = textdirection.
+    INSERT temp273 INTO TABLE temp272.
+    temp273-n = `groupName`.
+    temp273-v = groupname.
+    INSERT temp273 INTO TABLE temp272.
+    temp273-n = `activeTitle`.
+    temp273-v = z2ui5_cl_util=>boolean_abap_2_json( activetitle ).
+    INSERT temp273 INTO TABLE temp272.
+    temp273-n = `counter`.
+    temp273-v = counter.
+    INSERT temp273 INTO TABLE temp272.
+    temp273-n = `markupDescription`.
+    temp273-v = z2ui5_cl_util=>boolean_abap_2_json( markupdescription ).
+    INSERT temp273 INTO TABLE temp272.
+    result = _generic(
+        name   = `MessageItem`
+        t_prop = temp272 ).
   ENDMETHOD.
 
-  METHOD micro_process_flow_item.
+  METHOD message_page.
     DATA temp274 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp275 LIKE LINE OF temp274.
     CLEAR temp274.
     
-    temp275-n = `id`.
-    temp275-v = id.
+    temp275-n = `showHeader`.
+    temp275-v = z2ui5_cl_util=>boolean_abap_2_json( show_header ).
     INSERT temp275 INTO TABLE temp274.
-    temp275-n = `class`.
-    temp275-v = class.
-    INSERT temp275 INTO TABLE temp274.
-    temp275-n = `press`.
-    temp275-v = press.
-    INSERT temp275 INTO TABLE temp274.
-    temp275-n = `title`.
-    temp275-v = title.
-    INSERT temp275 INTO TABLE temp274.
-    temp275-n = `stepWidth`.
-    temp275-v = stepwidth.
-    INSERT temp275 INTO TABLE temp274.
-    temp275-n = `state`.
-    temp275-v = state.
-    INSERT temp275 INTO TABLE temp274.
-    temp275-n = `key`.
-    temp275-v = key.
+    temp275-n = `description`.
+    temp275-v = description.
     INSERT temp275 INTO TABLE temp274.
     temp275-n = `icon`.
     temp275-v = icon.
     INSERT temp275 INTO TABLE temp274.
-    temp275-n = `showSeparator`.
-    temp275-v = z2ui5_cl_util=>boolean_abap_2_json( showseparator ).
+    temp275-n = `text`.
+    temp275-v = text.
     INSERT temp275 INTO TABLE temp274.
-    temp275-n = `showIntermediary`.
-    temp275-v = z2ui5_cl_util=>boolean_abap_2_json( showintermediary ).
+    temp275-n = `enableFormattedText`.
+    temp275-v = z2ui5_cl_util=>boolean_abap_2_json( enableformattedtext ).
     INSERT temp275 INTO TABLE temp274.
     result = _generic(
-        name   = `MicroProcessFlowItem`
-        ns     = `commons`
-        t_prop = temp274 ).
+                 name   = `MessagePage`
+                 t_prop = temp274 ).
   ENDMETHOD.
 
-  METHOD mid_column_pages.
-
+  METHOD message_popover.
     DATA temp276 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp277 LIKE LINE OF temp276.
     CLEAR temp276.
     
-    temp277-n = `id`.
-    temp277-v = id.
+    temp277-n = `items`.
+    temp277-v = items.
     INSERT temp277 INTO TABLE temp276.
-    result = _generic( name   = `midColumnPages`
-                       ns     = `f`
-                       t_prop = temp276 ).
-
+    temp277-n = `activeTitlePress`.
+    temp277-v = activetitlepress.
+    INSERT temp277 INTO TABLE temp276.
+    temp277-n = `placement`.
+    temp277-v = placement.
+    INSERT temp277 INTO TABLE temp276.
+    temp277-n = `listSelect`.
+    temp277-v = listselect.
+    INSERT temp277 INTO TABLE temp276.
+    temp277-n = `afterClose`.
+    temp277-v = afterclose.
+    INSERT temp277 INTO TABLE temp276.
+    temp277-n = `beforeClose`.
+    temp277-v = beforeclose.
+    INSERT temp277 INTO TABLE temp276.
+    temp277-n = `initiallyExpanded`.
+    temp277-v = z2ui5_cl_util=>boolean_abap_2_json( initiallyexpanded ).
+    INSERT temp277 INTO TABLE temp276.
+    temp277-n = `groupItems`.
+    temp277-v = z2ui5_cl_util=>boolean_abap_2_json( groupitems ).
+    INSERT temp277 INTO TABLE temp276.
+    result = _generic(
+        name   = `MessagePopover`
+        t_prop = temp276 ).
   ENDMETHOD.
 
-  METHOD multi_combobox.
+  METHOD message_strip.
     DATA temp278 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp279 LIKE LINE OF temp278.
+    result = me.
+    
     CLEAR temp278.
     
-    temp279-n = `selectionChange`.
-    temp279-v = selectionchange.
+    temp279-n = `text`.
+    temp279-v = text.
     INSERT temp279 INTO TABLE temp278.
-    temp279-n = `selectedKeys`.
-    temp279-v = selectedkeys.
+    temp279-n = `type`.
+    temp279-v = type.
     INSERT temp279 INTO TABLE temp278.
-    temp279-n = `selectedItems`.
-    temp279-v = selecteditems.
+    temp279-n = `showIcon`.
+    temp279-v = z2ui5_cl_util=>boolean_abap_2_json( showicon ).
     INSERT temp279 INTO TABLE temp278.
-    temp279-n = `items`.
-    temp279-v = items.
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `id`.
-    temp279-v = id.
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `class`.
-    temp279-v = class.
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `selectionFinish`.
-    temp279-v = selectionfinish.
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `width`.
-    temp279-v = width.
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `showSecondaryValues`.
-    temp279-v = z2ui5_cl_util=>boolean_abap_2_json( showsecondaryvalues ).
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `placeholder`.
-    temp279-v = placeholder.
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `selectedItemId`.
-    temp279-v = selecteditemid.
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `selectedKey`.
-    temp279-v = selectedkey.
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `name`.
-    temp279-v = name.
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `value`.
-    temp279-v = value.
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `valueState`.
-    temp279-v = valuestate.
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `valueStateText`.
-    temp279-v = valuestatetext.
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `textAlign`.
-    temp279-v = textalign.
+    temp279-n = `customIcon`.
+    temp279-v = customicon.
     INSERT temp279 INTO TABLE temp278.
     temp279-n = `visible`.
     temp279-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp279 INTO TABLE temp278.
-    temp279-n = `showValueStateMessage`.
-    temp279-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluestatemessage ).
+    temp279-n = `showCloseButton`.
+    temp279-v = z2ui5_cl_util=>boolean_abap_2_json( showclosebutton ).
     INSERT temp279 INTO TABLE temp278.
-    temp279-n = `showClearIcon`.
-    temp279-v = z2ui5_cl_util=>boolean_abap_2_json( showclearicon ).
+    temp279-n = `class`.
+    temp279-v = class.
     INSERT temp279 INTO TABLE temp278.
-    temp279-n = `showButton`.
-    temp279-v = z2ui5_cl_util=>boolean_abap_2_json( showbutton ).
+    temp279-n = `enableFormattedText`.
+    temp279-v = z2ui5_cl_util=>boolean_abap_2_json( enableformattedtext ).
     INSERT temp279 INTO TABLE temp278.
-    temp279-n = `required`.
-    temp279-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `editable`.
-    temp279-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `enabled`.
-    temp279-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `filterSecondaryValues`.
-    temp279-v = z2ui5_cl_util=>boolean_abap_2_json( filtersecondaryvalues ).
-    INSERT temp279 INTO TABLE temp278.
-    temp279-n = `showSelectAll`.
-    temp279-v = showselectall.
-    INSERT temp279 INTO TABLE temp278.
-    result = _generic(
-        name   = `MultiComboBox`
+    _generic(
+        name   = `MessageStrip`
         t_prop = temp278 ).
   ENDMETHOD.
 
-  METHOD multi_input.
+  METHOD message_view.
+
     DATA temp280 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp281 LIKE LINE OF temp280.
     CLEAR temp280.
     
-    temp281-n = `tokens`.
-    temp281-v = tokens.
+    temp281-n = `items`.
+    temp281-v = items.
     INSERT temp281 INTO TABLE temp280.
-    temp281-n = `showClearIcon`.
-    temp281-v = z2ui5_cl_util=>boolean_abap_2_json( showclearicon ).
+    temp281-n = `groupItems`.
+    temp281-v = z2ui5_cl_util=>boolean_abap_2_json( groupitems ).
     INSERT temp281 INTO TABLE temp280.
-    temp281-n = `name`.
-    temp281-v = name.
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `showValueHelp`.
-    temp281-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluehelp ).
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `enabled`.
-    temp281-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `suggestionItems`.
-    temp281-v = suggestionitems.
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `tokenUpdate`.
-    temp281-v = tokenupdate.
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `submit`.
-    temp281-v = submit.
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `width`.
-    temp281-v = width.
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `value`.
-    temp281-v = value.
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `id`.
-    temp281-v = id.
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `change`.
-    temp281-v = change.
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `valueHelpRequest`.
-    temp281-v = valuehelprequest.
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `class`.
-    temp281-v = class.
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `visible`.
-    temp281-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `required`.
-    temp281-v = required.
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `valueState`.
-    temp281-v = valuestate.
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `valueStateText`.
-    temp281-v = valuestatetext.
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `placeholder`.
-    temp281-v = placeholder.
-    INSERT temp281 INTO TABLE temp280.
-    temp281-n = `showSuggestion`.
-    temp281-v = z2ui5_cl_util=>boolean_abap_2_json( showsuggestion ).
-    INSERT temp281 INTO TABLE temp280.
-    result = _generic(
-        name   = `MultiInput`
-        t_prop = temp280 ).
+    result = _generic( name   = `MessageView`
+                       t_prop = temp280 ).
   ENDMETHOD.
 
-  METHOD navigation_actions.
-    result = _generic( name = `navigationActions`
-                       ns   = `f` ).
-  ENDMETHOD.
-
-  METHOD nav_container.
-
+  METHOD micro_process_flow.
     DATA temp282 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp283 LIKE LINE OF temp282.
     CLEAR temp282.
     
-    temp283-n = `initialPage`.
-    temp283-v = initialpage.
-    INSERT temp283 INTO TABLE temp282.
     temp283-n = `id`.
     temp283-v = id.
     INSERT temp283 INTO TABLE temp282.
-    temp283-n = `height`.
-    temp283-v = height.
+    temp283-n = `class`.
+    temp283-v = class.
+    INSERT temp283 INTO TABLE temp282.
+    temp283-n = `renderType`.
+    temp283-v = rendertype.
     INSERT temp283 INTO TABLE temp282.
     temp283-n = `width`.
     temp283-v = width.
     INSERT temp283 INTO TABLE temp282.
-    temp283-n = `autoFocus`.
-    temp283-v = z2ui5_cl_util=>boolean_abap_2_json( autofocus ).
+    temp283-n = `ariaLabel`.
+    temp283-v = arialabel.
     INSERT temp283 INTO TABLE temp282.
-    temp283-n = `visible`.
-    temp283-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp283 INTO TABLE temp282.
-    temp283-n = `defaultTransitionName`.
-    temp283-v = defaulttransitionname.
-    INSERT temp283 INTO TABLE temp282.
-    result = _generic( name   = `NavContainer`
+    result = _generic( name   = `MicroProcessFlow`
+                       ns     = `commons`
                        t_prop = temp282 ).
-
   ENDMETHOD.
 
-  METHOD network_graph.
+  METHOD micro_process_flow_item.
     DATA temp284 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp285 LIKE LINE OF temp284.
     CLEAR temp284.
@@ -10970,82 +11002,38 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp285-n = `class`.
     temp285-v = class.
     INSERT temp285 INTO TABLE temp284.
-    temp285-n = `layout`.
-    temp285-v = layout.
+    temp285-n = `press`.
+    temp285-v = press.
     INSERT temp285 INTO TABLE temp284.
-    temp285-n = `height`.
-    temp285-v = height.
+    temp285-n = `title`.
+    temp285-v = title.
     INSERT temp285 INTO TABLE temp284.
-    temp285-n = `width`.
-    temp285-v = width.
+    temp285-n = `stepWidth`.
+    temp285-v = stepwidth.
     INSERT temp285 INTO TABLE temp284.
-    temp285-n = `nodes`.
-    temp285-v = nodes.
+    temp285-n = `state`.
+    temp285-v = state.
     INSERT temp285 INTO TABLE temp284.
-    temp285-n = `lines`.
-    temp285-v = lines.
+    temp285-n = `key`.
+    temp285-v = key.
     INSERT temp285 INTO TABLE temp284.
-    temp285-n = `groups`.
-    temp285-v = groups.
+    temp285-n = `icon`.
+    temp285-v = icon.
     INSERT temp285 INTO TABLE temp284.
-    temp285-n = `backgroundColor`.
-    temp285-v = backgroundcolor.
+    temp285-n = `showSeparator`.
+    temp285-v = z2ui5_cl_util=>boolean_abap_2_json( showseparator ).
     INSERT temp285 INTO TABLE temp284.
-    temp285-n = `backgroundImage`.
-    temp285-v = backgroundimage.
+    temp285-n = `showIntermediary`.
+    temp285-v = z2ui5_cl_util=>boolean_abap_2_json( showintermediary ).
     INSERT temp285 INTO TABLE temp284.
-    temp285-n = `noDataText`.
-    temp285-v = nodatatext.
-    INSERT temp285 INTO TABLE temp284.
-    temp285-n = `orientation`.
-    temp285-v = orientation.
-    INSERT temp285 INTO TABLE temp284.
-    temp285-n = `renderType`.
-    temp285-v = rendertype.
-    INSERT temp285 INTO TABLE temp284.
-    temp285-n = `afterLayouting`.
-    temp285-v = afterlayouting.
-    INSERT temp285 INTO TABLE temp284.
-    temp285-n = `beforeLayouting`.
-    temp285-v = beforelayouting.
-    INSERT temp285 INTO TABLE temp284.
-    temp285-n = `failure`.
-    temp285-v = failure.
-    INSERT temp285 INTO TABLE temp284.
-    temp285-n = `graphReady`.
-    temp285-v = graphready.
-    INSERT temp285 INTO TABLE temp284.
-    temp285-n = `search`.
-    temp285-v = search.
-    INSERT temp285 INTO TABLE temp284.
-    temp285-n = `searchSuggest`.
-    temp285-v = searchsuggest.
-    INSERT temp285 INTO TABLE temp284.
-    temp285-n = `selectionChange`.
-    temp285-v = selectionchange.
-    INSERT temp285 INTO TABLE temp284.
-    temp285-n = `zoomChanged`.
-    temp285-v = zoomchanged.
-    INSERT temp285 INTO TABLE temp284.
-    temp285-n = `enableWheelZoom`.
-    temp285-v = z2ui5_cl_util=>boolean_abap_2_json( enablewheelzoom ).
-    INSERT temp285 INTO TABLE temp284.
-    temp285-n = `enableZoom`.
-    temp285-v = z2ui5_cl_util=>boolean_abap_2_json( enablezoom ).
-    INSERT temp285 INTO TABLE temp284.
-    temp285-n = `noData`.
-    temp285-v = z2ui5_cl_util=>boolean_abap_2_json( nodata ).
-    INSERT temp285 INTO TABLE temp284.
-    temp285-n = `visible`.
-    temp285-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp285 INTO TABLE temp284.
-    result = _generic( name   = `Graph`
-                       ns     = `networkgraph`
-                       t_prop = temp284 ).
-
+    result = _generic(
+        name   = `MicroProcessFlowItem`
+        ns     = `commons`
+        t_prop = temp284 ).
   ENDMETHOD.
 
-  METHOD node.
+  METHOD mid_column_pages.
+
     DATA temp286 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp287 LIKE LINE OF temp286.
     CLEAR temp286.
@@ -11053,327 +11041,208 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp287-n = `id`.
     temp287-v = id.
     INSERT temp287 INTO TABLE temp286.
-    temp287-n = `class`.
-    temp287-v = class.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `altText`.
-    temp287-v = alttext.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `coreNodeSize`.
-    temp287-v = corenodesize.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `description`.
-    temp287-v = description.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `descriptionLineSize`.
-    temp287-v = descriptionlinesize.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `group`.
-    temp287-v = group.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `headerCheckBoxState`.
-    temp287-v = headercheckboxstate.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `height`.
-    temp287-v = height.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `icon`.
-    temp287-v = icon.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `iconSize`.
-    temp287-v = iconsize.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `iconSize`.
-    temp287-v = iconsize.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `key`.
-    temp287-v = key.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `maxWidth`.
-    temp287-v = maxwidth.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `title`.
-    temp287-v = title.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `shape`.
-    temp287-v = shape.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `statusIcon`.
-    temp287-v = statusicon.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `titleLineSize`.
-    temp287-v = titlelinesize.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `width`.
-    temp287-v = width.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `x`.
-    temp287-v = x.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `y`.
-    temp287-v = y.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `attributes`.
-    temp287-v = attributes.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `actionButtons`.
-    temp287-v = actionbuttons.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `collapseExpand`.
-    temp287-v = collapseexpand.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `headerCheckBoxPress`.
-    temp287-v = headercheckboxpress.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `hover`.
-    temp287-v = hover.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `press`.
-    temp287-v = press.
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `collapsed`.
-    temp287-v = z2ui5_cl_util=>boolean_abap_2_json( collapsed ).
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `selected`.
-    temp287-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `showActionLinksButton`.
-    temp287-v = z2ui5_cl_util=>boolean_abap_2_json( showactionlinksbutton ).
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `showDetailButton`.
-    temp287-v = z2ui5_cl_util=>boolean_abap_2_json( showdetailbutton ).
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `showExpandButton`.
-    temp287-v = z2ui5_cl_util=>boolean_abap_2_json( showexpandbutton ).
-    INSERT temp287 INTO TABLE temp286.
-    temp287-n = `visible`.
-    temp287-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp287 INTO TABLE temp286.
-    result = _generic(
-        name   = `Node`
-        ns     = `networkgraph`
-        t_prop = temp286 ).
+    result = _generic( name   = `midColumnPages`
+                       ns     = `f`
+                       t_prop = temp286 ).
 
   ENDMETHOD.
 
-  METHOD nodes.
-    result = _generic( name = `nodes`
-                       ns   = ns ).
-  ENDMETHOD.
-
-  METHOD node_image.
+  METHOD multi_combobox.
     DATA temp288 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp289 LIKE LINE OF temp288.
     CLEAR temp288.
     
+    temp289-n = `selectionChange`.
+    temp289-v = selectionchange.
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `selectedKeys`.
+    temp289-v = selectedkeys.
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `selectedItems`.
+    temp289-v = selecteditems.
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `items`.
+    temp289-v = items.
+    INSERT temp289 INTO TABLE temp288.
     temp289-n = `id`.
     temp289-v = id.
     INSERT temp289 INTO TABLE temp288.
     temp289-n = `class`.
     temp289-v = class.
     INSERT temp289 INTO TABLE temp288.
-    temp289-n = `height`.
-    temp289-v = height.
+    temp289-n = `selectionFinish`.
+    temp289-v = selectionfinish.
     INSERT temp289 INTO TABLE temp288.
     temp289-n = `width`.
     temp289-v = width.
     INSERT temp289 INTO TABLE temp288.
-    temp289-n = `src`.
-    temp289-v = src.
+    temp289-n = `showSecondaryValues`.
+    temp289-v = z2ui5_cl_util=>boolean_abap_2_json( showsecondaryvalues ).
     INSERT temp289 INTO TABLE temp288.
-    result = _generic( name   = `NodeImage`
-                       ns     = `networkgraph`
-                       t_prop = temp288 ).
+    temp289-n = `placeholder`.
+    temp289-v = placeholder.
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `selectedItemId`.
+    temp289-v = selecteditemid.
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `selectedKey`.
+    temp289-v = selectedkey.
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `name`.
+    temp289-v = name.
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `value`.
+    temp289-v = value.
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `valueState`.
+    temp289-v = valuestate.
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `valueStateText`.
+    temp289-v = valuestatetext.
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `textAlign`.
+    temp289-v = textalign.
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `visible`.
+    temp289-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `showValueStateMessage`.
+    temp289-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluestatemessage ).
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `showClearIcon`.
+    temp289-v = z2ui5_cl_util=>boolean_abap_2_json( showclearicon ).
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `showButton`.
+    temp289-v = z2ui5_cl_util=>boolean_abap_2_json( showbutton ).
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `required`.
+    temp289-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `editable`.
+    temp289-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `enabled`.
+    temp289-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `filterSecondaryValues`.
+    temp289-v = z2ui5_cl_util=>boolean_abap_2_json( filtersecondaryvalues ).
+    INSERT temp289 INTO TABLE temp288.
+    temp289-n = `showSelectAll`.
+    temp289-v = showselectall.
+    INSERT temp289 INTO TABLE temp288.
+    result = _generic(
+        name   = `MultiComboBox`
+        t_prop = temp288 ).
   ENDMETHOD.
 
-  METHOD noop_layout.
-    result = _generic( name = `NoopLayout`
-                       ns   = `nglayout` ).
-  ENDMETHOD.
-
-  METHOD notification_list.
+  METHOD multi_input.
     DATA temp290 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp291 LIKE LINE OF temp290.
     CLEAR temp290.
     
-    temp291-n = `id`.
-    temp291-v = id.
+    temp291-n = `tokens`.
+    temp291-v = tokens.
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `class`.
-    temp291-v = class.
+    temp291-n = `showClearIcon`.
+    temp291-v = z2ui5_cl_util=>boolean_abap_2_json( showclearicon ).
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `footerText`.
-    temp291-v = footertext.
+    temp291-n = `name`.
+    temp291-v = name.
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `growingDirection`.
-    temp291-v = growingdirection.
+    temp291-n = `showValueHelp`.
+    temp291-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluehelp ).
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `growingThreshold`.
-    temp291-v = growingthreshold.
+    temp291-n = `enabled`.
+    temp291-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `growingTriggerText`.
-    temp291-v = growingtriggertext.
+    temp291-n = `suggestionItems`.
+    temp291-v = suggestionitems.
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `headerLevel`.
-    temp291-v = headerlevel.
+    temp291-n = `tokenUpdate`.
+    temp291-v = tokenupdate.
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `headerText`.
-    temp291-v = headertext.
-    INSERT temp291 INTO TABLE temp290.
-    temp291-n = `keyboardMode`.
-    temp291-v = keyboardmode.
-    INSERT temp291 INTO TABLE temp290.
-    temp291-n = `mode`.
-    temp291-v = mode.
-    INSERT temp291 INTO TABLE temp290.
-    temp291-n = `multiSelectMode`.
-    temp291-v = multiselectmode.
-    INSERT temp291 INTO TABLE temp290.
-    temp291-n = `noDataText`.
-    temp291-v = nodatatext.
-    INSERT temp291 INTO TABLE temp290.
-    temp291-n = `sticky`.
-    temp291-v = sticky.
-    INSERT temp291 INTO TABLE temp290.
-    temp291-n = `swipeDirection`.
-    temp291-v = swipedirection.
+    temp291-n = `submit`.
+    temp291-v = submit.
     INSERT temp291 INTO TABLE temp290.
     temp291-n = `width`.
     temp291-v = width.
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `showSeparators`.
-    temp291-v = showseparators.
+    temp291-n = `value`.
+    temp291-v = value.
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `beforeOpenContextMenu`.
-    temp291-v = beforeopencontextmenu.
+    temp291-n = `id`.
+    temp291-v = id.
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `delete`.
-    temp291-v = delete.
+    temp291-n = `change`.
+    temp291-v = change.
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `growingFinished`.
-    temp291-v = growingfinished.
+    temp291-n = `valueHelpRequest`.
+    temp291-v = valuehelprequest.
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `growingStarted`.
-    temp291-v = growingstarted.
-    INSERT temp291 INTO TABLE temp290.
-    temp291-n = `itemPress`.
-    temp291-v = itempress.
-    INSERT temp291 INTO TABLE temp290.
-    temp291-n = `select`.
-    temp291-v = select.
-    INSERT temp291 INTO TABLE temp290.
-    temp291-n = `selectionChange`.
-    temp291-v = selectionchange.
-    INSERT temp291 INTO TABLE temp290.
-    temp291-n = `swipe`.
-    temp291-v = swipe.
-    INSERT temp291 INTO TABLE temp290.
-    temp291-n = `updateFinished`.
-    temp291-v = updatefinished.
-    INSERT temp291 INTO TABLE temp290.
-    temp291-n = `updateStarted`.
-    temp291-v = updatestarted.
-    INSERT temp291 INTO TABLE temp290.
-    temp291-n = `growingScrollToLoad`.
-    temp291-v = z2ui5_cl_util=>boolean_abap_2_json( growingscrolltoload ).
+    temp291-n = `class`.
+    temp291-v = class.
     INSERT temp291 INTO TABLE temp290.
     temp291-n = `visible`.
     temp291-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `growing`.
-    temp291-v = z2ui5_cl_util=>boolean_abap_2_json( growing ).
+    temp291-n = `required`.
+    temp291-v = required.
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `includeItemInSelection`.
-    temp291-v = z2ui5_cl_util=>boolean_abap_2_json( includeiteminselection ).
+    temp291-n = `valueState`.
+    temp291-v = valuestate.
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `inset`.
-    temp291-v = z2ui5_cl_util=>boolean_abap_2_json( inset ).
+    temp291-n = `valueStateText`.
+    temp291-v = valuestatetext.
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `modeAnimationOn`.
-    temp291-v = z2ui5_cl_util=>boolean_abap_2_json( modeanimationon ).
+    temp291-n = `placeholder`.
+    temp291-v = placeholder.
     INSERT temp291 INTO TABLE temp290.
-    temp291-n = `rememberSelections`.
-    temp291-v = z2ui5_cl_util=>boolean_abap_2_json( rememberselections ).
-    INSERT temp291 INTO TABLE temp290.
-    temp291-n = `showNoData`.
-    temp291-v = z2ui5_cl_util=>boolean_abap_2_json( shownodata ).
-    INSERT temp291 INTO TABLE temp290.
-    temp291-n = `showUnread`.
-    temp291-v = z2ui5_cl_util=>boolean_abap_2_json( showunread ).
+    temp291-n = `showSuggestion`.
+    temp291-v = z2ui5_cl_util=>boolean_abap_2_json( showsuggestion ).
     INSERT temp291 INTO TABLE temp290.
     result = _generic(
-        name   = `NotificationList`
+        name   = `MultiInput`
         t_prop = temp290 ).
   ENDMETHOD.
 
-  METHOD notification_list_group.
+  METHOD navigation_actions.
+    result = _generic( name = `navigationActions`
+                       ns   = `f` ).
+  ENDMETHOD.
+
+  METHOD nav_container.
+
     DATA temp292 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp293 LIKE LINE OF temp292.
     CLEAR temp292.
     
+    temp293-n = `initialPage`.
+    temp293-v = initialpage.
+    INSERT temp293 INTO TABLE temp292.
     temp293-n = `id`.
     temp293-v = id.
     INSERT temp293 INTO TABLE temp292.
-    temp293-n = `class`.
-    temp293-v = class.
+    temp293-n = `height`.
+    temp293-v = height.
     INSERT temp293 INTO TABLE temp292.
-    temp293-n = `highlight`.
-    temp293-v = highlight.
+    temp293-n = `width`.
+    temp293-v = width.
     INSERT temp293 INTO TABLE temp292.
-    temp293-n = `highlightText`.
-    temp293-v = highlighttext.
-    INSERT temp293 INTO TABLE temp292.
-    temp293-n = `priority`.
-    temp293-v = priority.
-    INSERT temp293 INTO TABLE temp292.
-    temp293-n = `title`.
-    temp293-v = title.
-    INSERT temp293 INTO TABLE temp292.
-    temp293-n = `type`.
-    temp293-v = type.
-    INSERT temp293 INTO TABLE temp292.
-    temp293-n = `onCollapse`.
-    temp293-v = oncollapse.
+    temp293-n = `autoFocus`.
+    temp293-v = z2ui5_cl_util=>boolean_abap_2_json( autofocus ).
     INSERT temp293 INTO TABLE temp292.
     temp293-n = `visible`.
     temp293-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp293 INTO TABLE temp292.
-    temp293-n = `autoPriority`.
-    temp293-v = z2ui5_cl_util=>boolean_abap_2_json( autopriority ).
+    temp293-n = `defaultTransitionName`.
+    temp293-v = defaulttransitionname.
     INSERT temp293 INTO TABLE temp292.
-    temp293-n = `collapsed`.
-    temp293-v = z2ui5_cl_util=>boolean_abap_2_json( collapsed ).
-    INSERT temp293 INTO TABLE temp292.
-    temp293-n = `enableCollapseButtonWhenEmpty`.
-    temp293-v = z2ui5_cl_util=>boolean_abap_2_json( enablecollapsebuttonwhenempty ).
-    INSERT temp293 INTO TABLE temp292.
-    temp293-n = `navigated`.
-    temp293-v = z2ui5_cl_util=>boolean_abap_2_json( navigated ).
-    INSERT temp293 INTO TABLE temp292.
-    temp293-n = `selected`.
-    temp293-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
-    INSERT temp293 INTO TABLE temp292.
-    temp293-n = `showButtons`.
-    temp293-v = z2ui5_cl_util=>boolean_abap_2_json( showbuttons ).
-    INSERT temp293 INTO TABLE temp292.
-    temp293-n = `showCloseButton`.
-    temp293-v = z2ui5_cl_util=>boolean_abap_2_json( showclosebutton ).
-    INSERT temp293 INTO TABLE temp292.
-    temp293-n = `showEmptyGroup`.
-    temp293-v = z2ui5_cl_util=>boolean_abap_2_json( showemptygroup ).
-    INSERT temp293 INTO TABLE temp292.
-    temp293-n = `showItemsCounter`.
-    temp293-v = z2ui5_cl_util=>boolean_abap_2_json( showitemscounter ).
-    INSERT temp293 INTO TABLE temp292.
-    temp293-n = `unread`.
-    temp293-v = z2ui5_cl_util=>boolean_abap_2_json( unread ).
-    INSERT temp293 INTO TABLE temp292.
-    result = _generic(
-                 name   = `NotificationListGroup`
-                 t_prop = temp292 ).
+    result = _generic( name   = `NavContainer`
+                       t_prop = temp292 ).
+
   ENDMETHOD.
 
-  METHOD notification_list_item.
+  METHOD network_graph.
     DATA temp294 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp295 LIKE LINE OF temp294.
     CLEAR temp294.
@@ -11384,153 +11253,198 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp295-n = `class`.
     temp295-v = class.
     INSERT temp295 INTO TABLE temp294.
-    temp295-n = `authorAvatarColor`.
-    temp295-v = authoravatarcolor.
+    temp295-n = `layout`.
+    temp295-v = layout.
     INSERT temp295 INTO TABLE temp294.
-    temp295-n = `authorInitials`.
-    temp295-v = authorinitials.
+    temp295-n = `height`.
+    temp295-v = height.
     INSERT temp295 INTO TABLE temp294.
-    temp295-n = `description`.
-    temp295-v = description.
+    temp295-n = `width`.
+    temp295-v = width.
     INSERT temp295 INTO TABLE temp294.
-    temp295-n = `authorName`.
-    temp295-v = authorname.
+    temp295-n = `nodes`.
+    temp295-v = nodes.
     INSERT temp295 INTO TABLE temp294.
-    temp295-n = `authorPicture`.
-    temp295-v = authorpicture.
+    temp295-n = `lines`.
+    temp295-v = lines.
     INSERT temp295 INTO TABLE temp294.
-    temp295-n = `datetime`.
-    temp295-v = datetime.
+    temp295-n = `groups`.
+    temp295-v = groups.
     INSERT temp295 INTO TABLE temp294.
-    temp295-n = `counter`.
-    temp295-v = counter.
+    temp295-n = `backgroundColor`.
+    temp295-v = backgroundcolor.
     INSERT temp295 INTO TABLE temp294.
-    temp295-n = `highlightText`.
-    temp295-v = highlighttext.
+    temp295-n = `backgroundImage`.
+    temp295-v = backgroundimage.
     INSERT temp295 INTO TABLE temp294.
-    temp295-n = `priority`.
-    temp295-v = priority.
+    temp295-n = `noDataText`.
+    temp295-v = nodatatext.
     INSERT temp295 INTO TABLE temp294.
-    temp295-n = `title`.
-    temp295-v = title.
+    temp295-n = `orientation`.
+    temp295-v = orientation.
     INSERT temp295 INTO TABLE temp294.
-    temp295-n = `type`.
-    temp295-v = type.
+    temp295-n = `renderType`.
+    temp295-v = rendertype.
     INSERT temp295 INTO TABLE temp294.
-    temp295-n = `close`.
-    temp295-v = close.
+    temp295-n = `afterLayouting`.
+    temp295-v = afterlayouting.
     INSERT temp295 INTO TABLE temp294.
-    temp295-n = `detailPress`.
-    temp295-v = detailpress.
+    temp295-n = `beforeLayouting`.
+    temp295-v = beforelayouting.
     INSERT temp295 INTO TABLE temp294.
-    temp295-n = `press`.
-    temp295-v = press.
+    temp295-n = `failure`.
+    temp295-v = failure.
+    INSERT temp295 INTO TABLE temp294.
+    temp295-n = `graphReady`.
+    temp295-v = graphready.
+    INSERT temp295 INTO TABLE temp294.
+    temp295-n = `search`.
+    temp295-v = search.
+    INSERT temp295 INTO TABLE temp294.
+    temp295-n = `searchSuggest`.
+    temp295-v = searchsuggest.
+    INSERT temp295 INTO TABLE temp294.
+    temp295-n = `selectionChange`.
+    temp295-v = selectionchange.
+    INSERT temp295 INTO TABLE temp294.
+    temp295-n = `zoomChanged`.
+    temp295-v = zoomchanged.
+    INSERT temp295 INTO TABLE temp294.
+    temp295-n = `enableWheelZoom`.
+    temp295-v = z2ui5_cl_util=>boolean_abap_2_json( enablewheelzoom ).
+    INSERT temp295 INTO TABLE temp294.
+    temp295-n = `enableZoom`.
+    temp295-v = z2ui5_cl_util=>boolean_abap_2_json( enablezoom ).
+    INSERT temp295 INTO TABLE temp294.
+    temp295-n = `noData`.
+    temp295-v = z2ui5_cl_util=>boolean_abap_2_json( nodata ).
     INSERT temp295 INTO TABLE temp294.
     temp295-n = `visible`.
     temp295-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp295 INTO TABLE temp294.
-    temp295-n = `hideShowMoreButton`.
-    temp295-v = z2ui5_cl_util=>boolean_abap_2_json( hideshowmorebutton ).
-    INSERT temp295 INTO TABLE temp294.
-    temp295-n = `truncate`.
-    temp295-v = z2ui5_cl_util=>boolean_abap_2_json( truncate ).
-    INSERT temp295 INTO TABLE temp294.
-    temp295-n = `highlight`.
-    temp295-v = z2ui5_cl_util=>boolean_abap_2_json( highlight ).
-    INSERT temp295 INTO TABLE temp294.
-    temp295-n = `navigated`.
-    temp295-v = z2ui5_cl_util=>boolean_abap_2_json( navigated ).
-    INSERT temp295 INTO TABLE temp294.
-    temp295-n = `selected`.
-    temp295-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
-    INSERT temp295 INTO TABLE temp294.
-    temp295-n = `showButtons`.
-    temp295-v = z2ui5_cl_util=>boolean_abap_2_json( showbuttons ).
-    INSERT temp295 INTO TABLE temp294.
-    temp295-n = `showCloseButton`.
-    temp295-v = z2ui5_cl_util=>boolean_abap_2_json( showclosebutton ).
-    INSERT temp295 INTO TABLE temp294.
-    temp295-n = `truncate`.
-    temp295-v = z2ui5_cl_util=>boolean_abap_2_json( truncate ).
-    INSERT temp295 INTO TABLE temp294.
-    temp295-n = `unread`.
-    temp295-v = z2ui5_cl_util=>boolean_abap_2_json( unread ).
-    INSERT temp295 INTO TABLE temp294.
-    result = _generic(
-                 name   = `NotificationListItem`
-                 t_prop = temp294 ).
+    result = _generic( name   = `Graph`
+                       ns     = `networkgraph`
+                       t_prop = temp294 ).
+
   ENDMETHOD.
 
-  METHOD no_data.
-    result = _generic( name = `noData`
-                       ns   = ns ).
-  ENDMETHOD.
-
-  METHOD numeric_content.
-
+  METHOD node.
     DATA temp296 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp297 LIKE LINE OF temp296.
     CLEAR temp296.
     
-    temp297-n = `value`.
-    temp297-v = value.
-    INSERT temp297 INTO TABLE temp296.
-    temp297-n = `icon`.
-    temp297-v = icon.
-    INSERT temp297 INTO TABLE temp296.
-    temp297-n = `width`.
-    temp297-v = width.
-    INSERT temp297 INTO TABLE temp296.
-    temp297-n = `valueColor`.
-    temp297-v = valuecolor.
-    INSERT temp297 INTO TABLE temp296.
-    temp297-n = `truncateValueTo`.
-    temp297-v = truncatevalueto.
-    INSERT temp297 INTO TABLE temp296.
-    temp297-n = `state`.
-    temp297-v = state.
-    INSERT temp297 INTO TABLE temp296.
-    temp297-n = `scale`.
-    temp297-v = scale.
-    INSERT temp297 INTO TABLE temp296.
-    temp297-n = `indicator`.
-    temp297-v = indicator.
-    INSERT temp297 INTO TABLE temp296.
-    temp297-n = `iconDescription`.
-    temp297-v = icondescription.
-    INSERT temp297 INTO TABLE temp296.
-    temp297-n = `visible`.
-    temp297-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp297 INTO TABLE temp296.
-    temp297-n = `nullifyValue`.
-    temp297-v = z2ui5_cl_util=>boolean_abap_2_json( nullifyvalue ).
-    INSERT temp297 INTO TABLE temp296.
-    temp297-n = `formatterValue`.
-    temp297-v = z2ui5_cl_util=>boolean_abap_2_json( formattervalue ).
-    INSERT temp297 INTO TABLE temp296.
-    temp297-n = `animateTextChange`.
-    temp297-v = z2ui5_cl_util=>boolean_abap_2_json( animatetextchange ).
-    INSERT temp297 INTO TABLE temp296.
-    temp297-n = `adaptiveFontSize`.
-    temp297-v = z2ui5_cl_util=>boolean_abap_2_json( adaptivefontsize ).
-    INSERT temp297 INTO TABLE temp296.
-    temp297-n = `withMargin`.
-    temp297-v = z2ui5_cl_util=>boolean_abap_2_json( withmargin ).
+    temp297-n = `id`.
+    temp297-v = id.
     INSERT temp297 INTO TABLE temp296.
     temp297-n = `class`.
     temp297-v = class.
     INSERT temp297 INTO TABLE temp296.
+    temp297-n = `altText`.
+    temp297-v = alttext.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `coreNodeSize`.
+    temp297-v = corenodesize.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `description`.
+    temp297-v = description.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `descriptionLineSize`.
+    temp297-v = descriptionlinesize.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `group`.
+    temp297-v = group.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `headerCheckBoxState`.
+    temp297-v = headercheckboxstate.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `height`.
+    temp297-v = height.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `icon`.
+    temp297-v = icon.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `iconSize`.
+    temp297-v = iconsize.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `iconSize`.
+    temp297-v = iconsize.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `key`.
+    temp297-v = key.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `maxWidth`.
+    temp297-v = maxwidth.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `title`.
+    temp297-v = title.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `shape`.
+    temp297-v = shape.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `statusIcon`.
+    temp297-v = statusicon.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `titleLineSize`.
+    temp297-v = titlelinesize.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `width`.
+    temp297-v = width.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `x`.
+    temp297-v = x.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `y`.
+    temp297-v = y.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `attributes`.
+    temp297-v = attributes.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `actionButtons`.
+    temp297-v = actionbuttons.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `collapseExpand`.
+    temp297-v = collapseexpand.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `headerCheckBoxPress`.
+    temp297-v = headercheckboxpress.
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `hover`.
+    temp297-v = hover.
+    INSERT temp297 INTO TABLE temp296.
     temp297-n = `press`.
     temp297-v = press.
     INSERT temp297 INTO TABLE temp296.
+    temp297-n = `collapsed`.
+    temp297-v = z2ui5_cl_util=>boolean_abap_2_json( collapsed ).
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `selected`.
+    temp297-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `showActionLinksButton`.
+    temp297-v = z2ui5_cl_util=>boolean_abap_2_json( showactionlinksbutton ).
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `showDetailButton`.
+    temp297-v = z2ui5_cl_util=>boolean_abap_2_json( showdetailbutton ).
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `showExpandButton`.
+    temp297-v = z2ui5_cl_util=>boolean_abap_2_json( showexpandbutton ).
+    INSERT temp297 INTO TABLE temp296.
+    temp297-n = `visible`.
+    temp297-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp297 INTO TABLE temp296.
     result = _generic(
-        name   = `NumericContent`
+        name   = `Node`
+        ns     = `networkgraph`
         t_prop = temp296 ).
 
   ENDMETHOD.
 
-  METHOD numeric_header.
+  METHOD nodes.
+    result = _generic( name = `nodes`
+                       ns   = ns ).
+  ENDMETHOD.
 
+  METHOD node_image.
     DATA temp298 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp299 LIKE LINE OF temp298.
     CLEAR temp298.
@@ -11541,93 +11455,26 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp299-n = `class`.
     temp299-v = class.
     INSERT temp299 INTO TABLE temp298.
-    temp299-n = `datatimestamp`.
-    temp299-v = datatimestamp.
+    temp299-n = `height`.
+    temp299-v = height.
     INSERT temp299 INTO TABLE temp298.
-    temp299-n = `press`.
-    temp299-v = press.
+    temp299-n = `width`.
+    temp299-v = width.
     INSERT temp299 INTO TABLE temp298.
-    temp299-n = `details`.
-    temp299-v = details.
+    temp299-n = `src`.
+    temp299-v = src.
     INSERT temp299 INTO TABLE temp298.
-    temp299-n = `detailsMaxLines`.
-    temp299-v = detailsmaxlines.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `detailsState`.
-    temp299-v = detailsstate.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `iconAlt`.
-    temp299-v = iconalt.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `iconBackgroundColor`.
-    temp299-v = iconbackgroundcolor.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `iconDisplayShape`.
-    temp299-v = icondisplayshape.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `iconSize`.
-    temp299-v = iconsize.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `iconSrc`.
-    temp299-v = iconsrc.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `iconInitials`.
-    temp299-v = iconinitials.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `number`.
-    temp299-v = number.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `numberSize`.
-    temp299-v = numbersize.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `scale`.
-    temp299-v = scale.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `sideIndicatorsAlignment`.
-    temp299-v = sideindicatorsalignment.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `state`.
-    temp299-v = state.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `statusText`.
-    temp299-v = statustext.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `subtitle`.
-    temp299-v = subtitle.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `subtitleMaxLines`.
-    temp299-v = subtitlemaxlines.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `title`.
-    temp299-v = title.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `titleMaxLines`.
-    temp299-v = titlemaxlines.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `trend`.
-    temp299-v = trend.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `unitOfMeasurement`.
-    temp299-v = unitofmeasurement.
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `statusVisible`.
-    temp299-v = z2ui5_cl_util=>boolean_abap_2_json( statusvisible ).
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `numberVisible`.
-    temp299-v = z2ui5_cl_util=>boolean_abap_2_json( numbervisible ).
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `iconVisible`.
-    temp299-v = z2ui5_cl_util=>boolean_abap_2_json( iconvisible ).
-    INSERT temp299 INTO TABLE temp298.
-    temp299-n = `visible`.
-    temp299-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp299 INTO TABLE temp298.
-    result = _generic( name   = `NumericHeader`
-                       ns     = `f`
+    result = _generic( name   = `NodeImage`
+                       ns     = `networkgraph`
                        t_prop = temp298 ).
   ENDMETHOD.
 
-  METHOD numeric_side_indicator.
+  METHOD noop_layout.
+    result = _generic( name = `NoopLayout`
+                       ns   = `nglayout` ).
+  ENDMETHOD.
+
+  METHOD notification_list.
     DATA temp300 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp301 LIKE LINE OF temp300.
     CLEAR temp300.
@@ -11638,320 +11485,756 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp301-n = `class`.
     temp301-v = class.
     INSERT temp301 INTO TABLE temp300.
-    temp301-n = `unit`.
-    temp301-v = unit.
+    temp301-n = `footerText`.
+    temp301-v = footertext.
     INSERT temp301 INTO TABLE temp300.
-    temp301-n = `title`.
-    temp301-v = title.
+    temp301-n = `growingDirection`.
+    temp301-v = growingdirection.
     INSERT temp301 INTO TABLE temp300.
-    temp301-n = `state`.
-    temp301-v = state.
+    temp301-n = `growingThreshold`.
+    temp301-v = growingthreshold.
     INSERT temp301 INTO TABLE temp300.
-    temp301-n = `number`.
-    temp301-v = number.
+    temp301-n = `growingTriggerText`.
+    temp301-v = growingtriggertext.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `headerLevel`.
+    temp301-v = headerlevel.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `headerText`.
+    temp301-v = headertext.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `keyboardMode`.
+    temp301-v = keyboardmode.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `mode`.
+    temp301-v = mode.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `multiSelectMode`.
+    temp301-v = multiselectmode.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `noDataText`.
+    temp301-v = nodatatext.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `sticky`.
+    temp301-v = sticky.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `swipeDirection`.
+    temp301-v = swipedirection.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `width`.
+    temp301-v = width.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `showSeparators`.
+    temp301-v = showseparators.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `beforeOpenContextMenu`.
+    temp301-v = beforeopencontextmenu.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `delete`.
+    temp301-v = delete.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `growingFinished`.
+    temp301-v = growingfinished.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `growingStarted`.
+    temp301-v = growingstarted.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `itemPress`.
+    temp301-v = itempress.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `select`.
+    temp301-v = select.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `selectionChange`.
+    temp301-v = selectionchange.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `swipe`.
+    temp301-v = swipe.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `updateFinished`.
+    temp301-v = updatefinished.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `updateStarted`.
+    temp301-v = updatestarted.
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `growingScrollToLoad`.
+    temp301-v = z2ui5_cl_util=>boolean_abap_2_json( growingscrolltoload ).
     INSERT temp301 INTO TABLE temp300.
     temp301-n = `visible`.
     temp301-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp301 INTO TABLE temp300.
-    result = _generic( name   = `NumericSideIndicator`
-                       ns     = `f`
-                       t_prop = temp300 ).
+    temp301-n = `growing`.
+    temp301-v = z2ui5_cl_util=>boolean_abap_2_json( growing ).
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `includeItemInSelection`.
+    temp301-v = z2ui5_cl_util=>boolean_abap_2_json( includeiteminselection ).
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `inset`.
+    temp301-v = z2ui5_cl_util=>boolean_abap_2_json( inset ).
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `modeAnimationOn`.
+    temp301-v = z2ui5_cl_util=>boolean_abap_2_json( modeanimationon ).
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `rememberSelections`.
+    temp301-v = z2ui5_cl_util=>boolean_abap_2_json( rememberselections ).
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `showNoData`.
+    temp301-v = z2ui5_cl_util=>boolean_abap_2_json( shownodata ).
+    INSERT temp301 INTO TABLE temp300.
+    temp301-n = `showUnread`.
+    temp301-v = z2ui5_cl_util=>boolean_abap_2_json( showunread ).
+    INSERT temp301 INTO TABLE temp300.
+    result = _generic(
+        name   = `NotificationList`
+        t_prop = temp300 ).
   ENDMETHOD.
 
-  METHOD object_attribute.
+  METHOD notification_list_group.
     DATA temp302 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp303 LIKE LINE OF temp302.
-    result = me.
-
-    
     CLEAR temp302.
     
+    temp303-n = `id`.
+    temp303-v = id.
+    INSERT temp303 INTO TABLE temp302.
+    temp303-n = `class`.
+    temp303-v = class.
+    INSERT temp303 INTO TABLE temp302.
+    temp303-n = `highlight`.
+    temp303-v = highlight.
+    INSERT temp303 INTO TABLE temp302.
+    temp303-n = `highlightText`.
+    temp303-v = highlighttext.
+    INSERT temp303 INTO TABLE temp302.
+    temp303-n = `priority`.
+    temp303-v = priority.
+    INSERT temp303 INTO TABLE temp302.
     temp303-n = `title`.
     temp303-v = title.
     INSERT temp303 INTO TABLE temp302.
-    temp303-n = `textDirection`.
-    temp303-v = textdirection.
+    temp303-n = `type`.
+    temp303-v = type.
     INSERT temp303 INTO TABLE temp302.
-    temp303-n = `ariaHasPopup`.
-    temp303-v = ariahaspopup.
-    INSERT temp303 INTO TABLE temp302.
-    temp303-n = `press`.
-    temp303-v = press.
-    INSERT temp303 INTO TABLE temp302.
-    temp303-n = `active`.
-    temp303-v = z2ui5_cl_util=>boolean_abap_2_json( active ).
+    temp303-n = `onCollapse`.
+    temp303-v = oncollapse.
     INSERT temp303 INTO TABLE temp302.
     temp303-n = `visible`.
     temp303-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp303 INTO TABLE temp302.
-    temp303-n = `text`.
-    temp303-v = text.
+    temp303-n = `autoPriority`.
+    temp303-v = z2ui5_cl_util=>boolean_abap_2_json( autopriority ).
     INSERT temp303 INTO TABLE temp302.
-    _generic( name   = `ObjectAttribute`
-              t_prop = temp302 ).
+    temp303-n = `collapsed`.
+    temp303-v = z2ui5_cl_util=>boolean_abap_2_json( collapsed ).
+    INSERT temp303 INTO TABLE temp302.
+    temp303-n = `enableCollapseButtonWhenEmpty`.
+    temp303-v = z2ui5_cl_util=>boolean_abap_2_json( enablecollapsebuttonwhenempty ).
+    INSERT temp303 INTO TABLE temp302.
+    temp303-n = `navigated`.
+    temp303-v = z2ui5_cl_util=>boolean_abap_2_json( navigated ).
+    INSERT temp303 INTO TABLE temp302.
+    temp303-n = `selected`.
+    temp303-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    INSERT temp303 INTO TABLE temp302.
+    temp303-n = `showButtons`.
+    temp303-v = z2ui5_cl_util=>boolean_abap_2_json( showbuttons ).
+    INSERT temp303 INTO TABLE temp302.
+    temp303-n = `showCloseButton`.
+    temp303-v = z2ui5_cl_util=>boolean_abap_2_json( showclosebutton ).
+    INSERT temp303 INTO TABLE temp302.
+    temp303-n = `showEmptyGroup`.
+    temp303-v = z2ui5_cl_util=>boolean_abap_2_json( showemptygroup ).
+    INSERT temp303 INTO TABLE temp302.
+    temp303-n = `showItemsCounter`.
+    temp303-v = z2ui5_cl_util=>boolean_abap_2_json( showitemscounter ).
+    INSERT temp303 INTO TABLE temp302.
+    temp303-n = `unread`.
+    temp303-v = z2ui5_cl_util=>boolean_abap_2_json( unread ).
+    INSERT temp303 INTO TABLE temp302.
+    result = _generic(
+                 name   = `NotificationListGroup`
+                 t_prop = temp302 ).
   ENDMETHOD.
 
-  METHOD object_header.
-
+  METHOD notification_list_item.
     DATA temp304 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp305 LIKE LINE OF temp304.
     CLEAR temp304.
     
-    temp305-n = `backgrounddesign`.
-    temp305-v = backgrounddesign.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `condensed`.
-    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( condensed ).
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `fullscreenoptimized`.
-    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( fullscreenoptimized ).
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `icon`.
-    temp305-v = icon.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `iconactive`.
-    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( iconactive ).
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `iconalt`.
-    temp305-v = iconalt.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `icondensityaware`.
-    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( icondensityaware ).
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `icontooltip`.
-    temp305-v = icontooltip.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `imageShape`.
-    temp305-v = imageshape.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `intro`.
-    temp305-v = intro.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `introactive`.
-    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( introactive ).
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `introhref`.
-    temp305-v = introhref.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `introtarget`.
-    temp305-v = introtarget.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `introtextdirection`.
-    temp305-v = introtextdirection.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `number`.
-    temp305-v = number.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `numberstate`.
-    temp305-v = numberstate.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `numbertextdirection`.
-    temp305-v = numbertextdirection.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `numberunit`.
-    temp305-v = numberunit.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `responsive`.
-    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( responsive ).
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `showtitleselector`.
-    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( showtitleselector ).
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `title`.
-    temp305-v = title.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `titleactive`.
-    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( titleactive ).
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `titlehref`.
-    temp305-v = titlehref.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `titlelevel`.
-    temp305-v = titlelevel.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `titleselectortooltip`.
-    temp305-v = titleselectortooltip.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `titletarget`.
-    temp305-v = titletarget.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `titletextdirection`.
-    temp305-v = titletextdirection.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `iconpress`.
-    temp305-v = iconpress.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `intropress`.
-    temp305-v = intropress.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `titlepress`.
-    temp305-v = titlepress.
-    INSERT temp305 INTO TABLE temp304.
-    temp305-n = `titleselectorpress`.
-    temp305-v = titleselectorpress.
+    temp305-n = `id`.
+    temp305-v = id.
     INSERT temp305 INTO TABLE temp304.
     temp305-n = `class`.
     temp305-v = class.
     INSERT temp305 INTO TABLE temp304.
+    temp305-n = `authorAvatarColor`.
+    temp305-v = authoravatarcolor.
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `authorInitials`.
+    temp305-v = authorinitials.
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `description`.
+    temp305-v = description.
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `authorName`.
+    temp305-v = authorname.
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `authorPicture`.
+    temp305-v = authorpicture.
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `datetime`.
+    temp305-v = datetime.
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `counter`.
+    temp305-v = counter.
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `highlightText`.
+    temp305-v = highlighttext.
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `priority`.
+    temp305-v = priority.
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `title`.
+    temp305-v = title.
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `type`.
+    temp305-v = type.
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `close`.
+    temp305-v = close.
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `detailPress`.
+    temp305-v = detailpress.
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `press`.
+    temp305-v = press.
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `visible`.
+    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `hideShowMoreButton`.
+    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( hideshowmorebutton ).
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `truncate`.
+    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( truncate ).
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `highlight`.
+    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( highlight ).
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `navigated`.
+    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( navigated ).
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `selected`.
+    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `showButtons`.
+    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( showbuttons ).
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `showCloseButton`.
+    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( showclosebutton ).
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `truncate`.
+    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( truncate ).
+    INSERT temp305 INTO TABLE temp304.
+    temp305-n = `unread`.
+    temp305-v = z2ui5_cl_util=>boolean_abap_2_json( unread ).
+    INSERT temp305 INTO TABLE temp304.
     result = _generic(
-        name   = `ObjectHeader`
-        t_prop = temp304 ).
+                 name   = `NotificationListItem`
+                 t_prop = temp304 ).
   ENDMETHOD.
 
-  METHOD object_identifier.
+  METHOD no_data.
+    result = _generic( name = `noData`
+                       ns   = ns ).
+  ENDMETHOD.
+
+  METHOD numeric_content.
+
     DATA temp306 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp307 LIKE LINE OF temp306.
     CLEAR temp306.
     
-    temp307-n = `emptyIndicatorMode`.
-    temp307-v = emptyindicatormode.
+    temp307-n = `value`.
+    temp307-v = value.
     INSERT temp307 INTO TABLE temp306.
-    temp307-n = `text`.
-    temp307-v = text.
+    temp307-n = `icon`.
+    temp307-v = icon.
     INSERT temp307 INTO TABLE temp306.
-    temp307-n = `textDirection`.
-    temp307-v = textdirection.
+    temp307-n = `width`.
+    temp307-v = width.
     INSERT temp307 INTO TABLE temp306.
-    temp307-n = `title`.
-    temp307-v = title.
+    temp307-n = `valueColor`.
+    temp307-v = valuecolor.
     INSERT temp307 INTO TABLE temp306.
-    temp307-n = `titleActive`.
-    temp307-v = titleactive.
+    temp307-n = `truncateValueTo`.
+    temp307-v = truncatevalueto.
+    INSERT temp307 INTO TABLE temp306.
+    temp307-n = `state`.
+    temp307-v = state.
+    INSERT temp307 INTO TABLE temp306.
+    temp307-n = `scale`.
+    temp307-v = scale.
+    INSERT temp307 INTO TABLE temp306.
+    temp307-n = `indicator`.
+    temp307-v = indicator.
+    INSERT temp307 INTO TABLE temp306.
+    temp307-n = `iconDescription`.
+    temp307-v = icondescription.
     INSERT temp307 INTO TABLE temp306.
     temp307-n = `visible`.
     temp307-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp307 INTO TABLE temp306.
-    temp307-n = `titlePress`.
-    temp307-v = titlepress.
+    temp307-n = `nullifyValue`.
+    temp307-v = z2ui5_cl_util=>boolean_abap_2_json( nullifyvalue ).
     INSERT temp307 INTO TABLE temp306.
-    result = _generic( name   = `ObjectIdentifier`
-                       t_prop = temp306 ).
+    temp307-n = `formatterValue`.
+    temp307-v = z2ui5_cl_util=>boolean_abap_2_json( formattervalue ).
+    INSERT temp307 INTO TABLE temp306.
+    temp307-n = `animateTextChange`.
+    temp307-v = z2ui5_cl_util=>boolean_abap_2_json( animatetextchange ).
+    INSERT temp307 INTO TABLE temp306.
+    temp307-n = `adaptiveFontSize`.
+    temp307-v = z2ui5_cl_util=>boolean_abap_2_json( adaptivefontsize ).
+    INSERT temp307 INTO TABLE temp306.
+    temp307-n = `withMargin`.
+    temp307-v = z2ui5_cl_util=>boolean_abap_2_json( withmargin ).
+    INSERT temp307 INTO TABLE temp306.
+    temp307-n = `class`.
+    temp307-v = class.
+    INSERT temp307 INTO TABLE temp306.
+    temp307-n = `press`.
+    temp307-v = press.
+    INSERT temp307 INTO TABLE temp306.
+    result = _generic(
+        name   = `NumericContent`
+        t_prop = temp306 ).
+
   ENDMETHOD.
 
-  METHOD object_list_item.
+  METHOD numeric_header.
+
     DATA temp308 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp309 LIKE LINE OF temp308.
     CLEAR temp308.
     
-    temp309-n = `activeIcon`.
-    temp309-v = activeicon.
+    temp309-n = `id`.
+    temp309-v = id.
     INSERT temp309 INTO TABLE temp308.
-    temp309-n = `icon`.
-    temp309-v = icon.
+    temp309-n = `class`.
+    temp309-v = class.
     INSERT temp309 INTO TABLE temp308.
-    temp309-n = `intro`.
-    temp309-v = intro.
-    INSERT temp309 INTO TABLE temp308.
-    temp309-n = `introTextDirection`.
-    temp309-v = introtextdirection.
-    INSERT temp309 INTO TABLE temp308.
-    temp309-n = `number`.
-    temp309-v = number.
-    INSERT temp309 INTO TABLE temp308.
-    temp309-n = `numberState`.
-    temp309-v = numberstate.
-    INSERT temp309 INTO TABLE temp308.
-    temp309-n = `numberTextDirection`.
-    temp309-v = numbertextdirection.
-    INSERT temp309 INTO TABLE temp308.
-    temp309-n = `numberUnit`.
-    temp309-v = numberunit.
-    INSERT temp309 INTO TABLE temp308.
-    temp309-n = `title`.
-    temp309-v = title.
-    INSERT temp309 INTO TABLE temp308.
-    temp309-n = `titleTextDirection`.
-    temp309-v = titletextdirection.
-    INSERT temp309 INTO TABLE temp308.
-    temp309-n = `iconDensityAware`.
-    temp309-v = z2ui5_cl_util=>boolean_abap_2_json( icondensityaware ).
+    temp309-n = `datatimestamp`.
+    temp309-v = datatimestamp.
     INSERT temp309 INTO TABLE temp308.
     temp309-n = `press`.
     temp309-v = press.
     INSERT temp309 INTO TABLE temp308.
-    temp309-n = `selected`.
-    temp309-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    temp309-n = `details`.
+    temp309-v = details.
     INSERT temp309 INTO TABLE temp308.
-    temp309-n = `type`.
-    temp309-v = type.
+    temp309-n = `detailsMaxLines`.
+    temp309-v = detailsmaxlines.
     INSERT temp309 INTO TABLE temp308.
-    result = _generic(
-        name   = `ObjectListItem`
-        t_prop = temp308 ).
+    temp309-n = `detailsState`.
+    temp309-v = detailsstate.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `iconAlt`.
+    temp309-v = iconalt.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `iconBackgroundColor`.
+    temp309-v = iconbackgroundcolor.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `iconDisplayShape`.
+    temp309-v = icondisplayshape.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `iconSize`.
+    temp309-v = iconsize.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `iconSrc`.
+    temp309-v = iconsrc.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `iconInitials`.
+    temp309-v = iconinitials.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `number`.
+    temp309-v = number.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `numberSize`.
+    temp309-v = numbersize.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `scale`.
+    temp309-v = scale.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `sideIndicatorsAlignment`.
+    temp309-v = sideindicatorsalignment.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `state`.
+    temp309-v = state.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `statusText`.
+    temp309-v = statustext.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `subtitle`.
+    temp309-v = subtitle.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `subtitleMaxLines`.
+    temp309-v = subtitlemaxlines.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `title`.
+    temp309-v = title.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `titleMaxLines`.
+    temp309-v = titlemaxlines.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `trend`.
+    temp309-v = trend.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `unitOfMeasurement`.
+    temp309-v = unitofmeasurement.
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `statusVisible`.
+    temp309-v = z2ui5_cl_util=>boolean_abap_2_json( statusvisible ).
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `numberVisible`.
+    temp309-v = z2ui5_cl_util=>boolean_abap_2_json( numbervisible ).
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `iconVisible`.
+    temp309-v = z2ui5_cl_util=>boolean_abap_2_json( iconvisible ).
+    INSERT temp309 INTO TABLE temp308.
+    temp309-n = `visible`.
+    temp309-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp309 INTO TABLE temp308.
+    result = _generic( name   = `NumericHeader`
+                       ns     = `f`
+                       t_prop = temp308 ).
   ENDMETHOD.
 
-  METHOD object_marker.
+  METHOD numeric_side_indicator.
     DATA temp310 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp311 LIKE LINE OF temp310.
     CLEAR temp310.
     
-    temp311-n = `additionalInfo`.
-    temp311-v = additionalinfo.
+    temp311-n = `id`.
+    temp311-v = id.
     INSERT temp311 INTO TABLE temp310.
-    temp311-n = `type`.
-    temp311-v = type.
+    temp311-n = `class`.
+    temp311-v = class.
+    INSERT temp311 INTO TABLE temp310.
+    temp311-n = `unit`.
+    temp311-v = unit.
+    INSERT temp311 INTO TABLE temp310.
+    temp311-n = `title`.
+    temp311-v = title.
+    INSERT temp311 INTO TABLE temp310.
+    temp311-n = `state`.
+    temp311-v = state.
+    INSERT temp311 INTO TABLE temp310.
+    temp311-n = `number`.
+    temp311-v = number.
     INSERT temp311 INTO TABLE temp310.
     temp311-n = `visible`.
     temp311-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp311 INTO TABLE temp310.
-    temp311-n = `press`.
-    temp311-v = press.
-    INSERT temp311 INTO TABLE temp310.
-    temp311-n = `visibility`.
-    temp311-v = visibility.
-    INSERT temp311 INTO TABLE temp310.
-    result = _generic( name   = `ObjectMarker`
+    result = _generic( name   = `NumericSideIndicator`
+                       ns     = `f`
                        t_prop = temp310 ).
   ENDMETHOD.
 
-  METHOD object_number.
+  METHOD object_attribute.
     DATA temp312 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp313 LIKE LINE OF temp312.
     result = me.
+
     
     CLEAR temp312.
     
-    temp313-n = `emphasized`.
-    temp313-v = z2ui5_cl_util=>boolean_abap_2_json( emphasized ).
-    INSERT temp313 INTO TABLE temp312.
-    temp313-n = `number`.
-    temp313-v = number.
-    INSERT temp313 INTO TABLE temp312.
-    temp313-n = `state`.
-    temp313-v = state.
-    INSERT temp313 INTO TABLE temp312.
-    temp313-n = `id`.
-    temp313-v = id.
-    INSERT temp313 INTO TABLE temp312.
-    temp313-n = `class`.
-    temp313-v = class.
-    INSERT temp313 INTO TABLE temp312.
-    temp313-n = `textAlign`.
-    temp313-v = textalign.
+    temp313-n = `title`.
+    temp313-v = title.
     INSERT temp313 INTO TABLE temp312.
     temp313-n = `textDirection`.
     temp313-v = textdirection.
     INSERT temp313 INTO TABLE temp312.
-    temp313-n = `emptyIndicatorMode`.
-    temp313-v = emptyindicatormode.
+    temp313-n = `ariaHasPopup`.
+    temp313-v = ariahaspopup.
     INSERT temp313 INTO TABLE temp312.
-    temp313-n = `numberunit`.
-    temp313-v = numberunit.
+    temp313-n = `press`.
+    temp313-v = press.
     INSERT temp313 INTO TABLE temp312.
     temp313-n = `active`.
     temp313-v = z2ui5_cl_util=>boolean_abap_2_json( active ).
     INSERT temp313 INTO TABLE temp312.
-    temp313-n = `inverted`.
-    temp313-v = z2ui5_cl_util=>boolean_abap_2_json( inverted ).
-    INSERT temp313 INTO TABLE temp312.
     temp313-n = `visible`.
     temp313-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp313 INTO TABLE temp312.
-    temp313-n = `unit`.
-    temp313-v = unit.
+    temp313-n = `text`.
+    temp313-v = text.
     INSERT temp313 INTO TABLE temp312.
-    _generic( name   = `ObjectNumber`
+    _generic( name   = `ObjectAttribute`
               t_prop = temp312 ).
+  ENDMETHOD.
+
+  METHOD object_header.
+
+    DATA temp314 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp315 LIKE LINE OF temp314.
+    CLEAR temp314.
+    
+    temp315-n = `backgrounddesign`.
+    temp315-v = backgrounddesign.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `condensed`.
+    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( condensed ).
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `fullscreenoptimized`.
+    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( fullscreenoptimized ).
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `icon`.
+    temp315-v = icon.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `iconactive`.
+    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( iconactive ).
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `iconalt`.
+    temp315-v = iconalt.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `icondensityaware`.
+    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( icondensityaware ).
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `icontooltip`.
+    temp315-v = icontooltip.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `imageShape`.
+    temp315-v = imageshape.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `intro`.
+    temp315-v = intro.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `introactive`.
+    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( introactive ).
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `introhref`.
+    temp315-v = introhref.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `introtarget`.
+    temp315-v = introtarget.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `introtextdirection`.
+    temp315-v = introtextdirection.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `number`.
+    temp315-v = number.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `numberstate`.
+    temp315-v = numberstate.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `numbertextdirection`.
+    temp315-v = numbertextdirection.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `numberunit`.
+    temp315-v = numberunit.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `responsive`.
+    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( responsive ).
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `showtitleselector`.
+    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( showtitleselector ).
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `title`.
+    temp315-v = title.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `titleactive`.
+    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( titleactive ).
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `titlehref`.
+    temp315-v = titlehref.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `titlelevel`.
+    temp315-v = titlelevel.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `titleselectortooltip`.
+    temp315-v = titleselectortooltip.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `titletarget`.
+    temp315-v = titletarget.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `titletextdirection`.
+    temp315-v = titletextdirection.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `iconpress`.
+    temp315-v = iconpress.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `intropress`.
+    temp315-v = intropress.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `titlepress`.
+    temp315-v = titlepress.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `titleselectorpress`.
+    temp315-v = titleselectorpress.
+    INSERT temp315 INTO TABLE temp314.
+    temp315-n = `class`.
+    temp315-v = class.
+    INSERT temp315 INTO TABLE temp314.
+    result = _generic(
+        name   = `ObjectHeader`
+        t_prop = temp314 ).
+  ENDMETHOD.
+
+  METHOD object_identifier.
+    DATA temp316 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp317 LIKE LINE OF temp316.
+    CLEAR temp316.
+    
+    temp317-n = `emptyIndicatorMode`.
+    temp317-v = emptyindicatormode.
+    INSERT temp317 INTO TABLE temp316.
+    temp317-n = `text`.
+    temp317-v = text.
+    INSERT temp317 INTO TABLE temp316.
+    temp317-n = `textDirection`.
+    temp317-v = textdirection.
+    INSERT temp317 INTO TABLE temp316.
+    temp317-n = `title`.
+    temp317-v = title.
+    INSERT temp317 INTO TABLE temp316.
+    temp317-n = `titleActive`.
+    temp317-v = titleactive.
+    INSERT temp317 INTO TABLE temp316.
+    temp317-n = `visible`.
+    temp317-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp317 INTO TABLE temp316.
+    temp317-n = `titlePress`.
+    temp317-v = titlepress.
+    INSERT temp317 INTO TABLE temp316.
+    result = _generic( name   = `ObjectIdentifier`
+                       t_prop = temp316 ).
+  ENDMETHOD.
+
+  METHOD object_list_item.
+    DATA temp318 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp319 LIKE LINE OF temp318.
+    CLEAR temp318.
+    
+    temp319-n = `activeIcon`.
+    temp319-v = activeicon.
+    INSERT temp319 INTO TABLE temp318.
+    temp319-n = `icon`.
+    temp319-v = icon.
+    INSERT temp319 INTO TABLE temp318.
+    temp319-n = `intro`.
+    temp319-v = intro.
+    INSERT temp319 INTO TABLE temp318.
+    temp319-n = `introTextDirection`.
+    temp319-v = introtextdirection.
+    INSERT temp319 INTO TABLE temp318.
+    temp319-n = `number`.
+    temp319-v = number.
+    INSERT temp319 INTO TABLE temp318.
+    temp319-n = `numberState`.
+    temp319-v = numberstate.
+    INSERT temp319 INTO TABLE temp318.
+    temp319-n = `numberTextDirection`.
+    temp319-v = numbertextdirection.
+    INSERT temp319 INTO TABLE temp318.
+    temp319-n = `numberUnit`.
+    temp319-v = numberunit.
+    INSERT temp319 INTO TABLE temp318.
+    temp319-n = `title`.
+    temp319-v = title.
+    INSERT temp319 INTO TABLE temp318.
+    temp319-n = `titleTextDirection`.
+    temp319-v = titletextdirection.
+    INSERT temp319 INTO TABLE temp318.
+    temp319-n = `iconDensityAware`.
+    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( icondensityaware ).
+    INSERT temp319 INTO TABLE temp318.
+    temp319-n = `press`.
+    temp319-v = press.
+    INSERT temp319 INTO TABLE temp318.
+    temp319-n = `selected`.
+    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    INSERT temp319 INTO TABLE temp318.
+    temp319-n = `type`.
+    temp319-v = type.
+    INSERT temp319 INTO TABLE temp318.
+    result = _generic(
+        name   = `ObjectListItem`
+        t_prop = temp318 ).
+  ENDMETHOD.
+
+  METHOD object_marker.
+    DATA temp320 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp321 LIKE LINE OF temp320.
+    CLEAR temp320.
+    
+    temp321-n = `additionalInfo`.
+    temp321-v = additionalinfo.
+    INSERT temp321 INTO TABLE temp320.
+    temp321-n = `type`.
+    temp321-v = type.
+    INSERT temp321 INTO TABLE temp320.
+    temp321-n = `visible`.
+    temp321-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp321 INTO TABLE temp320.
+    temp321-n = `press`.
+    temp321-v = press.
+    INSERT temp321 INTO TABLE temp320.
+    temp321-n = `visibility`.
+    temp321-v = visibility.
+    INSERT temp321 INTO TABLE temp320.
+    result = _generic( name   = `ObjectMarker`
+                       t_prop = temp320 ).
+  ENDMETHOD.
+
+  METHOD object_number.
+    DATA temp322 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp323 LIKE LINE OF temp322.
+    result = me.
+    
+    CLEAR temp322.
+    
+    temp323-n = `emphasized`.
+    temp323-v = z2ui5_cl_util=>boolean_abap_2_json( emphasized ).
+    INSERT temp323 INTO TABLE temp322.
+    temp323-n = `number`.
+    temp323-v = number.
+    INSERT temp323 INTO TABLE temp322.
+    temp323-n = `state`.
+    temp323-v = state.
+    INSERT temp323 INTO TABLE temp322.
+    temp323-n = `id`.
+    temp323-v = id.
+    INSERT temp323 INTO TABLE temp322.
+    temp323-n = `class`.
+    temp323-v = class.
+    INSERT temp323 INTO TABLE temp322.
+    temp323-n = `textAlign`.
+    temp323-v = textalign.
+    INSERT temp323 INTO TABLE temp322.
+    temp323-n = `textDirection`.
+    temp323-v = textdirection.
+    INSERT temp323 INTO TABLE temp322.
+    temp323-n = `emptyIndicatorMode`.
+    temp323-v = emptyindicatormode.
+    INSERT temp323 INTO TABLE temp322.
+    temp323-n = `numberunit`.
+    temp323-v = numberunit.
+    INSERT temp323 INTO TABLE temp322.
+    temp323-n = `active`.
+    temp323-v = z2ui5_cl_util=>boolean_abap_2_json( active ).
+    INSERT temp323 INTO TABLE temp322.
+    temp323-n = `inverted`.
+    temp323-v = z2ui5_cl_util=>boolean_abap_2_json( inverted ).
+    INSERT temp323 INTO TABLE temp322.
+    temp323-n = `visible`.
+    temp323-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp323 INTO TABLE temp322.
+    temp323-n = `unit`.
+    temp323-v = unit.
+    INSERT temp323 INTO TABLE temp322.
+    _generic( name   = `ObjectNumber`
+              t_prop = temp322 ).
   ENDMETHOD.
 
   METHOD object_page_dyn_header_title.
@@ -11960,569 +12243,569 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD object_page_header.
-    DATA temp314 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp315 LIKE LINE OF temp314.
-    result = me.
-    
-    CLEAR temp314.
-    
-    temp315-n = `isActionAreaAlwaysVisible`.
-    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( isactionareaalwaysvisible ).
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `isObjectIconAlwaysVisible`.
-    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( isobjecticonalwaysvisible ).
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `isObjectSubtitleAlwaysVisible`.
-    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( isobjectsubtitlealwaysvisible ).
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `isObjectTitleAlwaysVisible`.
-    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( isobjecttitlealwaysvisible ).
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `markChanges`.
-    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( markchanges ).
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `markFavorite`.
-    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( markfavorite ).
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `markFlagged`.
-    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( markflagged ).
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `markLocked`.
-    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( marklocked ).
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `objectImageDensityAware`.
-    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( objectimagedensityaware ).
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `showMarkers`.
-    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( showmarkers ).
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `showPlaceholder`.
-    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( showplaceholder ).
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `showTitleSelector`.
-    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( showtitleselector ).
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `visible`.
-    temp315-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `objectImageAlt`.
-    temp315-v = objectimagealt.
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `objectImageBackgroundColor`.
-    temp315-v = objectimagebackgroundcolor.
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `objectImageURI`.
-    temp315-v = objectimageuri.
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `objectSubtitle`.
-    temp315-v = objectsubtitle.
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `objectTitle`.
-    temp315-v = objecttitle.
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `markChangesPress`.
-    temp315-v = markchangespress.
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `markLockedPress`.
-    temp315-v = marklockedpress.
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `titleSelectorPress`.
-    temp315-v = titleselectorpress.
-    INSERT temp315 INTO TABLE temp314.
-    temp315-n = `objectImageShape`.
-    temp315-v = objectimageshape.
-    INSERT temp315 INTO TABLE temp314.
-    _generic(
-        name   = `ObjectPageHeader`
-        ns     = `uxap`
-        t_prop = temp314 ).
-  ENDMETHOD.
-
-  METHOD object_page_header_action_btn.
-    DATA temp316 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp317 LIKE LINE OF temp316.
-    result = me.
-    
-    CLEAR temp316.
-    
-    temp317-n = `activeIcon`.
-    temp317-v = activeicon.
-    INSERT temp317 INTO TABLE temp316.
-    temp317-n = `ariaHasPopup`.
-    temp317-v = ariahaspopup.
-    INSERT temp317 INTO TABLE temp316.
-    temp317-n = `icon`.
-    temp317-v = icon.
-    INSERT temp317 INTO TABLE temp316.
-    temp317-n = `importance`.
-    temp317-v = importance.
-    INSERT temp317 INTO TABLE temp316.
-    temp317-n = `text`.
-    temp317-v = text.
-    INSERT temp317 INTO TABLE temp316.
-    temp317-n = `textDirection`.
-    temp317-v = textdirection.
-    INSERT temp317 INTO TABLE temp316.
-    temp317-n = `type`.
-    temp317-v = type.
-    INSERT temp317 INTO TABLE temp316.
-    temp317-n = `width`.
-    temp317-v = width.
-    INSERT temp317 INTO TABLE temp316.
-    temp317-n = `enabled`.
-    temp317-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp317 INTO TABLE temp316.
-    temp317-n = `hideIcon`.
-    temp317-v = z2ui5_cl_util=>boolean_abap_2_json( hideicon ).
-    INSERT temp317 INTO TABLE temp316.
-    temp317-n = `hideText`.
-    temp317-v = z2ui5_cl_util=>boolean_abap_2_json( hidetext ).
-    INSERT temp317 INTO TABLE temp316.
-    temp317-n = `iconDensityAware`.
-    temp317-v = z2ui5_cl_util=>boolean_abap_2_json( icondensityaware ).
-    INSERT temp317 INTO TABLE temp316.
-    temp317-n = `iconFirst`.
-    temp317-v = z2ui5_cl_util=>boolean_abap_2_json( iconfirst ).
-    INSERT temp317 INTO TABLE temp316.
-    temp317-n = `visible`.
-    temp317-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp317 INTO TABLE temp316.
-    temp317-n = `press`.
-    temp317-v = press.
-    INSERT temp317 INTO TABLE temp316.
-    _generic( name   = `ObjectPageHeaderActionButton`
-              ns     = `uxap`
-              t_prop = temp316 ).
-  ENDMETHOD.
-
-  METHOD object_page_layout.
-    DATA temp318 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp319 LIKE LINE OF temp318.
-    CLEAR temp318.
-    
-    temp319-n = `showTitleInHeaderContent`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( showtitleinheadercontent ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `showEditHeaderButton`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( showeditheaderbutton ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `alwaysShowContentHeader`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( alwaysshowcontentheader ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `enableLazyLoading`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( enablelazyloading ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `flexEnabled`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( flexenabled ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `headerContentPinnable`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( headercontentpinnable ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `headerContentPinned`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( headercontentpinned ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `isChildPage`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( ischildpage ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `preserveHeaderStateOnScroll`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( preserveheaderstateonscroll ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `showAnchorBar`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( showanchorbar ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `showAnchorBarPopover`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( showanchorbarpopover ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `showHeaderContent`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( showheadercontent ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `showOnlyHighImportance`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( showonlyhighimportance ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `subSectionLayout`.
-    temp319-v = subsectionlayout.
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `toggleHeaderOnTitleClick`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( toggleheaderontitleclick ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `useIconTabBar`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( useicontabbar ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `useTwoColumnsForLargeScreen`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( usetwocolumnsforlargescreen ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `visible`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `backgroundDesignAnchorBar`.
-    temp319-v = backgrounddesignanchorbar.
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `height`.
-    temp319-v = height.
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `sectionTitleLevel`.
-    temp319-v = sectiontitlelevel.
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `editHeaderButtonPress`.
-    temp319-v = editheaderbuttonpress.
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `upperCaseAnchorBar`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( uppercaseanchorbar ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `beforeNavigate`.
-    temp319-v = beforenavigate.
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `headerContentPinnedStateChange`.
-    temp319-v = headercontentpinnedstatechange.
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `navigate`.
-    temp319-v = navigate.
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `sectionChange`.
-    temp319-v = sectionchange.
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `subSectionVisibilityChange`.
-    temp319-v = subsectionvisibilitychange.
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `toggleAnchorBar`.
-    temp319-v = toggleanchorbar.
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `showFooter`.
-    temp319-v = z2ui5_cl_util=>boolean_abap_2_json( showfooter ).
-    INSERT temp319 INTO TABLE temp318.
-    temp319-n = `class`.
-    temp319-v = class.
-    INSERT temp319 INTO TABLE temp318.
-    result = _generic(
-        name   = `ObjectPageLayout`
-        ns     = `uxap`
-        t_prop = temp318 ).
-  ENDMETHOD.
-
-  METHOD object_page_section.
-    DATA temp320 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp321 LIKE LINE OF temp320.
-    CLEAR temp320.
-    
-    temp321-n = `titleUppercase`.
-    temp321-v = z2ui5_cl_util=>boolean_abap_2_json( titleuppercase ).
-    INSERT temp321 INTO TABLE temp320.
-    temp321-n = `title`.
-    temp321-v = title.
-    INSERT temp321 INTO TABLE temp320.
-    temp321-n = `id`.
-    temp321-v = id.
-    INSERT temp321 INTO TABLE temp320.
-    temp321-n = `anchorBarButtonColor`.
-    temp321-v = anchorbarbuttoncolor.
-    INSERT temp321 INTO TABLE temp320.
-    temp321-n = `titleLevel`.
-    temp321-v = titlelevel.
-    INSERT temp321 INTO TABLE temp320.
-    temp321-n = `titleVisible`.
-    temp321-v = z2ui5_cl_util=>boolean_abap_2_json( titlevisible ).
-    INSERT temp321 INTO TABLE temp320.
-    temp321-n = `showTitle`.
-    temp321-v = z2ui5_cl_util=>boolean_abap_2_json( showtitle ).
-    INSERT temp321 INTO TABLE temp320.
-    temp321-n = `visible`.
-    temp321-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp321 INTO TABLE temp320.
-    temp321-n = `wrapTitle`.
-    temp321-v = z2ui5_cl_util=>boolean_abap_2_json( wraptitle ).
-    INSERT temp321 INTO TABLE temp320.
-    temp321-n = `importance`.
-    temp321-v = importance.
-    INSERT temp321 INTO TABLE temp320.
-    result = _generic(
-                 name   = `ObjectPageSection`
-                 ns     = `uxap`
-                 t_prop = temp320 ).
-  ENDMETHOD.
-
-  METHOD object_page_sub_section.
-    DATA temp322 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp323 LIKE LINE OF temp322.
-    CLEAR temp322.
-    
-    temp323-n = `id`.
-    temp323-v = id.
-    INSERT temp323 INTO TABLE temp322.
-    temp323-n = `mode`.
-    temp323-v = mode.
-    INSERT temp323 INTO TABLE temp322.
-    temp323-n = `importance`.
-    temp323-v = importance.
-    INSERT temp323 INTO TABLE temp322.
-    temp323-n = `titleLevel`.
-    temp323-v = titlelevel.
-    INSERT temp323 INTO TABLE temp322.
-    temp323-n = `titleVisible`.
-    temp323-v = z2ui5_cl_util=>boolean_abap_2_json( titlevisible ).
-    INSERT temp323 INTO TABLE temp322.
-    temp323-n = `showTitle`.
-    temp323-v = z2ui5_cl_util=>boolean_abap_2_json( showtitle ).
-    INSERT temp323 INTO TABLE temp322.
-    temp323-n = `titleUppercase`.
-    temp323-v = z2ui5_cl_util=>boolean_abap_2_json( titleuppercase ).
-    INSERT temp323 INTO TABLE temp322.
-    temp323-n = `visible`.
-    temp323-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp323 INTO TABLE temp322.
-    temp323-n = `title`.
-    temp323-v = title.
-    INSERT temp323 INTO TABLE temp322.
-    result = _generic(
-                 name   = `ObjectPageSubSection`
-                 ns     = `uxap`
-                 t_prop = temp322 ).
-  ENDMETHOD.
-
-  METHOD object_status.
     DATA temp324 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp325 LIKE LINE OF temp324.
+    result = me.
+    
     CLEAR temp324.
     
-    temp325-n = `active`.
-    temp325-v = z2ui5_cl_util=>boolean_abap_2_json( active ).
+    temp325-n = `isActionAreaAlwaysVisible`.
+    temp325-v = z2ui5_cl_util=>boolean_abap_2_json( isactionareaalwaysvisible ).
     INSERT temp325 INTO TABLE temp324.
-    temp325-n = `emptyIndicatorMode`.
-    temp325-v = emptyindicatormode.
+    temp325-n = `isObjectIconAlwaysVisible`.
+    temp325-v = z2ui5_cl_util=>boolean_abap_2_json( isobjecticonalwaysvisible ).
     INSERT temp325 INTO TABLE temp324.
-    temp325-n = `icon`.
-    temp325-v = icon.
+    temp325-n = `isObjectSubtitleAlwaysVisible`.
+    temp325-v = z2ui5_cl_util=>boolean_abap_2_json( isobjectsubtitlealwaysvisible ).
     INSERT temp325 INTO TABLE temp324.
-    temp325-n = `iconDensityAware`.
-    temp325-v = z2ui5_cl_util=>boolean_abap_2_json( icondensityaware ).
+    temp325-n = `isObjectTitleAlwaysVisible`.
+    temp325-v = z2ui5_cl_util=>boolean_abap_2_json( isobjecttitlealwaysvisible ).
     INSERT temp325 INTO TABLE temp324.
-    temp325-n = `inverted`.
-    temp325-v = z2ui5_cl_util=>boolean_abap_2_json( inverted ).
+    temp325-n = `markChanges`.
+    temp325-v = z2ui5_cl_util=>boolean_abap_2_json( markchanges ).
     INSERT temp325 INTO TABLE temp324.
-    temp325-n = `state`.
-    temp325-v = state.
+    temp325-n = `markFavorite`.
+    temp325-v = z2ui5_cl_util=>boolean_abap_2_json( markfavorite ).
     INSERT temp325 INTO TABLE temp324.
-    temp325-n = `stateAnnouncementText`.
-    temp325-v = stateannouncementtext.
+    temp325-n = `markFlagged`.
+    temp325-v = z2ui5_cl_util=>boolean_abap_2_json( markflagged ).
     INSERT temp325 INTO TABLE temp324.
-    temp325-n = `text`.
-    temp325-v = text.
+    temp325-n = `markLocked`.
+    temp325-v = z2ui5_cl_util=>boolean_abap_2_json( marklocked ).
     INSERT temp325 INTO TABLE temp324.
-    temp325-n = `id`.
-    temp325-v = id.
+    temp325-n = `objectImageDensityAware`.
+    temp325-v = z2ui5_cl_util=>boolean_abap_2_json( objectimagedensityaware ).
     INSERT temp325 INTO TABLE temp324.
-    temp325-n = `class`.
-    temp325-v = class.
+    temp325-n = `showMarkers`.
+    temp325-v = z2ui5_cl_util=>boolean_abap_2_json( showmarkers ).
     INSERT temp325 INTO TABLE temp324.
-    temp325-n = `textDirection`.
-    temp325-v = textdirection.
+    temp325-n = `showPlaceholder`.
+    temp325-v = z2ui5_cl_util=>boolean_abap_2_json( showplaceholder ).
     INSERT temp325 INTO TABLE temp324.
-    temp325-n = `title`.
-    temp325-v = title.
+    temp325-n = `showTitleSelector`.
+    temp325-v = z2ui5_cl_util=>boolean_abap_2_json( showtitleselector ).
     INSERT temp325 INTO TABLE temp324.
     temp325-n = `visible`.
     temp325-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp325 INTO TABLE temp324.
-    temp325-n = `press`.
-    temp325-v = press.
+    temp325-n = `objectImageAlt`.
+    temp325-v = objectimagealt.
     INSERT temp325 INTO TABLE temp324.
-    result = _generic(
-        name   = `ObjectStatus`
+    temp325-n = `objectImageBackgroundColor`.
+    temp325-v = objectimagebackgroundcolor.
+    INSERT temp325 INTO TABLE temp324.
+    temp325-n = `objectImageURI`.
+    temp325-v = objectimageuri.
+    INSERT temp325 INTO TABLE temp324.
+    temp325-n = `objectSubtitle`.
+    temp325-v = objectsubtitle.
+    INSERT temp325 INTO TABLE temp324.
+    temp325-n = `objectTitle`.
+    temp325-v = objecttitle.
+    INSERT temp325 INTO TABLE temp324.
+    temp325-n = `markChangesPress`.
+    temp325-v = markchangespress.
+    INSERT temp325 INTO TABLE temp324.
+    temp325-n = `markLockedPress`.
+    temp325-v = marklockedpress.
+    INSERT temp325 INTO TABLE temp324.
+    temp325-n = `titleSelectorPress`.
+    temp325-v = titleselectorpress.
+    INSERT temp325 INTO TABLE temp324.
+    temp325-n = `objectImageShape`.
+    temp325-v = objectimageshape.
+    INSERT temp325 INTO TABLE temp324.
+    _generic(
+        name   = `ObjectPageHeader`
+        ns     = `uxap`
         t_prop = temp324 ).
   ENDMETHOD.
 
-  METHOD overflow_toolbar.
+  METHOD object_page_header_action_btn.
     DATA temp326 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp327 LIKE LINE OF temp326.
+    result = me.
+    
     CLEAR temp326.
     
-    temp327-n = `press`.
-    temp327-v = press.
+    temp327-n = `activeIcon`.
+    temp327-v = activeicon.
+    INSERT temp327 INTO TABLE temp326.
+    temp327-n = `ariaHasPopup`.
+    temp327-v = ariahaspopup.
+    INSERT temp327 INTO TABLE temp326.
+    temp327-n = `icon`.
+    temp327-v = icon.
+    INSERT temp327 INTO TABLE temp326.
+    temp327-n = `importance`.
+    temp327-v = importance.
     INSERT temp327 INTO TABLE temp326.
     temp327-n = `text`.
     temp327-v = text.
     INSERT temp327 INTO TABLE temp326.
-    temp327-n = `active`.
-    temp327-v = z2ui5_cl_util=>boolean_abap_2_json( active ).
-    INSERT temp327 INTO TABLE temp326.
-    temp327-n = `visible`.
-    temp327-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp327 INTO TABLE temp326.
-    temp327-n = `asyncMode`.
-    temp327-v = z2ui5_cl_util=>boolean_abap_2_json( asyncmode ).
-    INSERT temp327 INTO TABLE temp326.
-    temp327-n = `enabled`.
-    temp327-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp327 INTO TABLE temp326.
-    temp327-n = `design`.
-    temp327-v = design.
+    temp327-n = `textDirection`.
+    temp327-v = textdirection.
     INSERT temp327 INTO TABLE temp326.
     temp327-n = `type`.
     temp327-v = type.
     INSERT temp327 INTO TABLE temp326.
-    temp327-n = `style`.
-    temp327-v = style.
-    INSERT temp327 INTO TABLE temp326.
-    temp327-n = `id`.
-    temp327-v = id.
-    INSERT temp327 INTO TABLE temp326.
-    temp327-n = `class`.
-    temp327-v = class.
-    INSERT temp327 INTO TABLE temp326.
     temp327-n = `width`.
     temp327-v = width.
     INSERT temp327 INTO TABLE temp326.
-    temp327-n = `height`.
-    temp327-v = height.
+    temp327-n = `enabled`.
+    temp327-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
     INSERT temp327 INTO TABLE temp326.
-    result = _generic( name   = `OverflowToolbar`
-                       t_prop = temp326 ).
+    temp327-n = `hideIcon`.
+    temp327-v = z2ui5_cl_util=>boolean_abap_2_json( hideicon ).
+    INSERT temp327 INTO TABLE temp326.
+    temp327-n = `hideText`.
+    temp327-v = z2ui5_cl_util=>boolean_abap_2_json( hidetext ).
+    INSERT temp327 INTO TABLE temp326.
+    temp327-n = `iconDensityAware`.
+    temp327-v = z2ui5_cl_util=>boolean_abap_2_json( icondensityaware ).
+    INSERT temp327 INTO TABLE temp326.
+    temp327-n = `iconFirst`.
+    temp327-v = z2ui5_cl_util=>boolean_abap_2_json( iconfirst ).
+    INSERT temp327 INTO TABLE temp326.
+    temp327-n = `visible`.
+    temp327-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp327 INTO TABLE temp326.
+    temp327-n = `press`.
+    temp327-v = press.
+    INSERT temp327 INTO TABLE temp326.
+    _generic( name   = `ObjectPageHeaderActionButton`
+              ns     = `uxap`
+              t_prop = temp326 ).
   ENDMETHOD.
 
-  METHOD overflow_toolbar_button.
+  METHOD object_page_layout.
     DATA temp328 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp329 LIKE LINE OF temp328.
-    result = me.
-    
     CLEAR temp328.
     
-    temp329-n = `id`.
-    temp329-v = id.
+    temp329-n = `showTitleInHeaderContent`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( showtitleinheadercontent ).
     INSERT temp329 INTO TABLE temp328.
-    temp329-n = `press`.
-    temp329-v = press.
+    temp329-n = `showEditHeaderButton`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( showeditheaderbutton ).
     INSERT temp329 INTO TABLE temp328.
-    temp329-n = `text`.
-    temp329-v = text.
+    temp329-n = `alwaysShowContentHeader`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( alwaysshowcontentheader ).
     INSERT temp329 INTO TABLE temp328.
-    temp329-n = `enabled`.
-    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    temp329-n = `enableLazyLoading`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( enablelazyloading ).
     INSERT temp329 INTO TABLE temp328.
-    temp329-n = `icon`.
-    temp329-v = icon.
+    temp329-n = `flexEnabled`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( flexenabled ).
     INSERT temp329 INTO TABLE temp328.
-    temp329-n = `type`.
-    temp329-v = type.
+    temp329-n = `headerContentPinnable`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( headercontentpinnable ).
     INSERT temp329 INTO TABLE temp328.
-    temp329-n = `tooltip`.
-    temp329-v = tooltip.
+    temp329-n = `headerContentPinned`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( headercontentpinned ).
     INSERT temp329 INTO TABLE temp328.
-    _generic( name   = `OverflowToolbarButton`
-              t_prop = temp328 ).
+    temp329-n = `isChildPage`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( ischildpage ).
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `preserveHeaderStateOnScroll`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( preserveheaderstateonscroll ).
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `showAnchorBar`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( showanchorbar ).
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `showAnchorBarPopover`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( showanchorbarpopover ).
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `showHeaderContent`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( showheadercontent ).
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `showOnlyHighImportance`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( showonlyhighimportance ).
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `subSectionLayout`.
+    temp329-v = subsectionlayout.
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `toggleHeaderOnTitleClick`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( toggleheaderontitleclick ).
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `useIconTabBar`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( useicontabbar ).
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `useTwoColumnsForLargeScreen`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( usetwocolumnsforlargescreen ).
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `visible`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `backgroundDesignAnchorBar`.
+    temp329-v = backgrounddesignanchorbar.
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `height`.
+    temp329-v = height.
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `sectionTitleLevel`.
+    temp329-v = sectiontitlelevel.
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `editHeaderButtonPress`.
+    temp329-v = editheaderbuttonpress.
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `upperCaseAnchorBar`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( uppercaseanchorbar ).
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `beforeNavigate`.
+    temp329-v = beforenavigate.
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `headerContentPinnedStateChange`.
+    temp329-v = headercontentpinnedstatechange.
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `navigate`.
+    temp329-v = navigate.
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `sectionChange`.
+    temp329-v = sectionchange.
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `subSectionVisibilityChange`.
+    temp329-v = subsectionvisibilitychange.
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `toggleAnchorBar`.
+    temp329-v = toggleanchorbar.
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `showFooter`.
+    temp329-v = z2ui5_cl_util=>boolean_abap_2_json( showfooter ).
+    INSERT temp329 INTO TABLE temp328.
+    temp329-n = `class`.
+    temp329-v = class.
+    INSERT temp329 INTO TABLE temp328.
+    result = _generic(
+        name   = `ObjectPageLayout`
+        ns     = `uxap`
+        t_prop = temp328 ).
   ENDMETHOD.
 
-  METHOD overflow_toolbar_menu_button.
+  METHOD object_page_section.
     DATA temp330 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp331 LIKE LINE OF temp330.
     CLEAR temp330.
     
-    temp331-n = `buttonMode`.
-    temp331-v = buttonmode.
+    temp331-n = `titleUppercase`.
+    temp331-v = z2ui5_cl_util=>boolean_abap_2_json( titleuppercase ).
     INSERT temp331 INTO TABLE temp330.
-    temp331-n = `defaultAction`.
-    temp331-v = defaultaction.
+    temp331-n = `title`.
+    temp331-v = title.
     INSERT temp331 INTO TABLE temp330.
-    temp331-n = `text`.
-    temp331-v = text.
+    temp331-n = `id`.
+    temp331-v = id.
     INSERT temp331 INTO TABLE temp330.
-    temp331-n = `enabled`.
-    temp331-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    temp331-n = `anchorBarButtonColor`.
+    temp331-v = anchorbarbuttoncolor.
     INSERT temp331 INTO TABLE temp330.
-    temp331-n = `icon`.
-    temp331-v = icon.
+    temp331-n = `titleLevel`.
+    temp331-v = titlelevel.
     INSERT temp331 INTO TABLE temp330.
-    temp331-n = `type`.
-    temp331-v = type.
+    temp331-n = `titleVisible`.
+    temp331-v = z2ui5_cl_util=>boolean_abap_2_json( titlevisible ).
     INSERT temp331 INTO TABLE temp330.
-    temp331-n = `tooltip`.
-    temp331-v = tooltip.
+    temp331-n = `showTitle`.
+    temp331-v = z2ui5_cl_util=>boolean_abap_2_json( showtitle ).
     INSERT temp331 INTO TABLE temp330.
-    result = _generic( name   = `OverflowToolbarMenuButton`
-                       t_prop = temp330 ).
+    temp331-n = `visible`.
+    temp331-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp331 INTO TABLE temp330.
+    temp331-n = `wrapTitle`.
+    temp331-v = z2ui5_cl_util=>boolean_abap_2_json( wraptitle ).
+    INSERT temp331 INTO TABLE temp330.
+    temp331-n = `importance`.
+    temp331-v = importance.
+    INSERT temp331 INTO TABLE temp330.
+    result = _generic(
+                 name   = `ObjectPageSection`
+                 ns     = `uxap`
+                 t_prop = temp330 ).
   ENDMETHOD.
 
-  METHOD overflow_toolbar_toggle_button.
+  METHOD object_page_sub_section.
     DATA temp332 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp333 LIKE LINE OF temp332.
-    result = me.
-    
     CLEAR temp332.
     
-    temp333-n = `press`.
-    temp333-v = press.
+    temp333-n = `id`.
+    temp333-v = id.
     INSERT temp333 INTO TABLE temp332.
-    temp333-n = `text`.
-    temp333-v = text.
+    temp333-n = `mode`.
+    temp333-v = mode.
     INSERT temp333 INTO TABLE temp332.
-    temp333-n = `enabled`.
-    temp333-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    temp333-n = `importance`.
+    temp333-v = importance.
     INSERT temp333 INTO TABLE temp332.
-    temp333-n = `icon`.
-    temp333-v = icon.
+    temp333-n = `titleLevel`.
+    temp333-v = titlelevel.
     INSERT temp333 INTO TABLE temp332.
-    temp333-n = `type`.
-    temp333-v = type.
+    temp333-n = `titleVisible`.
+    temp333-v = z2ui5_cl_util=>boolean_abap_2_json( titlevisible ).
     INSERT temp333 INTO TABLE temp332.
-    temp333-n = `tooltip`.
-    temp333-v = tooltip.
+    temp333-n = `showTitle`.
+    temp333-v = z2ui5_cl_util=>boolean_abap_2_json( showtitle ).
     INSERT temp333 INTO TABLE temp332.
-    _generic( name   = `OverflowToolbarToggleButton`
-              t_prop = temp332 ).
+    temp333-n = `titleUppercase`.
+    temp333-v = z2ui5_cl_util=>boolean_abap_2_json( titleuppercase ).
+    INSERT temp333 INTO TABLE temp332.
+    temp333-n = `visible`.
+    temp333-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp333 INTO TABLE temp332.
+    temp333-n = `title`.
+    temp333-v = title.
+    INSERT temp333 INTO TABLE temp332.
+    result = _generic(
+                 name   = `ObjectPageSubSection`
+                 ns     = `uxap`
+                 t_prop = temp332 ).
   ENDMETHOD.
 
-  METHOD page.
+  METHOD object_status.
     DATA temp334 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp335 LIKE LINE OF temp334.
     CLEAR temp334.
     
-    temp335-n = `title`.
-    temp335-v = title.
+    temp335-n = `active`.
+    temp335-v = z2ui5_cl_util=>boolean_abap_2_json( active ).
     INSERT temp335 INTO TABLE temp334.
-    temp335-n = `showNavButton`.
-    temp335-v = z2ui5_cl_util=>boolean_abap_2_json( shownavbutton ).
+    temp335-n = `emptyIndicatorMode`.
+    temp335-v = emptyindicatormode.
     INSERT temp335 INTO TABLE temp334.
-    temp335-n = `navButtonPress`.
-    temp335-v = navbuttonpress.
+    temp335-n = `icon`.
+    temp335-v = icon.
     INSERT temp335 INTO TABLE temp334.
-    temp335-n = `showHeader`.
-    temp335-v = z2ui5_cl_util=>boolean_abap_2_json( showheader ).
+    temp335-n = `iconDensityAware`.
+    temp335-v = z2ui5_cl_util=>boolean_abap_2_json( icondensityaware ).
     INSERT temp335 INTO TABLE temp334.
-    temp335-n = `class`.
-    temp335-v = class.
+    temp335-n = `inverted`.
+    temp335-v = z2ui5_cl_util=>boolean_abap_2_json( inverted ).
     INSERT temp335 INTO TABLE temp334.
-    temp335-n = `backgroundDesign`.
-    temp335-v = backgrounddesign.
+    temp335-n = `state`.
+    temp335-v = state.
     INSERT temp335 INTO TABLE temp334.
-    temp335-n = `navButtonTooltip`.
-    temp335-v = navbuttontooltip.
+    temp335-n = `stateAnnouncementText`.
+    temp335-v = stateannouncementtext.
     INSERT temp335 INTO TABLE temp334.
-    temp335-n = `titleAlignment`.
-    temp335-v = titlealignment.
-    INSERT temp335 INTO TABLE temp334.
-    temp335-n = `titleLevel`.
-    temp335-v = titlelevel.
-    INSERT temp335 INTO TABLE temp334.
-    temp335-n = `contentOnlyBusy`.
-    temp335-v = z2ui5_cl_util=>boolean_abap_2_json( contentonlybusy ).
-    INSERT temp335 INTO TABLE temp334.
-    temp335-n = `enableScrolling`.
-    temp335-v = z2ui5_cl_util=>boolean_abap_2_json( enablescrolling ).
-    INSERT temp335 INTO TABLE temp334.
-    temp335-n = `floatingFooter`.
-    temp335-v = z2ui5_cl_util=>boolean_abap_2_json( floatingfooter ).
-    INSERT temp335 INTO TABLE temp334.
-    temp335-n = `showFooter`.
-    temp335-v = z2ui5_cl_util=>boolean_abap_2_json( showfooter ).
-    INSERT temp335 INTO TABLE temp334.
-    temp335-n = `showSubHeader`.
-    temp335-v = z2ui5_cl_util=>boolean_abap_2_json( showsubheader ).
+    temp335-n = `text`.
+    temp335-v = text.
     INSERT temp335 INTO TABLE temp334.
     temp335-n = `id`.
     temp335-v = id.
     INSERT temp335 INTO TABLE temp334.
+    temp335-n = `class`.
+    temp335-v = class.
+    INSERT temp335 INTO TABLE temp334.
+    temp335-n = `textDirection`.
+    temp335-v = textdirection.
+    INSERT temp335 INTO TABLE temp334.
+    temp335-n = `title`.
+    temp335-v = title.
+    INSERT temp335 INTO TABLE temp334.
+    temp335-n = `visible`.
+    temp335-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp335 INTO TABLE temp334.
+    temp335-n = `press`.
+    temp335-v = press.
+    INSERT temp335 INTO TABLE temp334.
+    result = _generic(
+        name   = `ObjectStatus`
+        t_prop = temp334 ).
+  ENDMETHOD.
+
+  METHOD overflow_toolbar.
+    DATA temp336 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp337 LIKE LINE OF temp336.
+    CLEAR temp336.
+    
+    temp337-n = `press`.
+    temp337-v = press.
+    INSERT temp337 INTO TABLE temp336.
+    temp337-n = `text`.
+    temp337-v = text.
+    INSERT temp337 INTO TABLE temp336.
+    temp337-n = `active`.
+    temp337-v = z2ui5_cl_util=>boolean_abap_2_json( active ).
+    INSERT temp337 INTO TABLE temp336.
+    temp337-n = `visible`.
+    temp337-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp337 INTO TABLE temp336.
+    temp337-n = `asyncMode`.
+    temp337-v = z2ui5_cl_util=>boolean_abap_2_json( asyncmode ).
+    INSERT temp337 INTO TABLE temp336.
+    temp337-n = `enabled`.
+    temp337-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp337 INTO TABLE temp336.
+    temp337-n = `design`.
+    temp337-v = design.
+    INSERT temp337 INTO TABLE temp336.
+    temp337-n = `type`.
+    temp337-v = type.
+    INSERT temp337 INTO TABLE temp336.
+    temp337-n = `style`.
+    temp337-v = style.
+    INSERT temp337 INTO TABLE temp336.
+    temp337-n = `id`.
+    temp337-v = id.
+    INSERT temp337 INTO TABLE temp336.
+    temp337-n = `class`.
+    temp337-v = class.
+    INSERT temp337 INTO TABLE temp336.
+    temp337-n = `width`.
+    temp337-v = width.
+    INSERT temp337 INTO TABLE temp336.
+    temp337-n = `height`.
+    temp337-v = height.
+    INSERT temp337 INTO TABLE temp336.
+    result = _generic( name   = `OverflowToolbar`
+                       t_prop = temp336 ).
+  ENDMETHOD.
+
+  METHOD overflow_toolbar_button.
+    DATA temp338 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp339 LIKE LINE OF temp338.
+    result = me.
+    
+    CLEAR temp338.
+    
+    temp339-n = `id`.
+    temp339-v = id.
+    INSERT temp339 INTO TABLE temp338.
+    temp339-n = `press`.
+    temp339-v = press.
+    INSERT temp339 INTO TABLE temp338.
+    temp339-n = `text`.
+    temp339-v = text.
+    INSERT temp339 INTO TABLE temp338.
+    temp339-n = `enabled`.
+    temp339-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp339 INTO TABLE temp338.
+    temp339-n = `icon`.
+    temp339-v = icon.
+    INSERT temp339 INTO TABLE temp338.
+    temp339-n = `type`.
+    temp339-v = type.
+    INSERT temp339 INTO TABLE temp338.
+    temp339-n = `tooltip`.
+    temp339-v = tooltip.
+    INSERT temp339 INTO TABLE temp338.
+    _generic( name   = `OverflowToolbarButton`
+              t_prop = temp338 ).
+  ENDMETHOD.
+
+  METHOD overflow_toolbar_menu_button.
+    DATA temp340 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp341 LIKE LINE OF temp340.
+    CLEAR temp340.
+    
+    temp341-n = `buttonMode`.
+    temp341-v = buttonmode.
+    INSERT temp341 INTO TABLE temp340.
+    temp341-n = `defaultAction`.
+    temp341-v = defaultaction.
+    INSERT temp341 INTO TABLE temp340.
+    temp341-n = `text`.
+    temp341-v = text.
+    INSERT temp341 INTO TABLE temp340.
+    temp341-n = `enabled`.
+    temp341-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp341 INTO TABLE temp340.
+    temp341-n = `icon`.
+    temp341-v = icon.
+    INSERT temp341 INTO TABLE temp340.
+    temp341-n = `type`.
+    temp341-v = type.
+    INSERT temp341 INTO TABLE temp340.
+    temp341-n = `tooltip`.
+    temp341-v = tooltip.
+    INSERT temp341 INTO TABLE temp340.
+    result = _generic( name   = `OverflowToolbarMenuButton`
+                       t_prop = temp340 ).
+  ENDMETHOD.
+
+  METHOD overflow_toolbar_toggle_button.
+    DATA temp342 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp343 LIKE LINE OF temp342.
+    result = me.
+    
+    CLEAR temp342.
+    
+    temp343-n = `press`.
+    temp343-v = press.
+    INSERT temp343 INTO TABLE temp342.
+    temp343-n = `text`.
+    temp343-v = text.
+    INSERT temp343 INTO TABLE temp342.
+    temp343-n = `enabled`.
+    temp343-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp343 INTO TABLE temp342.
+    temp343-n = `icon`.
+    temp343-v = icon.
+    INSERT temp343 INTO TABLE temp342.
+    temp343-n = `type`.
+    temp343-v = type.
+    INSERT temp343 INTO TABLE temp342.
+    temp343-n = `tooltip`.
+    temp343-v = tooltip.
+    INSERT temp343 INTO TABLE temp342.
+    _generic( name   = `OverflowToolbarToggleButton`
+              t_prop = temp342 ).
+  ENDMETHOD.
+
+  METHOD page.
+    DATA temp344 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp345 LIKE LINE OF temp344.
+    CLEAR temp344.
+    
+    temp345-n = `title`.
+    temp345-v = title.
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `showNavButton`.
+    temp345-v = z2ui5_cl_util=>boolean_abap_2_json( shownavbutton ).
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `navButtonPress`.
+    temp345-v = navbuttonpress.
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `showHeader`.
+    temp345-v = z2ui5_cl_util=>boolean_abap_2_json( showheader ).
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `class`.
+    temp345-v = class.
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `backgroundDesign`.
+    temp345-v = backgrounddesign.
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `navButtonTooltip`.
+    temp345-v = navbuttontooltip.
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `titleAlignment`.
+    temp345-v = titlealignment.
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `titleLevel`.
+    temp345-v = titlelevel.
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `contentOnlyBusy`.
+    temp345-v = z2ui5_cl_util=>boolean_abap_2_json( contentonlybusy ).
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `enableScrolling`.
+    temp345-v = z2ui5_cl_util=>boolean_abap_2_json( enablescrolling ).
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `floatingFooter`.
+    temp345-v = z2ui5_cl_util=>boolean_abap_2_json( floatingfooter ).
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `showFooter`.
+    temp345-v = z2ui5_cl_util=>boolean_abap_2_json( showfooter ).
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `showSubHeader`.
+    temp345-v = z2ui5_cl_util=>boolean_abap_2_json( showsubheader ).
+    INSERT temp345 INTO TABLE temp344.
+    temp345-n = `id`.
+    temp345-v = id.
+    INSERT temp345 INTO TABLE temp344.
     result = _generic(
                  name   = `Page`
                  ns     = ns
-                 t_prop = temp334 ).
+                 t_prop = temp344 ).
   ENDMETHOD.
 
   METHOD pages.
@@ -12531,351 +12814,351 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD paging_button.
-    DATA temp336 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp337 LIKE LINE OF temp336.
+    DATA temp346 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp347 LIKE LINE OF temp346.
     result = me.
     
-    CLEAR temp336.
+    CLEAR temp346.
     
-    temp337-n = `count`.
-    temp337-v = count.
-    INSERT temp337 INTO TABLE temp336.
-    temp337-n = `nextButtonTooltip`.
-    temp337-v = nextbuttontooltip.
-    INSERT temp337 INTO TABLE temp336.
-    temp337-n = `position`.
-    temp337-v = position.
-    INSERT temp337 INTO TABLE temp336.
-    temp337-n = `previousButtonTooltip`.
-    temp337-v = previousbuttontooltip.
-    INSERT temp337 INTO TABLE temp336.
+    temp347-n = `count`.
+    temp347-v = count.
+    INSERT temp347 INTO TABLE temp346.
+    temp347-n = `nextButtonTooltip`.
+    temp347-v = nextbuttontooltip.
+    INSERT temp347 INTO TABLE temp346.
+    temp347-n = `position`.
+    temp347-v = position.
+    INSERT temp347 INTO TABLE temp346.
+    temp347-n = `previousButtonTooltip`.
+    temp347-v = previousbuttontooltip.
+    INSERT temp347 INTO TABLE temp346.
     _generic( name   = `PagingButton`
-              t_prop = temp336 ).
+              t_prop = temp346 ).
   ENDMETHOD.
 
   METHOD panel.
 
-    DATA temp338 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp339 LIKE LINE OF temp338.
-    CLEAR temp338.
-    
-    temp339-n = `expandable`.
-    temp339-v = z2ui5_cl_util=>boolean_abap_2_json( expandable ).
-    INSERT temp339 INTO TABLE temp338.
-    temp339-n = `expanded`.
-    temp339-v = z2ui5_cl_util=>boolean_abap_2_json( expanded ).
-    INSERT temp339 INTO TABLE temp338.
-    temp339-n = `stickyHeader`.
-    temp339-v = z2ui5_cl_util=>boolean_abap_2_json( stickyheader ).
-    INSERT temp339 INTO TABLE temp338.
-    temp339-n = `expandAnimation`.
-    temp339-v = z2ui5_cl_util=>boolean_abap_2_json( expandanimation ).
-    INSERT temp339 INTO TABLE temp338.
-    temp339-n = `visible`.
-    temp339-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp339 INTO TABLE temp338.
-    temp339-n = `height`.
-    temp339-v = height.
-    INSERT temp339 INTO TABLE temp338.
-    temp339-n = `backgroundDesign`.
-    temp339-v = backgrounddesign.
-    INSERT temp339 INTO TABLE temp338.
-    temp339-n = `width`.
-    temp339-v = width.
-    INSERT temp339 INTO TABLE temp338.
-    temp339-n = `id`.
-    temp339-v = id.
-    INSERT temp339 INTO TABLE temp338.
-    temp339-n = `class`.
-    temp339-v = class.
-    INSERT temp339 INTO TABLE temp338.
-    temp339-n = `expand`.
-    temp339-v = expand.
-    INSERT temp339 INTO TABLE temp338.
-    temp339-n = `headerText`.
-    temp339-v = headertext.
-    INSERT temp339 INTO TABLE temp338.
-    result = _generic(
-                 name   = `Panel`
-                 t_prop = temp338 ).
-
-  ENDMETHOD.
-
-  METHOD pane_container.
-    DATA temp340 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp341 LIKE LINE OF temp340.
-    CLEAR temp340.
-    
-    temp341-n = `resize`.
-    temp341-v = resize.
-    INSERT temp341 INTO TABLE temp340.
-    temp341-n = `orientation`.
-    temp341-v = orientation.
-    INSERT temp341 INTO TABLE temp340.
-    result = _generic( name   = `PaneContainer`
-                       ns     = `layout`
-                       t_prop = temp340 ).
-  ENDMETHOD.
-
-  METHOD planning_calendar.
-    DATA temp342 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp343 LIKE LINE OF temp342.
-    CLEAR temp342.
-    
-    temp343-n = `rows`.
-    temp343-v = rows.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `startDate`.
-    temp343-v = startdate.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `id`.
-    temp343-v = id.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `class`.
-    temp343-v = class.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `appointmentHeight`.
-    temp343-v = appointmentheight.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `appointmentRoundWidth`.
-    temp343-v = appointmentroundwidth.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `builtInViews`.
-    temp343-v = builtinviews.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `calendarWeekNumbering`.
-    temp343-v = calendarweeknumbering.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `firstDayOfWeek`.
-    temp343-v = firstdayofweek.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `groupAppointmentsMode`.
-    temp343-v = groupappointmentsmode.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `height`.
-    temp343-v = height.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `iconShape`.
-    temp343-v = iconshape.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `maxDate`.
-    temp343-v = maxdate.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `minDate`.
-    temp343-v = mindate.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `noDataText`.
-    temp343-v = nodatatext.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `primaryCalendarType`.
-    temp343-v = primarycalendartype.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `secondaryCalendarType`.
-    temp343-v = secondarycalendartype.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `appointmentsVisualization`.
-    temp343-v = appointmentsvisualization.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `appointmentSelect`.
-    temp343-v = appointmentselect.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `intervalSelect`.
-    temp343-v = intervalselect.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `rowHeaderPress`.
-    temp343-v = rowheaderpress.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `rowSelectionChange`.
-    temp343-v = rowselectionchange.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `startDateChange`.
-    temp343-v = startdatechange.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `viewChange`.
-    temp343-v = viewchange.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `stickyHeader`.
-    temp343-v = stickyheader.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `viewKey`.
-    temp343-v = viewkey.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `width`.
-    temp343-v = width.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `singleSelection`.
-    temp343-v = z2ui5_cl_util=>boolean_abap_2_json( singleselection ).
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `showRowHeaders`.
-    temp343-v = z2ui5_cl_util=>boolean_abap_2_json( showrowheaders ).
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `multipleAppointmentsSelection`.
-    temp343-v = z2ui5_cl_util=>boolean_abap_2_json( multipleappointmentsselection ).
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `showIntervalHeaders`.
-    temp343-v = z2ui5_cl_util=>boolean_abap_2_json( showintervalheaders ).
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `showEmptyIntervalHeaders`.
-    temp343-v = z2ui5_cl_util=>boolean_abap_2_json( showemptyintervalheaders ).
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `showWeekNumbers`.
-    temp343-v = z2ui5_cl_util=>boolean_abap_2_json( showweeknumbers ).
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `legend`.
-    temp343-v = legend.
-    INSERT temp343 INTO TABLE temp342.
-    temp343-n = `showDayNamesLine`.
-    temp343-v = z2ui5_cl_util=>boolean_abap_2_json( showdaynamesline ).
-    INSERT temp343 INTO TABLE temp342.
-    result = _generic(
-        name   = `PlanningCalendar`
-        t_prop = temp342 ).
-  ENDMETHOD.
-
-  METHOD planning_calendar_legend.
-    DATA temp344 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp345 LIKE LINE OF temp344.
-    CLEAR temp344.
-    
-    temp345-n = `id`.
-    temp345-v = id.
-    INSERT temp345 INTO TABLE temp344.
-    temp345-n = `items`.
-    temp345-v = items.
-    INSERT temp345 INTO TABLE temp344.
-    temp345-n = `appointmentItems`.
-    temp345-v = appointmentitems.
-    INSERT temp345 INTO TABLE temp344.
-    temp345-n = `columnWidth`.
-    temp345-v = columnwidth.
-    INSERT temp345 INTO TABLE temp344.
-    temp345-n = `visible`.
-    temp345-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp345 INTO TABLE temp344.
-    temp345-n = `standardItems`.
-    temp345-v = standarditems.
-    INSERT temp345 INTO TABLE temp344.
-    result = _generic(
-                 name   = `PlanningCalendarLegend`
-                 t_prop = temp344 ).
-
-  ENDMETHOD.
-
-  METHOD planning_calendar_row.
-    DATA temp346 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp347 LIKE LINE OF temp346.
-    CLEAR temp346.
-    
-    temp347-n = `appointments`.
-    temp347-v = appointments.
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `intervalHeaders`.
-    temp347-v = intervalheaders.
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `id`.
-    temp347-v = id.
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `class`.
-    temp347-v = class.
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `icon`.
-    temp347-v = icon.
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `title`.
-    temp347-v = title.
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `key`.
-    temp347-v = key.
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `noAppointmentsText`.
-    temp347-v = noappointmentstext.
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `nonWorkingHours`.
-    temp347-v = nonworkinghours.
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `rowHeaderDescription`.
-    temp347-v = rowheaderdescription.
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `nonworkingdays`.
-    temp347-v = nonworkingdays.
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `enableAppointmentsCreate`.
-    temp347-v = z2ui5_cl_util=>boolean_abap_2_json( enableappointmentscreate ).
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `appointmentResize`.
-    temp347-v = appointmentresize.
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `appointmentDrop`.
-    temp347-v = appointmentdrop.
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `appointmentDragEnter`.
-    temp347-v = appointmentdragenter.
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `appointmentCreate`.
-    temp347-v = appointmentcreate.
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `selected`.
-    temp347-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `nonWorkingDays`.
-    temp347-v = nonworkingdays.
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `enableAppointmentsResize`.
-    temp347-v = z2ui5_cl_util=>boolean_abap_2_json( enableappointmentsresize ).
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `enableAppointmentsDragAndDrop`.
-    temp347-v = z2ui5_cl_util=>boolean_abap_2_json( enableappointmentsdraganddrop ).
-    INSERT temp347 INTO TABLE temp346.
-    temp347-n = `text`.
-    temp347-v = text.
-    INSERT temp347 INTO TABLE temp346.
-    result = _generic(
-        name   = `PlanningCalendarRow`
-        t_prop = temp346 ).
-
-  ENDMETHOD.
-
-  METHOD planning_calendar_view.
     DATA temp348 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp349 LIKE LINE OF temp348.
     CLEAR temp348.
     
-    temp349-n = `appointmentHeight`.
-    temp349-v = appointmentheight.
+    temp349-n = `expandable`.
+    temp349-v = z2ui5_cl_util=>boolean_abap_2_json( expandable ).
     INSERT temp349 INTO TABLE temp348.
-    temp349-n = `description`.
-    temp349-v = description.
+    temp349-n = `expanded`.
+    temp349-v = z2ui5_cl_util=>boolean_abap_2_json( expanded ).
     INSERT temp349 INTO TABLE temp348.
-    temp349-n = `intervalLabelFormatter`.
-    temp349-v = intervallabelformatter.
+    temp349-n = `stickyHeader`.
+    temp349-v = z2ui5_cl_util=>boolean_abap_2_json( stickyheader ).
     INSERT temp349 INTO TABLE temp348.
-    temp349-n = `intervalSize`.
-    temp349-v = intervalsize.
+    temp349-n = `expandAnimation`.
+    temp349-v = z2ui5_cl_util=>boolean_abap_2_json( expandanimation ).
     INSERT temp349 INTO TABLE temp348.
-    temp349-n = `intervalsL`.
-    temp349-v = intervalsl.
+    temp349-n = `visible`.
+    temp349-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp349 INTO TABLE temp348.
-    temp349-n = `intervalsM`.
-    temp349-v = intervalsm.
+    temp349-n = `height`.
+    temp349-v = height.
     INSERT temp349 INTO TABLE temp348.
-    temp349-n = `intervalsS`.
-    temp349-v = intervalss.
+    temp349-n = `backgroundDesign`.
+    temp349-v = backgrounddesign.
     INSERT temp349 INTO TABLE temp348.
-    temp349-n = `intervalType`.
-    temp349-v = intervaltype.
+    temp349-n = `width`.
+    temp349-v = width.
     INSERT temp349 INTO TABLE temp348.
-    temp349-n = `key`.
-    temp349-v = key.
+    temp349-n = `id`.
+    temp349-v = id.
     INSERT temp349 INTO TABLE temp348.
-    temp349-n = `relative`.
-    temp349-v = z2ui5_cl_util=>boolean_abap_2_json( relative ).
+    temp349-n = `class`.
+    temp349-v = class.
     INSERT temp349 INTO TABLE temp348.
-    temp349-n = `showSubIntervals`.
-    temp349-v = z2ui5_cl_util=>boolean_abap_2_json( showsubintervals ).
+    temp349-n = `expand`.
+    temp349-v = expand.
+    INSERT temp349 INTO TABLE temp348.
+    temp349-n = `headerText`.
+    temp349-v = headertext.
     INSERT temp349 INTO TABLE temp348.
     result = _generic(
+                 name   = `Panel`
+                 t_prop = temp348 ).
+
+  ENDMETHOD.
+
+  METHOD pane_container.
+    DATA temp350 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp351 LIKE LINE OF temp350.
+    CLEAR temp350.
+    
+    temp351-n = `resize`.
+    temp351-v = resize.
+    INSERT temp351 INTO TABLE temp350.
+    temp351-n = `orientation`.
+    temp351-v = orientation.
+    INSERT temp351 INTO TABLE temp350.
+    result = _generic( name   = `PaneContainer`
+                       ns     = `layout`
+                       t_prop = temp350 ).
+  ENDMETHOD.
+
+  METHOD planning_calendar.
+    DATA temp352 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp353 LIKE LINE OF temp352.
+    CLEAR temp352.
+    
+    temp353-n = `rows`.
+    temp353-v = rows.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `startDate`.
+    temp353-v = startdate.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `id`.
+    temp353-v = id.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `class`.
+    temp353-v = class.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `appointmentHeight`.
+    temp353-v = appointmentheight.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `appointmentRoundWidth`.
+    temp353-v = appointmentroundwidth.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `builtInViews`.
+    temp353-v = builtinviews.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `calendarWeekNumbering`.
+    temp353-v = calendarweeknumbering.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `firstDayOfWeek`.
+    temp353-v = firstdayofweek.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `groupAppointmentsMode`.
+    temp353-v = groupappointmentsmode.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `height`.
+    temp353-v = height.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `iconShape`.
+    temp353-v = iconshape.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `maxDate`.
+    temp353-v = maxdate.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `minDate`.
+    temp353-v = mindate.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `noDataText`.
+    temp353-v = nodatatext.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `primaryCalendarType`.
+    temp353-v = primarycalendartype.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `secondaryCalendarType`.
+    temp353-v = secondarycalendartype.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `appointmentsVisualization`.
+    temp353-v = appointmentsvisualization.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `appointmentSelect`.
+    temp353-v = appointmentselect.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `intervalSelect`.
+    temp353-v = intervalselect.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `rowHeaderPress`.
+    temp353-v = rowheaderpress.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `rowSelectionChange`.
+    temp353-v = rowselectionchange.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `startDateChange`.
+    temp353-v = startdatechange.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `viewChange`.
+    temp353-v = viewchange.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `stickyHeader`.
+    temp353-v = stickyheader.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `viewKey`.
+    temp353-v = viewkey.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `width`.
+    temp353-v = width.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `singleSelection`.
+    temp353-v = z2ui5_cl_util=>boolean_abap_2_json( singleselection ).
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `showRowHeaders`.
+    temp353-v = z2ui5_cl_util=>boolean_abap_2_json( showrowheaders ).
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `multipleAppointmentsSelection`.
+    temp353-v = z2ui5_cl_util=>boolean_abap_2_json( multipleappointmentsselection ).
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `showIntervalHeaders`.
+    temp353-v = z2ui5_cl_util=>boolean_abap_2_json( showintervalheaders ).
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `showEmptyIntervalHeaders`.
+    temp353-v = z2ui5_cl_util=>boolean_abap_2_json( showemptyintervalheaders ).
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `showWeekNumbers`.
+    temp353-v = z2ui5_cl_util=>boolean_abap_2_json( showweeknumbers ).
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `legend`.
+    temp353-v = legend.
+    INSERT temp353 INTO TABLE temp352.
+    temp353-n = `showDayNamesLine`.
+    temp353-v = z2ui5_cl_util=>boolean_abap_2_json( showdaynamesline ).
+    INSERT temp353 INTO TABLE temp352.
+    result = _generic(
+        name   = `PlanningCalendar`
+        t_prop = temp352 ).
+  ENDMETHOD.
+
+  METHOD planning_calendar_legend.
+    DATA temp354 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp355 LIKE LINE OF temp354.
+    CLEAR temp354.
+    
+    temp355-n = `id`.
+    temp355-v = id.
+    INSERT temp355 INTO TABLE temp354.
+    temp355-n = `items`.
+    temp355-v = items.
+    INSERT temp355 INTO TABLE temp354.
+    temp355-n = `appointmentItems`.
+    temp355-v = appointmentitems.
+    INSERT temp355 INTO TABLE temp354.
+    temp355-n = `columnWidth`.
+    temp355-v = columnwidth.
+    INSERT temp355 INTO TABLE temp354.
+    temp355-n = `visible`.
+    temp355-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp355 INTO TABLE temp354.
+    temp355-n = `standardItems`.
+    temp355-v = standarditems.
+    INSERT temp355 INTO TABLE temp354.
+    result = _generic(
+                 name   = `PlanningCalendarLegend`
+                 t_prop = temp354 ).
+
+  ENDMETHOD.
+
+  METHOD planning_calendar_row.
+    DATA temp356 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp357 LIKE LINE OF temp356.
+    CLEAR temp356.
+    
+    temp357-n = `appointments`.
+    temp357-v = appointments.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `intervalHeaders`.
+    temp357-v = intervalheaders.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `id`.
+    temp357-v = id.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `class`.
+    temp357-v = class.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `icon`.
+    temp357-v = icon.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `title`.
+    temp357-v = title.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `key`.
+    temp357-v = key.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `noAppointmentsText`.
+    temp357-v = noappointmentstext.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `nonWorkingHours`.
+    temp357-v = nonworkinghours.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `rowHeaderDescription`.
+    temp357-v = rowheaderdescription.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `nonworkingdays`.
+    temp357-v = nonworkingdays.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `enableAppointmentsCreate`.
+    temp357-v = z2ui5_cl_util=>boolean_abap_2_json( enableappointmentscreate ).
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `appointmentResize`.
+    temp357-v = appointmentresize.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `appointmentDrop`.
+    temp357-v = appointmentdrop.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `appointmentDragEnter`.
+    temp357-v = appointmentdragenter.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `appointmentCreate`.
+    temp357-v = appointmentcreate.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `selected`.
+    temp357-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `nonWorkingDays`.
+    temp357-v = nonworkingdays.
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `enableAppointmentsResize`.
+    temp357-v = z2ui5_cl_util=>boolean_abap_2_json( enableappointmentsresize ).
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `enableAppointmentsDragAndDrop`.
+    temp357-v = z2ui5_cl_util=>boolean_abap_2_json( enableappointmentsdraganddrop ).
+    INSERT temp357 INTO TABLE temp356.
+    temp357-n = `text`.
+    temp357-v = text.
+    INSERT temp357 INTO TABLE temp356.
+    result = _generic(
+        name   = `PlanningCalendarRow`
+        t_prop = temp356 ).
+
+  ENDMETHOD.
+
+  METHOD planning_calendar_view.
+    DATA temp358 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp359 LIKE LINE OF temp358.
+    CLEAR temp358.
+    
+    temp359-n = `appointmentHeight`.
+    temp359-v = appointmentheight.
+    INSERT temp359 INTO TABLE temp358.
+    temp359-n = `description`.
+    temp359-v = description.
+    INSERT temp359 INTO TABLE temp358.
+    temp359-n = `intervalLabelFormatter`.
+    temp359-v = intervallabelformatter.
+    INSERT temp359 INTO TABLE temp358.
+    temp359-n = `intervalSize`.
+    temp359-v = intervalsize.
+    INSERT temp359 INTO TABLE temp358.
+    temp359-n = `intervalsL`.
+    temp359-v = intervalsl.
+    INSERT temp359 INTO TABLE temp358.
+    temp359-n = `intervalsM`.
+    temp359-v = intervalsm.
+    INSERT temp359 INTO TABLE temp358.
+    temp359-n = `intervalsS`.
+    temp359-v = intervalss.
+    INSERT temp359 INTO TABLE temp358.
+    temp359-n = `intervalType`.
+    temp359-v = intervaltype.
+    INSERT temp359 INTO TABLE temp358.
+    temp359-n = `key`.
+    temp359-v = key.
+    INSERT temp359 INTO TABLE temp358.
+    temp359-n = `relative`.
+    temp359-v = z2ui5_cl_util=>boolean_abap_2_json( relative ).
+    INSERT temp359 INTO TABLE temp358.
+    temp359-n = `showSubIntervals`.
+    temp359-v = z2ui5_cl_util=>boolean_abap_2_json( showsubintervals ).
+    INSERT temp359 INTO TABLE temp358.
+    result = _generic(
         name   = `PlanningCalendarView`
-        t_prop = temp348 ).
+        t_prop = temp358 ).
   ENDMETHOD.
 
   METHOD points.
@@ -12884,262 +13167,262 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD popover.
-    DATA temp350 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp351 LIKE LINE OF temp350.
-    CLEAR temp350.
-    
-    temp351-n = `title`.
-    temp351-v = title.
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `class`.
-    temp351-v = class.
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `placement`.
-    temp351-v = placement.
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `initialFocus`.
-    temp351-v = initialfocus.
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `contentHeight`.
-    temp351-v = contentheight.
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `showHeader`.
-    temp351-v = z2ui5_cl_util=>boolean_abap_2_json( showheader ).
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `showArrow`.
-    temp351-v = z2ui5_cl_util=>boolean_abap_2_json( showarrow ).
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `resizable`.
-    temp351-v = z2ui5_cl_util=>boolean_abap_2_json( resizable ).
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `modal`.
-    temp351-v = z2ui5_cl_util=>boolean_abap_2_json( modal ).
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `horizontalScrolling`.
-    temp351-v = z2ui5_cl_util=>boolean_abap_2_json( horizontalscrolling ).
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `verticalScrolling`.
-    temp351-v = z2ui5_cl_util=>boolean_abap_2_json( verticalscrolling ).
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `visible`.
-    temp351-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `offsetX`.
-    temp351-v = offsetx.
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `offsetY`.
-    temp351-v = offsety.
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `contentMinWidth`.
-    temp351-v = contentminwidth.
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `titleAlignment`.
-    temp351-v = titlealignment.
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `contentWidth`.
-    temp351-v = contentwidth.
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `afterClose`.
-    temp351-v = afterclose.
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `afterOpen`.
-    temp351-v = afteropen.
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `beforeClose`.
-    temp351-v = beforeclose.
-    INSERT temp351 INTO TABLE temp350.
-    temp351-n = `beforeOpen`.
-    temp351-v = beforeopen.
-    INSERT temp351 INTO TABLE temp350.
-    result = _generic(
-        name   = `Popover`
-        t_prop = temp350 ).
-  ENDMETHOD.
-
-  METHOD process_flow.
-    DATA temp352 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp353 LIKE LINE OF temp352.
-    CLEAR temp352.
-    
-    temp353-n = `id`.
-    temp353-v = id.
-    INSERT temp353 INTO TABLE temp352.
-    temp353-n = `foldedCorners`.
-    temp353-v = z2ui5_cl_util=>boolean_abap_2_json( foldedcorners ).
-    INSERT temp353 INTO TABLE temp352.
-    temp353-n = `scrollable`.
-    temp353-v = z2ui5_cl_util=>boolean_abap_2_json( scrollable ).
-    INSERT temp353 INTO TABLE temp352.
-    temp353-n = `showLabels`.
-    temp353-v = z2ui5_cl_util=>boolean_abap_2_json( showlabels ).
-    INSERT temp353 INTO TABLE temp352.
-    temp353-n = `visible`.
-    temp353-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp353 INTO TABLE temp352.
-    temp353-n = `wheelZoomable`.
-    temp353-v = z2ui5_cl_util=>boolean_abap_2_json( wheelzoomable ).
-    INSERT temp353 INTO TABLE temp352.
-    temp353-n = `headerPress`.
-    temp353-v = headerpress.
-    INSERT temp353 INTO TABLE temp352.
-    temp353-n = `labelPress`.
-    temp353-v = labelpress.
-    INSERT temp353 INTO TABLE temp352.
-    temp353-n = `nodePress`.
-    temp353-v = nodepress.
-    INSERT temp353 INTO TABLE temp352.
-    temp353-n = `onError`.
-    temp353-v = onerror.
-    INSERT temp353 INTO TABLE temp352.
-    temp353-n = `lanes`.
-    temp353-v = lanes.
-    INSERT temp353 INTO TABLE temp352.
-    temp353-n = `nodes`.
-    temp353-v = nodes.
-    INSERT temp353 INTO TABLE temp352.
-    result = _generic(
-                 name   = `ProcessFlow`
-                 ns     = 'commons'
-                 t_prop = temp352 ).
-  ENDMETHOD.
-
-  METHOD process_flow_lane_header.
-
-    DATA temp354 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp355 LIKE LINE OF temp354.
-    CLEAR temp354.
-    
-    temp355-n = `iconSrc`.
-    temp355-v = iconsrc.
-    INSERT temp355 INTO TABLE temp354.
-    temp355-n = `laneId`.
-    temp355-v = laneid.
-    INSERT temp355 INTO TABLE temp354.
-    temp355-n = `position`.
-    temp355-v = position.
-    INSERT temp355 INTO TABLE temp354.
-    temp355-n = `state`.
-    temp355-v = state.
-    INSERT temp355 INTO TABLE temp354.
-    temp355-n = `text`.
-    temp355-v = text.
-    INSERT temp355 INTO TABLE temp354.
-    temp355-n = `zoomLevel`.
-    temp355-v = zoomlevel.
-    INSERT temp355 INTO TABLE temp354.
-    result = _generic( name   = `ProcessFlowLaneHeader`
-                       ns     = 'commons'
-                       t_prop = temp354 ).
-  ENDMETHOD.
-
-  METHOD process_flow_node.
-    DATA temp356 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp357 LIKE LINE OF temp356.
-    CLEAR temp356.
-    
-    temp357-n = `laneId`.
-    temp357-v = laneid.
-    INSERT temp357 INTO TABLE temp356.
-    temp357-n = `nodeId`.
-    temp357-v = nodeid.
-    INSERT temp357 INTO TABLE temp356.
-    temp357-n = `title`.
-    temp357-v = title.
-    INSERT temp357 INTO TABLE temp356.
-    temp357-n = `titleAbbreviation`.
-    temp357-v = titleabbreviation.
-    INSERT temp357 INTO TABLE temp356.
-    temp357-n = `children`.
-    temp357-v = children.
-    INSERT temp357 INTO TABLE temp356.
-    temp357-n = `state`.
-    temp357-v = state.
-    INSERT temp357 INTO TABLE temp356.
-    temp357-n = `stateText`.
-    temp357-v = statetext.
-    INSERT temp357 INTO TABLE temp356.
-    temp357-n = `texts`.
-    temp357-v = texts.
-    INSERT temp357 INTO TABLE temp356.
-    temp357-n = `highlighted`.
-    temp357-v = z2ui5_cl_util=>boolean_abap_2_json( highlighted ).
-    INSERT temp357 INTO TABLE temp356.
-    temp357-n = `focused`.
-    temp357-v = z2ui5_cl_util=>boolean_abap_2_json( focused ).
-    INSERT temp357 INTO TABLE temp356.
-    temp357-n = `selected`.
-    temp357-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
-    INSERT temp357 INTO TABLE temp356.
-    temp357-n = `tag`.
-    temp357-v = tag.
-    INSERT temp357 INTO TABLE temp356.
-    temp357-n = `texts`.
-    temp357-v = texts.
-    INSERT temp357 INTO TABLE temp356.
-    temp357-n = `type`.
-    temp357-v = type.
-    INSERT temp357 INTO TABLE temp356.
-    result = _generic(
-                 name   = `ProcessFlowNode`
-                 ns     = 'commons'
-                 t_prop = temp356 ).
-  ENDMETHOD.
-
-  METHOD progress_indicator.
-    DATA temp358 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp359 LIKE LINE OF temp358.
-    result = me.
-    
-    CLEAR temp358.
-    
-    temp359-n = `class`.
-    temp359-v = class.
-    INSERT temp359 INTO TABLE temp358.
-    temp359-n = `percentValue`.
-    temp359-v = percentvalue.
-    INSERT temp359 INTO TABLE temp358.
-    temp359-n = `displayValue`.
-    temp359-v = displayvalue.
-    INSERT temp359 INTO TABLE temp358.
-    temp359-n = `showValue`.
-    temp359-v = z2ui5_cl_util=>boolean_abap_2_json( showvalue ).
-    INSERT temp359 INTO TABLE temp358.
-    temp359-n = `visible`.
-    temp359-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp359 INTO TABLE temp358.
-    temp359-n = `state`.
-    temp359-v = state.
-    INSERT temp359 INTO TABLE temp358.
-    _generic( name   = `ProgressIndicator`
-              t_prop = temp358 ).
-  ENDMETHOD.
-
-  METHOD property_threshold.
     DATA temp360 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp361 LIKE LINE OF temp360.
     CLEAR temp360.
     
-    temp361-n = `id`.
-    temp361-v = id.
+    temp361-n = `title`.
+    temp361-v = title.
     INSERT temp361 INTO TABLE temp360.
     temp361-n = `class`.
     temp361-v = class.
     INSERT temp361 INTO TABLE temp360.
-    temp361-n = `ariaLabel`.
-    temp361-v = arialabel.
+    temp361-n = `placement`.
+    temp361-v = placement.
     INSERT temp361 INTO TABLE temp360.
-    temp361-n = `fillColor`.
-    temp361-v = fillcolor.
+    temp361-n = `initialFocus`.
+    temp361-v = initialfocus.
     INSERT temp361 INTO TABLE temp360.
-    temp361-n = `toValue`.
-    temp361-v = tovalue.
+    temp361-n = `contentHeight`.
+    temp361-v = contentheight.
+    INSERT temp361 INTO TABLE temp360.
+    temp361-n = `showHeader`.
+    temp361-v = z2ui5_cl_util=>boolean_abap_2_json( showheader ).
+    INSERT temp361 INTO TABLE temp360.
+    temp361-n = `showArrow`.
+    temp361-v = z2ui5_cl_util=>boolean_abap_2_json( showarrow ).
+    INSERT temp361 INTO TABLE temp360.
+    temp361-n = `resizable`.
+    temp361-v = z2ui5_cl_util=>boolean_abap_2_json( resizable ).
+    INSERT temp361 INTO TABLE temp360.
+    temp361-n = `modal`.
+    temp361-v = z2ui5_cl_util=>boolean_abap_2_json( modal ).
+    INSERT temp361 INTO TABLE temp360.
+    temp361-n = `horizontalScrolling`.
+    temp361-v = z2ui5_cl_util=>boolean_abap_2_json( horizontalscrolling ).
+    INSERT temp361 INTO TABLE temp360.
+    temp361-n = `verticalScrolling`.
+    temp361-v = z2ui5_cl_util=>boolean_abap_2_json( verticalscrolling ).
     INSERT temp361 INTO TABLE temp360.
     temp361-n = `visible`.
     temp361-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp361 INTO TABLE temp360.
+    temp361-n = `offsetX`.
+    temp361-v = offsetx.
+    INSERT temp361 INTO TABLE temp360.
+    temp361-n = `offsetY`.
+    temp361-v = offsety.
+    INSERT temp361 INTO TABLE temp360.
+    temp361-n = `contentMinWidth`.
+    temp361-v = contentminwidth.
+    INSERT temp361 INTO TABLE temp360.
+    temp361-n = `titleAlignment`.
+    temp361-v = titlealignment.
+    INSERT temp361 INTO TABLE temp360.
+    temp361-n = `contentWidth`.
+    temp361-v = contentwidth.
+    INSERT temp361 INTO TABLE temp360.
+    temp361-n = `afterClose`.
+    temp361-v = afterclose.
+    INSERT temp361 INTO TABLE temp360.
+    temp361-n = `afterOpen`.
+    temp361-v = afteropen.
+    INSERT temp361 INTO TABLE temp360.
+    temp361-n = `beforeClose`.
+    temp361-v = beforeclose.
+    INSERT temp361 INTO TABLE temp360.
+    temp361-n = `beforeOpen`.
+    temp361-v = beforeopen.
+    INSERT temp361 INTO TABLE temp360.
+    result = _generic(
+        name   = `Popover`
+        t_prop = temp360 ).
+  ENDMETHOD.
+
+  METHOD process_flow.
+    DATA temp362 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp363 LIKE LINE OF temp362.
+    CLEAR temp362.
+    
+    temp363-n = `id`.
+    temp363-v = id.
+    INSERT temp363 INTO TABLE temp362.
+    temp363-n = `foldedCorners`.
+    temp363-v = z2ui5_cl_util=>boolean_abap_2_json( foldedcorners ).
+    INSERT temp363 INTO TABLE temp362.
+    temp363-n = `scrollable`.
+    temp363-v = z2ui5_cl_util=>boolean_abap_2_json( scrollable ).
+    INSERT temp363 INTO TABLE temp362.
+    temp363-n = `showLabels`.
+    temp363-v = z2ui5_cl_util=>boolean_abap_2_json( showlabels ).
+    INSERT temp363 INTO TABLE temp362.
+    temp363-n = `visible`.
+    temp363-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp363 INTO TABLE temp362.
+    temp363-n = `wheelZoomable`.
+    temp363-v = z2ui5_cl_util=>boolean_abap_2_json( wheelzoomable ).
+    INSERT temp363 INTO TABLE temp362.
+    temp363-n = `headerPress`.
+    temp363-v = headerpress.
+    INSERT temp363 INTO TABLE temp362.
+    temp363-n = `labelPress`.
+    temp363-v = labelpress.
+    INSERT temp363 INTO TABLE temp362.
+    temp363-n = `nodePress`.
+    temp363-v = nodepress.
+    INSERT temp363 INTO TABLE temp362.
+    temp363-n = `onError`.
+    temp363-v = onerror.
+    INSERT temp363 INTO TABLE temp362.
+    temp363-n = `lanes`.
+    temp363-v = lanes.
+    INSERT temp363 INTO TABLE temp362.
+    temp363-n = `nodes`.
+    temp363-v = nodes.
+    INSERT temp363 INTO TABLE temp362.
+    result = _generic(
+                 name   = `ProcessFlow`
+                 ns     = 'commons'
+                 t_prop = temp362 ).
+  ENDMETHOD.
+
+  METHOD process_flow_lane_header.
+
+    DATA temp364 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp365 LIKE LINE OF temp364.
+    CLEAR temp364.
+    
+    temp365-n = `iconSrc`.
+    temp365-v = iconsrc.
+    INSERT temp365 INTO TABLE temp364.
+    temp365-n = `laneId`.
+    temp365-v = laneid.
+    INSERT temp365 INTO TABLE temp364.
+    temp365-n = `position`.
+    temp365-v = position.
+    INSERT temp365 INTO TABLE temp364.
+    temp365-n = `state`.
+    temp365-v = state.
+    INSERT temp365 INTO TABLE temp364.
+    temp365-n = `text`.
+    temp365-v = text.
+    INSERT temp365 INTO TABLE temp364.
+    temp365-n = `zoomLevel`.
+    temp365-v = zoomlevel.
+    INSERT temp365 INTO TABLE temp364.
+    result = _generic( name   = `ProcessFlowLaneHeader`
+                       ns     = 'commons'
+                       t_prop = temp364 ).
+  ENDMETHOD.
+
+  METHOD process_flow_node.
+    DATA temp366 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp367 LIKE LINE OF temp366.
+    CLEAR temp366.
+    
+    temp367-n = `laneId`.
+    temp367-v = laneid.
+    INSERT temp367 INTO TABLE temp366.
+    temp367-n = `nodeId`.
+    temp367-v = nodeid.
+    INSERT temp367 INTO TABLE temp366.
+    temp367-n = `title`.
+    temp367-v = title.
+    INSERT temp367 INTO TABLE temp366.
+    temp367-n = `titleAbbreviation`.
+    temp367-v = titleabbreviation.
+    INSERT temp367 INTO TABLE temp366.
+    temp367-n = `children`.
+    temp367-v = children.
+    INSERT temp367 INTO TABLE temp366.
+    temp367-n = `state`.
+    temp367-v = state.
+    INSERT temp367 INTO TABLE temp366.
+    temp367-n = `stateText`.
+    temp367-v = statetext.
+    INSERT temp367 INTO TABLE temp366.
+    temp367-n = `texts`.
+    temp367-v = texts.
+    INSERT temp367 INTO TABLE temp366.
+    temp367-n = `highlighted`.
+    temp367-v = z2ui5_cl_util=>boolean_abap_2_json( highlighted ).
+    INSERT temp367 INTO TABLE temp366.
+    temp367-n = `focused`.
+    temp367-v = z2ui5_cl_util=>boolean_abap_2_json( focused ).
+    INSERT temp367 INTO TABLE temp366.
+    temp367-n = `selected`.
+    temp367-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    INSERT temp367 INTO TABLE temp366.
+    temp367-n = `tag`.
+    temp367-v = tag.
+    INSERT temp367 INTO TABLE temp366.
+    temp367-n = `texts`.
+    temp367-v = texts.
+    INSERT temp367 INTO TABLE temp366.
+    temp367-n = `type`.
+    temp367-v = type.
+    INSERT temp367 INTO TABLE temp366.
+    result = _generic(
+                 name   = `ProcessFlowNode`
+                 ns     = 'commons'
+                 t_prop = temp366 ).
+  ENDMETHOD.
+
+  METHOD progress_indicator.
+    DATA temp368 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp369 LIKE LINE OF temp368.
+    result = me.
+    
+    CLEAR temp368.
+    
+    temp369-n = `class`.
+    temp369-v = class.
+    INSERT temp369 INTO TABLE temp368.
+    temp369-n = `percentValue`.
+    temp369-v = percentvalue.
+    INSERT temp369 INTO TABLE temp368.
+    temp369-n = `displayValue`.
+    temp369-v = displayvalue.
+    INSERT temp369 INTO TABLE temp368.
+    temp369-n = `showValue`.
+    temp369-v = z2ui5_cl_util=>boolean_abap_2_json( showvalue ).
+    INSERT temp369 INTO TABLE temp368.
+    temp369-n = `visible`.
+    temp369-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp369 INTO TABLE temp368.
+    temp369-n = `state`.
+    temp369-v = state.
+    INSERT temp369 INTO TABLE temp368.
+    _generic( name   = `ProgressIndicator`
+              t_prop = temp368 ).
+  ENDMETHOD.
+
+  METHOD property_threshold.
+    DATA temp370 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp371 LIKE LINE OF temp370.
+    CLEAR temp370.
+    
+    temp371-n = `id`.
+    temp371-v = id.
+    INSERT temp371 INTO TABLE temp370.
+    temp371-n = `class`.
+    temp371-v = class.
+    INSERT temp371 INTO TABLE temp370.
+    temp371-n = `ariaLabel`.
+    temp371-v = arialabel.
+    INSERT temp371 INTO TABLE temp370.
+    temp371-n = `fillColor`.
+    temp371-v = fillcolor.
+    INSERT temp371 INTO TABLE temp370.
+    temp371-n = `toValue`.
+    temp371-v = tovalue.
+    INSERT temp371 INTO TABLE temp370.
+    temp371-n = `visible`.
+    temp371-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp371 INTO TABLE temp370.
     result = _generic( name   = `PropertyThreshold`
                        ns     = `si`
-                       t_prop = temp360 ).
+                       t_prop = temp370 ).
   ENDMETHOD.
 
   METHOD property_thresholds.
@@ -13148,115 +13431,115 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD proportion_zoom_strategy.
-    DATA temp362 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp363 LIKE LINE OF temp362.
-    CLEAR temp362.
+    DATA temp372 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp373 LIKE LINE OF temp372.
+    CLEAR temp372.
     
-    temp363-n = `zoomLevel`.
-    temp363-v = zoomlevel.
-    INSERT temp363 INTO TABLE temp362.
+    temp373-n = `zoomLevel`.
+    temp373-v = zoomlevel.
+    INSERT temp373 INTO TABLE temp372.
     result = _generic( name   = `ProportionZoomStrategy`
                        ns     = `axistime`
-                       t_prop = temp362 ).
+                       t_prop = temp372 ).
   ENDMETHOD.
 
   METHOD quick_view.
-    DATA temp364 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp365 LIKE LINE OF temp364.
-    CLEAR temp364.
+    DATA temp374 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp375 LIKE LINE OF temp374.
+    CLEAR temp374.
     
-    temp365-n = `placement`.
-    temp365-v = placement.
-    INSERT temp365 INTO TABLE temp364.
-    temp365-n = `width`.
-    temp365-v = width.
-    INSERT temp365 INTO TABLE temp364.
-    temp365-n = `afterClose`.
-    temp365-v = afterclose.
-    INSERT temp365 INTO TABLE temp364.
-    temp365-n = `afterOpen`.
-    temp365-v = afteropen.
-    INSERT temp365 INTO TABLE temp364.
-    temp365-n = `beforeClose`.
-    temp365-v = beforeclose.
-    INSERT temp365 INTO TABLE temp364.
-    temp365-n = `beforeOpen`.
-    temp365-v = beforeopen.
-    INSERT temp365 INTO TABLE temp364.
+    temp375-n = `placement`.
+    temp375-v = placement.
+    INSERT temp375 INTO TABLE temp374.
+    temp375-n = `width`.
+    temp375-v = width.
+    INSERT temp375 INTO TABLE temp374.
+    temp375-n = `afterClose`.
+    temp375-v = afterclose.
+    INSERT temp375 INTO TABLE temp374.
+    temp375-n = `afterOpen`.
+    temp375-v = afteropen.
+    INSERT temp375 INTO TABLE temp374.
+    temp375-n = `beforeClose`.
+    temp375-v = beforeclose.
+    INSERT temp375 INTO TABLE temp374.
+    temp375-n = `beforeOpen`.
+    temp375-v = beforeopen.
+    INSERT temp375 INTO TABLE temp374.
     result = _generic( name   = `QuickView`
-                       t_prop = temp364 ).
+                       t_prop = temp374 ).
   ENDMETHOD.
 
   METHOD quick_view_group.
-    DATA temp366 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp367 LIKE LINE OF temp366.
-    CLEAR temp366.
+    DATA temp376 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp377 LIKE LINE OF temp376.
+    CLEAR temp376.
     
-    temp367-n = `heading`.
-    temp367-v = heading.
-    INSERT temp367 INTO TABLE temp366.
-    temp367-n = `visible`.
-    temp367-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp367 INTO TABLE temp366.
+    temp377-n = `heading`.
+    temp377-v = heading.
+    INSERT temp377 INTO TABLE temp376.
+    temp377-n = `visible`.
+    temp377-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp377 INTO TABLE temp376.
     result = _generic( name   = `QuickViewGroup`
-                       t_prop = temp366 ).
+                       t_prop = temp376 ).
   ENDMETHOD.
 
   METHOD quick_view_group_element.
-    DATA temp368 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp369 LIKE LINE OF temp368.
-    CLEAR temp368.
+    DATA temp378 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp379 LIKE LINE OF temp378.
+    CLEAR temp378.
     
-    temp369-n = `emailSubject`.
-    temp369-v = emailsubject.
-    INSERT temp369 INTO TABLE temp368.
-    temp369-n = `label`.
-    temp369-v = label.
-    INSERT temp369 INTO TABLE temp368.
-    temp369-n = `pageLinkId`.
-    temp369-v = pagelinkid.
-    INSERT temp369 INTO TABLE temp368.
-    temp369-n = `target`.
-    temp369-v = target.
-    INSERT temp369 INTO TABLE temp368.
-    temp369-n = `type`.
-    temp369-v = type.
-    INSERT temp369 INTO TABLE temp368.
-    temp369-n = `url`.
-    temp369-v = url.
-    INSERT temp369 INTO TABLE temp368.
-    temp369-n = `value`.
-    temp369-v = value.
-    INSERT temp369 INTO TABLE temp368.
-    temp369-n = `visible`.
-    temp369-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp369 INTO TABLE temp368.
+    temp379-n = `emailSubject`.
+    temp379-v = emailsubject.
+    INSERT temp379 INTO TABLE temp378.
+    temp379-n = `label`.
+    temp379-v = label.
+    INSERT temp379 INTO TABLE temp378.
+    temp379-n = `pageLinkId`.
+    temp379-v = pagelinkid.
+    INSERT temp379 INTO TABLE temp378.
+    temp379-n = `target`.
+    temp379-v = target.
+    INSERT temp379 INTO TABLE temp378.
+    temp379-n = `type`.
+    temp379-v = type.
+    INSERT temp379 INTO TABLE temp378.
+    temp379-n = `url`.
+    temp379-v = url.
+    INSERT temp379 INTO TABLE temp378.
+    temp379-n = `value`.
+    temp379-v = value.
+    INSERT temp379 INTO TABLE temp378.
+    temp379-n = `visible`.
+    temp379-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp379 INTO TABLE temp378.
     result = _generic( name   = `QuickViewGroupElement`
-                       t_prop = temp368 ).
+                       t_prop = temp378 ).
   ENDMETHOD.
 
   METHOD quick_view_page.
-    DATA temp370 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp371 LIKE LINE OF temp370.
-    CLEAR temp370.
+    DATA temp380 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp381 LIKE LINE OF temp380.
+    CLEAR temp380.
     
-    temp371-n = `description`.
-    temp371-v = description.
-    INSERT temp371 INTO TABLE temp370.
-    temp371-n = `header`.
-    temp371-v = header.
-    INSERT temp371 INTO TABLE temp370.
-    temp371-n = `pageId`.
-    temp371-v = pageid.
-    INSERT temp371 INTO TABLE temp370.
-    temp371-n = `title`.
-    temp371-v = title.
-    INSERT temp371 INTO TABLE temp370.
-    temp371-n = `titleUrl`.
-    temp371-v = titleurl.
-    INSERT temp371 INTO TABLE temp370.
+    temp381-n = `description`.
+    temp381-v = description.
+    INSERT temp381 INTO TABLE temp380.
+    temp381-n = `header`.
+    temp381-v = header.
+    INSERT temp381 INTO TABLE temp380.
+    temp381-n = `pageId`.
+    temp381-v = pageid.
+    INSERT temp381 INTO TABLE temp380.
+    temp381-n = `title`.
+    temp381-v = title.
+    INSERT temp381 INTO TABLE temp380.
+    temp381-n = `titleUrl`.
+    temp381-v = titleurl.
+    INSERT temp381 INTO TABLE temp380.
     result = _generic( name   = `QuickViewPage`
-                       t_prop = temp370 ).
+                       t_prop = temp380 ).
   ENDMETHOD.
 
   METHOD quick_view_page_avatar.
@@ -13264,239 +13547,239 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD radial_micro_chart.
-    DATA temp372 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp373 LIKE LINE OF temp372.
+    DATA temp382 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp383 LIKE LINE OF temp382.
     result = me.
     
-    CLEAR temp372.
+    CLEAR temp382.
     
-    temp373-n = `percentage`.
-    temp373-v = percentage.
-    INSERT temp373 INTO TABLE temp372.
-    temp373-n = `press`.
-    temp373-v = press.
-    INSERT temp373 INTO TABLE temp372.
-    temp373-n = `size`.
-    temp373-v = size.
-    INSERT temp373 INTO TABLE temp372.
-    temp373-n = `height`.
-    temp373-v = height.
-    INSERT temp373 INTO TABLE temp372.
-    temp373-n = `alignContent`.
-    temp373-v = aligncontent.
-    INSERT temp373 INTO TABLE temp372.
-    temp373-n = `hideOnNoData`.
-    temp373-v = z2ui5_cl_util=>boolean_abap_2_json( hideonnodata ).
-    INSERT temp373 INTO TABLE temp372.
-    temp373-n = `valueColor`.
-    temp373-v = valuecolor.
-    INSERT temp373 INTO TABLE temp372.
+    temp383-n = `percentage`.
+    temp383-v = percentage.
+    INSERT temp383 INTO TABLE temp382.
+    temp383-n = `press`.
+    temp383-v = press.
+    INSERT temp383 INTO TABLE temp382.
+    temp383-n = `size`.
+    temp383-v = size.
+    INSERT temp383 INTO TABLE temp382.
+    temp383-n = `height`.
+    temp383-v = height.
+    INSERT temp383 INTO TABLE temp382.
+    temp383-n = `alignContent`.
+    temp383-v = aligncontent.
+    INSERT temp383 INTO TABLE temp382.
+    temp383-n = `hideOnNoData`.
+    temp383-v = z2ui5_cl_util=>boolean_abap_2_json( hideonnodata ).
+    INSERT temp383 INTO TABLE temp382.
+    temp383-n = `valueColor`.
+    temp383-v = valuecolor.
+    INSERT temp383 INTO TABLE temp382.
     _generic( name   = `RadialMicroChart`
               ns     = `mchart`
-              t_prop = temp372 ).
+              t_prop = temp382 ).
   ENDMETHOD.
 
   METHOD radio_button.
-    DATA temp374 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp375 LIKE LINE OF temp374.
-    CLEAR temp374.
+    DATA temp384 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp385 LIKE LINE OF temp384.
+    CLEAR temp384.
     
-    temp375-n = `id`.
-    temp375-v = id.
-    INSERT temp375 INTO TABLE temp374.
-    temp375-n = `activeHandling`.
-    temp375-v = z2ui5_cl_util=>boolean_abap_2_json( activehandling ).
-    INSERT temp375 INTO TABLE temp374.
-    temp375-n = `editable`.
-    temp375-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
-    INSERT temp375 INTO TABLE temp374.
-    temp375-n = `enabled`.
-    temp375-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp375 INTO TABLE temp374.
-    temp375-n = `selected`.
-    temp375-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
-    INSERT temp375 INTO TABLE temp374.
-    temp375-n = `useEntireWidth`.
-    temp375-v = z2ui5_cl_util=>boolean_abap_2_json( useentirewidth ).
-    INSERT temp375 INTO TABLE temp374.
-    temp375-n = `text`.
-    temp375-v = text.
-    INSERT temp375 INTO TABLE temp374.
-    temp375-n = `textDirection`.
-    temp375-v = textdirection.
-    INSERT temp375 INTO TABLE temp374.
-    temp375-n = `textAlign`.
-    temp375-v = textalign.
-    INSERT temp375 INTO TABLE temp374.
-    temp375-n = `groupName`.
-    temp375-v = groupname.
-    INSERT temp375 INTO TABLE temp374.
-    temp375-n = `valueState`.
-    temp375-v = valuestate.
-    INSERT temp375 INTO TABLE temp374.
-    temp375-n = `width`.
-    temp375-v = width.
-    INSERT temp375 INTO TABLE temp374.
-    temp375-n = `select`.
-    temp375-v = select.
-    INSERT temp375 INTO TABLE temp374.
+    temp385-n = `id`.
+    temp385-v = id.
+    INSERT temp385 INTO TABLE temp384.
+    temp385-n = `activeHandling`.
+    temp385-v = z2ui5_cl_util=>boolean_abap_2_json( activehandling ).
+    INSERT temp385 INTO TABLE temp384.
+    temp385-n = `editable`.
+    temp385-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp385 INTO TABLE temp384.
+    temp385-n = `enabled`.
+    temp385-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp385 INTO TABLE temp384.
+    temp385-n = `selected`.
+    temp385-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    INSERT temp385 INTO TABLE temp384.
+    temp385-n = `useEntireWidth`.
+    temp385-v = z2ui5_cl_util=>boolean_abap_2_json( useentirewidth ).
+    INSERT temp385 INTO TABLE temp384.
+    temp385-n = `text`.
+    temp385-v = text.
+    INSERT temp385 INTO TABLE temp384.
+    temp385-n = `textDirection`.
+    temp385-v = textdirection.
+    INSERT temp385 INTO TABLE temp384.
+    temp385-n = `textAlign`.
+    temp385-v = textalign.
+    INSERT temp385 INTO TABLE temp384.
+    temp385-n = `groupName`.
+    temp385-v = groupname.
+    INSERT temp385 INTO TABLE temp384.
+    temp385-n = `valueState`.
+    temp385-v = valuestate.
+    INSERT temp385 INTO TABLE temp384.
+    temp385-n = `width`.
+    temp385-v = width.
+    INSERT temp385 INTO TABLE temp384.
+    temp385-n = `select`.
+    temp385-v = select.
+    INSERT temp385 INTO TABLE temp384.
     result = _generic(
                  name   = `RadioButton`
-                 t_prop = temp374 ).
+                 t_prop = temp384 ).
   ENDMETHOD.
 
   METHOD radio_button_group.
-    DATA temp376 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp377 LIKE LINE OF temp376.
-    CLEAR temp376.
+    DATA temp386 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp387 LIKE LINE OF temp386.
+    CLEAR temp386.
     
-    temp377-n = `id`.
-    temp377-v = id.
-    INSERT temp377 INTO TABLE temp376.
-    temp377-n = `columns`.
-    temp377-v = columns.
-    INSERT temp377 INTO TABLE temp376.
-    temp377-n = `editable`.
-    temp377-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
-    INSERT temp377 INTO TABLE temp376.
-    temp377-n = `enabled`.
-    temp377-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp377 INTO TABLE temp376.
-    temp377-n = `selectedIndex`.
-    temp377-v = selectedindex.
-    INSERT temp377 INTO TABLE temp376.
-    temp377-n = `textDirection`.
-    temp377-v = textdirection.
-    INSERT temp377 INTO TABLE temp376.
-    temp377-n = `valueState`.
-    temp377-v = valuestate.
-    INSERT temp377 INTO TABLE temp376.
-    temp377-n = `select`.
-    temp377-v = select.
-    INSERT temp377 INTO TABLE temp376.
-    temp377-n = `width`.
-    temp377-v = width.
-    INSERT temp377 INTO TABLE temp376.
-    temp377-n = `class`.
-    temp377-v = class.
-    INSERT temp377 INTO TABLE temp376.
+    temp387-n = `id`.
+    temp387-v = id.
+    INSERT temp387 INTO TABLE temp386.
+    temp387-n = `columns`.
+    temp387-v = columns.
+    INSERT temp387 INTO TABLE temp386.
+    temp387-n = `editable`.
+    temp387-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp387 INTO TABLE temp386.
+    temp387-n = `enabled`.
+    temp387-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp387 INTO TABLE temp386.
+    temp387-n = `selectedIndex`.
+    temp387-v = selectedindex.
+    INSERT temp387 INTO TABLE temp386.
+    temp387-n = `textDirection`.
+    temp387-v = textdirection.
+    INSERT temp387 INTO TABLE temp386.
+    temp387-n = `valueState`.
+    temp387-v = valuestate.
+    INSERT temp387 INTO TABLE temp386.
+    temp387-n = `select`.
+    temp387-v = select.
+    INSERT temp387 INTO TABLE temp386.
+    temp387-n = `width`.
+    temp387-v = width.
+    INSERT temp387 INTO TABLE temp386.
+    temp387-n = `class`.
+    temp387-v = class.
+    INSERT temp387 INTO TABLE temp386.
     result = _generic( name   = `RadioButtonGroup`
-                       t_prop = temp376 ).
+                       t_prop = temp386 ).
   ENDMETHOD.
 
   METHOD range_slider.
-    DATA temp378 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp379 LIKE LINE OF temp378.
+    DATA temp388 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp389 LIKE LINE OF temp388.
     result = me.
     
-    CLEAR temp378.
+    CLEAR temp388.
     
-    temp379-n = `class`.
-    temp379-v = class.
-    INSERT temp379 INTO TABLE temp378.
-    temp379-n = `endValue`.
-    temp379-v = endvalue.
-    INSERT temp379 INTO TABLE temp378.
-    temp379-n = `id`.
-    temp379-v = id.
-    INSERT temp379 INTO TABLE temp378.
-    temp379-n = `labelInterval`.
-    temp379-v = labelinterval.
-    INSERT temp379 INTO TABLE temp378.
-    temp379-n = `max`.
-    temp379-v = max.
-    INSERT temp379 INTO TABLE temp378.
-    temp379-n = `min`.
-    temp379-v = min.
-    INSERT temp379 INTO TABLE temp378.
-    temp379-n = `showTickmarks`.
-    temp379-v = z2ui5_cl_util=>boolean_abap_2_json( showtickmarks ).
-    INSERT temp379 INTO TABLE temp378.
-    temp379-n = `startValue`.
-    temp379-v = startvalue.
-    INSERT temp379 INTO TABLE temp378.
-    temp379-n = `step`.
-    temp379-v = step.
-    INSERT temp379 INTO TABLE temp378.
-    temp379-n = `width`.
-    temp379-v = width.
-    INSERT temp379 INTO TABLE temp378.
-    temp379-n = `value`.
-    temp379-v = value.
-    INSERT temp379 INTO TABLE temp378.
-    temp379-n = `value2`.
-    temp379-v = value2.
-    INSERT temp379 INTO TABLE temp378.
-    temp379-n = `change`.
-    temp379-v = change.
-    INSERT temp379 INTO TABLE temp378.
+    temp389-n = `class`.
+    temp389-v = class.
+    INSERT temp389 INTO TABLE temp388.
+    temp389-n = `endValue`.
+    temp389-v = endvalue.
+    INSERT temp389 INTO TABLE temp388.
+    temp389-n = `id`.
+    temp389-v = id.
+    INSERT temp389 INTO TABLE temp388.
+    temp389-n = `labelInterval`.
+    temp389-v = labelinterval.
+    INSERT temp389 INTO TABLE temp388.
+    temp389-n = `max`.
+    temp389-v = max.
+    INSERT temp389 INTO TABLE temp388.
+    temp389-n = `min`.
+    temp389-v = min.
+    INSERT temp389 INTO TABLE temp388.
+    temp389-n = `showTickmarks`.
+    temp389-v = z2ui5_cl_util=>boolean_abap_2_json( showtickmarks ).
+    INSERT temp389 INTO TABLE temp388.
+    temp389-n = `startValue`.
+    temp389-v = startvalue.
+    INSERT temp389 INTO TABLE temp388.
+    temp389-n = `step`.
+    temp389-v = step.
+    INSERT temp389 INTO TABLE temp388.
+    temp389-n = `width`.
+    temp389-v = width.
+    INSERT temp389 INTO TABLE temp388.
+    temp389-n = `value`.
+    temp389-v = value.
+    INSERT temp389 INTO TABLE temp388.
+    temp389-n = `value2`.
+    temp389-v = value2.
+    INSERT temp389 INTO TABLE temp388.
+    temp389-n = `change`.
+    temp389-v = change.
+    INSERT temp389 INTO TABLE temp388.
     _generic( name   = `RangeSlider`
 *              ns     = `webc`
-              t_prop = temp378 ).
+              t_prop = temp388 ).
   ENDMETHOD.
 
   METHOD rating_indicator.
 
-    DATA temp380 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp381 LIKE LINE OF temp380.
-    CLEAR temp380.
+    DATA temp390 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp391 LIKE LINE OF temp390.
+    CLEAR temp390.
     
-    temp381-n = `class`.
-    temp381-v = class.
-    INSERT temp381 INTO TABLE temp380.
-    temp381-n = `maxValue`.
-    temp381-v = maxvalue.
-    INSERT temp381 INTO TABLE temp380.
-    temp381-n = `displayOnly`.
-    temp381-v = z2ui5_cl_util=>boolean_abap_2_json( displayonly ).
-    INSERT temp381 INTO TABLE temp380.
-    temp381-n = `editable`.
-    temp381-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
-    INSERT temp381 INTO TABLE temp380.
-    temp381-n = `iconSize`.
-    temp381-v = iconsize.
-    INSERT temp381 INTO TABLE temp380.
-    temp381-n = `value`.
-    temp381-v = value.
-    INSERT temp381 INTO TABLE temp380.
-    temp381-n = `id`.
-    temp381-v = id.
-    INSERT temp381 INTO TABLE temp380.
-    temp381-n = `change`.
-    temp381-v = change.
-    INSERT temp381 INTO TABLE temp380.
-    temp381-n = `enabled`.
-    temp381-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp381 INTO TABLE temp380.
-    temp381-n = `tooltip`.
-    temp381-v = tooltip.
-    INSERT temp381 INTO TABLE temp380.
+    temp391-n = `class`.
+    temp391-v = class.
+    INSERT temp391 INTO TABLE temp390.
+    temp391-n = `maxValue`.
+    temp391-v = maxvalue.
+    INSERT temp391 INTO TABLE temp390.
+    temp391-n = `displayOnly`.
+    temp391-v = z2ui5_cl_util=>boolean_abap_2_json( displayonly ).
+    INSERT temp391 INTO TABLE temp390.
+    temp391-n = `editable`.
+    temp391-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp391 INTO TABLE temp390.
+    temp391-n = `iconSize`.
+    temp391-v = iconsize.
+    INSERT temp391 INTO TABLE temp390.
+    temp391-n = `value`.
+    temp391-v = value.
+    INSERT temp391 INTO TABLE temp390.
+    temp391-n = `id`.
+    temp391-v = id.
+    INSERT temp391 INTO TABLE temp390.
+    temp391-n = `change`.
+    temp391-v = change.
+    INSERT temp391 INTO TABLE temp390.
+    temp391-n = `enabled`.
+    temp391-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp391 INTO TABLE temp390.
+    temp391-n = `tooltip`.
+    temp391-v = tooltip.
+    INSERT temp391 INTO TABLE temp390.
     result = _generic( name   = `RatingIndicator`
-                       t_prop = temp380 ).
+                       t_prop = temp390 ).
 
   ENDMETHOD.
 
   METHOD relationship.
 
-    DATA temp382 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp383 LIKE LINE OF temp382.
-    CLEAR temp382.
+    DATA temp392 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp393 LIKE LINE OF temp392.
+    CLEAR temp392.
     
-    temp383-n = `shapeId`.
-    temp383-v = shapeid.
-    INSERT temp383 INTO TABLE temp382.
-    temp383-n = `type`.
-    temp383-v = type.
-    INSERT temp383 INTO TABLE temp382.
-    temp383-n = `successor`.
-    temp383-v = successor.
-    INSERT temp383 INTO TABLE temp382.
-    temp383-n = `predecessor`.
-    temp383-v = predecessor.
-    INSERT temp383 INTO TABLE temp382.
+    temp393-n = `shapeId`.
+    temp393-v = shapeid.
+    INSERT temp393 INTO TABLE temp392.
+    temp393-n = `type`.
+    temp393-v = type.
+    INSERT temp393 INTO TABLE temp392.
+    temp393-n = `successor`.
+    temp393-v = successor.
+    INSERT temp393 INTO TABLE temp392.
+    temp393-n = `predecessor`.
+    temp393-v = predecessor.
+    INSERT temp393 INTO TABLE temp392.
     result = _generic( name   = `Relationship`
                        ns     = `gantt`
-                       t_prop = temp382 ).
+                       t_prop = temp392 ).
 
   ENDMETHOD.
 
@@ -13506,179 +13789,179 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD responsive_scale.
-    DATA temp384 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp385 LIKE LINE OF temp384.
-    CLEAR temp384.
+    DATA temp394 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp395 LIKE LINE OF temp394.
+    CLEAR temp394.
     
-    temp385-n = `id`.
-    temp385-v = id.
-    INSERT temp385 INTO TABLE temp384.
-    temp385-n = `class`.
-    temp385-v = class.
-    INSERT temp385 INTO TABLE temp384.
-    temp385-n = `tickmarksBetweenLabels`.
-    temp385-v = tickmarksbetweenlabels.
-    INSERT temp385 INTO TABLE temp384.
+    temp395-n = `id`.
+    temp395-v = id.
+    INSERT temp395 INTO TABLE temp394.
+    temp395-n = `class`.
+    temp395-v = class.
+    INSERT temp395 INTO TABLE temp394.
+    temp395-n = `tickmarksBetweenLabels`.
+    temp395-v = tickmarksbetweenlabels.
+    INSERT temp395 INTO TABLE temp394.
     result = _generic( name   = `ResponsiveScale`
-                       t_prop = temp384 ).
+                       t_prop = temp394 ).
   ENDMETHOD.
 
   METHOD responsive_splitter.
-    DATA temp386 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp387 LIKE LINE OF temp386.
-    CLEAR temp386.
+    DATA temp396 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp397 LIKE LINE OF temp396.
+    CLEAR temp396.
     
-    temp387-n = `defaultPane`.
-    temp387-v = defaultpane.
-    INSERT temp387 INTO TABLE temp386.
-    temp387-n = `height`.
-    temp387-v = height.
-    INSERT temp387 INTO TABLE temp386.
-    temp387-n = `width`.
-    temp387-v = width.
-    INSERT temp387 INTO TABLE temp386.
+    temp397-n = `defaultPane`.
+    temp397-v = defaultpane.
+    INSERT temp397 INTO TABLE temp396.
+    temp397-n = `height`.
+    temp397-v = height.
+    INSERT temp397 INTO TABLE temp396.
+    temp397-n = `width`.
+    temp397-v = width.
+    INSERT temp397 INTO TABLE temp396.
     result = _generic( name   = `ResponsiveSplitter`
                        ns     = `layout`
-                       t_prop = temp386 ).
+                       t_prop = temp396 ).
   ENDMETHOD.
 
   METHOD rich_text_editor.
-    DATA temp388 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp389 LIKE LINE OF temp388.
-    CLEAR temp388.
+    DATA temp398 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp399 LIKE LINE OF temp398.
+    CLEAR temp398.
     
-    temp389-n = `buttonGroups`.
-    temp389-v = buttongroups.
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `customToolbar`.
-    temp389-v = z2ui5_cl_util=>boolean_abap_2_json( customtoolbar ).
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `editable`.
-    temp389-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `height`.
-    temp389-v = height.
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `editorType`.
-    temp389-v = editortype.
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `plugins`.
-    temp389-v = plugins.
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `textDirection`.
-    temp389-v = textdirection.
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `value`.
-    temp389-v = value.
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `beforeEditorInit`.
-    temp389-v = beforeeditorinit.
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `change`.
-    temp389-v = change.
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `ready`.
-    temp389-v = ready.
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `readyRecurring`.
-    temp389-v = readyrecurring.
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `required`.
-    temp389-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `sanitizeValue`.
-    temp389-v = z2ui5_cl_util=>boolean_abap_2_json( sanitizevalue ).
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `showGroupClipboard`.
-    temp389-v = z2ui5_cl_util=>boolean_abap_2_json( showgroupclipboard ).
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `showGroupFont`.
-    temp389-v = z2ui5_cl_util=>boolean_abap_2_json( showgroupfont ).
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `showGroupFontStyle`.
-    temp389-v = z2ui5_cl_util=>boolean_abap_2_json( showgroupfontstyle ).
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `showGroupInsert`.
-    temp389-v = z2ui5_cl_util=>boolean_abap_2_json( showgroupinsert ).
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `showGroupLink`.
-    temp389-v = z2ui5_cl_util=>boolean_abap_2_json( showgrouplink ).
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `showGroupStructure`.
-    temp389-v = z2ui5_cl_util=>boolean_abap_2_json( showgroupstructure ).
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `showGroupTextAlign`.
-    temp389-v = z2ui5_cl_util=>boolean_abap_2_json( showgrouptextalign ).
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `showGroupUndo`.
-    temp389-v = z2ui5_cl_util=>boolean_abap_2_json( showgroupundo ).
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `useLegacyTheme`.
-    temp389-v = z2ui5_cl_util=>boolean_abap_2_json( uselegacytheme ).
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `wrapping`.
-    temp389-v = z2ui5_cl_util=>boolean_abap_2_json( wrapping ).
-    INSERT temp389 INTO TABLE temp388.
-    temp389-n = `width`.
-    temp389-v = width.
-    INSERT temp389 INTO TABLE temp388.
+    temp399-n = `buttonGroups`.
+    temp399-v = buttongroups.
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `customToolbar`.
+    temp399-v = z2ui5_cl_util=>boolean_abap_2_json( customtoolbar ).
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `editable`.
+    temp399-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `height`.
+    temp399-v = height.
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `editorType`.
+    temp399-v = editortype.
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `plugins`.
+    temp399-v = plugins.
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `textDirection`.
+    temp399-v = textdirection.
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `value`.
+    temp399-v = value.
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `beforeEditorInit`.
+    temp399-v = beforeeditorinit.
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `change`.
+    temp399-v = change.
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `ready`.
+    temp399-v = ready.
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `readyRecurring`.
+    temp399-v = readyrecurring.
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `required`.
+    temp399-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `sanitizeValue`.
+    temp399-v = z2ui5_cl_util=>boolean_abap_2_json( sanitizevalue ).
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `showGroupClipboard`.
+    temp399-v = z2ui5_cl_util=>boolean_abap_2_json( showgroupclipboard ).
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `showGroupFont`.
+    temp399-v = z2ui5_cl_util=>boolean_abap_2_json( showgroupfont ).
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `showGroupFontStyle`.
+    temp399-v = z2ui5_cl_util=>boolean_abap_2_json( showgroupfontstyle ).
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `showGroupInsert`.
+    temp399-v = z2ui5_cl_util=>boolean_abap_2_json( showgroupinsert ).
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `showGroupLink`.
+    temp399-v = z2ui5_cl_util=>boolean_abap_2_json( showgrouplink ).
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `showGroupStructure`.
+    temp399-v = z2ui5_cl_util=>boolean_abap_2_json( showgroupstructure ).
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `showGroupTextAlign`.
+    temp399-v = z2ui5_cl_util=>boolean_abap_2_json( showgrouptextalign ).
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `showGroupUndo`.
+    temp399-v = z2ui5_cl_util=>boolean_abap_2_json( showgroupundo ).
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `useLegacyTheme`.
+    temp399-v = z2ui5_cl_util=>boolean_abap_2_json( uselegacytheme ).
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `wrapping`.
+    temp399-v = z2ui5_cl_util=>boolean_abap_2_json( wrapping ).
+    INSERT temp399 INTO TABLE temp398.
+    temp399-n = `width`.
+    temp399-v = width.
+    INSERT temp399 INTO TABLE temp398.
     result = _generic(
         name   = `RichTextEditor`
         ns     = `text`
-        t_prop = temp388 ).
+        t_prop = temp398 ).
 
   ENDMETHOD.
 
   METHOD route.
-    DATA temp390 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp391 LIKE LINE OF temp390.
+    DATA temp400 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp401 LIKE LINE OF temp400.
 
     result = me.
     
-    CLEAR temp390.
+    CLEAR temp400.
     
-    temp391-n = `id`.
-    temp391-v = id.
-    INSERT temp391 INTO TABLE temp390.
-    temp391-n = `position`.
-    temp391-v = position.
-    INSERT temp391 INTO TABLE temp390.
-    temp391-n = `routetype`.
-    temp391-v = routetype.
-    INSERT temp391 INTO TABLE temp390.
-    temp391-n = `lineDash`.
-    temp391-v = linedash.
-    INSERT temp391 INTO TABLE temp390.
-    temp391-n = `linewidth`.
-    temp391-v = linewidth.
-    INSERT temp391 INTO TABLE temp390.
-    temp391-n = `color`.
-    temp391-v = color.
-    INSERT temp391 INTO TABLE temp390.
-    temp391-n = `colorBorder`.
-    temp391-v = colorborder.
-    INSERT temp391 INTO TABLE temp390.
+    temp401-n = `id`.
+    temp401-v = id.
+    INSERT temp401 INTO TABLE temp400.
+    temp401-n = `position`.
+    temp401-v = position.
+    INSERT temp401 INTO TABLE temp400.
+    temp401-n = `routetype`.
+    temp401-v = routetype.
+    INSERT temp401 INTO TABLE temp400.
+    temp401-n = `lineDash`.
+    temp401-v = linedash.
+    INSERT temp401 INTO TABLE temp400.
+    temp401-n = `linewidth`.
+    temp401-v = linewidth.
+    INSERT temp401 INTO TABLE temp400.
+    temp401-n = `color`.
+    temp401-v = color.
+    INSERT temp401 INTO TABLE temp400.
+    temp401-n = `colorBorder`.
+    temp401-v = colorborder.
+    INSERT temp401 INTO TABLE temp400.
     _generic( name   = `Route`
               ns     = `vbm`
-              t_prop = temp390 ).
+              t_prop = temp400 ).
 
   ENDMETHOD.
 
   METHOD routes.
 
-    DATA temp392 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp393 LIKE LINE OF temp392.
-    CLEAR temp392.
+    DATA temp402 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp403 LIKE LINE OF temp402.
+    CLEAR temp402.
     
-    temp393-n = `id`.
-    temp393-v = id.
-    INSERT temp393 INTO TABLE temp392.
-    temp393-n = `items`.
-    temp393-v = items.
-    INSERT temp393 INTO TABLE temp392.
+    temp403-n = `id`.
+    temp403-v = id.
+    INSERT temp403 INTO TABLE temp402.
+    temp403-n = `items`.
+    temp403-v = items.
+    INSERT temp403 INTO TABLE temp402.
     result = _generic( name   = `Routes`
                        ns     = `vbm`
-                       t_prop = temp392 ).
+                       t_prop = temp402 ).
 
   ENDMETHOD.
 
@@ -13696,89 +13979,89 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD scroll_container.
-    DATA temp394 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp395 LIKE LINE OF temp394.
-    CLEAR temp394.
+    DATA temp404 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp405 LIKE LINE OF temp404.
+    CLEAR temp404.
     
-    temp395-n = `height`.
-    temp395-v = height.
-    INSERT temp395 INTO TABLE temp394.
-    temp395-n = `width`.
-    temp395-v = width.
-    INSERT temp395 INTO TABLE temp394.
-    temp395-n = `id`.
-    temp395-v = id.
-    INSERT temp395 INTO TABLE temp394.
-    temp395-n = `visible`.
-    temp395-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp395 INTO TABLE temp394.
-    temp395-n = `vertical`.
-    temp395-v = z2ui5_cl_util=>boolean_abap_2_json( vertical ).
-    INSERT temp395 INTO TABLE temp394.
-    temp395-n = `horizontal`.
-    temp395-v = z2ui5_cl_util=>boolean_abap_2_json( horizontal ).
-    INSERT temp395 INTO TABLE temp394.
-    temp395-n = `focusable`.
-    temp395-v = z2ui5_cl_util=>boolean_abap_2_json( focusable ).
-    INSERT temp395 INTO TABLE temp394.
+    temp405-n = `height`.
+    temp405-v = height.
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `width`.
+    temp405-v = width.
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `id`.
+    temp405-v = id.
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `visible`.
+    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `vertical`.
+    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( vertical ).
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `horizontal`.
+    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( horizontal ).
+    INSERT temp405 INTO TABLE temp404.
+    temp405-n = `focusable`.
+    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( focusable ).
+    INSERT temp405 INTO TABLE temp404.
     result = _generic( name   = `ScrollContainer`
-                       t_prop = temp394 ).
+                       t_prop = temp404 ).
   ENDMETHOD.
 
   METHOD search_field.
-    DATA temp396 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp397 LIKE LINE OF temp396.
+    DATA temp406 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp407 LIKE LINE OF temp406.
     result = me.
     
-    CLEAR temp396.
+    CLEAR temp406.
     
-    temp397-n = `width`.
-    temp397-v = width.
-    INSERT temp397 INTO TABLE temp396.
-    temp397-n = `search`.
-    temp397-v = search.
-    INSERT temp397 INTO TABLE temp396.
-    temp397-n = `value`.
-    temp397-v = value.
-    INSERT temp397 INTO TABLE temp396.
-    temp397-n = `id`.
-    temp397-v = id.
-    INSERT temp397 INTO TABLE temp396.
-    temp397-n = `class`.
-    temp397-v = class.
-    INSERT temp397 INTO TABLE temp396.
-    temp397-n = `change`.
-    temp397-v = change.
-    INSERT temp397 INTO TABLE temp396.
-    temp397-n = `maxLength`.
-    temp397-v = maxlength.
-    INSERT temp397 INTO TABLE temp396.
-    temp397-n = `placeholder`.
-    temp397-v = placeholder.
-    INSERT temp397 INTO TABLE temp396.
-    temp397-n = `suggest`.
-    temp397-v = suggest.
-    INSERT temp397 INTO TABLE temp396.
-    temp397-n = `enableSuggestions`.
-    temp397-v = z2ui5_cl_util=>boolean_abap_2_json( enablesuggestions ).
-    INSERT temp397 INTO TABLE temp396.
-    temp397-n = `showRefreshButton`.
-    temp397-v = z2ui5_cl_util=>boolean_abap_2_json( showrefreshbutton ).
-    INSERT temp397 INTO TABLE temp396.
-    temp397-n = `showSearchButton`.
-    temp397-v = z2ui5_cl_util=>boolean_abap_2_json( showsearchbutton ).
-    INSERT temp397 INTO TABLE temp396.
-    temp397-n = `visible`.
-    temp397-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp397 INTO TABLE temp396.
-    temp397-n = `enabled`.
-    temp397-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp397 INTO TABLE temp396.
-    temp397-n = `liveChange`.
-    temp397-v = livechange.
-    INSERT temp397 INTO TABLE temp396.
+    temp407-n = `width`.
+    temp407-v = width.
+    INSERT temp407 INTO TABLE temp406.
+    temp407-n = `search`.
+    temp407-v = search.
+    INSERT temp407 INTO TABLE temp406.
+    temp407-n = `value`.
+    temp407-v = value.
+    INSERT temp407 INTO TABLE temp406.
+    temp407-n = `id`.
+    temp407-v = id.
+    INSERT temp407 INTO TABLE temp406.
+    temp407-n = `class`.
+    temp407-v = class.
+    INSERT temp407 INTO TABLE temp406.
+    temp407-n = `change`.
+    temp407-v = change.
+    INSERT temp407 INTO TABLE temp406.
+    temp407-n = `maxLength`.
+    temp407-v = maxlength.
+    INSERT temp407 INTO TABLE temp406.
+    temp407-n = `placeholder`.
+    temp407-v = placeholder.
+    INSERT temp407 INTO TABLE temp406.
+    temp407-n = `suggest`.
+    temp407-v = suggest.
+    INSERT temp407 INTO TABLE temp406.
+    temp407-n = `enableSuggestions`.
+    temp407-v = z2ui5_cl_util=>boolean_abap_2_json( enablesuggestions ).
+    INSERT temp407 INTO TABLE temp406.
+    temp407-n = `showRefreshButton`.
+    temp407-v = z2ui5_cl_util=>boolean_abap_2_json( showrefreshbutton ).
+    INSERT temp407 INTO TABLE temp406.
+    temp407-n = `showSearchButton`.
+    temp407-v = z2ui5_cl_util=>boolean_abap_2_json( showsearchbutton ).
+    INSERT temp407 INTO TABLE temp406.
+    temp407-n = `visible`.
+    temp407-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp407 INTO TABLE temp406.
+    temp407-n = `enabled`.
+    temp407-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp407 INTO TABLE temp406.
+    temp407-n = `liveChange`.
+    temp407-v = livechange.
+    INSERT temp407 INTO TABLE temp406.
     _generic( name   = `SearchField`
-              t_prop = temp396 ).
+              t_prop = temp406 ).
   ENDMETHOD.
 
   METHOD second_status.
@@ -13791,62 +14074,62 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD segmented_button.
-    DATA temp398 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp399 LIKE LINE OF temp398.
-    CLEAR temp398.
+    DATA temp408 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp409 LIKE LINE OF temp408.
+    CLEAR temp408.
     
-    temp399-n = `id`.
-    temp399-v = id.
-    INSERT temp399 INTO TABLE temp398.
-    temp399-n = `selectedKey`.
-    temp399-v = selected_key.
-    INSERT temp399 INTO TABLE temp398.
-    temp399-n = `visible`.
-    temp399-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp399 INTO TABLE temp398.
-    temp399-n = `enabled`.
-    temp399-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp399 INTO TABLE temp398.
-    temp399-n = `selectionChange`.
-    temp399-v = selection_change.
-    INSERT temp399 INTO TABLE temp398.
+    temp409-n = `id`.
+    temp409-v = id.
+    INSERT temp409 INTO TABLE temp408.
+    temp409-n = `selectedKey`.
+    temp409-v = selected_key.
+    INSERT temp409 INTO TABLE temp408.
+    temp409-n = `visible`.
+    temp409-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp409 INTO TABLE temp408.
+    temp409-n = `enabled`.
+    temp409-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp409 INTO TABLE temp408.
+    temp409-n = `selectionChange`.
+    temp409-v = selection_change.
+    INSERT temp409 INTO TABLE temp408.
     result = _generic( name   = `SegmentedButton`
-                       t_prop = temp398 ).
+                       t_prop = temp408 ).
   ENDMETHOD.
 
   METHOD segmented_button_item.
-    DATA temp400 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp401 LIKE LINE OF temp400.
+    DATA temp410 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp411 LIKE LINE OF temp410.
     result = me.
     
-    CLEAR temp400.
+    CLEAR temp410.
     
-    temp401-n = `icon`.
-    temp401-v = icon.
-    INSERT temp401 INTO TABLE temp400.
-    temp401-n = `press`.
-    temp401-v = press.
-    INSERT temp401 INTO TABLE temp400.
-    temp401-n = `width`.
-    temp401-v = width.
-    INSERT temp401 INTO TABLE temp400.
-    temp401-n = `key`.
-    temp401-v = key.
-    INSERT temp401 INTO TABLE temp400.
-    temp401-n = `textDirection`.
-    temp401-v = textdirection.
-    INSERT temp401 INTO TABLE temp400.
-    temp401-n = `enabled`.
-    temp401-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp401 INTO TABLE temp400.
-    temp401-n = `visible`.
-    temp401-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp401 INTO TABLE temp400.
-    temp401-n = `text`.
-    temp401-v = text.
-    INSERT temp401 INTO TABLE temp400.
+    temp411-n = `icon`.
+    temp411-v = icon.
+    INSERT temp411 INTO TABLE temp410.
+    temp411-n = `press`.
+    temp411-v = press.
+    INSERT temp411 INTO TABLE temp410.
+    temp411-n = `width`.
+    temp411-v = width.
+    INSERT temp411 INTO TABLE temp410.
+    temp411-n = `key`.
+    temp411-v = key.
+    INSERT temp411 INTO TABLE temp410.
+    temp411-n = `textDirection`.
+    temp411-v = textdirection.
+    INSERT temp411 INTO TABLE temp410.
+    temp411-n = `enabled`.
+    temp411-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp411 INTO TABLE temp410.
+    temp411-n = `visible`.
+    temp411-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp411 INTO TABLE temp410.
+    temp411-n = `text`.
+    temp411-v = text.
+    INSERT temp411 INTO TABLE temp410.
     _generic( name   = `SegmentedButtonItem`
-              t_prop = temp400 ).
+              t_prop = temp410 ).
   ENDMETHOD.
 
   METHOD segments.
@@ -13855,93 +14138,93 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD select.
-    DATA temp402 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp403 LIKE LINE OF temp402.
-    CLEAR temp402.
+    DATA temp412 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp413 LIKE LINE OF temp412.
+    CLEAR temp412.
     
-    temp403-n = `id`.
-    temp403-v = id.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `class`.
-    temp403-v = class.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `autoAdjustWidth`.
-    temp403-v = z2ui5_cl_util=>boolean_abap_2_json( autoadjustwidth ).
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `columnRatio`.
-    temp403-v = columnratio.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `editable`.
-    temp403-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `enabled`.
-    temp403-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `forceSelection`.
-    temp403-v = z2ui5_cl_util=>boolean_abap_2_json( forceselection ).
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `icon`.
-    temp403-v = icon.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `maxWidth`.
-    temp403-v = maxwidth.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `name`.
-    temp403-v = name.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `required`.
-    temp403-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `resetOnMissingKey`.
-    temp403-v = z2ui5_cl_util=>boolean_abap_2_json( resetonmissingkey ).
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `selectedItemId`.
-    temp403-v = selecteditemid.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `selectedKey`.
-    temp403-v = selectedkey.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `showSecondaryValues`.
-    temp403-v = z2ui5_cl_util=>boolean_abap_2_json( showsecondaryvalues ).
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `textAlign`.
-    temp403-v = textalign.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `textDirection`.
-    temp403-v = textdirection.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `type`.
-    temp403-v = type.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `valueState`.
-    temp403-v = valuestate.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `valueStateText`.
-    temp403-v = valuestatetext.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `width`.
-    temp403-v = width.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `wrapItemsText`.
-    temp403-v = z2ui5_cl_util=>boolean_abap_2_json( wrapitemstext ).
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `items`.
-    temp403-v = items.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `selectedItem`.
-    temp403-v = selecteditem.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `change`.
-    temp403-v = change.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `liveChange`.
-    temp403-v = livechange.
-    INSERT temp403 INTO TABLE temp402.
-    temp403-n = `visible`.
-    temp403-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp403 INTO TABLE temp402.
+    temp413-n = `id`.
+    temp413-v = id.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `class`.
+    temp413-v = class.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `autoAdjustWidth`.
+    temp413-v = z2ui5_cl_util=>boolean_abap_2_json( autoadjustwidth ).
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `columnRatio`.
+    temp413-v = columnratio.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `editable`.
+    temp413-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `enabled`.
+    temp413-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `forceSelection`.
+    temp413-v = z2ui5_cl_util=>boolean_abap_2_json( forceselection ).
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `icon`.
+    temp413-v = icon.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `maxWidth`.
+    temp413-v = maxwidth.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `name`.
+    temp413-v = name.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `required`.
+    temp413-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `resetOnMissingKey`.
+    temp413-v = z2ui5_cl_util=>boolean_abap_2_json( resetonmissingkey ).
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `selectedItemId`.
+    temp413-v = selecteditemid.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `selectedKey`.
+    temp413-v = selectedkey.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `showSecondaryValues`.
+    temp413-v = z2ui5_cl_util=>boolean_abap_2_json( showsecondaryvalues ).
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `textAlign`.
+    temp413-v = textalign.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `textDirection`.
+    temp413-v = textdirection.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `type`.
+    temp413-v = type.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `valueState`.
+    temp413-v = valuestate.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `valueStateText`.
+    temp413-v = valuestatetext.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `width`.
+    temp413-v = width.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `wrapItemsText`.
+    temp413-v = z2ui5_cl_util=>boolean_abap_2_json( wrapitemstext ).
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `items`.
+    temp413-v = items.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `selectedItem`.
+    temp413-v = selecteditem.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `change`.
+    temp413-v = change.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `liveChange`.
+    temp413-v = livechange.
+    INSERT temp413 INTO TABLE temp412.
+    temp413-n = `visible`.
+    temp413-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp413 INTO TABLE temp412.
     result = _generic( name   = `Select`
-                       t_prop = temp402 ).
+                       t_prop = temp412 ).
   ENDMETHOD.
 
   METHOD shapes1.
@@ -13960,356 +14243,356 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD shell.
-    DATA temp404 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp405 LIKE LINE OF temp404.
-    CLEAR temp404.
-    
-    temp405-n = `appWidthLimited`.
-    temp405-v = z2ui5_cl_util=>boolean_abap_2_json( appwidthlimited ).
-    INSERT temp405 INTO TABLE temp404.
-    result = _generic(
-        name   = `Shell`
-        ns     = ns
-        t_prop = temp404 ).
-  ENDMETHOD.
-
-  METHOD shell_bar.
-    DATA temp406 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp407 LIKE LINE OF temp406.
-    CLEAR temp406.
-    
-    temp407-n = `homeIcon`.
-    temp407-v = homeicon.
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = `homeIconTooltip`.
-    temp407-v = homeicontooltip.
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = `title`.
-    temp407-v = title.
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = `secondTitle`.
-    temp407-v = secondtitle.
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = `showCopilot`.
-    temp407-v = z2ui5_cl_util=>boolean_abap_2_json( showcopilot ).
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = `showMenuButton`.
-    temp407-v = z2ui5_cl_util=>boolean_abap_2_json( showmenubutton ).
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = `showNavButton`.
-    temp407-v = z2ui5_cl_util=>boolean_abap_2_json( shownavbutton ).
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = `showNotifications`.
-    temp407-v = z2ui5_cl_util=>boolean_abap_2_json( shownotifications ).
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = `showProductSwitcher`.
-    temp407-v = z2ui5_cl_util=>boolean_abap_2_json( showproductswitcher ).
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = `showSearch`.
-    temp407-v = z2ui5_cl_util=>boolean_abap_2_json( showsearch ).
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = `notificationsNumber`.
-    temp407-v = notificationsnumber.
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = 'avatarPressed'.
-    temp407-v = avatarpressed.
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = 'copilotPressed'.
-    temp407-v = copilotpressed.
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = 'homeIconPressed'.
-    temp407-v = homeiconpressed.
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = 'menuButtonPressed'.
-    temp407-v = menubuttonpressed.
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = 'navButtonPressed'.
-    temp407-v = navbuttonpressed.
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = 'notificationsPressed'.
-    temp407-v = notificationspressed.
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = 'productSwitcherPressed'.
-    temp407-v = productswitcherpressed.
-    INSERT temp407 INTO TABLE temp406.
-    temp407-n = 'searchButtonPressed'.
-    temp407-v = searchbuttonpressed.
-    INSERT temp407 INTO TABLE temp406.
-    result = _generic( name   = `ShellBar`
-                       ns     = `f`
-                       t_prop = temp406 ).
-
-  ENDMETHOD.
-
-  METHOD side_content.
-    DATA temp408 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp409 LIKE LINE OF temp408.
-    CLEAR temp408.
-    
-    temp409-n = `width`.
-    temp409-v = width.
-    INSERT temp409 INTO TABLE temp408.
-    result = _generic( name   = `sideContent`
-                       ns     = 'layout'
-                       t_prop = temp408 ).
-
-  ENDMETHOD.
-
-  METHOD side_panel.
-    DATA temp410 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp411 LIKE LINE OF temp410.
-    CLEAR temp410.
-    
-    temp411-n = `sidePanelWidth`.
-    temp411-v = sidepanelwidth.
-    INSERT temp411 INTO TABLE temp410.
-    temp411-n = `sidePanelResizeStep`.
-    temp411-v = sidepanelresizestep.
-    INSERT temp411 INTO TABLE temp410.
-    temp411-n = `sidePanelResizeLargerStep`.
-    temp411-v = sidepanelresizelargerstep.
-    INSERT temp411 INTO TABLE temp410.
-    temp411-n = `sidePanelPosition`.
-    temp411-v = sidepanelposition.
-    INSERT temp411 INTO TABLE temp410.
-    temp411-n = `sidePanelMinWidth`.
-    temp411-v = sidepanelminwidth.
-    INSERT temp411 INTO TABLE temp410.
-    temp411-n = `sidePanelMaxWidth`.
-    temp411-v = sidepanelmaxwidth.
-    INSERT temp411 INTO TABLE temp410.
-    temp411-n = `sidePanelResizable`.
-    temp411-v = z2ui5_cl_util=>boolean_abap_2_json( sidepanelresizable ).
-    INSERT temp411 INTO TABLE temp410.
-    temp411-n = `actionBarExpanded`.
-    temp411-v = z2ui5_cl_util=>boolean_abap_2_json( actionbarexpanded ).
-    INSERT temp411 INTO TABLE temp410.
-    temp411-n = `toggle`.
-    temp411-v = toggle.
-    INSERT temp411 INTO TABLE temp410.
-    temp411-n = `ariaLabel`.
-    temp411-v = arialabel.
-    INSERT temp411 INTO TABLE temp410.
-    result = _generic(
-        name   = `SidePanel`
-        ns     = `f`
-        t_prop = temp410 ).
-  ENDMETHOD.
-
-  METHOD side_panel_item.
-    DATA temp412 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp413 LIKE LINE OF temp412.
-    CLEAR temp412.
-    
-    temp413-n = `icon`.
-    temp413-v = icon.
-    INSERT temp413 INTO TABLE temp412.
-    temp413-n = `enabled`.
-    temp413-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp413 INTO TABLE temp412.
-    temp413-n = `key`.
-    temp413-v = key.
-    INSERT temp413 INTO TABLE temp412.
-    temp413-n = `text`.
-    temp413-v = text.
-    INSERT temp413 INTO TABLE temp412.
-    result = _generic( name   = `SidePanelItem`
-                       ns     = `f`
-                       t_prop = temp412 ).
-  ENDMETHOD.
-
-  METHOD simple_form.
     DATA temp414 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp415 LIKE LINE OF temp414.
     CLEAR temp414.
     
-    temp415-n = `title`.
-    temp415-v = title.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `layout`.
-    temp415-v = layout.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `class`.
-    temp415-v = class.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `adjustLabelSpan`.
-    temp415-v = adjustlabelspan.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `backgroundDesign`.
-    temp415-v = backgrounddesign.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `breakpointL`.
-    temp415-v = breakpointl.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `breakpointM`.
-    temp415-v = breakpointm.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `breakpointXL`.
-    temp415-v = breakpointxl.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `emptySpanL`.
-    temp415-v = emptyspanl.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `emptySpanM`.
-    temp415-v = emptyspanm.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `emptySpanS`.
-    temp415-v = emptyspans.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `emptySpanXL`.
-    temp415-v = emptyspanxl.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `labelSpanL`.
-    temp415-v = labelspanl.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `labelSpanM`.
-    temp415-v = labelspanm.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `labelSpanS`.
-    temp415-v = labelspans.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `labelSpanXL`.
-    temp415-v = labelspanxl.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `maxContainerCols`.
-    temp415-v = maxcontainercols.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `minWidth`.
-    temp415-v = minwidth.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `singleContainerFullSize`.
-    temp415-v = z2ui5_cl_util=>boolean_abap_2_json( singlecontainerfullsize ).
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `visible`.
-    temp415-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `width`.
-    temp415-v = width.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `id`.
-    temp415-v = id.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `columnsXL`.
-    temp415-v = columnsxl.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `columnsL`.
-    temp415-v = columnsl.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `columnsM`.
-    temp415-v = columnsm.
-    INSERT temp415 INTO TABLE temp414.
-    temp415-n = `editable`.
-    temp415-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    temp415-n = `appWidthLimited`.
+    temp415-v = z2ui5_cl_util=>boolean_abap_2_json( appwidthlimited ).
     INSERT temp415 INTO TABLE temp414.
     result = _generic(
-        name   = `SimpleForm`
-        ns     = `form`
+        name   = `Shell`
+        ns     = ns
         t_prop = temp414 ).
   ENDMETHOD.
 
-  METHOD slider.
+  METHOD shell_bar.
     DATA temp416 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp417 LIKE LINE OF temp416.
-    result = me.
-    
     CLEAR temp416.
     
-    temp417-n = `class`.
-    temp417-v = class.
+    temp417-n = `homeIcon`.
+    temp417-v = homeicon.
     INSERT temp417 INTO TABLE temp416.
-    temp417-n = `id`.
-    temp417-v = id.
+    temp417-n = `homeIconTooltip`.
+    temp417-v = homeicontooltip.
     INSERT temp417 INTO TABLE temp416.
-    temp417-n = `max`.
-    temp417-v = max.
+    temp417-n = `title`.
+    temp417-v = title.
     INSERT temp417 INTO TABLE temp416.
-    temp417-n = `min`.
-    temp417-v = min.
+    temp417-n = `secondTitle`.
+    temp417-v = secondtitle.
     INSERT temp417 INTO TABLE temp416.
-    temp417-n = `enableTickmarks`.
-    temp417-v = z2ui5_cl_util=>boolean_abap_2_json( enabletickmarks ).
+    temp417-n = `showCopilot`.
+    temp417-v = z2ui5_cl_util=>boolean_abap_2_json( showcopilot ).
     INSERT temp417 INTO TABLE temp416.
-    temp417-n = `enabled`.
-    temp417-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    temp417-n = `showMenuButton`.
+    temp417-v = z2ui5_cl_util=>boolean_abap_2_json( showmenubutton ).
     INSERT temp417 INTO TABLE temp416.
-    temp417-n = `value`.
-    temp417-v = value.
+    temp417-n = `showNavButton`.
+    temp417-v = z2ui5_cl_util=>boolean_abap_2_json( shownavbutton ).
     INSERT temp417 INTO TABLE temp416.
-    temp417-n = `step`.
-    temp417-v = step.
+    temp417-n = `showNotifications`.
+    temp417-v = z2ui5_cl_util=>boolean_abap_2_json( shownotifications ).
     INSERT temp417 INTO TABLE temp416.
-    temp417-n = `change`.
-    temp417-v = change.
+    temp417-n = `showProductSwitcher`.
+    temp417-v = z2ui5_cl_util=>boolean_abap_2_json( showproductswitcher ).
     INSERT temp417 INTO TABLE temp416.
-    temp417-n = `width`.
-    temp417-v = width.
+    temp417-n = `showSearch`.
+    temp417-v = z2ui5_cl_util=>boolean_abap_2_json( showsearch ).
     INSERT temp417 INTO TABLE temp416.
-    temp417-n = `inputsAsTooltips`.
-    temp417-v = inputsastooltips.
+    temp417-n = `notificationsNumber`.
+    temp417-v = notificationsnumber.
     INSERT temp417 INTO TABLE temp416.
-    temp417-n = `showAdvancedTooltip`.
-    temp417-v = showadvancedtooltip.
+    temp417-n = 'avatarPressed'.
+    temp417-v = avatarpressed.
     INSERT temp417 INTO TABLE temp416.
-    temp417-n = `showHandleTooltip`.
-    temp417-v = showhandletooltip.
+    temp417-n = 'copilotPressed'.
+    temp417-v = copilotpressed.
     INSERT temp417 INTO TABLE temp416.
-    _generic( name   = `Slider`
-*              ns     = `webc`
-              t_prop = temp416 ).
+    temp417-n = 'homeIconPressed'.
+    temp417-v = homeiconpressed.
+    INSERT temp417 INTO TABLE temp416.
+    temp417-n = 'menuButtonPressed'.
+    temp417-v = menubuttonpressed.
+    INSERT temp417 INTO TABLE temp416.
+    temp417-n = 'navButtonPressed'.
+    temp417-v = navbuttonpressed.
+    INSERT temp417 INTO TABLE temp416.
+    temp417-n = 'notificationsPressed'.
+    temp417-v = notificationspressed.
+    INSERT temp417 INTO TABLE temp416.
+    temp417-n = 'productSwitcherPressed'.
+    temp417-v = productswitcherpressed.
+    INSERT temp417 INTO TABLE temp416.
+    temp417-n = 'searchButtonPressed'.
+    temp417-v = searchbuttonpressed.
+    INSERT temp417 INTO TABLE temp416.
+    result = _generic( name   = `ShellBar`
+                       ns     = `f`
+                       t_prop = temp416 ).
+
   ENDMETHOD.
 
-  METHOD slide_tile.
-
+  METHOD side_content.
     DATA temp418 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp419 LIKE LINE OF temp418.
     CLEAR temp418.
     
-    temp419-n = `displayTime`.
-    temp419-v = displaytime.
-    INSERT temp419 INTO TABLE temp418.
-    temp419-n = `height`.
-    temp419-v = height.
-    INSERT temp419 INTO TABLE temp418.
-    temp419-n = `scope`.
-    temp419-v = scope.
-    INSERT temp419 INTO TABLE temp418.
-    temp419-n = `sizeBehavior`.
-    temp419-v = sizebehavior.
-    INSERT temp419 INTO TABLE temp418.
-    temp419-n = `transitionTime`.
-    temp419-v = transitiontime.
-    INSERT temp419 INTO TABLE temp418.
     temp419-n = `width`.
     temp419-v = width.
     INSERT temp419 INTO TABLE temp418.
-    temp419-n = `press`.
-    temp419-v = press.
-    INSERT temp419 INTO TABLE temp418.
-    temp419-n = `visible`.
-    temp419-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp419 INTO TABLE temp418.
-    temp419-n = `class`.
-    temp419-v = class.
-    INSERT temp419 INTO TABLE temp418.
-    result = _generic( name   = `SlideTile`
+    result = _generic( name   = `sideContent`
+                       ns     = 'layout'
                        t_prop = temp418 ).
+
   ENDMETHOD.
 
-  METHOD smart_variant_management.
+  METHOD side_panel.
     DATA temp420 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp421 LIKE LINE OF temp420.
     CLEAR temp420.
     
-    temp421-n = `id`.
-    temp421-v = id.
+    temp421-n = `sidePanelWidth`.
+    temp421-v = sidepanelwidth.
     INSERT temp421 INTO TABLE temp420.
-    temp421-n = `showExecuteOnSelection`.
-    temp421-v = z2ui5_cl_util=>boolean_abap_2_json( showexecuteonselection ).
+    temp421-n = `sidePanelResizeStep`.
+    temp421-v = sidepanelresizestep.
     INSERT temp421 INTO TABLE temp420.
+    temp421-n = `sidePanelResizeLargerStep`.
+    temp421-v = sidepanelresizelargerstep.
+    INSERT temp421 INTO TABLE temp420.
+    temp421-n = `sidePanelPosition`.
+    temp421-v = sidepanelposition.
+    INSERT temp421 INTO TABLE temp420.
+    temp421-n = `sidePanelMinWidth`.
+    temp421-v = sidepanelminwidth.
+    INSERT temp421 INTO TABLE temp420.
+    temp421-n = `sidePanelMaxWidth`.
+    temp421-v = sidepanelmaxwidth.
+    INSERT temp421 INTO TABLE temp420.
+    temp421-n = `sidePanelResizable`.
+    temp421-v = z2ui5_cl_util=>boolean_abap_2_json( sidepanelresizable ).
+    INSERT temp421 INTO TABLE temp420.
+    temp421-n = `actionBarExpanded`.
+    temp421-v = z2ui5_cl_util=>boolean_abap_2_json( actionbarexpanded ).
+    INSERT temp421 INTO TABLE temp420.
+    temp421-n = `toggle`.
+    temp421-v = toggle.
+    INSERT temp421 INTO TABLE temp420.
+    temp421-n = `ariaLabel`.
+    temp421-v = arialabel.
+    INSERT temp421 INTO TABLE temp420.
+    result = _generic(
+        name   = `SidePanel`
+        ns     = `f`
+        t_prop = temp420 ).
+  ENDMETHOD.
+
+  METHOD side_panel_item.
+    DATA temp422 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp423 LIKE LINE OF temp422.
+    CLEAR temp422.
+    
+    temp423-n = `icon`.
+    temp423-v = icon.
+    INSERT temp423 INTO TABLE temp422.
+    temp423-n = `enabled`.
+    temp423-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp423 INTO TABLE temp422.
+    temp423-n = `key`.
+    temp423-v = key.
+    INSERT temp423 INTO TABLE temp422.
+    temp423-n = `text`.
+    temp423-v = text.
+    INSERT temp423 INTO TABLE temp422.
+    result = _generic( name   = `SidePanelItem`
+                       ns     = `f`
+                       t_prop = temp422 ).
+  ENDMETHOD.
+
+  METHOD simple_form.
+    DATA temp424 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp425 LIKE LINE OF temp424.
+    CLEAR temp424.
+    
+    temp425-n = `title`.
+    temp425-v = title.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `layout`.
+    temp425-v = layout.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `class`.
+    temp425-v = class.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `adjustLabelSpan`.
+    temp425-v = adjustlabelspan.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `backgroundDesign`.
+    temp425-v = backgrounddesign.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `breakpointL`.
+    temp425-v = breakpointl.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `breakpointM`.
+    temp425-v = breakpointm.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `breakpointXL`.
+    temp425-v = breakpointxl.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `emptySpanL`.
+    temp425-v = emptyspanl.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `emptySpanM`.
+    temp425-v = emptyspanm.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `emptySpanS`.
+    temp425-v = emptyspans.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `emptySpanXL`.
+    temp425-v = emptyspanxl.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `labelSpanL`.
+    temp425-v = labelspanl.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `labelSpanM`.
+    temp425-v = labelspanm.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `labelSpanS`.
+    temp425-v = labelspans.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `labelSpanXL`.
+    temp425-v = labelspanxl.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `maxContainerCols`.
+    temp425-v = maxcontainercols.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `minWidth`.
+    temp425-v = minwidth.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `singleContainerFullSize`.
+    temp425-v = z2ui5_cl_util=>boolean_abap_2_json( singlecontainerfullsize ).
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `visible`.
+    temp425-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `width`.
+    temp425-v = width.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `id`.
+    temp425-v = id.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `columnsXL`.
+    temp425-v = columnsxl.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `columnsL`.
+    temp425-v = columnsl.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `columnsM`.
+    temp425-v = columnsm.
+    INSERT temp425 INTO TABLE temp424.
+    temp425-n = `editable`.
+    temp425-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp425 INTO TABLE temp424.
+    result = _generic(
+        name   = `SimpleForm`
+        ns     = `form`
+        t_prop = temp424 ).
+  ENDMETHOD.
+
+  METHOD slider.
+    DATA temp426 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp427 LIKE LINE OF temp426.
+    result = me.
+    
+    CLEAR temp426.
+    
+    temp427-n = `class`.
+    temp427-v = class.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `id`.
+    temp427-v = id.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `max`.
+    temp427-v = max.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `min`.
+    temp427-v = min.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `enableTickmarks`.
+    temp427-v = z2ui5_cl_util=>boolean_abap_2_json( enabletickmarks ).
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `enabled`.
+    temp427-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `value`.
+    temp427-v = value.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `step`.
+    temp427-v = step.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `change`.
+    temp427-v = change.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `width`.
+    temp427-v = width.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `inputsAsTooltips`.
+    temp427-v = inputsastooltips.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `showAdvancedTooltip`.
+    temp427-v = showadvancedtooltip.
+    INSERT temp427 INTO TABLE temp426.
+    temp427-n = `showHandleTooltip`.
+    temp427-v = showhandletooltip.
+    INSERT temp427 INTO TABLE temp426.
+    _generic( name   = `Slider`
+*              ns     = `webc`
+              t_prop = temp426 ).
+  ENDMETHOD.
+
+  METHOD slide_tile.
+
+    DATA temp428 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp429 LIKE LINE OF temp428.
+    CLEAR temp428.
+    
+    temp429-n = `displayTime`.
+    temp429-v = displaytime.
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `height`.
+    temp429-v = height.
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `scope`.
+    temp429-v = scope.
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `sizeBehavior`.
+    temp429-v = sizebehavior.
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `transitionTime`.
+    temp429-v = transitiontime.
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `width`.
+    temp429-v = width.
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `press`.
+    temp429-v = press.
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `visible`.
+    temp429-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp429 INTO TABLE temp428.
+    temp429-n = `class`.
+    temp429-v = class.
+    INSERT temp429 INTO TABLE temp428.
+    result = _generic( name   = `SlideTile`
+                       t_prop = temp428 ).
+  ENDMETHOD.
+
+  METHOD smart_variant_management.
+    DATA temp430 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp431 LIKE LINE OF temp430.
+    CLEAR temp430.
+    
+    temp431-n = `id`.
+    temp431-v = id.
+    INSERT temp431 INTO TABLE temp430.
+    temp431-n = `showExecuteOnSelection`.
+    temp431-v = z2ui5_cl_util=>boolean_abap_2_json( showexecuteonselection ).
+    INSERT temp431 INTO TABLE temp430.
     result = _generic(
         name   = `SmartVariantManagement`
         ns     = `svm`
-        t_prop = temp420 ).
+        t_prop = temp430 ).
   ENDMETHOD.
 
   METHOD snapped_content.
@@ -14333,499 +14616,499 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD splitter_layout_data.
-    DATA temp422 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp423 LIKE LINE OF temp422.
-    CLEAR temp422.
-    
-    temp423-n = `size`.
-    temp423-v = size.
-    INSERT temp423 INTO TABLE temp422.
-    temp423-n = `minSize`.
-    temp423-v = minsize.
-    INSERT temp423 INTO TABLE temp422.
-    temp423-n = `resizable`.
-    temp423-v = z2ui5_cl_util=>boolean_abap_2_json( resizable ).
-    INSERT temp423 INTO TABLE temp422.
-    result = _generic( name   = `SplitterLayoutData`
-                       ns     = `layout`
-                       t_prop = temp422 ).
-  ENDMETHOD.
-
-  METHOD split_container.
-    DATA temp424 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp425 LIKE LINE OF temp424.
-
-    result = me.
-    
-    CLEAR temp424.
-    
-    temp425-n = `id`.
-    temp425-v = id.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `initialDetail`.
-    temp425-v = initialdetail.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `initialMaster`.
-    temp425-v = initialmaster.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `backgroundColor`.
-    temp425-v = backgroundcolor.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `backgroundImage`.
-    temp425-v = backgroundimage.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `backgroundOpacity`.
-    temp425-v = backgroundopacity.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `backgroundRepeat`.
-    temp425-v = backgroundrepeat.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `defaultTransitionNameDetail`.
-    temp425-v = defaulttransitionnamedetail.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `defaultTransitionNameMaster`.
-    temp425-v = defaulttransitionnamemaster.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `masterButtonText`.
-    temp425-v = masterbuttontext.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `masterButtonTooltip`.
-    temp425-v = masterbuttontooltip.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `afterDetailNavigate`.
-    temp425-v = afterdetailnavigate.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `afterMasterClose`.
-    temp425-v = aftermasterclose.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `afterMasterNavigate`.
-    temp425-v = aftermasternavigate.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `afterMasterOpen`.
-    temp425-v = aftermasteropen.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `beforeMasterClose`.
-    temp425-v = beforemasterclose.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `beforeMasterOpen`.
-    temp425-v = beforemasteropen.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `detailNavigate`.
-    temp425-v = detailnavigate.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `masterButton`.
-    temp425-v = masterbutton.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `masterNavigate`.
-    temp425-v = masternavigate.
-    INSERT temp425 INTO TABLE temp424.
-    temp425-n = `mode`.
-    temp425-v = mode.
-    INSERT temp425 INTO TABLE temp424.
-    _generic( name   = `SplitContainer`
-              t_prop = temp424 ).
-
-  ENDMETHOD.
-
-  METHOD split_pane.
-    DATA temp426 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp427 LIKE LINE OF temp426.
-    CLEAR temp426.
-    
-    temp427-n = `id`.
-    temp427-v = id.
-    INSERT temp427 INTO TABLE temp426.
-    temp427-n = `requiredParentWidth`.
-    temp427-v = requiredparentwidth.
-    INSERT temp427 INTO TABLE temp426.
-    result = _generic( name   = `SplitPane`
-                       ns     = `layout`
-                       t_prop = temp426 ).
-  ENDMETHOD.
-
-  METHOD spot.
-    DATA temp428 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp429 LIKE LINE OF temp428.
-
-    result = me.
-    
-    CLEAR temp428.
-    
-    temp429-n = `id`.
-    temp429-v = id.
-    INSERT temp429 INTO TABLE temp428.
-    temp429-n = `position`.
-    temp429-v = position.
-    INSERT temp429 INTO TABLE temp428.
-    temp429-n = `contentOffset`.
-    temp429-v = contentoffset.
-    INSERT temp429 INTO TABLE temp428.
-    temp429-n = `type`.
-    temp429-v = type.
-    INSERT temp429 INTO TABLE temp428.
-    temp429-n = `scale`.
-    temp429-v = scale.
-    INSERT temp429 INTO TABLE temp428.
-    temp429-n = `tooltip`.
-    temp429-v = tooltip.
-    INSERT temp429 INTO TABLE temp428.
-    temp429-n = `image`.
-    temp429-v = image.
-    INSERT temp429 INTO TABLE temp428.
-    temp429-n = `icon`.
-    temp429-v = icon.
-    INSERT temp429 INTO TABLE temp428.
-    temp429-n = `click`.
-    temp429-v = click.
-    INSERT temp429 INTO TABLE temp428.
-    _generic( name   = `Spot`
-              ns     = `vbm`
-              t_prop = temp428 ).
-
-  ENDMETHOD.
-
-  METHOD spots.
-
-    DATA temp430 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp431 LIKE LINE OF temp430.
-    CLEAR temp430.
-    
-    temp431-n = `id`.
-    temp431-v = id.
-    INSERT temp431 INTO TABLE temp430.
-    temp431-n = `items`.
-    temp431-v = items.
-    INSERT temp431 INTO TABLE temp430.
-    result = _generic( name   = `Spots`
-                       ns     = `vbm`
-                       t_prop = temp430 ).
-
-  ENDMETHOD.
-
-  METHOD stacked_bar_micro_chart.
     DATA temp432 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp433 LIKE LINE OF temp432.
-
-    result = me.
-    
     CLEAR temp432.
     
-    temp433-n = `height`.
-    temp433-v = height.
-    INSERT temp433 INTO TABLE temp432.
-    temp433-n = `press`.
-    temp433-v = press.
-    INSERT temp433 INTO TABLE temp432.
-    temp433-n = `maxValue`.
-    temp433-v = maxvalue.
-    INSERT temp433 INTO TABLE temp432.
-    temp433-n = `precision`.
-    temp433-v = precision.
-    INSERT temp433 INTO TABLE temp432.
     temp433-n = `size`.
     temp433-v = size.
     INSERT temp433 INTO TABLE temp432.
-    temp433-n = `hideOnNoData`.
-    temp433-v = z2ui5_cl_util=>boolean_abap_2_json( hideonnodata ).
+    temp433-n = `minSize`.
+    temp433-v = minsize.
     INSERT temp433 INTO TABLE temp432.
-    temp433-n = `displayZeroValue`.
-    temp433-v = z2ui5_cl_util=>boolean_abap_2_json( displayzerovalue ).
+    temp433-n = `resizable`.
+    temp433-v = z2ui5_cl_util=>boolean_abap_2_json( resizable ).
     INSERT temp433 INTO TABLE temp432.
-    temp433-n = `showLabels`.
-    temp433-v = z2ui5_cl_util=>boolean_abap_2_json( showlabels ).
-    INSERT temp433 INTO TABLE temp432.
-    temp433-n = `width`.
-    temp433-v = width.
-    INSERT temp433 INTO TABLE temp432.
-    _generic( name   = `StackedBarMicroChart`
-              ns     = `mchart`
-              t_prop = temp432 ).
+    result = _generic( name   = `SplitterLayoutData`
+                       ns     = `layout`
+                       t_prop = temp432 ).
   ENDMETHOD.
 
-  METHOD standard_list_item.
+  METHOD split_container.
     DATA temp434 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp435 LIKE LINE OF temp434.
+
     result = me.
     
     CLEAR temp434.
     
-    temp435-n = `title`.
-    temp435-v = title.
+    temp435-n = `id`.
+    temp435-v = id.
     INSERT temp435 INTO TABLE temp434.
-    temp435-n = `description`.
-    temp435-v = description.
+    temp435-n = `initialDetail`.
+    temp435-v = initialdetail.
     INSERT temp435 INTO TABLE temp434.
-    temp435-n = `icon`.
-    temp435-v = icon.
+    temp435-n = `initialMaster`.
+    temp435-v = initialmaster.
     INSERT temp435 INTO TABLE temp434.
-    temp435-n = `info`.
-    temp435-v = info.
+    temp435-n = `backgroundColor`.
+    temp435-v = backgroundcolor.
     INSERT temp435 INTO TABLE temp434.
-    temp435-n = `press`.
-    temp435-v = press.
+    temp435-n = `backgroundImage`.
+    temp435-v = backgroundimage.
     INSERT temp435 INTO TABLE temp434.
-    temp435-n = `type`.
-    temp435-v = type.
+    temp435-n = `backgroundOpacity`.
+    temp435-v = backgroundopacity.
     INSERT temp435 INTO TABLE temp434.
-    temp435-n = `counter`.
-    temp435-v = counter.
+    temp435-n = `backgroundRepeat`.
+    temp435-v = backgroundrepeat.
     INSERT temp435 INTO TABLE temp434.
-    temp435-n = `activeIcon`.
-    temp435-v = activeicon.
+    temp435-n = `defaultTransitionNameDetail`.
+    temp435-v = defaulttransitionnamedetail.
     INSERT temp435 INTO TABLE temp434.
-    temp435-n = `adaptTitleSize`.
-    temp435-v = z2ui5_cl_util=>boolean_abap_2_json( adapttitlesize ).
+    temp435-n = `defaultTransitionNameMaster`.
+    temp435-v = defaulttransitionnamemaster.
     INSERT temp435 INTO TABLE temp434.
-    temp435-n = `unread`.
-    temp435-v = z2ui5_cl_util=>boolean_abap_2_json( unread ).
+    temp435-n = `masterButtonText`.
+    temp435-v = masterbuttontext.
     INSERT temp435 INTO TABLE temp434.
-    temp435-n = `iconInset`.
-    temp435-v = z2ui5_cl_util=>boolean_abap_2_json( iconinset ).
+    temp435-n = `masterButtonTooltip`.
+    temp435-v = masterbuttontooltip.
     INSERT temp435 INTO TABLE temp434.
-    temp435-n = `infoStateInverted`.
-    temp435-v = z2ui5_cl_util=>boolean_abap_2_json( infostateinverted ).
+    temp435-n = `afterDetailNavigate`.
+    temp435-v = afterdetailnavigate.
     INSERT temp435 INTO TABLE temp434.
-    temp435-n = `wrapping`.
-    temp435-v = z2ui5_cl_util=>boolean_abap_2_json( wrapping ).
+    temp435-n = `afterMasterClose`.
+    temp435-v = aftermasterclose.
     INSERT temp435 INTO TABLE temp434.
-    temp435-n = `infoState`.
-    temp435-v = infostate.
+    temp435-n = `afterMasterNavigate`.
+    temp435-v = aftermasternavigate.
     INSERT temp435 INTO TABLE temp434.
-    temp435-n = `highlight`.
-    temp435-v = highlight.
+    temp435-n = `afterMasterOpen`.
+    temp435-v = aftermasteropen.
     INSERT temp435 INTO TABLE temp434.
-    temp435-n = `wrapCharLimit`.
-    temp435-v = wrapcharlimit.
+    temp435-n = `beforeMasterClose`.
+    temp435-v = beforemasterclose.
     INSERT temp435 INTO TABLE temp434.
-    temp435-n = `selected`.
-    temp435-v = selected.
+    temp435-n = `beforeMasterOpen`.
+    temp435-v = beforemasteropen.
     INSERT temp435 INTO TABLE temp434.
-    _generic(
-        name   = `StandardListItem`
-        t_prop = temp434 ).
+    temp435-n = `detailNavigate`.
+    temp435-v = detailnavigate.
+    INSERT temp435 INTO TABLE temp434.
+    temp435-n = `masterButton`.
+    temp435-v = masterbutton.
+    INSERT temp435 INTO TABLE temp434.
+    temp435-n = `masterNavigate`.
+    temp435-v = masternavigate.
+    INSERT temp435 INTO TABLE temp434.
+    temp435-n = `mode`.
+    temp435-v = mode.
+    INSERT temp435 INTO TABLE temp434.
+    _generic( name   = `SplitContainer`
+              t_prop = temp434 ).
+
   ENDMETHOD.
 
-  METHOD standard_tree_item.
+  METHOD split_pane.
     DATA temp436 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp437 LIKE LINE OF temp436.
-    result = me.
-    
     CLEAR temp436.
     
-    temp437-n = `title`.
-    temp437-v = title.
+    temp437-n = `id`.
+    temp437-v = id.
     INSERT temp437 INTO TABLE temp436.
-    temp437-n = `icon`.
-    temp437-v = icon.
+    temp437-n = `requiredParentWidth`.
+    temp437-v = requiredparentwidth.
     INSERT temp437 INTO TABLE temp436.
-    temp437-n = `press`.
-    temp437-v = press.
-    INSERT temp437 INTO TABLE temp436.
-    temp437-n = `detailPress`.
-    temp437-v = detailpress.
-    INSERT temp437 INTO TABLE temp436.
-    temp437-n = `type`.
-    temp437-v = type.
-    INSERT temp437 INTO TABLE temp436.
-    temp437-n = `counter`.
-    temp437-v = counter.
-    INSERT temp437 INTO TABLE temp436.
-    temp437-n = `selected`.
-    temp437-v = selected.
-    INSERT temp437 INTO TABLE temp436.
-    temp437-n = `tooltip`.
-    temp437-v = tooltip.
-    INSERT temp437 INTO TABLE temp436.
-    _generic( name   = `StandardTreeItem`
-              t_prop = temp436 ).
-
+    result = _generic( name   = `SplitPane`
+                       ns     = `layout`
+                       t_prop = temp436 ).
   ENDMETHOD.
 
-  METHOD status.
-
+  METHOD spot.
     DATA temp438 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp439 LIKE LINE OF temp438.
+
+    result = me.
+    
     CLEAR temp438.
     
     temp439-n = `id`.
     temp439-v = id.
     INSERT temp439 INTO TABLE temp438.
-    temp439-n = `class`.
-    temp439-v = class.
+    temp439-n = `position`.
+    temp439-v = position.
     INSERT temp439 INTO TABLE temp438.
-    temp439-n = `backgroundColor`.
-    temp439-v = backgroundcolor.
+    temp439-n = `contentOffset`.
+    temp439-v = contentoffset.
     INSERT temp439 INTO TABLE temp438.
-    temp439-n = `borderColor`.
-    temp439-v = bordercolor.
+    temp439-n = `type`.
+    temp439-v = type.
     INSERT temp439 INTO TABLE temp438.
-    temp439-n = `borderStyle`.
-    temp439-v = borderstyle.
+    temp439-n = `scale`.
+    temp439-v = scale.
     INSERT temp439 INTO TABLE temp438.
-    temp439-n = `borderWidth`.
-    temp439-v = borderwidth.
+    temp439-n = `tooltip`.
+    temp439-v = tooltip.
     INSERT temp439 INTO TABLE temp438.
-    temp439-n = `contentColor`.
-    temp439-v = contentcolor.
+    temp439-n = `image`.
+    temp439-v = image.
     INSERT temp439 INTO TABLE temp438.
-    temp439-n = `headerContentColor`.
-    temp439-v = headercontentcolor.
+    temp439-n = `icon`.
+    temp439-v = icon.
     INSERT temp439 INTO TABLE temp438.
-    temp439-n = `hoverBackgroundColor`.
-    temp439-v = hoverbackgroundcolor.
+    temp439-n = `click`.
+    temp439-v = click.
     INSERT temp439 INTO TABLE temp438.
-    temp439-n = `hoverBorderColor`.
-    temp439-v = hoverbordercolor.
-    INSERT temp439 INTO TABLE temp438.
-    temp439-n = `hoverContentColor`.
-    temp439-v = hovercontentcolor.
-    INSERT temp439 INTO TABLE temp438.
-    temp439-n = `key`.
-    temp439-v = key.
-    INSERT temp439 INTO TABLE temp438.
-    temp439-n = `legendColor`.
-    temp439-v = legendcolor.
-    INSERT temp439 INTO TABLE temp438.
-    temp439-n = `selectedBackgroundColor`.
-    temp439-v = selectedbackgroundcolor.
-    INSERT temp439 INTO TABLE temp438.
-    temp439-n = `selectedBorderColor`.
-    temp439-v = selectedbordercolor.
-    INSERT temp439 INTO TABLE temp438.
-    temp439-n = `selectedContentColor`.
-    temp439-v = selectedcontentcolor.
-    INSERT temp439 INTO TABLE temp438.
-    temp439-n = `title`.
-    temp439-v = title.
-    INSERT temp439 INTO TABLE temp438.
-    temp439-n = `useFocusColorAsContentColor`.
-    temp439-v = z2ui5_cl_util=>boolean_abap_2_json( usefocuscolorascontentcolor ).
-    INSERT temp439 INTO TABLE temp438.
-    temp439-n = `visible`.
-    temp439-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp439 INTO TABLE temp438.
+    _generic( name   = `Spot`
+              ns     = `vbm`
+              t_prop = temp438 ).
+
+  ENDMETHOD.
+
+  METHOD spots.
+
+    DATA temp440 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp441 LIKE LINE OF temp440.
+    CLEAR temp440.
+    
+    temp441-n = `id`.
+    temp441-v = id.
+    INSERT temp441 INTO TABLE temp440.
+    temp441-n = `items`.
+    temp441-v = items.
+    INSERT temp441 INTO TABLE temp440.
+    result = _generic( name   = `Spots`
+                       ns     = `vbm`
+                       t_prop = temp440 ).
+
+  ENDMETHOD.
+
+  METHOD stacked_bar_micro_chart.
+    DATA temp442 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp443 LIKE LINE OF temp442.
+
+    result = me.
+    
+    CLEAR temp442.
+    
+    temp443-n = `height`.
+    temp443-v = height.
+    INSERT temp443 INTO TABLE temp442.
+    temp443-n = `press`.
+    temp443-v = press.
+    INSERT temp443 INTO TABLE temp442.
+    temp443-n = `maxValue`.
+    temp443-v = maxvalue.
+    INSERT temp443 INTO TABLE temp442.
+    temp443-n = `precision`.
+    temp443-v = precision.
+    INSERT temp443 INTO TABLE temp442.
+    temp443-n = `size`.
+    temp443-v = size.
+    INSERT temp443 INTO TABLE temp442.
+    temp443-n = `hideOnNoData`.
+    temp443-v = z2ui5_cl_util=>boolean_abap_2_json( hideonnodata ).
+    INSERT temp443 INTO TABLE temp442.
+    temp443-n = `displayZeroValue`.
+    temp443-v = z2ui5_cl_util=>boolean_abap_2_json( displayzerovalue ).
+    INSERT temp443 INTO TABLE temp442.
+    temp443-n = `showLabels`.
+    temp443-v = z2ui5_cl_util=>boolean_abap_2_json( showlabels ).
+    INSERT temp443 INTO TABLE temp442.
+    temp443-n = `width`.
+    temp443-v = width.
+    INSERT temp443 INTO TABLE temp442.
+    _generic( name   = `StackedBarMicroChart`
+              ns     = `mchart`
+              t_prop = temp442 ).
+  ENDMETHOD.
+
+  METHOD standard_list_item.
+    DATA temp444 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp445 LIKE LINE OF temp444.
+    result = me.
+    
+    CLEAR temp444.
+    
+    temp445-n = `title`.
+    temp445-v = title.
+    INSERT temp445 INTO TABLE temp444.
+    temp445-n = `description`.
+    temp445-v = description.
+    INSERT temp445 INTO TABLE temp444.
+    temp445-n = `icon`.
+    temp445-v = icon.
+    INSERT temp445 INTO TABLE temp444.
+    temp445-n = `info`.
+    temp445-v = info.
+    INSERT temp445 INTO TABLE temp444.
+    temp445-n = `press`.
+    temp445-v = press.
+    INSERT temp445 INTO TABLE temp444.
+    temp445-n = `type`.
+    temp445-v = type.
+    INSERT temp445 INTO TABLE temp444.
+    temp445-n = `counter`.
+    temp445-v = counter.
+    INSERT temp445 INTO TABLE temp444.
+    temp445-n = `activeIcon`.
+    temp445-v = activeicon.
+    INSERT temp445 INTO TABLE temp444.
+    temp445-n = `adaptTitleSize`.
+    temp445-v = z2ui5_cl_util=>boolean_abap_2_json( adapttitlesize ).
+    INSERT temp445 INTO TABLE temp444.
+    temp445-n = `unread`.
+    temp445-v = z2ui5_cl_util=>boolean_abap_2_json( unread ).
+    INSERT temp445 INTO TABLE temp444.
+    temp445-n = `iconInset`.
+    temp445-v = z2ui5_cl_util=>boolean_abap_2_json( iconinset ).
+    INSERT temp445 INTO TABLE temp444.
+    temp445-n = `infoStateInverted`.
+    temp445-v = z2ui5_cl_util=>boolean_abap_2_json( infostateinverted ).
+    INSERT temp445 INTO TABLE temp444.
+    temp445-n = `wrapping`.
+    temp445-v = z2ui5_cl_util=>boolean_abap_2_json( wrapping ).
+    INSERT temp445 INTO TABLE temp444.
+    temp445-n = `infoState`.
+    temp445-v = infostate.
+    INSERT temp445 INTO TABLE temp444.
+    temp445-n = `highlight`.
+    temp445-v = highlight.
+    INSERT temp445 INTO TABLE temp444.
+    temp445-n = `wrapCharLimit`.
+    temp445-v = wrapcharlimit.
+    INSERT temp445 INTO TABLE temp444.
+    temp445-n = `selected`.
+    temp445-v = selected.
+    INSERT temp445 INTO TABLE temp444.
+    _generic(
+        name   = `StandardListItem`
+        t_prop = temp444 ).
+  ENDMETHOD.
+
+  METHOD standard_tree_item.
+    DATA temp446 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp447 LIKE LINE OF temp446.
+    result = me.
+    
+    CLEAR temp446.
+    
+    temp447-n = `title`.
+    temp447-v = title.
+    INSERT temp447 INTO TABLE temp446.
+    temp447-n = `icon`.
+    temp447-v = icon.
+    INSERT temp447 INTO TABLE temp446.
+    temp447-n = `press`.
+    temp447-v = press.
+    INSERT temp447 INTO TABLE temp446.
+    temp447-n = `detailPress`.
+    temp447-v = detailpress.
+    INSERT temp447 INTO TABLE temp446.
+    temp447-n = `type`.
+    temp447-v = type.
+    INSERT temp447 INTO TABLE temp446.
+    temp447-n = `counter`.
+    temp447-v = counter.
+    INSERT temp447 INTO TABLE temp446.
+    temp447-n = `selected`.
+    temp447-v = selected.
+    INSERT temp447 INTO TABLE temp446.
+    temp447-n = `tooltip`.
+    temp447-v = tooltip.
+    INSERT temp447 INTO TABLE temp446.
+    _generic( name   = `StandardTreeItem`
+              t_prop = temp446 ).
+
+  ENDMETHOD.
+
+  METHOD status.
+
+    DATA temp448 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp449 LIKE LINE OF temp448.
+    CLEAR temp448.
+    
+    temp449-n = `id`.
+    temp449-v = id.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `class`.
+    temp449-v = class.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `backgroundColor`.
+    temp449-v = backgroundcolor.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `borderColor`.
+    temp449-v = bordercolor.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `borderStyle`.
+    temp449-v = borderstyle.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `borderWidth`.
+    temp449-v = borderwidth.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `contentColor`.
+    temp449-v = contentcolor.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `headerContentColor`.
+    temp449-v = headercontentcolor.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `hoverBackgroundColor`.
+    temp449-v = hoverbackgroundcolor.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `hoverBorderColor`.
+    temp449-v = hoverbordercolor.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `hoverContentColor`.
+    temp449-v = hovercontentcolor.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `key`.
+    temp449-v = key.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `legendColor`.
+    temp449-v = legendcolor.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `selectedBackgroundColor`.
+    temp449-v = selectedbackgroundcolor.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `selectedBorderColor`.
+    temp449-v = selectedbordercolor.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `selectedContentColor`.
+    temp449-v = selectedcontentcolor.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `title`.
+    temp449-v = title.
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `useFocusColorAsContentColor`.
+    temp449-v = z2ui5_cl_util=>boolean_abap_2_json( usefocuscolorascontentcolor ).
+    INSERT temp449 INTO TABLE temp448.
+    temp449-n = `visible`.
+    temp449-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp449 INTO TABLE temp448.
     result = _generic(
                  name   = `Status`
                  ns     = `networkgraph`
-                 t_prop = temp438 ).
+                 t_prop = temp448 ).
 
   ENDMETHOD.
 
   METHOD statuses.
-    DATA temp440 TYPE string.
+    DATA temp450 TYPE string.
     CASE ns.
       WHEN ''.
-        temp440 = `networkgraph`.
+        temp450 = `networkgraph`.
       WHEN OTHERS.
-        temp440 = ns.
+        temp450 = ns.
     ENDCASE.
     result = _generic( name = `statuses`
-                       ns   = temp440 ).
+                       ns   = temp450 ).
   ENDMETHOD.
 
   METHOD status_indicator.
-    DATA temp441 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp442 LIKE LINE OF temp441.
-    CLEAR temp441.
+    DATA temp451 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp452 LIKE LINE OF temp451.
+    CLEAR temp451.
     
-    temp442-n = `id`.
-    temp442-v = id.
-    INSERT temp442 INTO TABLE temp441.
-    temp442-n = `class`.
-    temp442-v = class.
-    INSERT temp442 INTO TABLE temp441.
-    temp442-n = `height`.
-    temp442-v = height.
-    INSERT temp442 INTO TABLE temp441.
-    temp442-n = `labelPosition`.
-    temp442-v = labelposition.
-    INSERT temp442 INTO TABLE temp441.
-    temp442-n = `showLabel`.
-    temp442-v = z2ui5_cl_util=>boolean_abap_2_json( showlabel ).
-    INSERT temp442 INTO TABLE temp441.
-    temp442-n = `size`.
-    temp442-v = size.
-    INSERT temp442 INTO TABLE temp441.
-    temp442-n = `value`.
-    temp442-v = value.
-    INSERT temp442 INTO TABLE temp441.
-    temp442-n = `viewBox`.
-    temp442-v = viewbox.
-    INSERT temp442 INTO TABLE temp441.
-    temp442-n = `width`.
-    temp442-v = width.
-    INSERT temp442 INTO TABLE temp441.
-    temp442-n = `press`.
-    temp442-v = press.
-    INSERT temp442 INTO TABLE temp441.
-    temp442-n = `visible`.
-    temp442-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp442 INTO TABLE temp441.
+    temp452-n = `id`.
+    temp452-v = id.
+    INSERT temp452 INTO TABLE temp451.
+    temp452-n = `class`.
+    temp452-v = class.
+    INSERT temp452 INTO TABLE temp451.
+    temp452-n = `height`.
+    temp452-v = height.
+    INSERT temp452 INTO TABLE temp451.
+    temp452-n = `labelPosition`.
+    temp452-v = labelposition.
+    INSERT temp452 INTO TABLE temp451.
+    temp452-n = `showLabel`.
+    temp452-v = z2ui5_cl_util=>boolean_abap_2_json( showlabel ).
+    INSERT temp452 INTO TABLE temp451.
+    temp452-n = `size`.
+    temp452-v = size.
+    INSERT temp452 INTO TABLE temp451.
+    temp452-n = `value`.
+    temp452-v = value.
+    INSERT temp452 INTO TABLE temp451.
+    temp452-n = `viewBox`.
+    temp452-v = viewbox.
+    INSERT temp452 INTO TABLE temp451.
+    temp452-n = `width`.
+    temp452-v = width.
+    INSERT temp452 INTO TABLE temp451.
+    temp452-n = `press`.
+    temp452-v = press.
+    INSERT temp452 INTO TABLE temp451.
+    temp452-n = `visible`.
+    temp452-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp452 INTO TABLE temp451.
     result = _generic( name   = `StatusIndicator`
                        ns     = `si`
-                       t_prop = temp441 ).
+                       t_prop = temp451 ).
   ENDMETHOD.
 
   METHOD step_input.
-    DATA temp443 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp444 LIKE LINE OF temp443.
+    DATA temp453 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp454 LIKE LINE OF temp453.
     result = me.
     
-    CLEAR temp443.
+    CLEAR temp453.
     
-    temp444-n = `id`.
-    temp444-v = id.
-    INSERT temp444 INTO TABLE temp443.
-    temp444-n = `max`.
-    temp444-v = max.
-    INSERT temp444 INTO TABLE temp443.
-    temp444-n = `min`.
-    temp444-v = min.
-    INSERT temp444 INTO TABLE temp443.
-    temp444-n = `step`.
-    temp444-v = step.
-    INSERT temp444 INTO TABLE temp443.
-    temp444-n = `width`.
-    temp444-v = width.
-    INSERT temp444 INTO TABLE temp443.
-    temp444-n = `value`.
-    temp444-v = value.
-    INSERT temp444 INTO TABLE temp443.
-    temp444-n = `valueState`.
-    temp444-v = valuestate.
-    INSERT temp444 INTO TABLE temp443.
-    temp444-n = `enabled`.
-    temp444-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp444 INTO TABLE temp443.
-    temp444-n = `description`.
-    temp444-v = description.
-    INSERT temp444 INTO TABLE temp443.
-    temp444-n = `displayValuePrecision`.
-    temp444-v = displayvalueprecision.
-    INSERT temp444 INTO TABLE temp443.
-    temp444-n = `largerStep`.
-    temp444-v = largerstep.
-    INSERT temp444 INTO TABLE temp443.
-    temp444-n = `stepMode`.
-    temp444-v = stepmode.
-    INSERT temp444 INTO TABLE temp443.
-    temp444-n = `editable`.
-    temp444-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
-    INSERT temp444 INTO TABLE temp443.
-    temp444-n = `fieldWidth`.
-    temp444-v = fieldwidth.
-    INSERT temp444 INTO TABLE temp443.
-    temp444-n = `textalign`.
-    temp444-v = textalign.
-    INSERT temp444 INTO TABLE temp443.
-    temp444-n = `validationMode`.
-    temp444-v = validationmode.
-    INSERT temp444 INTO TABLE temp443.
-    temp444-n = `change`.
-    temp444-v = change.
-    INSERT temp444 INTO TABLE temp443.
+    temp454-n = `id`.
+    temp454-v = id.
+    INSERT temp454 INTO TABLE temp453.
+    temp454-n = `max`.
+    temp454-v = max.
+    INSERT temp454 INTO TABLE temp453.
+    temp454-n = `min`.
+    temp454-v = min.
+    INSERT temp454 INTO TABLE temp453.
+    temp454-n = `step`.
+    temp454-v = step.
+    INSERT temp454 INTO TABLE temp453.
+    temp454-n = `width`.
+    temp454-v = width.
+    INSERT temp454 INTO TABLE temp453.
+    temp454-n = `value`.
+    temp454-v = value.
+    INSERT temp454 INTO TABLE temp453.
+    temp454-n = `valueState`.
+    temp454-v = valuestate.
+    INSERT temp454 INTO TABLE temp453.
+    temp454-n = `enabled`.
+    temp454-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp454 INTO TABLE temp453.
+    temp454-n = `description`.
+    temp454-v = description.
+    INSERT temp454 INTO TABLE temp453.
+    temp454-n = `displayValuePrecision`.
+    temp454-v = displayvalueprecision.
+    INSERT temp454 INTO TABLE temp453.
+    temp454-n = `largerStep`.
+    temp454-v = largerstep.
+    INSERT temp454 INTO TABLE temp453.
+    temp454-n = `stepMode`.
+    temp454-v = stepmode.
+    INSERT temp454 INTO TABLE temp453.
+    temp454-n = `editable`.
+    temp454-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp454 INTO TABLE temp453.
+    temp454-n = `fieldWidth`.
+    temp454-v = fieldwidth.
+    INSERT temp454 INTO TABLE temp453.
+    temp454-n = `textalign`.
+    temp454-v = textalign.
+    INSERT temp454 INTO TABLE temp453.
+    temp454-n = `validationMode`.
+    temp454-v = validationmode.
+    INSERT temp454 INTO TABLE temp453.
+    temp454-n = `change`.
+    temp454-v = change.
+    INSERT temp454 INTO TABLE temp453.
     _generic( name   = `StepInput`
-              t_prop = temp443 ).
+              t_prop = temp453 ).
   ENDMETHOD.
 
   METHOD stringify.
@@ -14852,29 +15135,29 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD suggestion_item.
-    DATA temp445 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp446 LIKE LINE OF temp445.
+    DATA temp455 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp456 LIKE LINE OF temp455.
     result = me.
     
-    CLEAR temp445.
+    CLEAR temp455.
     
-    temp446-n = `description`.
-    temp446-v = description.
-    INSERT temp446 INTO TABLE temp445.
-    temp446-n = `icon`.
-    temp446-v = icon.
-    INSERT temp446 INTO TABLE temp445.
-    temp446-n = `key`.
-    temp446-v = key.
-    INSERT temp446 INTO TABLE temp445.
-    temp446-n = `text`.
-    temp446-v = text.
-    INSERT temp446 INTO TABLE temp445.
-    temp446-n = `textDirection`.
-    temp446-v = textdirection.
-    INSERT temp446 INTO TABLE temp445.
+    temp456-n = `description`.
+    temp456-v = description.
+    INSERT temp456 INTO TABLE temp455.
+    temp456-n = `icon`.
+    temp456-v = icon.
+    INSERT temp456 INTO TABLE temp455.
+    temp456-n = `key`.
+    temp456-v = key.
+    INSERT temp456 INTO TABLE temp455.
+    temp456-n = `text`.
+    temp456-v = text.
+    INSERT temp456 INTO TABLE temp455.
+    temp456-n = `textDirection`.
+    temp456-v = textdirection.
+    INSERT temp456 INTO TABLE temp455.
     _generic( name   = `SuggestionItem`
-              t_prop = temp445 ).
+              t_prop = temp455 ).
   ENDMETHOD.
 
   METHOD suggestion_items.
@@ -14891,193 +15174,193 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD switch.
-    DATA temp447 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp448 LIKE LINE OF temp447.
+    DATA temp457 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp458 LIKE LINE OF temp457.
     result = me.
     
-    CLEAR temp447.
+    CLEAR temp457.
     
-    temp448-n = `type`.
-    temp448-v = type.
-    INSERT temp448 INTO TABLE temp447.
-    temp448-n = `enabled`.
-    temp448-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp448 INTO TABLE temp447.
-    temp448-n = `state`.
-    temp448-v = state.
-    INSERT temp448 INTO TABLE temp447.
-    temp448-n = `change`.
-    temp448-v = change.
-    INSERT temp448 INTO TABLE temp447.
-    temp448-n = `customTextOff`.
-    temp448-v = customtextoff.
-    INSERT temp448 INTO TABLE temp447.
-    temp448-n = `customTextOn`.
-    temp448-v = customtexton.
-    INSERT temp448 INTO TABLE temp447.
+    temp458-n = `type`.
+    temp458-v = type.
+    INSERT temp458 INTO TABLE temp457.
+    temp458-n = `enabled`.
+    temp458-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp458 INTO TABLE temp457.
+    temp458-n = `state`.
+    temp458-v = state.
+    INSERT temp458 INTO TABLE temp457.
+    temp458-n = `change`.
+    temp458-v = change.
+    INSERT temp458 INTO TABLE temp457.
+    temp458-n = `customTextOff`.
+    temp458-v = customtextoff.
+    INSERT temp458 INTO TABLE temp457.
+    temp458-n = `customTextOn`.
+    temp458-v = customtexton.
+    INSERT temp458 INTO TABLE temp457.
     _generic( name   = `Switch`
-              t_prop = temp447 ).
+              t_prop = temp457 ).
   ENDMETHOD.
 
   METHOD tab.
-    DATA temp449 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp450 LIKE LINE OF temp449.
-    CLEAR temp449.
+    DATA temp459 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp460 LIKE LINE OF temp459.
+    CLEAR temp459.
     
-    temp450-n = `text`.
-    temp450-v = text.
-    INSERT temp450 INTO TABLE temp449.
-    temp450-n = `selected`.
-    temp450-v = selected.
-    INSERT temp450 INTO TABLE temp449.
+    temp460-n = `text`.
+    temp460-v = text.
+    INSERT temp460 INTO TABLE temp459.
+    temp460-n = `selected`.
+    temp460-v = selected.
+    INSERT temp460 INTO TABLE temp459.
     result = _generic( name   = `Tab`
                        ns     = `webc`
-                       t_prop = temp449 ).
+                       t_prop = temp459 ).
   ENDMETHOD.
 
   METHOD table.
-    DATA temp451 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp452 LIKE LINE OF temp451.
-    CLEAR temp451.
+    DATA temp461 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp462 LIKE LINE OF temp461.
+    CLEAR temp461.
     
-    temp452-n = `items`.
-    temp452-v = items.
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `headerText`.
-    temp452-v = headertext.
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `class`.
-    temp452-v = class.
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `growing`.
-    temp452-v = growing.
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `growingThreshold`.
-    temp452-v = growingthreshold.
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `growingScrollToLoad`.
-    temp452-v = growingscrolltoload.
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `sticky`.
-    temp452-v = sticky.
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `showSeparators`.
-    temp452-v = showseparators.
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `mode`.
-    temp452-v = mode.
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `inset`.
-    temp452-v = inset.
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `width`.
-    temp452-v = width.
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `id`.
-    temp452-v = id.
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `hiddenInPopin`.
-    temp452-v = hiddeninpopin.
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `popinLayout`.
-    temp452-v = popinlayout.
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `selectionChange`.
-    temp452-v = selectionchange.
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `backgroundDesign`.
-    temp452-v = backgrounddesign.
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `visible`.
-    temp452-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `alternateRowColors`.
-    temp452-v = z2ui5_cl_util=>boolean_abap_2_json( alternaterowcolors ).
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `fixedLayout`.
-    temp452-v = z2ui5_cl_util=>boolean_abap_2_json( fixedlayout ).
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `showOverlay`.
-    temp452-v = z2ui5_cl_util=>boolean_abap_2_json( showoverlay ).
-    INSERT temp452 INTO TABLE temp451.
-    temp452-n = `autoPopinMode`.
-    temp452-v = z2ui5_cl_util=>boolean_abap_2_json( autopopinmode ).
-    INSERT temp452 INTO TABLE temp451.
+    temp462-n = `items`.
+    temp462-v = items.
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `headerText`.
+    temp462-v = headertext.
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `class`.
+    temp462-v = class.
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `growing`.
+    temp462-v = growing.
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `growingThreshold`.
+    temp462-v = growingthreshold.
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `growingScrollToLoad`.
+    temp462-v = growingscrolltoload.
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `sticky`.
+    temp462-v = sticky.
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `showSeparators`.
+    temp462-v = showseparators.
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `mode`.
+    temp462-v = mode.
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `inset`.
+    temp462-v = inset.
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `width`.
+    temp462-v = width.
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `id`.
+    temp462-v = id.
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `hiddenInPopin`.
+    temp462-v = hiddeninpopin.
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `popinLayout`.
+    temp462-v = popinlayout.
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `selectionChange`.
+    temp462-v = selectionchange.
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `backgroundDesign`.
+    temp462-v = backgrounddesign.
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `visible`.
+    temp462-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `alternateRowColors`.
+    temp462-v = z2ui5_cl_util=>boolean_abap_2_json( alternaterowcolors ).
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `fixedLayout`.
+    temp462-v = z2ui5_cl_util=>boolean_abap_2_json( fixedlayout ).
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `showOverlay`.
+    temp462-v = z2ui5_cl_util=>boolean_abap_2_json( showoverlay ).
+    INSERT temp462 INTO TABLE temp461.
+    temp462-n = `autoPopinMode`.
+    temp462-v = z2ui5_cl_util=>boolean_abap_2_json( autopopinmode ).
+    INSERT temp462 INTO TABLE temp461.
     result = _generic( name   = `Table`
-                       t_prop = temp451 ).
+                       t_prop = temp461 ).
   ENDMETHOD.
 
   METHOD table_select_dialog.
 
-    DATA temp453 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp454 LIKE LINE OF temp453.
-    CLEAR temp453.
+    DATA temp463 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp464 LIKE LINE OF temp463.
+    CLEAR temp463.
     
-    temp454-n = `confirmButtonText`.
-    temp454-v = confirmbuttontext.
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `contentHeight`.
-    temp454-v = contentheight.
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `contentWidth`.
-    temp454-v = contentwidth.
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `draggable`.
-    temp454-v = z2ui5_cl_util=>boolean_abap_2_json( draggable ).
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `growing`.
-    temp454-v = z2ui5_cl_util=>boolean_abap_2_json( growing ).
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `growingThreshold`.
-    temp454-v = growingthreshold.
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `multiSelect`.
-    temp454-v = z2ui5_cl_util=>boolean_abap_2_json( multiselect ).
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `noDataText`.
-    temp454-v = nodatatext.
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `rememberSelections`.
-    temp454-v = z2ui5_cl_util=>boolean_abap_2_json( rememberselections ).
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `resizable`.
-    temp454-v = z2ui5_cl_util=>boolean_abap_2_json( resizable ).
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `searchPlaceholder`.
-    temp454-v = searchplaceholder.
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `showClearButton`.
-    temp454-v = z2ui5_cl_util=>boolean_abap_2_json( showclearbutton ).
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `title`.
-    temp454-v = title.
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `titleAlignment`.
-    temp454-v = titlealignment.
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `items`.
-    temp454-v = items.
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `search`.
-    temp454-v = search.
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `confirm`.
-    temp454-v = confirm.
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `cancel`.
-    temp454-v = cancel.
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `liveChange`.
-    temp454-v = livechange.
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `selectionChange`.
-    temp454-v = selectionchange.
-    INSERT temp454 INTO TABLE temp453.
-    temp454-n = `visible`.
-    temp454-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp454 INTO TABLE temp453.
+    temp464-n = `confirmButtonText`.
+    temp464-v = confirmbuttontext.
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `contentHeight`.
+    temp464-v = contentheight.
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `contentWidth`.
+    temp464-v = contentwidth.
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `draggable`.
+    temp464-v = z2ui5_cl_util=>boolean_abap_2_json( draggable ).
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `growing`.
+    temp464-v = z2ui5_cl_util=>boolean_abap_2_json( growing ).
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `growingThreshold`.
+    temp464-v = growingthreshold.
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `multiSelect`.
+    temp464-v = z2ui5_cl_util=>boolean_abap_2_json( multiselect ).
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `noDataText`.
+    temp464-v = nodatatext.
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `rememberSelections`.
+    temp464-v = z2ui5_cl_util=>boolean_abap_2_json( rememberselections ).
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `resizable`.
+    temp464-v = z2ui5_cl_util=>boolean_abap_2_json( resizable ).
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `searchPlaceholder`.
+    temp464-v = searchplaceholder.
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `showClearButton`.
+    temp464-v = z2ui5_cl_util=>boolean_abap_2_json( showclearbutton ).
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `title`.
+    temp464-v = title.
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `titleAlignment`.
+    temp464-v = titlealignment.
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `items`.
+    temp464-v = items.
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `search`.
+    temp464-v = search.
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `confirm`.
+    temp464-v = confirm.
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `cancel`.
+    temp464-v = cancel.
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `liveChange`.
+    temp464-v = livechange.
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `selectionChange`.
+    temp464-v = selectionchange.
+    INSERT temp464 INTO TABLE temp463.
+    temp464-n = `visible`.
+    temp464-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp464 INTO TABLE temp463.
     result = _generic( name   = `TableSelectDialog`
-                       t_prop = temp453 ).
+                       t_prop = temp463 ).
   ENDMETHOD.
 
   METHOD tab_container.
@@ -15086,37 +15369,37 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD task.
-    DATA temp455 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp456 LIKE LINE OF temp455.
-    CLEAR temp455.
+    DATA temp465 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp466 LIKE LINE OF temp465.
+    CLEAR temp465.
     
-    temp456-n = `time`.
-    temp456-v = time.
-    INSERT temp456 INTO TABLE temp455.
-    temp456-n = `endTime`.
-    temp456-v = endtime.
-    INSERT temp456 INTO TABLE temp455.
-    temp456-n = `id`.
-    temp456-v = id.
-    INSERT temp456 INTO TABLE temp455.
-    temp456-n = `type`.
-    temp456-v = type.
-    INSERT temp456 INTO TABLE temp455.
-    temp456-n = `connectable`.
-    temp456-v = connectable.
-    INSERT temp456 INTO TABLE temp455.
-    temp456-n = `title`.
-    temp456-v = title.
-    INSERT temp456 INTO TABLE temp455.
-    temp456-n = `showTitle`.
-    temp456-v = z2ui5_cl_util=>boolean_abap_2_json( showtitle ).
-    INSERT temp456 INTO TABLE temp455.
-    temp456-n = `color`.
-    temp456-v = color.
-    INSERT temp456 INTO TABLE temp455.
+    temp466-n = `time`.
+    temp466-v = time.
+    INSERT temp466 INTO TABLE temp465.
+    temp466-n = `endTime`.
+    temp466-v = endtime.
+    INSERT temp466 INTO TABLE temp465.
+    temp466-n = `id`.
+    temp466-v = id.
+    INSERT temp466 INTO TABLE temp465.
+    temp466-n = `type`.
+    temp466-v = type.
+    INSERT temp466 INTO TABLE temp465.
+    temp466-n = `connectable`.
+    temp466-v = connectable.
+    INSERT temp466 INTO TABLE temp465.
+    temp466-n = `title`.
+    temp466-v = title.
+    INSERT temp466 INTO TABLE temp465.
+    temp466-n = `showTitle`.
+    temp466-v = z2ui5_cl_util=>boolean_abap_2_json( showtitle ).
+    INSERT temp466 INTO TABLE temp465.
+    temp466-n = `color`.
+    temp466-v = color.
+    INSERT temp466 INTO TABLE temp465.
     result = _generic( name   = `Task`
                        ns     = `shapes`
-                       t_prop = temp455 ).
+                       t_prop = temp465 ).
   ENDMETHOD.
 
   METHOD template_else.
@@ -15128,49 +15411,49 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD template_elseif.
 
-    DATA temp457 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp458 LIKE LINE OF temp457.
-    CLEAR temp457.
+    DATA temp467 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp468 LIKE LINE OF temp467.
+    CLEAR temp467.
     
-    temp458-n = `test`.
-    temp458-v = test.
-    INSERT temp458 INTO TABLE temp457.
+    temp468-n = `test`.
+    temp468-v = test.
+    INSERT temp468 INTO TABLE temp467.
     result = _generic( name   = `elseif`
                        ns     = `template`
-                       t_prop = temp457 ).
+                       t_prop = temp467 ).
 
   ENDMETHOD.
 
   METHOD template_if.
 
-    DATA temp459 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp460 LIKE LINE OF temp459.
-    CLEAR temp459.
+    DATA temp469 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp470 LIKE LINE OF temp469.
+    CLEAR temp469.
     
-    temp460-n = `test`.
-    temp460-v = test.
-    INSERT temp460 INTO TABLE temp459.
+    temp470-n = `test`.
+    temp470-v = test.
+    INSERT temp470 INTO TABLE temp469.
     result = _generic( name   = `if`
                        ns     = `template`
-                       t_prop = temp459 ).
+                       t_prop = temp469 ).
 
   ENDMETHOD.
 
   METHOD template_repeat.
 
-    DATA temp461 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp462 LIKE LINE OF temp461.
-    CLEAR temp461.
+    DATA temp471 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp472 LIKE LINE OF temp471.
+    CLEAR temp471.
     
-    temp462-n = `list`.
-    temp462-v = list.
-    INSERT temp462 INTO TABLE temp461.
-    temp462-n = `var`.
-    temp462-v = var.
-    INSERT temp462 INTO TABLE temp461.
+    temp472-n = `list`.
+    temp472-v = list.
+    INSERT temp472 INTO TABLE temp471.
+    temp472-n = `var`.
+    temp472-v = var.
+    INSERT temp472 INTO TABLE temp471.
     result = _generic( name   = `repeat`
                        ns     = `template`
-                       t_prop = temp461 ).
+                       t_prop = temp471 ).
 
   ENDMETHOD.
 
@@ -15183,528 +15466,528 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD template_with.
 
-    DATA temp463 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp464 LIKE LINE OF temp463.
-    CLEAR temp463.
+    DATA temp473 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp474 LIKE LINE OF temp473.
+    CLEAR temp473.
     
-    temp464-n = `path`.
-    temp464-v = path.
-    INSERT temp464 INTO TABLE temp463.
-    temp464-n = `helper`.
-    temp464-v = helper.
-    INSERT temp464 INTO TABLE temp463.
-    temp464-n = `var`.
-    temp464-v = var.
-    INSERT temp464 INTO TABLE temp463.
+    temp474-n = `path`.
+    temp474-v = path.
+    INSERT temp474 INTO TABLE temp473.
+    temp474-n = `helper`.
+    temp474-v = helper.
+    INSERT temp474 INTO TABLE temp473.
+    temp474-n = `var`.
+    temp474-v = var.
+    INSERT temp474 INTO TABLE temp473.
     result = _generic( name   = `with`
                        ns     = `template`
-                       t_prop = temp463 ).
+                       t_prop = temp473 ).
 
   ENDMETHOD.
 
   METHOD text.
-    DATA temp465 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp466 LIKE LINE OF temp465.
+    DATA temp475 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp476 LIKE LINE OF temp475.
     result = me.
     
-    CLEAR temp465.
+    CLEAR temp475.
     
-    temp466-n = `text`.
-    temp466-v = text.
-    INSERT temp466 INTO TABLE temp465.
-    temp466-n = `emptyIndicatorMode`.
-    temp466-v = emptyindicatormode.
-    INSERT temp466 INTO TABLE temp465.
-    temp466-n = `maxLines`.
-    temp466-v = maxlines.
-    INSERT temp466 INTO TABLE temp465.
-    temp466-n = `renderWhitespace`.
-    temp466-v = renderwhitespace.
-    INSERT temp466 INTO TABLE temp465.
-    temp466-n = `textAlign`.
-    temp466-v = textalign.
-    INSERT temp466 INTO TABLE temp465.
-    temp466-n = `visible`.
-    temp466-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp466 INTO TABLE temp465.
-    temp466-n = `textDirection`.
-    temp466-v = textdirection.
-    INSERT temp466 INTO TABLE temp465.
-    temp466-n = `width`.
-    temp466-v = width.
-    INSERT temp466 INTO TABLE temp465.
-    temp466-n = `id`.
-    temp466-v = id.
-    INSERT temp466 INTO TABLE temp465.
-    temp466-n = `wrapping`.
-    temp466-v = z2ui5_cl_util=>boolean_abap_2_json( wrapping ).
-    INSERT temp466 INTO TABLE temp465.
-    temp466-n = `wrappingType`.
-    temp466-v = wrappingtype.
-    INSERT temp466 INTO TABLE temp465.
-    temp466-n = `class`.
-    temp466-v = class.
-    INSERT temp466 INTO TABLE temp465.
+    temp476-n = `text`.
+    temp476-v = text.
+    INSERT temp476 INTO TABLE temp475.
+    temp476-n = `emptyIndicatorMode`.
+    temp476-v = emptyindicatormode.
+    INSERT temp476 INTO TABLE temp475.
+    temp476-n = `maxLines`.
+    temp476-v = maxlines.
+    INSERT temp476 INTO TABLE temp475.
+    temp476-n = `renderWhitespace`.
+    temp476-v = renderwhitespace.
+    INSERT temp476 INTO TABLE temp475.
+    temp476-n = `textAlign`.
+    temp476-v = textalign.
+    INSERT temp476 INTO TABLE temp475.
+    temp476-n = `visible`.
+    temp476-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp476 INTO TABLE temp475.
+    temp476-n = `textDirection`.
+    temp476-v = textdirection.
+    INSERT temp476 INTO TABLE temp475.
+    temp476-n = `width`.
+    temp476-v = width.
+    INSERT temp476 INTO TABLE temp475.
+    temp476-n = `id`.
+    temp476-v = id.
+    INSERT temp476 INTO TABLE temp475.
+    temp476-n = `wrapping`.
+    temp476-v = z2ui5_cl_util=>boolean_abap_2_json( wrapping ).
+    INSERT temp476 INTO TABLE temp475.
+    temp476-n = `wrappingType`.
+    temp476-v = wrappingtype.
+    INSERT temp476 INTO TABLE temp475.
+    temp476-n = `class`.
+    temp476-v = class.
+    INSERT temp476 INTO TABLE temp475.
     _generic( name   = `Text`
               ns     = ns
-              t_prop = temp465 ).
+              t_prop = temp475 ).
   ENDMETHOD.
 
   METHOD text_area.
-    DATA temp467 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp468 LIKE LINE OF temp467.
+    DATA temp477 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp478 LIKE LINE OF temp477.
     result = me.
     
-    CLEAR temp467.
+    CLEAR temp477.
     
-    temp468-n = `value`.
-    temp468-v = value.
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `rows`.
-    temp468-v = rows.
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `cols`.
-    temp468-v = cols.
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `height`.
-    temp468-v = height.
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `width`.
-    temp468-v = width.
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `wrapping`.
-    temp468-v = wrapping.
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `maxLength`.
-    temp468-v = maxlength.
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `textAlign`.
-    temp468-v = textalign.
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `textDirection`.
-    temp468-v = textdirection.
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `showValueStateMessage`.
-    temp468-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluestatemessage ).
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `showExceededText`.
-    temp468-v = z2ui5_cl_util=>boolean_abap_2_json( showexceededtext ).
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `valueLiveUpdate`.
-    temp468-v = z2ui5_cl_util=>boolean_abap_2_json( valueliveupdate ).
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `editable`.
-    temp468-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `class`.
-    temp468-v = class.
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `enabled`.
-    temp468-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `id`.
-    temp468-v = id.
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `growing`.
-    temp468-v = z2ui5_cl_util=>boolean_abap_2_json( growing ).
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `growingMaxLines`.
-    temp468-v = growingmaxlines.
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `required`.
-    temp468-v = required.
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `valueState`.
-    temp468-v = valuestate.
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `placeholder`.
-    temp468-v = placeholder.
-    INSERT temp468 INTO TABLE temp467.
-    temp468-n = `valueStateText`.
-    temp468-v = valuestatetext.
-    INSERT temp468 INTO TABLE temp467.
+    temp478-n = `value`.
+    temp478-v = value.
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `rows`.
+    temp478-v = rows.
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `cols`.
+    temp478-v = cols.
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `height`.
+    temp478-v = height.
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `width`.
+    temp478-v = width.
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `wrapping`.
+    temp478-v = wrapping.
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `maxLength`.
+    temp478-v = maxlength.
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `textAlign`.
+    temp478-v = textalign.
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `textDirection`.
+    temp478-v = textdirection.
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `showValueStateMessage`.
+    temp478-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluestatemessage ).
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `showExceededText`.
+    temp478-v = z2ui5_cl_util=>boolean_abap_2_json( showexceededtext ).
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `valueLiveUpdate`.
+    temp478-v = z2ui5_cl_util=>boolean_abap_2_json( valueliveupdate ).
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `editable`.
+    temp478-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `class`.
+    temp478-v = class.
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `enabled`.
+    temp478-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `id`.
+    temp478-v = id.
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `growing`.
+    temp478-v = z2ui5_cl_util=>boolean_abap_2_json( growing ).
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `growingMaxLines`.
+    temp478-v = growingmaxlines.
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `required`.
+    temp478-v = required.
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `valueState`.
+    temp478-v = valuestate.
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `placeholder`.
+    temp478-v = placeholder.
+    INSERT temp478 INTO TABLE temp477.
+    temp478-n = `valueStateText`.
+    temp478-v = valuestatetext.
+    INSERT temp478 INTO TABLE temp477.
     _generic( name   = `TextArea`
-              t_prop = temp467 ).
+              t_prop = temp477 ).
   ENDMETHOD.
 
   METHOD tile_content.
 
-    DATA temp469 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp470 LIKE LINE OF temp469.
-    CLEAR temp469.
+    DATA temp479 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp480 LIKE LINE OF temp479.
+    CLEAR temp479.
     
-    temp470-n = `unit`.
-    temp470-v = unit.
-    INSERT temp470 INTO TABLE temp469.
-    temp470-n = `footerColor`.
-    temp470-v = footercolor.
-    INSERT temp470 INTO TABLE temp469.
-    temp470-n = `blocked`.
-    temp470-v = z2ui5_cl_util=>boolean_abap_2_json( blocked ).
-    INSERT temp470 INTO TABLE temp469.
-    temp470-n = `frameType`.
-    temp470-v = frametype.
-    INSERT temp470 INTO TABLE temp469.
-    temp470-n = `priority`.
-    temp470-v = priority.
-    INSERT temp470 INTO TABLE temp469.
-    temp470-n = `priorityText`.
-    temp470-v = prioritytext.
-    INSERT temp470 INTO TABLE temp469.
-    temp470-n = `state`.
-    temp470-v = state.
-    INSERT temp470 INTO TABLE temp469.
-    temp470-n = `disabled`.
-    temp470-v = z2ui5_cl_util=>boolean_abap_2_json( disabled ).
-    INSERT temp470 INTO TABLE temp469.
-    temp470-n = `visible`.
-    temp470-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp470 INTO TABLE temp469.
-    temp470-n = `footer`.
-    temp470-v = footer.
-    INSERT temp470 INTO TABLE temp469.
-    temp470-n = `class`.
-    temp470-v = class.
-    INSERT temp470 INTO TABLE temp469.
+    temp480-n = `unit`.
+    temp480-v = unit.
+    INSERT temp480 INTO TABLE temp479.
+    temp480-n = `footerColor`.
+    temp480-v = footercolor.
+    INSERT temp480 INTO TABLE temp479.
+    temp480-n = `blocked`.
+    temp480-v = z2ui5_cl_util=>boolean_abap_2_json( blocked ).
+    INSERT temp480 INTO TABLE temp479.
+    temp480-n = `frameType`.
+    temp480-v = frametype.
+    INSERT temp480 INTO TABLE temp479.
+    temp480-n = `priority`.
+    temp480-v = priority.
+    INSERT temp480 INTO TABLE temp479.
+    temp480-n = `priorityText`.
+    temp480-v = prioritytext.
+    INSERT temp480 INTO TABLE temp479.
+    temp480-n = `state`.
+    temp480-v = state.
+    INSERT temp480 INTO TABLE temp479.
+    temp480-n = `disabled`.
+    temp480-v = z2ui5_cl_util=>boolean_abap_2_json( disabled ).
+    INSERT temp480 INTO TABLE temp479.
+    temp480-n = `visible`.
+    temp480-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp480 INTO TABLE temp479.
+    temp480-n = `footer`.
+    temp480-v = footer.
+    INSERT temp480 INTO TABLE temp479.
+    temp480-n = `class`.
+    temp480-v = class.
+    INSERT temp480 INTO TABLE temp479.
     result = _generic( name   = `TileContent`
                        ns     = ``
-                       t_prop = temp469 ).
+                       t_prop = temp479 ).
 
   ENDMETHOD.
 
   METHOD tile_info.
-    DATA temp471 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp472 LIKE LINE OF temp471.
-    CLEAR temp471.
+    DATA temp481 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp482 LIKE LINE OF temp481.
+    CLEAR temp481.
     
-    temp472-n = `id`.
-    temp472-v = id.
-    INSERT temp472 INTO TABLE temp471.
-    temp472-n = `class`.
-    temp472-v = class.
-    INSERT temp472 INTO TABLE temp471.
-    temp472-n = `backgroundColor`.
-    temp472-v = backgroundcolor.
-    INSERT temp472 INTO TABLE temp471.
-    temp472-n = `borderColor`.
-    temp472-v = bordercolor.
-    INSERT temp472 INTO TABLE temp471.
-    temp472-n = `src`.
-    temp472-v = src.
-    INSERT temp472 INTO TABLE temp471.
-    temp472-n = `text`.
-    temp472-v = text.
-    INSERT temp472 INTO TABLE temp471.
-    temp472-n = `textColor`.
-    temp472-v = textcolor.
-    INSERT temp472 INTO TABLE temp471.
+    temp482-n = `id`.
+    temp482-v = id.
+    INSERT temp482 INTO TABLE temp481.
+    temp482-n = `class`.
+    temp482-v = class.
+    INSERT temp482 INTO TABLE temp481.
+    temp482-n = `backgroundColor`.
+    temp482-v = backgroundcolor.
+    INSERT temp482 INTO TABLE temp481.
+    temp482-n = `borderColor`.
+    temp482-v = bordercolor.
+    INSERT temp482 INTO TABLE temp481.
+    temp482-n = `src`.
+    temp482-v = src.
+    INSERT temp482 INTO TABLE temp481.
+    temp482-n = `text`.
+    temp482-v = text.
+    INSERT temp482 INTO TABLE temp481.
+    temp482-n = `textColor`.
+    temp482-v = textcolor.
+    INSERT temp482 INTO TABLE temp481.
     result = _generic( name   = `TileInfo`
-                       t_prop = temp471 ).
+                       t_prop = temp481 ).
 
   ENDMETHOD.
 
   METHOD timeline.
 
-    DATA temp473 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp474 LIKE LINE OF temp473.
-    CLEAR temp473.
+    DATA temp483 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp484 LIKE LINE OF temp483.
+    CLEAR temp483.
     
-    temp474-n = 'id'.
-    temp474-v = id.
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'enableDoubleSided'.
-    temp474-v = z2ui5_cl_util=>boolean_abap_2_json( enabledoublesided ).
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'groupBy'.
-    temp474-v = groupby.
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'growingThreshold'.
-    temp474-v = growingthreshold.
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'filterTitle'.
-    temp474-v = filtertitle.
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'sortOldestFirst'.
-    temp474-v = z2ui5_cl_util=>boolean_abap_2_json( sortoldestfirst ).
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'enableModelFilter'.
-    temp474-v = z2ui5_cl_util=>boolean_abap_2_json( enablemodelfilter ).
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'enableScroll'.
-    temp474-v = z2ui5_cl_util=>boolean_abap_2_json( enablescroll ).
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'forceGrowing'.
-    temp474-v = z2ui5_cl_util=>boolean_abap_2_json( forcegrowing ).
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'group'.
-    temp474-v = z2ui5_cl_util=>boolean_abap_2_json( group ).
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'lazyLoading'.
-    temp474-v = z2ui5_cl_util=>boolean_abap_2_json( lazyloading ).
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'showHeaderBar'.
-    temp474-v = z2ui5_cl_util=>boolean_abap_2_json( showheaderbar ).
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'showIcons'.
-    temp474-v = z2ui5_cl_util=>boolean_abap_2_json( showicons ).
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'showItemFilter'.
-    temp474-v = z2ui5_cl_util=>boolean_abap_2_json( showitemfilter ).
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'showSearch'.
-    temp474-v = z2ui5_cl_util=>boolean_abap_2_json( showsearch ).
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'showSort'.
-    temp474-v = z2ui5_cl_util=>boolean_abap_2_json( showsort ).
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'showTimeFilter'.
-    temp474-v = z2ui5_cl_util=>boolean_abap_2_json( showtimefilter ).
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'sort'.
-    temp474-v = z2ui5_cl_util=>boolean_abap_2_json( sort ).
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'groupByType'.
-    temp474-v = groupbytype.
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'textHeight'.
-    temp474-v = textheight.
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'width'.
-    temp474-v = width.
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'height'.
-    temp474-v = height.
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'noDataText'.
-    temp474-v = nodatatext.
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'alignment'.
-    temp474-v = alignment.
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'axisOrientation'.
-    temp474-v = axisorientation.
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'filterList'.
-    temp474-v = filterlist.
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'customFilter'.
-    temp474-v = customfilter.
-    INSERT temp474 INTO TABLE temp473.
-    temp474-n = 'content'.
-    temp474-v = content.
-    INSERT temp474 INTO TABLE temp473.
+    temp484-n = 'id'.
+    temp484-v = id.
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'enableDoubleSided'.
+    temp484-v = z2ui5_cl_util=>boolean_abap_2_json( enabledoublesided ).
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'groupBy'.
+    temp484-v = groupby.
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'growingThreshold'.
+    temp484-v = growingthreshold.
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'filterTitle'.
+    temp484-v = filtertitle.
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'sortOldestFirst'.
+    temp484-v = z2ui5_cl_util=>boolean_abap_2_json( sortoldestfirst ).
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'enableModelFilter'.
+    temp484-v = z2ui5_cl_util=>boolean_abap_2_json( enablemodelfilter ).
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'enableScroll'.
+    temp484-v = z2ui5_cl_util=>boolean_abap_2_json( enablescroll ).
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'forceGrowing'.
+    temp484-v = z2ui5_cl_util=>boolean_abap_2_json( forcegrowing ).
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'group'.
+    temp484-v = z2ui5_cl_util=>boolean_abap_2_json( group ).
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'lazyLoading'.
+    temp484-v = z2ui5_cl_util=>boolean_abap_2_json( lazyloading ).
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'showHeaderBar'.
+    temp484-v = z2ui5_cl_util=>boolean_abap_2_json( showheaderbar ).
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'showIcons'.
+    temp484-v = z2ui5_cl_util=>boolean_abap_2_json( showicons ).
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'showItemFilter'.
+    temp484-v = z2ui5_cl_util=>boolean_abap_2_json( showitemfilter ).
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'showSearch'.
+    temp484-v = z2ui5_cl_util=>boolean_abap_2_json( showsearch ).
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'showSort'.
+    temp484-v = z2ui5_cl_util=>boolean_abap_2_json( showsort ).
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'showTimeFilter'.
+    temp484-v = z2ui5_cl_util=>boolean_abap_2_json( showtimefilter ).
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'sort'.
+    temp484-v = z2ui5_cl_util=>boolean_abap_2_json( sort ).
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'groupByType'.
+    temp484-v = groupbytype.
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'textHeight'.
+    temp484-v = textheight.
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'width'.
+    temp484-v = width.
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'height'.
+    temp484-v = height.
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'noDataText'.
+    temp484-v = nodatatext.
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'alignment'.
+    temp484-v = alignment.
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'axisOrientation'.
+    temp484-v = axisorientation.
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'filterList'.
+    temp484-v = filterlist.
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'customFilter'.
+    temp484-v = customfilter.
+    INSERT temp484 INTO TABLE temp483.
+    temp484-n = 'content'.
+    temp484-v = content.
+    INSERT temp484 INTO TABLE temp483.
     result = _generic(
         name   = `Timeline`
         ns     = 'commons'
-        t_prop = temp473 ).
+        t_prop = temp483 ).
   ENDMETHOD.
 
   METHOD timeline_item.
 
-    DATA temp475 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp476 LIKE LINE OF temp475.
-    CLEAR temp475.
+    DATA temp485 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp486 LIKE LINE OF temp485.
+    CLEAR temp485.
     
-    temp476-n = 'id'.
-    temp476-v = id.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'dateTime'.
-    temp476-v = datetime.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'title'.
-    temp476-v = title.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'userNameClickable'.
-    temp476-v = z2ui5_cl_util=>boolean_abap_2_json( usernameclickable ).
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'useIconTooltip'.
-    temp476-v = z2ui5_cl_util=>boolean_abap_2_json( useicontooltip ).
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'userNameClicked'.
-    temp476-v = usernameclicked.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'userPicture'.
-    temp476-v = userpicture.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'select'.
-    temp476-v = select.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'text'.
-    temp476-v = text.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'userName'.
-    temp476-v = username.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'filterValue'.
-    temp476-v = filtervalue.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'iconDisplayShape'.
-    temp476-v = icondisplayshape.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'iconInitials'.
-    temp476-v = iconinitials.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'iconSize'.
-    temp476-v = iconsize.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'iconTooltip'.
-    temp476-v = icontooltip.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'maxCharacters'.
-    temp476-v = maxcharacters.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'replyCount'.
-    temp476-v = replycount.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'status'.
-    temp476-v = status.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'customActionClicked'.
-    temp476-v = customactionclicked.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'press'.
-    temp476-v = press.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'replyListOpen'.
-    temp476-v = replylistopen.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'replyPost'.
-    temp476-v = replypost.
-    INSERT temp476 INTO TABLE temp475.
-    temp476-n = 'icon'.
-    temp476-v = icon.
-    INSERT temp476 INTO TABLE temp475.
+    temp486-n = 'id'.
+    temp486-v = id.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'dateTime'.
+    temp486-v = datetime.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'title'.
+    temp486-v = title.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'userNameClickable'.
+    temp486-v = z2ui5_cl_util=>boolean_abap_2_json( usernameclickable ).
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'useIconTooltip'.
+    temp486-v = z2ui5_cl_util=>boolean_abap_2_json( useicontooltip ).
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'userNameClicked'.
+    temp486-v = usernameclicked.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'userPicture'.
+    temp486-v = userpicture.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'select'.
+    temp486-v = select.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'text'.
+    temp486-v = text.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'userName'.
+    temp486-v = username.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'filterValue'.
+    temp486-v = filtervalue.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'iconDisplayShape'.
+    temp486-v = icondisplayshape.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'iconInitials'.
+    temp486-v = iconinitials.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'iconSize'.
+    temp486-v = iconsize.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'iconTooltip'.
+    temp486-v = icontooltip.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'maxCharacters'.
+    temp486-v = maxcharacters.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'replyCount'.
+    temp486-v = replycount.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'status'.
+    temp486-v = status.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'customActionClicked'.
+    temp486-v = customactionclicked.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'press'.
+    temp486-v = press.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'replyListOpen'.
+    temp486-v = replylistopen.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'replyPost'.
+    temp486-v = replypost.
+    INSERT temp486 INTO TABLE temp485.
+    temp486-n = 'icon'.
+    temp486-v = icon.
+    INSERT temp486 INTO TABLE temp485.
     result = _generic(
         name   = `TimelineItem`
         ns     = 'commons'
-        t_prop = temp475 ).
+        t_prop = temp485 ).
   ENDMETHOD.
 
   METHOD time_horizon.
-    DATA temp477 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp478 LIKE LINE OF temp477.
-    CLEAR temp477.
+    DATA temp487 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp488 LIKE LINE OF temp487.
+    CLEAR temp487.
     
-    temp478-n = `startTime`.
-    temp478-v = starttime.
-    INSERT temp478 INTO TABLE temp477.
-    temp478-n = `endTime`.
-    temp478-v = endtime.
-    INSERT temp478 INTO TABLE temp477.
+    temp488-n = `startTime`.
+    temp488-v = starttime.
+    INSERT temp488 INTO TABLE temp487.
+    temp488-n = `endTime`.
+    temp488-v = endtime.
+    INSERT temp488 INTO TABLE temp487.
     result = _generic( name   = `TimeHorizon`
                        ns     = `config`
-                       t_prop = temp477 ).
+                       t_prop = temp487 ).
   ENDMETHOD.
 
   METHOD time_picker.
-    DATA temp479 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp480 LIKE LINE OF temp479.
+    DATA temp489 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp490 LIKE LINE OF temp489.
     result = me.
     
-    CLEAR temp479.
+    CLEAR temp489.
     
-    temp480-n = `value`.
-    temp480-v = value.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `dateValue`.
-    temp480-v = datevalue.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `localeId`.
-    temp480-v = localeid.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `placeholder`.
-    temp480-v = placeholder.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `mask`.
-    temp480-v = mask.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `maskMode`.
-    temp480-v = maskmode.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `minutesStep`.
-    temp480-v = minutesstep.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `name`.
-    temp480-v = name.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `placeholderSymbol`.
-    temp480-v = placeholdersymbol.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `secondsStep`.
-    temp480-v = secondsstep.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `textAlign`.
-    temp480-v = textalign.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `textDirection`.
-    temp480-v = textdirection.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `title`.
-    temp480-v = title.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `showCurrentTimeButton`.
-    temp480-v = z2ui5_cl_util=>boolean_abap_2_json( showcurrenttimebutton ).
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `showValueStateMessage`.
-    temp480-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluestatemessage ).
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `support2400`.
-    temp480-v = z2ui5_cl_util=>boolean_abap_2_json( support2400 ).
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `initialFocusedDateValue`.
-    temp480-v = z2ui5_cl_util=>boolean_abap_2_json( initialfocuseddatevalue ).
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `hideInput`.
-    temp480-v = z2ui5_cl_util=>boolean_abap_2_json( hideinput ).
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `editable`.
-    temp480-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `enabled`.
-    temp480-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `required`.
-    temp480-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `visible`.
-    temp480-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `width`.
-    temp480-v = width.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `valueState`.
-    temp480-v = valuestate.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `valueStateText`.
-    temp480-v = valuestatetext.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `displayFormat`.
-    temp480-v = displayformat.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `afterValueHelpClose`.
-    temp480-v = aftervaluehelpclose.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `afterValueHelpOpen`.
-    temp480-v = aftervaluehelpopen.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `change`.
-    temp480-v = change.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `liveChange`.
-    temp480-v = livechange.
-    INSERT temp480 INTO TABLE temp479.
-    temp480-n = `valueFormat`.
-    temp480-v = valueformat.
-    INSERT temp480 INTO TABLE temp479.
+    temp490-n = `value`.
+    temp490-v = value.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `dateValue`.
+    temp490-v = datevalue.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `localeId`.
+    temp490-v = localeid.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `placeholder`.
+    temp490-v = placeholder.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `mask`.
+    temp490-v = mask.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `maskMode`.
+    temp490-v = maskmode.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `minutesStep`.
+    temp490-v = minutesstep.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `name`.
+    temp490-v = name.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `placeholderSymbol`.
+    temp490-v = placeholdersymbol.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `secondsStep`.
+    temp490-v = secondsstep.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `textAlign`.
+    temp490-v = textalign.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `textDirection`.
+    temp490-v = textdirection.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `title`.
+    temp490-v = title.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `showCurrentTimeButton`.
+    temp490-v = z2ui5_cl_util=>boolean_abap_2_json( showcurrenttimebutton ).
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `showValueStateMessage`.
+    temp490-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluestatemessage ).
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `support2400`.
+    temp490-v = z2ui5_cl_util=>boolean_abap_2_json( support2400 ).
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `initialFocusedDateValue`.
+    temp490-v = z2ui5_cl_util=>boolean_abap_2_json( initialfocuseddatevalue ).
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `hideInput`.
+    temp490-v = z2ui5_cl_util=>boolean_abap_2_json( hideinput ).
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `editable`.
+    temp490-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `enabled`.
+    temp490-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `required`.
+    temp490-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `visible`.
+    temp490-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `width`.
+    temp490-v = width.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `valueState`.
+    temp490-v = valuestate.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `valueStateText`.
+    temp490-v = valuestatetext.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `displayFormat`.
+    temp490-v = displayformat.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `afterValueHelpClose`.
+    temp490-v = aftervaluehelpclose.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `afterValueHelpOpen`.
+    temp490-v = aftervaluehelpopen.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `change`.
+    temp490-v = change.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `liveChange`.
+    temp490-v = livechange.
+    INSERT temp490 INTO TABLE temp489.
+    temp490-n = `valueFormat`.
+    temp490-v = valueformat.
+    INSERT temp490 INTO TABLE temp489.
     _generic( name   = `TimePicker`
-              t_prop = temp479 ).
+              t_prop = temp489 ).
   ENDMETHOD.
 
   METHOD title.
     DATA lv_name TYPE c LENGTH 5.
     DATA temp2 LIKE lv_name.
-    DATA temp482 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp483 LIKE LINE OF temp482.
+    DATA temp492 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp493 LIKE LINE OF temp492.
     IF ns = 'f'.
       temp2 = 'title'.
     ELSE.
@@ -15714,104 +15997,104 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
     result = me.
     
-    CLEAR temp482.
+    CLEAR temp492.
     
-    temp483-n = `text`.
-    temp483-v = text.
-    INSERT temp483 INTO TABLE temp482.
-    temp483-n = `class`.
-    temp483-v = class.
-    INSERT temp483 INTO TABLE temp482.
-    temp483-n = `id`.
-    temp483-v = id.
-    INSERT temp483 INTO TABLE temp482.
-    temp483-n = `wrappingType`.
-    temp483-v = wrappingtype.
-    INSERT temp483 INTO TABLE temp482.
-    temp483-n = `textAlign`.
-    temp483-v = textalign.
-    INSERT temp483 INTO TABLE temp482.
-    temp483-n = `textDirection`.
-    temp483-v = textdirection.
-    INSERT temp483 INTO TABLE temp482.
-    temp483-n = `titleStyle`.
-    temp483-v = titlestyle.
-    INSERT temp483 INTO TABLE temp482.
-    temp483-n = `width`.
-    temp483-v = width.
-    INSERT temp483 INTO TABLE temp482.
-    temp483-n = `wrapping`.
-    temp483-v = z2ui5_cl_util=>boolean_abap_2_json( wrapping ).
-    INSERT temp483 INTO TABLE temp482.
-    temp483-n = `visible`.
-    temp483-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp483 INTO TABLE temp482.
-    temp483-n = `level`.
-    temp483-v = level.
-    INSERT temp483 INTO TABLE temp482.
+    temp493-n = `text`.
+    temp493-v = text.
+    INSERT temp493 INTO TABLE temp492.
+    temp493-n = `class`.
+    temp493-v = class.
+    INSERT temp493 INTO TABLE temp492.
+    temp493-n = `id`.
+    temp493-v = id.
+    INSERT temp493 INTO TABLE temp492.
+    temp493-n = `wrappingType`.
+    temp493-v = wrappingtype.
+    INSERT temp493 INTO TABLE temp492.
+    temp493-n = `textAlign`.
+    temp493-v = textalign.
+    INSERT temp493 INTO TABLE temp492.
+    temp493-n = `textDirection`.
+    temp493-v = textdirection.
+    INSERT temp493 INTO TABLE temp492.
+    temp493-n = `titleStyle`.
+    temp493-v = titlestyle.
+    INSERT temp493 INTO TABLE temp492.
+    temp493-n = `width`.
+    temp493-v = width.
+    INSERT temp493 INTO TABLE temp492.
+    temp493-n = `wrapping`.
+    temp493-v = z2ui5_cl_util=>boolean_abap_2_json( wrapping ).
+    INSERT temp493 INTO TABLE temp492.
+    temp493-n = `visible`.
+    temp493-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp493 INTO TABLE temp492.
+    temp493-n = `level`.
+    temp493-v = level.
+    INSERT temp493 INTO TABLE temp492.
     _generic( ns     = ns
               name   = lv_name
-              t_prop = temp482 ).
+              t_prop = temp492 ).
   ENDMETHOD.
 
   METHOD toggle_button.
-    DATA temp484 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp485 LIKE LINE OF temp484.
+    DATA temp494 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp495 LIKE LINE OF temp494.
 
     result = me.
     
-    CLEAR temp484.
+    CLEAR temp494.
     
-    temp485-n = `press`.
-    temp485-v = press.
-    INSERT temp485 INTO TABLE temp484.
-    temp485-n = `text`.
-    temp485-v = text.
-    INSERT temp485 INTO TABLE temp484.
-    temp485-n = `enabled`.
-    temp485-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp485 INTO TABLE temp484.
-    temp485-n = `icon`.
-    temp485-v = icon.
-    INSERT temp485 INTO TABLE temp484.
-    temp485-n = `type`.
-    temp485-v = type.
-    INSERT temp485 INTO TABLE temp484.
-    temp485-n = `class`.
-    temp485-v = class.
-    INSERT temp485 INTO TABLE temp484.
-    temp485-n = `pressed`.
-    temp485-v = z2ui5_cl_util=>boolean_abap_2_json( pressed ).
-    INSERT temp485 INTO TABLE temp484.
+    temp495-n = `press`.
+    temp495-v = press.
+    INSERT temp495 INTO TABLE temp494.
+    temp495-n = `text`.
+    temp495-v = text.
+    INSERT temp495 INTO TABLE temp494.
+    temp495-n = `enabled`.
+    temp495-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp495 INTO TABLE temp494.
+    temp495-n = `icon`.
+    temp495-v = icon.
+    INSERT temp495 INTO TABLE temp494.
+    temp495-n = `type`.
+    temp495-v = type.
+    INSERT temp495 INTO TABLE temp494.
+    temp495-n = `class`.
+    temp495-v = class.
+    INSERT temp495 INTO TABLE temp494.
+    temp495-n = `pressed`.
+    temp495-v = z2ui5_cl_util=>boolean_abap_2_json( pressed ).
+    INSERT temp495 INTO TABLE temp494.
     _generic( name   = `ToggleButton`
-              t_prop = temp484 ).
+              t_prop = temp494 ).
   ENDMETHOD.
 
   METHOD token.
-    DATA temp486 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp487 LIKE LINE OF temp486.
+    DATA temp496 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp497 LIKE LINE OF temp496.
 
     result = me.
     
-    CLEAR temp486.
+    CLEAR temp496.
     
-    temp487-n = `key`.
-    temp487-v = key.
-    INSERT temp487 INTO TABLE temp486.
-    temp487-n = `text`.
-    temp487-v = text.
-    INSERT temp487 INTO TABLE temp486.
-    temp487-n = `selected`.
-    temp487-v = selected.
-    INSERT temp487 INTO TABLE temp486.
-    temp487-n = `visible`.
-    temp487-v = visible.
-    INSERT temp487 INTO TABLE temp486.
-    temp487-n = `editable`.
-    temp487-v = editable.
-    INSERT temp487 INTO TABLE temp486.
+    temp497-n = `key`.
+    temp497-v = key.
+    INSERT temp497 INTO TABLE temp496.
+    temp497-n = `text`.
+    temp497-v = text.
+    INSERT temp497 INTO TABLE temp496.
+    temp497-n = `selected`.
+    temp497-v = selected.
+    INSERT temp497 INTO TABLE temp496.
+    temp497-n = `visible`.
+    temp497-v = visible.
+    INSERT temp497 INTO TABLE temp496.
+    temp497-n = `editable`.
+    temp497-v = editable.
+    INSERT temp497 INTO TABLE temp496.
     _generic( name   = `Token`
-              t_prop = temp486 ).
+              t_prop = temp496 ).
   ENDMETHOD.
 
   METHOD tokens.
@@ -15824,8 +16107,8 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   METHOD toolbar.
     DATA lv_name TYPE c LENGTH 7.
     DATA temp3 LIKE lv_name.
-    DATA temp489 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp490 LIKE LINE OF temp489.
+    DATA temp499 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp500 LIKE LINE OF temp499.
     IF ns = 'table'.
       temp3 = 'toolbar'.
     ELSEIF ns = 'form'.
@@ -15835,58 +16118,58 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     ENDIF.
     lv_name = temp3.
     
-    CLEAR temp489.
+    CLEAR temp499.
     
-    temp490-n = `active`.
-    temp490-v = z2ui5_cl_util=>boolean_abap_2_json( active ).
-    INSERT temp490 INTO TABLE temp489.
-    temp490-n = `ariaHasPopup`.
-    temp490-v = ariahaspopup.
-    INSERT temp490 INTO TABLE temp489.
-    temp490-n = `design`.
-    temp490-v = design.
-    INSERT temp490 INTO TABLE temp489.
-    temp490-n = `enabled`.
-    temp490-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp490 INTO TABLE temp489.
-    temp490-n = `visible`.
-    temp490-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp490 INTO TABLE temp489.
-    temp490-n = `height`.
-    temp490-v = height.
-    INSERT temp490 INTO TABLE temp489.
-    temp490-n = `style`.
-    temp490-v = style.
-    INSERT temp490 INTO TABLE temp489.
-    temp490-n = `width`.
-    temp490-v = width.
-    INSERT temp490 INTO TABLE temp489.
-    temp490-n = `id`.
-    temp490-v = id.
-    INSERT temp490 INTO TABLE temp489.
-    temp490-n = `press`.
-    temp490-v = press.
-    INSERT temp490 INTO TABLE temp489.
+    temp500-n = `active`.
+    temp500-v = z2ui5_cl_util=>boolean_abap_2_json( active ).
+    INSERT temp500 INTO TABLE temp499.
+    temp500-n = `ariaHasPopup`.
+    temp500-v = ariahaspopup.
+    INSERT temp500 INTO TABLE temp499.
+    temp500-n = `design`.
+    temp500-v = design.
+    INSERT temp500 INTO TABLE temp499.
+    temp500-n = `enabled`.
+    temp500-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp500 INTO TABLE temp499.
+    temp500-n = `visible`.
+    temp500-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp500 INTO TABLE temp499.
+    temp500-n = `height`.
+    temp500-v = height.
+    INSERT temp500 INTO TABLE temp499.
+    temp500-n = `style`.
+    temp500-v = style.
+    INSERT temp500 INTO TABLE temp499.
+    temp500-n = `width`.
+    temp500-v = width.
+    INSERT temp500 INTO TABLE temp499.
+    temp500-n = `id`.
+    temp500-v = id.
+    INSERT temp500 INTO TABLE temp499.
+    temp500-n = `press`.
+    temp500-v = press.
+    INSERT temp500 INTO TABLE temp499.
     result = _generic( name   = lv_name
                        ns     = ns
-                       t_prop = temp489 ).
+                       t_prop = temp499 ).
 
   ENDMETHOD.
 
   METHOD toolbar_spacer.
-    DATA temp491 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp492 LIKE LINE OF temp491.
+    DATA temp501 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp502 LIKE LINE OF temp501.
 
     result = me.
     
-    CLEAR temp491.
+    CLEAR temp501.
     
-    temp492-n = `width`.
-    temp492-v = width.
-    INSERT temp492 INTO TABLE temp491.
+    temp502-n = `width`.
+    temp502-v = width.
+    INSERT temp502 INTO TABLE temp501.
     _generic( name   = `ToolbarSpacer`
               ns     = ns
-              t_prop = temp491 ).
+              t_prop = temp501 ).
   ENDMETHOD.
 
   METHOD tool_header.
@@ -15907,82 +16190,82 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD tree.
-    DATA temp493 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp494 LIKE LINE OF temp493.
-    CLEAR temp493.
+    DATA temp503 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp504 LIKE LINE OF temp503.
+    CLEAR temp503.
     
-    temp494-n = `id`.
-    temp494-v = id.
-    INSERT temp494 INTO TABLE temp493.
-    temp494-n = `items`.
-    temp494-v = items.
-    INSERT temp494 INTO TABLE temp493.
-    temp494-n = `headerText`.
-    temp494-v = headertext.
-    INSERT temp494 INTO TABLE temp493.
-    temp494-n = `footerText`.
-    temp494-v = footertext.
-    INSERT temp494 INTO TABLE temp493.
-    temp494-n = `mode`.
-    temp494-v = mode.
-    INSERT temp494 INTO TABLE temp493.
-    temp494-n = `toggleOpenState`.
-    temp494-v = toggleopenstate.
-    INSERT temp494 INTO TABLE temp493.
-    temp494-n = `width`.
-    temp494-v = width.
-    INSERT temp494 INTO TABLE temp493.
-    temp494-n = `selectionChange`.
-    temp494-v = selectionchange.
-    INSERT temp494 INTO TABLE temp493.
-    temp494-n = `itemPress`.
-    temp494-v = itempress.
-    INSERT temp494 INTO TABLE temp493.
-    temp494-n = `select`.
-    temp494-v = select.
-    INSERT temp494 INTO TABLE temp493.
-    temp494-n = `multiSelectMode`.
-    temp494-v = multiselectmode.
-    INSERT temp494 INTO TABLE temp493.
-    temp494-n = `noDataText`.
-    temp494-v = nodatatext.
-    INSERT temp494 INTO TABLE temp493.
-    temp494-n = `headerLevel`.
-    temp494-v = headerlevel.
-    INSERT temp494 INTO TABLE temp493.
-    temp494-n = `includeItemInSelection`.
-    temp494-v = z2ui5_cl_util=>boolean_abap_2_json( includeiteminselection ).
-    INSERT temp494 INTO TABLE temp493.
-    temp494-n = `showNoData`.
-    temp494-v = z2ui5_cl_util=>boolean_abap_2_json( shownodata ).
-    INSERT temp494 INTO TABLE temp493.
-    temp494-n = `inset`.
-    temp494-v = z2ui5_cl_util=>boolean_abap_2_json( inset ).
-    INSERT temp494 INTO TABLE temp493.
+    temp504-n = `id`.
+    temp504-v = id.
+    INSERT temp504 INTO TABLE temp503.
+    temp504-n = `items`.
+    temp504-v = items.
+    INSERT temp504 INTO TABLE temp503.
+    temp504-n = `headerText`.
+    temp504-v = headertext.
+    INSERT temp504 INTO TABLE temp503.
+    temp504-n = `footerText`.
+    temp504-v = footertext.
+    INSERT temp504 INTO TABLE temp503.
+    temp504-n = `mode`.
+    temp504-v = mode.
+    INSERT temp504 INTO TABLE temp503.
+    temp504-n = `toggleOpenState`.
+    temp504-v = toggleopenstate.
+    INSERT temp504 INTO TABLE temp503.
+    temp504-n = `width`.
+    temp504-v = width.
+    INSERT temp504 INTO TABLE temp503.
+    temp504-n = `selectionChange`.
+    temp504-v = selectionchange.
+    INSERT temp504 INTO TABLE temp503.
+    temp504-n = `itemPress`.
+    temp504-v = itempress.
+    INSERT temp504 INTO TABLE temp503.
+    temp504-n = `select`.
+    temp504-v = select.
+    INSERT temp504 INTO TABLE temp503.
+    temp504-n = `multiSelectMode`.
+    temp504-v = multiselectmode.
+    INSERT temp504 INTO TABLE temp503.
+    temp504-n = `noDataText`.
+    temp504-v = nodatatext.
+    INSERT temp504 INTO TABLE temp503.
+    temp504-n = `headerLevel`.
+    temp504-v = headerlevel.
+    INSERT temp504 INTO TABLE temp503.
+    temp504-n = `includeItemInSelection`.
+    temp504-v = z2ui5_cl_util=>boolean_abap_2_json( includeiteminselection ).
+    INSERT temp504 INTO TABLE temp503.
+    temp504-n = `showNoData`.
+    temp504-v = z2ui5_cl_util=>boolean_abap_2_json( shownodata ).
+    INSERT temp504 INTO TABLE temp503.
+    temp504-n = `inset`.
+    temp504-v = z2ui5_cl_util=>boolean_abap_2_json( inset ).
+    INSERT temp504 INTO TABLE temp503.
     result = _generic(
                  name   = `Tree`
-                 t_prop = temp493 ).
+                 t_prop = temp503 ).
 
   ENDMETHOD.
 
   METHOD tree_column.
 
-    DATA temp495 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp496 LIKE LINE OF temp495.
-    CLEAR temp495.
+    DATA temp505 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp506 LIKE LINE OF temp505.
+    CLEAR temp505.
     
-    temp496-n = `label`.
-    temp496-v = label.
-    INSERT temp496 INTO TABLE temp495.
-    temp496-n = `template`.
-    temp496-v = template.
-    INSERT temp496 INTO TABLE temp495.
-    temp496-n = `hAlign`.
-    temp496-v = halign.
-    INSERT temp496 INTO TABLE temp495.
+    temp506-n = `label`.
+    temp506-v = label.
+    INSERT temp506 INTO TABLE temp505.
+    temp506-n = `template`.
+    temp506-v = template.
+    INSERT temp506 INTO TABLE temp505.
+    temp506-n = `hAlign`.
+    temp506-v = halign.
+    INSERT temp506 INTO TABLE temp505.
     result = _generic( name   = `Column`
                        ns     = `table`
-                       t_prop = temp495 ).
+                       t_prop = temp505 ).
 
   ENDMETHOD.
 
@@ -15995,113 +16278,113 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD tree_table.
 
-    DATA temp497 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp498 LIKE LINE OF temp497.
-    CLEAR temp497.
+    DATA temp507 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp508 LIKE LINE OF temp507.
+    CLEAR temp507.
     
-    temp498-n = `rows`.
-    temp498-v = rows.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `selectionMode`.
-    temp498-v = selectionmode.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `enableColumnReordering`.
-    temp498-v = z2ui5_cl_util=>boolean_abap_2_json( enablecolumnreordering ).
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `expandFirstLevel`.
-    temp498-v = z2ui5_cl_util=>boolean_abap_2_json( expandfirstlevel ).
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `columnSelect`.
-    temp498-v = columnselect.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `rowSelectionChange`.
-    temp498-v = rowselectionchange.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `selectionBehavior`.
-    temp498-v = selectionbehavior.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `id`.
-    temp498-v = id.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `alternateRowColors`.
-    temp498-v = z2ui5_cl_util=>boolean_abap_2_json( alternaterowcolors ).
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `columnHeaderVisible`.
-    temp498-v = z2ui5_cl_util=>boolean_abap_2_json( columnheadervisible ).
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `enableCellFilter`.
-    temp498-v = z2ui5_cl_util=>boolean_abap_2_json( enablecellfilter ).
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `enableColumnFreeze`.
-    temp498-v = z2ui5_cl_util=>boolean_abap_2_json( enablecolumnfreeze ).
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `enableCustomFilter`.
-    temp498-v = z2ui5_cl_util=>boolean_abap_2_json( enablecustomfilter ).
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `enableSelectAll`.
-    temp498-v = z2ui5_cl_util=>boolean_abap_2_json( enableselectall ).
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `showNoData`.
-    temp498-v = z2ui5_cl_util=>boolean_abap_2_json( shownodata ).
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `showOverlay`.
-    temp498-v = z2ui5_cl_util=>boolean_abap_2_json( showoverlay ).
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `visible`.
-    temp498-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `columnHeaderHeight`.
-    temp498-v = columnheaderheight.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `firstVisibleRow`.
-    temp498-v = firstvisiblerow.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `fixedColumnCount`.
-    temp498-v = fixedcolumncount.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `threshold`.
-    temp498-v = threshold.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `width`.
-    temp498-v = width.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `useGroupMode`.
-    temp498-v = z2ui5_cl_util=>boolean_abap_2_json( usegroupmode ).
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `groupHeaderProperty`.
-    temp498-v = groupheaderproperty.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `rowActionCount`.
-    temp498-v = rowactioncount.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `selectedIndex`.
-    temp498-v = selectedindex.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `rowHeight`.
-    temp498-v = rowheight.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `fixedRowCount`.
-    temp498-v = fixedrowcount.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `fixedBottomRowCount`.
-    temp498-v = fixedbottomrowcount.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `minAutoRowCount`.
-    temp498-v = minautorowcount.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `visibleRowCount`.
-    temp498-v = visiblerowcount.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `toggleOpenState`.
-    temp498-v = toggleopenstate.
-    INSERT temp498 INTO TABLE temp497.
-    temp498-n = `visibleRowCountMode`.
-    temp498-v = visiblerowcountmode.
-    INSERT temp498 INTO TABLE temp497.
+    temp508-n = `rows`.
+    temp508-v = rows.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `selectionMode`.
+    temp508-v = selectionmode.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `enableColumnReordering`.
+    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( enablecolumnreordering ).
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `expandFirstLevel`.
+    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( expandfirstlevel ).
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `columnSelect`.
+    temp508-v = columnselect.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `rowSelectionChange`.
+    temp508-v = rowselectionchange.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `selectionBehavior`.
+    temp508-v = selectionbehavior.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `id`.
+    temp508-v = id.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `alternateRowColors`.
+    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( alternaterowcolors ).
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `columnHeaderVisible`.
+    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( columnheadervisible ).
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `enableCellFilter`.
+    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( enablecellfilter ).
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `enableColumnFreeze`.
+    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( enablecolumnfreeze ).
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `enableCustomFilter`.
+    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( enablecustomfilter ).
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `enableSelectAll`.
+    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( enableselectall ).
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `showNoData`.
+    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( shownodata ).
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `showOverlay`.
+    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( showoverlay ).
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `visible`.
+    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `columnHeaderHeight`.
+    temp508-v = columnheaderheight.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `firstVisibleRow`.
+    temp508-v = firstvisiblerow.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `fixedColumnCount`.
+    temp508-v = fixedcolumncount.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `threshold`.
+    temp508-v = threshold.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `width`.
+    temp508-v = width.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `useGroupMode`.
+    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( usegroupmode ).
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `groupHeaderProperty`.
+    temp508-v = groupheaderproperty.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `rowActionCount`.
+    temp508-v = rowactioncount.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `selectedIndex`.
+    temp508-v = selectedindex.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `rowHeight`.
+    temp508-v = rowheight.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `fixedRowCount`.
+    temp508-v = fixedrowcount.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `fixedBottomRowCount`.
+    temp508-v = fixedbottomrowcount.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `minAutoRowCount`.
+    temp508-v = minautorowcount.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `visibleRowCount`.
+    temp508-v = visiblerowcount.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `toggleOpenState`.
+    temp508-v = toggleopenstate.
+    INSERT temp508 INTO TABLE temp507.
+    temp508-n = `visibleRowCountMode`.
+    temp508-v = visiblerowcountmode.
+    INSERT temp508 INTO TABLE temp507.
     result = _generic(
                  name   = `TreeTable`
                  ns     = `table`
-                 t_prop = temp497 ).
+                 t_prop = temp507 ).
 
   ENDMETHOD.
 
@@ -16118,52 +16401,52 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD ui_column.
-    DATA temp499 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp500 LIKE LINE OF temp499.
-    CLEAR temp499.
+    DATA temp509 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp510 LIKE LINE OF temp509.
+    CLEAR temp509.
     
-    temp500-n = `id`.
-    temp500-v = id.
-    INSERT temp500 INTO TABLE temp499.
-    temp500-n = `width`.
-    temp500-v = width.
-    INSERT temp500 INTO TABLE temp499.
-    temp500-n = `showSortMenuEntry`.
-    temp500-v = showsortmenuentry.
-    INSERT temp500 INTO TABLE temp499.
-    temp500-n = `sortProperty`.
-    temp500-v = sortproperty.
-    INSERT temp500 INTO TABLE temp499.
-    temp500-n = `showFilterMenuEntry`.
-    temp500-v = showfiltermenuentry.
-    INSERT temp500 INTO TABLE temp499.
-    temp500-n = `autoresizable`.
-    temp500-v = z2ui5_cl_util=>boolean_abap_2_json( autoresizable ).
-    INSERT temp500 INTO TABLE temp499.
-    temp500-n = `defaultFilterOperator`.
-    temp500-v = defaultfilteroperator.
-    INSERT temp500 INTO TABLE temp499.
-    temp500-n = `filterProperty`.
-    temp500-v = filterproperty.
-    INSERT temp500 INTO TABLE temp499.
-    temp500-n = `filterType`.
-    temp500-v = filtertype.
-    INSERT temp500 INTO TABLE temp499.
-    temp500-n = `hAlign`.
-    temp500-v = halign.
-    INSERT temp500 INTO TABLE temp499.
-    temp500-n = `minWidth`.
-    temp500-v = minwidth.
-    INSERT temp500 INTO TABLE temp499.
-    temp500-n = `resizable`.
-    temp500-v = z2ui5_cl_util=>boolean_abap_2_json( resizable ).
-    INSERT temp500 INTO TABLE temp499.
-    temp500-n = `visible`.
-    temp500-v = visible.
-    INSERT temp500 INTO TABLE temp499.
+    temp510-n = `id`.
+    temp510-v = id.
+    INSERT temp510 INTO TABLE temp509.
+    temp510-n = `width`.
+    temp510-v = width.
+    INSERT temp510 INTO TABLE temp509.
+    temp510-n = `showSortMenuEntry`.
+    temp510-v = showsortmenuentry.
+    INSERT temp510 INTO TABLE temp509.
+    temp510-n = `sortProperty`.
+    temp510-v = sortproperty.
+    INSERT temp510 INTO TABLE temp509.
+    temp510-n = `showFilterMenuEntry`.
+    temp510-v = showfiltermenuentry.
+    INSERT temp510 INTO TABLE temp509.
+    temp510-n = `autoresizable`.
+    temp510-v = z2ui5_cl_util=>boolean_abap_2_json( autoresizable ).
+    INSERT temp510 INTO TABLE temp509.
+    temp510-n = `defaultFilterOperator`.
+    temp510-v = defaultfilteroperator.
+    INSERT temp510 INTO TABLE temp509.
+    temp510-n = `filterProperty`.
+    temp510-v = filterproperty.
+    INSERT temp510 INTO TABLE temp509.
+    temp510-n = `filterType`.
+    temp510-v = filtertype.
+    INSERT temp510 INTO TABLE temp509.
+    temp510-n = `hAlign`.
+    temp510-v = halign.
+    INSERT temp510 INTO TABLE temp509.
+    temp510-n = `minWidth`.
+    temp510-v = minwidth.
+    INSERT temp510 INTO TABLE temp509.
+    temp510-n = `resizable`.
+    temp510-v = z2ui5_cl_util=>boolean_abap_2_json( resizable ).
+    INSERT temp510 INTO TABLE temp509.
+    temp510-n = `visible`.
+    temp510-v = visible.
+    INSERT temp510 INTO TABLE temp509.
     result = _generic( name   = `Column`
                        ns     = 'table'
-                       t_prop = temp499 ).
+                       t_prop = temp509 ).
   ENDMETHOD.
 
   METHOD ui_columns.
@@ -16188,28 +16471,28 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD ui_row_action_item.
-    DATA temp501 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp502 LIKE LINE OF temp501.
-    CLEAR temp501.
+    DATA temp511 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp512 LIKE LINE OF temp511.
+    CLEAR temp511.
     
-    temp502-n = `icon`.
-    temp502-v = icon.
-    INSERT temp502 INTO TABLE temp501.
-    temp502-n = `text`.
-    temp502-v = text.
-    INSERT temp502 INTO TABLE temp501.
-    temp502-n = `type`.
-    temp502-v = type.
-    INSERT temp502 INTO TABLE temp501.
-    temp502-n = `press`.
-    temp502-v = press.
-    INSERT temp502 INTO TABLE temp501.
-    temp502-n = `visible`.
-    temp502-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp502 INTO TABLE temp501.
+    temp512-n = `icon`.
+    temp512-v = icon.
+    INSERT temp512 INTO TABLE temp511.
+    temp512-n = `text`.
+    temp512-v = text.
+    INSERT temp512 INTO TABLE temp511.
+    temp512-n = `type`.
+    temp512-v = type.
+    INSERT temp512 INTO TABLE temp511.
+    temp512-n = `press`.
+    temp512-v = press.
+    INSERT temp512 INTO TABLE temp511.
+    temp512-n = `visible`.
+    temp512-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp512 INTO TABLE temp511.
     result = _generic( name   = `RowActionItem`
                        ns     = `table`
-                       t_prop = temp501 ).
+                       t_prop = temp511 ).
   ENDMETHOD.
 
   METHOD ui_row_action_template.
@@ -16219,107 +16502,107 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD ui_table.
 
-    DATA temp503 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp504 LIKE LINE OF temp503.
-    CLEAR temp503.
+    DATA temp513 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp514 LIKE LINE OF temp513.
+    CLEAR temp513.
     
-    temp504-n = `rows`.
-    temp504-v = rows.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `alternateRowColors`.
-    temp504-v = z2ui5_cl_util=>boolean_abap_2_json( alternaterowcolors ).
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `columnHeaderVisible`.
-    temp504-v = columnheadervisible.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `editable`.
-    temp504-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `class`.
-    temp504-v = class.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `enableCellFilter`.
-    temp504-v = z2ui5_cl_util=>boolean_abap_2_json( enablecellfilter ).
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `enableGrouping`.
-    temp504-v = z2ui5_cl_util=>boolean_abap_2_json( enablegrouping ).
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `enableSelectAll`.
-    temp504-v = z2ui5_cl_util=>boolean_abap_2_json( enableselectall ).
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `firstVisibleRow`.
-    temp504-v = firstvisiblerow.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `fixedBottomRowCount`.
-    temp504-v = fixedbottomrowcount.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `fixedColumnCount`.
-    temp504-v = fixedcolumncount.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `rowActionCount`.
-    temp504-v = rowactioncount.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `fixedRowCount`.
-    temp504-v = fixedrowcount.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `minAutoRowCount`.
-    temp504-v = minautorowcount.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `rowHeight`.
-    temp504-v = rowheight.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `selectedIndex`.
-    temp504-v = selectedindex.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `selectionMode`.
-    temp504-v = selectionmode.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `selectionBehavior`.
-    temp504-v = selectionbehavior.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `showColumnVisibilityMenu`.
-    temp504-v = z2ui5_cl_util=>boolean_abap_2_json( showcolumnvisibilitymenu ).
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `showNoData`.
-    temp504-v = z2ui5_cl_util=>boolean_abap_2_json( shownodata ).
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `threshold`.
-    temp504-v = threshold.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `visibleRowCount`.
-    temp504-v = visiblerowcount.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `visibleRowCountMode`.
-    temp504-v = visiblerowcountmode.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `footer`.
-    temp504-v = footer.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `filter`.
-    temp504-v = filter.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `sort`.
-    temp504-v = sort.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `customFilter`.
-    temp504-v = customfilter.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `id`.
-    temp504-v = id.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `fl:flexibility`.
-    temp504-v = flex.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `rowSelectionChange`.
-    temp504-v = rowselectionchange.
-    INSERT temp504 INTO TABLE temp503.
-    temp504-n = `rowMode`.
-    temp504-v = rowmode.
-    INSERT temp504 INTO TABLE temp503.
+    temp514-n = `rows`.
+    temp514-v = rows.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `alternateRowColors`.
+    temp514-v = z2ui5_cl_util=>boolean_abap_2_json( alternaterowcolors ).
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `columnHeaderVisible`.
+    temp514-v = columnheadervisible.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `editable`.
+    temp514-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `class`.
+    temp514-v = class.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `enableCellFilter`.
+    temp514-v = z2ui5_cl_util=>boolean_abap_2_json( enablecellfilter ).
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `enableGrouping`.
+    temp514-v = z2ui5_cl_util=>boolean_abap_2_json( enablegrouping ).
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `enableSelectAll`.
+    temp514-v = z2ui5_cl_util=>boolean_abap_2_json( enableselectall ).
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `firstVisibleRow`.
+    temp514-v = firstvisiblerow.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `fixedBottomRowCount`.
+    temp514-v = fixedbottomrowcount.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `fixedColumnCount`.
+    temp514-v = fixedcolumncount.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `rowActionCount`.
+    temp514-v = rowactioncount.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `fixedRowCount`.
+    temp514-v = fixedrowcount.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `minAutoRowCount`.
+    temp514-v = minautorowcount.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `rowHeight`.
+    temp514-v = rowheight.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `selectedIndex`.
+    temp514-v = selectedindex.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `selectionMode`.
+    temp514-v = selectionmode.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `selectionBehavior`.
+    temp514-v = selectionbehavior.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `showColumnVisibilityMenu`.
+    temp514-v = z2ui5_cl_util=>boolean_abap_2_json( showcolumnvisibilitymenu ).
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `showNoData`.
+    temp514-v = z2ui5_cl_util=>boolean_abap_2_json( shownodata ).
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `threshold`.
+    temp514-v = threshold.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `visibleRowCount`.
+    temp514-v = visiblerowcount.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `visibleRowCountMode`.
+    temp514-v = visiblerowcountmode.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `footer`.
+    temp514-v = footer.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `filter`.
+    temp514-v = filter.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `sort`.
+    temp514-v = sort.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `customFilter`.
+    temp514-v = customfilter.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `id`.
+    temp514-v = id.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `fl:flexibility`.
+    temp514-v = flex.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `rowSelectionChange`.
+    temp514-v = rowselectionchange.
+    INSERT temp514 INTO TABLE temp513.
+    temp514-n = `rowMode`.
+    temp514-v = rowmode.
+    INSERT temp514 INTO TABLE temp513.
     result = _generic(
         name   = `Table`
         ns     = `table`
-        t_prop = temp503 ).
+        t_prop = temp513 ).
 
   ENDMETHOD.
 
@@ -16331,186 +16614,186 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD upload_set.
-    DATA temp505 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp506 LIKE LINE OF temp505.
-    CLEAR temp505.
+    DATA temp515 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp516 LIKE LINE OF temp515.
+    CLEAR temp515.
     
-    temp506-n = `id`.
-    temp506-v = id.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `instantUpload`.
-    temp506-v = z2ui5_cl_util=>boolean_abap_2_json( instantupload ).
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `showIcons`.
-    temp506-v = z2ui5_cl_util=>boolean_abap_2_json( showicons ).
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `uploadEnabled`.
-    temp506-v = z2ui5_cl_util=>boolean_abap_2_json( uploadenabled ).
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `terminationEnabled`.
-    temp506-v = z2ui5_cl_util=>boolean_abap_2_json( terminationenabled ).
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `uploadButtonInvisible`.
-    temp506-v = z2ui5_cl_util=>boolean_abap_2_json( uploadbuttoninvisible ).
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `fileTypes`.
-    temp506-v = filetypes.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `maxFileNameLength`.
-    temp506-v = maxfilenamelength.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `maxFileSize`.
-    temp506-v = maxfilesize.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `mediaTypes`.
-    temp506-v = mediatypes.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `items`.
-    temp506-v = items.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `uploadUrl`.
-    temp506-v = uploadurl.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `mode`.
-    temp506-v = mode.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `fileRenamed`.
-    temp506-v = filerenamed.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `directory`.
-    temp506-v = z2ui5_cl_util=>boolean_abap_2_json( directory ).
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `multiple`.
-    temp506-v = z2ui5_cl_util=>boolean_abap_2_json( multiple ).
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `dragDropDescription`.
-    temp506-v = dragdropdescription.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `dragDropText`.
-    temp506-v = dragdroptext.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `noDataText`.
-    temp506-v = nodatatext.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `noDataDescription`.
-    temp506-v = nodatadescription.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `noDataIllustrationType`.
-    temp506-v = nodataillustrationtype.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `afterItemEdited`.
-    temp506-v = afteritemedited.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `afterItemRemoved`.
-    temp506-v = afteritemremoved.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `beforeItemAdded`.
-    temp506-v = beforeitemadded.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `beforeItemEdited`.
-    temp506-v = beforeitemedited.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `beforeItemRemoved`.
-    temp506-v = beforeitemremoved.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `beforeUploadStarts`.
-    temp506-v = beforeuploadstarts.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `beforeUploadTermination`.
-    temp506-v = beforeuploadtermination.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `fileNameLengthExceeded`.
-    temp506-v = filenamelengthexceeded.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `fileSizeExceeded`.
-    temp506-v = filesizeexceeded.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `fileTypeMismatch`.
-    temp506-v = filetypemismatch.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `itemDragStart`.
-    temp506-v = itemdragstart.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `itemDrop`.
-    temp506-v = itemdrop.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `mediaTypeMismatch`.
-    temp506-v = mediatypemismatch.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `uploadTerminated`.
-    temp506-v = uploadterminated.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `uploadCompleted`.
-    temp506-v = uploadcompleted.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `afterItemAdded`.
-    temp506-v = afteritemadded.
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `sameFilenameAllowed`.
-    temp506-v = z2ui5_cl_util=>boolean_abap_2_json( samefilenameallowed ).
-    INSERT temp506 INTO TABLE temp505.
-    temp506-n = `selectionChanged`.
-    temp506-v = selectionchanged.
-    INSERT temp506 INTO TABLE temp505.
+    temp516-n = `id`.
+    temp516-v = id.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `instantUpload`.
+    temp516-v = z2ui5_cl_util=>boolean_abap_2_json( instantupload ).
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `showIcons`.
+    temp516-v = z2ui5_cl_util=>boolean_abap_2_json( showicons ).
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `uploadEnabled`.
+    temp516-v = z2ui5_cl_util=>boolean_abap_2_json( uploadenabled ).
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `terminationEnabled`.
+    temp516-v = z2ui5_cl_util=>boolean_abap_2_json( terminationenabled ).
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `uploadButtonInvisible`.
+    temp516-v = z2ui5_cl_util=>boolean_abap_2_json( uploadbuttoninvisible ).
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `fileTypes`.
+    temp516-v = filetypes.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `maxFileNameLength`.
+    temp516-v = maxfilenamelength.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `maxFileSize`.
+    temp516-v = maxfilesize.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `mediaTypes`.
+    temp516-v = mediatypes.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `items`.
+    temp516-v = items.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `uploadUrl`.
+    temp516-v = uploadurl.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `mode`.
+    temp516-v = mode.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `fileRenamed`.
+    temp516-v = filerenamed.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `directory`.
+    temp516-v = z2ui5_cl_util=>boolean_abap_2_json( directory ).
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `multiple`.
+    temp516-v = z2ui5_cl_util=>boolean_abap_2_json( multiple ).
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `dragDropDescription`.
+    temp516-v = dragdropdescription.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `dragDropText`.
+    temp516-v = dragdroptext.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `noDataText`.
+    temp516-v = nodatatext.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `noDataDescription`.
+    temp516-v = nodatadescription.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `noDataIllustrationType`.
+    temp516-v = nodataillustrationtype.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `afterItemEdited`.
+    temp516-v = afteritemedited.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `afterItemRemoved`.
+    temp516-v = afteritemremoved.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `beforeItemAdded`.
+    temp516-v = beforeitemadded.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `beforeItemEdited`.
+    temp516-v = beforeitemedited.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `beforeItemRemoved`.
+    temp516-v = beforeitemremoved.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `beforeUploadStarts`.
+    temp516-v = beforeuploadstarts.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `beforeUploadTermination`.
+    temp516-v = beforeuploadtermination.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `fileNameLengthExceeded`.
+    temp516-v = filenamelengthexceeded.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `fileSizeExceeded`.
+    temp516-v = filesizeexceeded.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `fileTypeMismatch`.
+    temp516-v = filetypemismatch.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `itemDragStart`.
+    temp516-v = itemdragstart.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `itemDrop`.
+    temp516-v = itemdrop.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `mediaTypeMismatch`.
+    temp516-v = mediatypemismatch.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `uploadTerminated`.
+    temp516-v = uploadterminated.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `uploadCompleted`.
+    temp516-v = uploadcompleted.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `afterItemAdded`.
+    temp516-v = afteritemadded.
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `sameFilenameAllowed`.
+    temp516-v = z2ui5_cl_util=>boolean_abap_2_json( samefilenameallowed ).
+    INSERT temp516 INTO TABLE temp515.
+    temp516-n = `selectionChanged`.
+    temp516-v = selectionchanged.
+    INSERT temp516 INTO TABLE temp515.
     result = _generic(
                  name   = `UploadSet`
                  ns     = 'upload'
-                 t_prop = temp505 ).
+                 t_prop = temp515 ).
   ENDMETHOD.
 
   METHOD upload_set_item.
-    DATA temp507 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp508 LIKE LINE OF temp507.
-    CLEAR temp507.
+    DATA temp517 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp518 LIKE LINE OF temp517.
+    CLEAR temp517.
     
-    temp508-n = `fileName`.
-    temp508-v = filename.
-    INSERT temp508 INTO TABLE temp507.
-    temp508-n = `mediaType`.
-    temp508-v = mediatype.
-    INSERT temp508 INTO TABLE temp507.
-    temp508-n = `url`.
-    temp508-v = url.
-    INSERT temp508 INTO TABLE temp507.
-    temp508-n = `thumbnailUrl`.
-    temp508-v = thumbnailurl.
-    INSERT temp508 INTO TABLE temp507.
-    temp508-n = `markers`.
-    temp508-v = markers.
-    INSERT temp508 INTO TABLE temp507.
-    temp508-n = `enabledEdit`.
-    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( enablededit ).
-    INSERT temp508 INTO TABLE temp507.
-    temp508-n = `enabledRemove`.
-    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( enabledremove ).
-    INSERT temp508 INTO TABLE temp507.
-    temp508-n = `selected`.
-    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
-    INSERT temp508 INTO TABLE temp507.
-    temp508-n = `visibleEdit`.
-    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( visibleedit ).
-    INSERT temp508 INTO TABLE temp507.
-    temp508-n = `visibleRemove`.
-    temp508-v = z2ui5_cl_util=>boolean_abap_2_json( visibleremove ).
-    INSERT temp508 INTO TABLE temp507.
-    temp508-n = `uploadState`.
-    temp508-v = uploadstate.
-    INSERT temp508 INTO TABLE temp507.
-    temp508-n = `uploadUrl`.
-    temp508-v = uploadurl.
-    INSERT temp508 INTO TABLE temp507.
-    temp508-n = `openPressed`.
-    temp508-v = openpressed.
-    INSERT temp508 INTO TABLE temp507.
-    temp508-n = `removePressed`.
-    temp508-v = removepressed.
-    INSERT temp508 INTO TABLE temp507.
-    temp508-n = `statuses`.
-    temp508-v = statuses.
-    INSERT temp508 INTO TABLE temp507.
+    temp518-n = `fileName`.
+    temp518-v = filename.
+    INSERT temp518 INTO TABLE temp517.
+    temp518-n = `mediaType`.
+    temp518-v = mediatype.
+    INSERT temp518 INTO TABLE temp517.
+    temp518-n = `url`.
+    temp518-v = url.
+    INSERT temp518 INTO TABLE temp517.
+    temp518-n = `thumbnailUrl`.
+    temp518-v = thumbnailurl.
+    INSERT temp518 INTO TABLE temp517.
+    temp518-n = `markers`.
+    temp518-v = markers.
+    INSERT temp518 INTO TABLE temp517.
+    temp518-n = `enabledEdit`.
+    temp518-v = z2ui5_cl_util=>boolean_abap_2_json( enablededit ).
+    INSERT temp518 INTO TABLE temp517.
+    temp518-n = `enabledRemove`.
+    temp518-v = z2ui5_cl_util=>boolean_abap_2_json( enabledremove ).
+    INSERT temp518 INTO TABLE temp517.
+    temp518-n = `selected`.
+    temp518-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    INSERT temp518 INTO TABLE temp517.
+    temp518-n = `visibleEdit`.
+    temp518-v = z2ui5_cl_util=>boolean_abap_2_json( visibleedit ).
+    INSERT temp518 INTO TABLE temp517.
+    temp518-n = `visibleRemove`.
+    temp518-v = z2ui5_cl_util=>boolean_abap_2_json( visibleremove ).
+    INSERT temp518 INTO TABLE temp517.
+    temp518-n = `uploadState`.
+    temp518-v = uploadstate.
+    INSERT temp518 INTO TABLE temp517.
+    temp518-n = `uploadUrl`.
+    temp518-v = uploadurl.
+    INSERT temp518 INTO TABLE temp517.
+    temp518-n = `openPressed`.
+    temp518-v = openpressed.
+    INSERT temp518 INTO TABLE temp517.
+    temp518-n = `removePressed`.
+    temp518-v = removepressed.
+    INSERT temp518 INTO TABLE temp517.
+    temp518-n = `statuses`.
+    temp518-v = statuses.
+    INSERT temp518 INTO TABLE temp517.
     result = _generic( name   = `UploadSetItem`
                        ns     = 'upload'
-                       t_prop = temp507 ).
+                       t_prop = temp517 ).
   ENDMETHOD.
 
   METHOD upload_set_toolbar_placeholder.
@@ -16520,83 +16803,83 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD variant_item.
 
-    DATA temp509 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp510 LIKE LINE OF temp509.
-    CLEAR temp509.
+    DATA temp519 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp520 LIKE LINE OF temp519.
+    CLEAR temp519.
     
-    temp510-n = `executeOnSelection`.
-    temp510-v = z2ui5_cl_util=>boolean_abap_2_json( executeonselection ).
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `global`.
-    temp510-v = z2ui5_cl_util=>boolean_abap_2_json( global ).
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `labelReadOnly`.
-    temp510-v = z2ui5_cl_util=>boolean_abap_2_json( labelreadonly ).
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `lifecyclePackage`.
-    temp510-v = lifecyclepackage.
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `lifecycleTransportId`.
-    temp510-v = lifecycletransportid.
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `namespace`.
-    temp510-v = namespace.
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `readOnly`.
-    temp510-v = readonly.
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `executeOnSelect`.
-    temp510-v = z2ui5_cl_util=>boolean_abap_2_json( executeonselect ).
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `author`.
-    temp510-v = author.
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `changeable`.
-    temp510-v = z2ui5_cl_util=>boolean_abap_2_json( changeable ).
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `enabled`.
-    temp510-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `favorite`.
-    temp510-v = z2ui5_cl_util=>boolean_abap_2_json( favorite ).
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `key`.
-    temp510-v = key.
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `text`.
-    temp510-v = text.
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `title`.
-    temp510-v = title.
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `textDirection`.
-    temp510-v = textdirection.
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `originalTitle`.
-    temp510-v = originaltitle.
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `originalExecuteOnSelect`.
-    temp510-v = z2ui5_cl_util=>boolean_abap_2_json( originalexecuteonselect ).
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `remove`.
-    temp510-v = z2ui5_cl_util=>boolean_abap_2_json( remove ).
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `rename`.
-    temp510-v = z2ui5_cl_util=>boolean_abap_2_json( rename ).
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `originalFavorite`.
-    temp510-v = z2ui5_cl_util=>boolean_abap_2_json( originalfavorite ).
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `sharing`.
-    temp510-v = z2ui5_cl_util=>boolean_abap_2_json( sharing ).
-    INSERT temp510 INTO TABLE temp509.
-    temp510-n = `change`.
-    temp510-v = change.
-    INSERT temp510 INTO TABLE temp509.
+    temp520-n = `executeOnSelection`.
+    temp520-v = z2ui5_cl_util=>boolean_abap_2_json( executeonselection ).
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `global`.
+    temp520-v = z2ui5_cl_util=>boolean_abap_2_json( global ).
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `labelReadOnly`.
+    temp520-v = z2ui5_cl_util=>boolean_abap_2_json( labelreadonly ).
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `lifecyclePackage`.
+    temp520-v = lifecyclepackage.
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `lifecycleTransportId`.
+    temp520-v = lifecycletransportid.
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `namespace`.
+    temp520-v = namespace.
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `readOnly`.
+    temp520-v = readonly.
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `executeOnSelect`.
+    temp520-v = z2ui5_cl_util=>boolean_abap_2_json( executeonselect ).
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `author`.
+    temp520-v = author.
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `changeable`.
+    temp520-v = z2ui5_cl_util=>boolean_abap_2_json( changeable ).
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `enabled`.
+    temp520-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `favorite`.
+    temp520-v = z2ui5_cl_util=>boolean_abap_2_json( favorite ).
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `key`.
+    temp520-v = key.
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `text`.
+    temp520-v = text.
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `title`.
+    temp520-v = title.
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `textDirection`.
+    temp520-v = textdirection.
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `originalTitle`.
+    temp520-v = originaltitle.
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `originalExecuteOnSelect`.
+    temp520-v = z2ui5_cl_util=>boolean_abap_2_json( originalexecuteonselect ).
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `remove`.
+    temp520-v = z2ui5_cl_util=>boolean_abap_2_json( remove ).
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `rename`.
+    temp520-v = z2ui5_cl_util=>boolean_abap_2_json( rename ).
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `originalFavorite`.
+    temp520-v = z2ui5_cl_util=>boolean_abap_2_json( originalfavorite ).
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `sharing`.
+    temp520-v = z2ui5_cl_util=>boolean_abap_2_json( sharing ).
+    INSERT temp520 INTO TABLE temp519.
+    temp520-n = `change`.
+    temp520-v = change.
+    INSERT temp520 INTO TABLE temp519.
     result = _generic(
                  name   = `VariantItem`
                  ns     = `vm`
-                 t_prop = temp509 ).
+                 t_prop = temp519 ).
 
   ENDMETHOD.
 
@@ -16608,334 +16891,6 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD variant_item_sapm.
-    DATA temp511 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp512 LIKE LINE OF temp511.
-    CLEAR temp511.
-    
-    temp512-n = `id`.
-    temp512-v = id.
-    INSERT temp512 INTO TABLE temp511.
-    temp512-n = `author`.
-    temp512-v = author.
-    INSERT temp512 INTO TABLE temp511.
-    temp512-n = `changeable`.
-    temp512-v = z2ui5_cl_util=>boolean_abap_2_json( changeable ).
-    INSERT temp512 INTO TABLE temp511.
-    temp512-n = `enabled`.
-    temp512-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp512 INTO TABLE temp511.
-    temp512-n = `favorite`.
-    temp512-v = z2ui5_cl_util=>boolean_abap_2_json( favorite ).
-    INSERT temp512 INTO TABLE temp511.
-    temp512-n = `remove`.
-    temp512-v = z2ui5_cl_util=>boolean_abap_2_json( remove ).
-    INSERT temp512 INTO TABLE temp511.
-    temp512-n = `rename`.
-    temp512-v = z2ui5_cl_util=>boolean_abap_2_json( rename ).
-    INSERT temp512 INTO TABLE temp511.
-    temp512-n = `visible`.
-    temp512-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp512 INTO TABLE temp511.
-    temp512-n = `contexts`.
-    temp512-v = contexts.
-    INSERT temp512 INTO TABLE temp511.
-    temp512-n = `key`.
-    temp512-v = key.
-    INSERT temp512 INTO TABLE temp511.
-    temp512-n = `sharing`.
-    temp512-v = sharing.
-    INSERT temp512 INTO TABLE temp511.
-    temp512-n = `text`.
-    temp512-v = text.
-    INSERT temp512 INTO TABLE temp511.
-    temp512-n = `textDirection`.
-    temp512-v = textdirection.
-    INSERT temp512 INTO TABLE temp511.
-    temp512-n = `title`.
-    temp512-v = title.
-    INSERT temp512 INTO TABLE temp511.
-    temp512-n = `executeOnSelect`.
-    temp512-v = z2ui5_cl_util=>boolean_abap_2_json( executeonselect ).
-    INSERT temp512 INTO TABLE temp511.
-    result = _generic(
-        name   = `VariantItem`
-        t_prop = temp511 ).
-  ENDMETHOD.
-
-  METHOD variant_management.
-
-    DATA temp513 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp514 LIKE LINE OF temp513.
-    CLEAR temp513.
-    
-    temp514-n = `defaultVariantKey`.
-    temp514-v = defaultvariantkey.
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `enabled`.
-    temp514-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `inErrorState`.
-    temp514-v = z2ui5_cl_util=>boolean_abap_2_json( inerrorstate ).
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `initialSelectionKey`.
-    temp514-v = initialselectionkey.
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `lifecycleSupport`.
-    temp514-v = z2ui5_cl_util=>boolean_abap_2_json( lifecyclesupport ).
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `selectionKey`.
-    temp514-v = selectionkey.
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `showCreateTile`.
-    temp514-v = z2ui5_cl_util=>boolean_abap_2_json( showcreatetile ).
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `showExecuteOnSelection`.
-    temp514-v = z2ui5_cl_util=>boolean_abap_2_json( showexecuteonselection ).
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `showSetAsDefault`.
-    temp514-v = z2ui5_cl_util=>boolean_abap_2_json( showsetasdefault ).
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `showShare`.
-    temp514-v = z2ui5_cl_util=>boolean_abap_2_json( showshare ).
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `standardItemAuthor`.
-    temp514-v = standarditemauthor.
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `standardItemText`.
-    temp514-v = standarditemtext.
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `useFavorites`.
-    temp514-v = z2ui5_cl_util=>boolean_abap_2_json( usefavorites ).
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `variantItems`.
-    temp514-v = variantitems.
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `manage`.
-    temp514-v = manage.
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `save`.
-    temp514-v = save.
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `select`.
-    temp514-v = select.
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `id`.
-    temp514-v = id.
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `variantCreationByUserAllowed`.
-    temp514-v = uservarcreate.
-    INSERT temp514 INTO TABLE temp513.
-    temp514-n = `visible`.
-    temp514-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp514 INTO TABLE temp513.
-    result = _generic(
-                 name   = `VariantManagement`
-                 ns     = `vm`
-                 t_prop = temp513 ).
-
-  ENDMETHOD.
-
-  METHOD variant_management_fl.
-    DATA temp515 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp516 LIKE LINE OF temp515.
-    CLEAR temp515.
-    
-    temp516-n = `displayTextForExecuteOnSelectionForStandardVariant`.
-    temp516-v = displaytextfsv.
-    INSERT temp516 INTO TABLE temp515.
-    temp516-n = `editable`.
-    temp516-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
-    INSERT temp516 INTO TABLE temp515.
-    temp516-n = `executeOnSelectionForStandardDefault`.
-    temp516-v = z2ui5_cl_util=>boolean_abap_2_json( executeonselectionforstandflt ).
-    INSERT temp516 INTO TABLE temp515.
-    temp516-n = `headerLevel`.
-    temp516-v = headerlevel.
-    INSERT temp516 INTO TABLE temp515.
-    temp516-n = `inErrorState`.
-    temp516-v = z2ui5_cl_util=>boolean_abap_2_json( inerrorstate ).
-    INSERT temp516 INTO TABLE temp515.
-    temp516-n = `maxWidth`.
-    temp516-v = maxwidth.
-    INSERT temp516 INTO TABLE temp515.
-    temp516-n = `modelName`.
-    temp516-v = modelname.
-    INSERT temp516 INTO TABLE temp515.
-    temp516-n = `resetOnContextChange`.
-    temp516-v = z2ui5_cl_util=>boolean_abap_2_json( resetoncontextchange ).
-    INSERT temp516 INTO TABLE temp515.
-    temp516-n = `showSetAsDefault`.
-    temp516-v = z2ui5_cl_util=>boolean_abap_2_json( showsetasdefault ).
-    INSERT temp516 INTO TABLE temp515.
-    temp516-n = `titleStyle`.
-    temp516-v = titlestyle.
-    INSERT temp516 INTO TABLE temp515.
-    temp516-n = `updateVariantInURL`.
-    temp516-v = z2ui5_cl_util=>boolean_abap_2_json( updatevariantinurl ).
-    INSERT temp516 INTO TABLE temp515.
-    temp516-n = `cancel`.
-    temp516-v = cancel.
-    INSERT temp516 INTO TABLE temp515.
-    temp516-n = `initialized`.
-    temp516-v = initialized.
-    INSERT temp516 INTO TABLE temp515.
-    temp516-n = `manage`.
-    temp516-v = manage.
-    INSERT temp516 INTO TABLE temp515.
-    temp516-n = `save`.
-    temp516-v = save.
-    INSERT temp516 INTO TABLE temp515.
-    temp516-n = `select`.
-    temp516-v = select.
-    INSERT temp516 INTO TABLE temp515.
-    temp516-n = `for`.
-    temp516-v = for.
-    INSERT temp516 INTO TABLE temp515.
-    result = _generic(
-                 name   = `VariantManagement`
-                 ns     = `flvm`
-                 t_prop = temp515 ).
-  ENDMETHOD.
-
-  METHOD variant_management_sapm.
-    DATA temp517 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp518 LIKE LINE OF temp517.
-    CLEAR temp517.
-    
-    temp518-n = `id`.
-    temp518-v = id.
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `defaultKey`.
-    temp518-v = defaultkey.
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `level`.
-    temp518-v = level.
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `maxWidth`.
-    temp518-v = maxwidth.
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `popoverTitle`.
-    temp518-v = popovertitle.
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `selectedKey`.
-    temp518-v = selectedkey.
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `titleStyle`.
-    temp518-v = titlestyle.
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `cancel`.
-    temp518-v = cancel.
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `manage`.
-    temp518-v = manage.
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `manageCancel`.
-    temp518-v = managecancel.
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `save`.
-    temp518-v = save.
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `select`.
-    temp518-v = select.
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `items`.
-    temp518-v = items.
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `creationAllowed`.
-    temp518-v = z2ui5_cl_util=>boolean_abap_2_json( creationallowed ).
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `inErrorState`.
-    temp518-v = z2ui5_cl_util=>boolean_abap_2_json( inerrorstate ).
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `modified`.
-    temp518-v = z2ui5_cl_util=>boolean_abap_2_json( modified ).
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `showFooter`.
-    temp518-v = z2ui5_cl_util=>boolean_abap_2_json( showfooter ).
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `showSaveAs`.
-    temp518-v = z2ui5_cl_util=>boolean_abap_2_json( showsaveas ).
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `supportApplyAutomatically`.
-    temp518-v = z2ui5_cl_util=>boolean_abap_2_json( supportapplyautomatically ).
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `supportContexts`.
-    temp518-v = z2ui5_cl_util=>boolean_abap_2_json( supportcontexts ).
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `supportDefault`.
-    temp518-v = z2ui5_cl_util=>boolean_abap_2_json( supportdefault ).
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `supportFavorites`.
-    temp518-v = z2ui5_cl_util=>boolean_abap_2_json( supportfavorites ).
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `supportPublic`.
-    temp518-v = z2ui5_cl_util=>boolean_abap_2_json( supportpublic ).
-    INSERT temp518 INTO TABLE temp517.
-    temp518-n = `visible`.
-    temp518-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp518 INTO TABLE temp517.
-    result = _generic(
-        name   = `VariantManagement`
-        t_prop = temp517 ).
-
-  ENDMETHOD.
-
-  METHOD vbox.
-
-    DATA temp519 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp520 LIKE LINE OF temp519.
-    CLEAR temp519.
-    
-    temp520-n = `height`.
-    temp520-v = height.
-    INSERT temp520 INTO TABLE temp519.
-    temp520-n = `id`.
-    temp520-v = id.
-    INSERT temp520 INTO TABLE temp519.
-    temp520-n = `justifyContent`.
-    temp520-v = justifycontent.
-    INSERT temp520 INTO TABLE temp519.
-    temp520-n = `renderType`.
-    temp520-v = rendertype.
-    INSERT temp520 INTO TABLE temp519.
-    temp520-n = `alignContent`.
-    temp520-v = aligncontent.
-    INSERT temp520 INTO TABLE temp519.
-    temp520-n = `alignItems`.
-    temp520-v = alignitems.
-    INSERT temp520 INTO TABLE temp519.
-    temp520-n = `width`.
-    temp520-v = width.
-    INSERT temp520 INTO TABLE temp519.
-    temp520-n = `wrap`.
-    temp520-v = wrap.
-    INSERT temp520 INTO TABLE temp519.
-    temp520-n = `backgroundDesign`.
-    temp520-v = backgrounddesign.
-    INSERT temp520 INTO TABLE temp519.
-    temp520-n = `direction`.
-    temp520-v = direction.
-    INSERT temp520 INTO TABLE temp519.
-    temp520-n = `displayInline`.
-    temp520-v = z2ui5_cl_util=>boolean_abap_2_json( displayinline ).
-    INSERT temp520 INTO TABLE temp519.
-    temp520-n = `visible`.
-    temp520-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp520 INTO TABLE temp519.
-    temp520-n = `fitContainer`.
-    temp520-v = z2ui5_cl_util=>boolean_abap_2_json( fitcontainer ).
-    INSERT temp520 INTO TABLE temp519.
-    temp520-n = `class`.
-    temp520-v = class.
-    INSERT temp520 INTO TABLE temp519.
-    result = _generic(
-        name   = `VBox`
-        t_prop = temp519 ).
-
-  ENDMETHOD.
-
-  METHOD vertical_layout.
-
     DATA temp521 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp522 LIKE LINE OF temp521.
     CLEAR temp521.
@@ -16943,135 +16898,463 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp522-n = `id`.
     temp522-v = id.
     INSERT temp522 INTO TABLE temp521.
-    temp522-n = `visible`.
-    temp522-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    temp522-n = `author`.
+    temp522-v = author.
+    INSERT temp522 INTO TABLE temp521.
+    temp522-n = `changeable`.
+    temp522-v = z2ui5_cl_util=>boolean_abap_2_json( changeable ).
     INSERT temp522 INTO TABLE temp521.
     temp522-n = `enabled`.
     temp522-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
     INSERT temp522 INTO TABLE temp521.
-    temp522-n = `class`.
-    temp522-v = class.
+    temp522-n = `favorite`.
+    temp522-v = z2ui5_cl_util=>boolean_abap_2_json( favorite ).
     INSERT temp522 INTO TABLE temp521.
-    temp522-n = `width`.
-    temp522-v = width.
+    temp522-n = `remove`.
+    temp522-v = z2ui5_cl_util=>boolean_abap_2_json( remove ).
     INSERT temp522 INTO TABLE temp521.
-    result = _generic( name   = `VerticalLayout`
-                       ns     = `layout`
-                       t_prop = temp521 ).
+    temp522-n = `rename`.
+    temp522-v = z2ui5_cl_util=>boolean_abap_2_json( rename ).
+    INSERT temp522 INTO TABLE temp521.
+    temp522-n = `visible`.
+    temp522-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp522 INTO TABLE temp521.
+    temp522-n = `contexts`.
+    temp522-v = contexts.
+    INSERT temp522 INTO TABLE temp521.
+    temp522-n = `key`.
+    temp522-v = key.
+    INSERT temp522 INTO TABLE temp521.
+    temp522-n = `sharing`.
+    temp522-v = sharing.
+    INSERT temp522 INTO TABLE temp521.
+    temp522-n = `text`.
+    temp522-v = text.
+    INSERT temp522 INTO TABLE temp521.
+    temp522-n = `textDirection`.
+    temp522-v = textdirection.
+    INSERT temp522 INTO TABLE temp521.
+    temp522-n = `title`.
+    temp522-v = title.
+    INSERT temp522 INTO TABLE temp521.
+    temp522-n = `executeOnSelect`.
+    temp522-v = z2ui5_cl_util=>boolean_abap_2_json( executeonselect ).
+    INSERT temp522 INTO TABLE temp521.
+    result = _generic(
+        name   = `VariantItem`
+        t_prop = temp521 ).
   ENDMETHOD.
 
-  METHOD view_settings_dialog.
+  METHOD variant_management.
 
     DATA temp523 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp524 LIKE LINE OF temp523.
     CLEAR temp523.
     
-    temp524-n = `confirm`.
-    temp524-v = confirm.
+    temp524-n = `defaultVariantKey`.
+    temp524-v = defaultvariantkey.
     INSERT temp524 INTO TABLE temp523.
-    temp524-n = `cancel`.
-    temp524-v = cancel.
+    temp524-n = `enabled`.
+    temp524-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
     INSERT temp524 INTO TABLE temp523.
-    temp524-n = `filterDetailPageOpened`.
-    temp524-v = filterdetailpageopened.
+    temp524-n = `inErrorState`.
+    temp524-v = z2ui5_cl_util=>boolean_abap_2_json( inerrorstate ).
     INSERT temp524 INTO TABLE temp523.
-    temp524-n = `reset`.
-    temp524-v = reset.
+    temp524-n = `initialSelectionKey`.
+    temp524-v = initialselectionkey.
     INSERT temp524 INTO TABLE temp523.
-    temp524-n = `resetFilters`.
-    temp524-v = resetfilters.
+    temp524-n = `lifecycleSupport`.
+    temp524-v = z2ui5_cl_util=>boolean_abap_2_json( lifecyclesupport ).
     INSERT temp524 INTO TABLE temp523.
-    temp524-n = `filterSearchOperator`.
-    temp524-v = filtersearchoperator.
+    temp524-n = `selectionKey`.
+    temp524-v = selectionkey.
     INSERT temp524 INTO TABLE temp523.
-    temp524-n = `groupDescending`.
-    temp524-v = z2ui5_cl_util=>boolean_abap_2_json( groupdescending ).
+    temp524-n = `showCreateTile`.
+    temp524-v = z2ui5_cl_util=>boolean_abap_2_json( showcreatetile ).
     INSERT temp524 INTO TABLE temp523.
-    temp524-n = `sortDescending`.
-    temp524-v = z2ui5_cl_util=>boolean_abap_2_json( sortdescending ).
+    temp524-n = `showExecuteOnSelection`.
+    temp524-v = z2ui5_cl_util=>boolean_abap_2_json( showexecuteonselection ).
     INSERT temp524 INTO TABLE temp523.
-    temp524-n = `title`.
-    temp524-v = title.
+    temp524-n = `showSetAsDefault`.
+    temp524-v = z2ui5_cl_util=>boolean_abap_2_json( showsetasdefault ).
     INSERT temp524 INTO TABLE temp523.
-    temp524-n = `selectedGroupItem`.
-    temp524-v = selectedgroupitem.
+    temp524-n = `showShare`.
+    temp524-v = z2ui5_cl_util=>boolean_abap_2_json( showshare ).
     INSERT temp524 INTO TABLE temp523.
-    temp524-n = `selectedPresetFilterItem`.
-    temp524-v = selectedpresetfilteritem.
+    temp524-n = `standardItemAuthor`.
+    temp524-v = standarditemauthor.
     INSERT temp524 INTO TABLE temp523.
-    temp524-n = `selectedSortItem`.
-    temp524-v = selectedsortitem.
+    temp524-n = `standardItemText`.
+    temp524-v = standarditemtext.
     INSERT temp524 INTO TABLE temp523.
-    temp524-n = `selectedSortItem`.
-    temp524-v = selectedsortitem.
+    temp524-n = `useFavorites`.
+    temp524-v = z2ui5_cl_util=>boolean_abap_2_json( usefavorites ).
     INSERT temp524 INTO TABLE temp523.
-    temp524-n = `filterItems`.
-    temp524-v = filteritems.
+    temp524-n = `variantItems`.
+    temp524-v = variantitems.
     INSERT temp524 INTO TABLE temp523.
-    temp524-n = `sortItems`.
-    temp524-v = sortitems.
+    temp524-n = `manage`.
+    temp524-v = manage.
     INSERT temp524 INTO TABLE temp523.
-    temp524-n = `groupItems`.
-    temp524-v = groupitems.
+    temp524-n = `save`.
+    temp524-v = save.
     INSERT temp524 INTO TABLE temp523.
-    temp524-n = `titleAlignment`.
-    temp524-v = titlealignment.
+    temp524-n = `select`.
+    temp524-v = select.
     INSERT temp524 INTO TABLE temp523.
-    result = _generic( name   = `ViewSettingsDialog`
-                       t_prop = temp523 ).
+    temp524-n = `id`.
+    temp524-v = id.
+    INSERT temp524 INTO TABLE temp523.
+    temp524-n = `variantCreationByUserAllowed`.
+    temp524-v = uservarcreate.
+    INSERT temp524 INTO TABLE temp523.
+    temp524-n = `visible`.
+    temp524-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp524 INTO TABLE temp523.
+    result = _generic(
+                 name   = `VariantManagement`
+                 ns     = `vm`
+                 t_prop = temp523 ).
 
   ENDMETHOD.
 
-  METHOD view_settings_filter_item.
+  METHOD variant_management_fl.
     DATA temp525 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp526 LIKE LINE OF temp525.
     CLEAR temp525.
     
-    temp526-n = `enabled`.
-    temp526-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    temp526-n = `displayTextForExecuteOnSelectionForStandardVariant`.
+    temp526-v = displaytextfsv.
     INSERT temp526 INTO TABLE temp525.
-    temp526-n = `key`.
-    temp526-v = key.
+    temp526-n = `editable`.
+    temp526-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
     INSERT temp526 INTO TABLE temp525.
-    temp526-n = `selected`.
-    temp526-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    temp526-n = `executeOnSelectionForStandardDefault`.
+    temp526-v = z2ui5_cl_util=>boolean_abap_2_json( executeonselectionforstandflt ).
     INSERT temp526 INTO TABLE temp525.
-    temp526-n = `text`.
-    temp526-v = text.
+    temp526-n = `headerLevel`.
+    temp526-v = headerlevel.
     INSERT temp526 INTO TABLE temp525.
-    temp526-n = `textDirection`.
-    temp526-v = textdirection.
+    temp526-n = `inErrorState`.
+    temp526-v = z2ui5_cl_util=>boolean_abap_2_json( inerrorstate ).
     INSERT temp526 INTO TABLE temp525.
-    temp526-n = `multiSelect`.
-    temp526-v = z2ui5_cl_util=>boolean_abap_2_json( multiselect ).
+    temp526-n = `maxWidth`.
+    temp526-v = maxwidth.
+    INSERT temp526 INTO TABLE temp525.
+    temp526-n = `modelName`.
+    temp526-v = modelname.
+    INSERT temp526 INTO TABLE temp525.
+    temp526-n = `resetOnContextChange`.
+    temp526-v = z2ui5_cl_util=>boolean_abap_2_json( resetoncontextchange ).
+    INSERT temp526 INTO TABLE temp525.
+    temp526-n = `showSetAsDefault`.
+    temp526-v = z2ui5_cl_util=>boolean_abap_2_json( showsetasdefault ).
+    INSERT temp526 INTO TABLE temp525.
+    temp526-n = `titleStyle`.
+    temp526-v = titlestyle.
+    INSERT temp526 INTO TABLE temp525.
+    temp526-n = `updateVariantInURL`.
+    temp526-v = z2ui5_cl_util=>boolean_abap_2_json( updatevariantinurl ).
+    INSERT temp526 INTO TABLE temp525.
+    temp526-n = `cancel`.
+    temp526-v = cancel.
+    INSERT temp526 INTO TABLE temp525.
+    temp526-n = `initialized`.
+    temp526-v = initialized.
+    INSERT temp526 INTO TABLE temp525.
+    temp526-n = `manage`.
+    temp526-v = manage.
+    INSERT temp526 INTO TABLE temp525.
+    temp526-n = `save`.
+    temp526-v = save.
+    INSERT temp526 INTO TABLE temp525.
+    temp526-n = `select`.
+    temp526-v = select.
+    INSERT temp526 INTO TABLE temp525.
+    temp526-n = `for`.
+    temp526-v = for.
     INSERT temp526 INTO TABLE temp525.
     result = _generic(
-                 name   = `ViewSettingsFilterItem`
+                 name   = `VariantManagement`
+                 ns     = `flvm`
                  t_prop = temp525 ).
   ENDMETHOD.
 
-  METHOD view_settings_item.
+  METHOD variant_management_sapm.
     DATA temp527 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp528 LIKE LINE OF temp527.
     CLEAR temp527.
     
-    temp528-n = `enabled`.
-    temp528-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    temp528-n = `id`.
+    temp528-v = id.
     INSERT temp528 INTO TABLE temp527.
-    temp528-n = `key`.
-    temp528-v = key.
+    temp528-n = `defaultKey`.
+    temp528-v = defaultkey.
     INSERT temp528 INTO TABLE temp527.
-    temp528-n = `selected`.
-    temp528-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    temp528-n = `level`.
+    temp528-v = level.
     INSERT temp528 INTO TABLE temp527.
-    temp528-n = `text`.
-    temp528-v = text.
+    temp528-n = `maxWidth`.
+    temp528-v = maxwidth.
     INSERT temp528 INTO TABLE temp527.
-    temp528-n = `textDirection`.
-    temp528-v = textdirection.
+    temp528-n = `popoverTitle`.
+    temp528-v = popovertitle.
     INSERT temp528 INTO TABLE temp527.
+    temp528-n = `selectedKey`.
+    temp528-v = selectedkey.
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `titleStyle`.
+    temp528-v = titlestyle.
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `cancel`.
+    temp528-v = cancel.
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `manage`.
+    temp528-v = manage.
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `manageCancel`.
+    temp528-v = managecancel.
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `save`.
+    temp528-v = save.
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `select`.
+    temp528-v = select.
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `items`.
+    temp528-v = items.
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `creationAllowed`.
+    temp528-v = z2ui5_cl_util=>boolean_abap_2_json( creationallowed ).
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `inErrorState`.
+    temp528-v = z2ui5_cl_util=>boolean_abap_2_json( inerrorstate ).
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `modified`.
+    temp528-v = z2ui5_cl_util=>boolean_abap_2_json( modified ).
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `showFooter`.
+    temp528-v = z2ui5_cl_util=>boolean_abap_2_json( showfooter ).
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `showSaveAs`.
+    temp528-v = z2ui5_cl_util=>boolean_abap_2_json( showsaveas ).
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `supportApplyAutomatically`.
+    temp528-v = z2ui5_cl_util=>boolean_abap_2_json( supportapplyautomatically ).
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `supportContexts`.
+    temp528-v = z2ui5_cl_util=>boolean_abap_2_json( supportcontexts ).
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `supportDefault`.
+    temp528-v = z2ui5_cl_util=>boolean_abap_2_json( supportdefault ).
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `supportFavorites`.
+    temp528-v = z2ui5_cl_util=>boolean_abap_2_json( supportfavorites ).
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `supportPublic`.
+    temp528-v = z2ui5_cl_util=>boolean_abap_2_json( supportpublic ).
+    INSERT temp528 INTO TABLE temp527.
+    temp528-n = `visible`.
+    temp528-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp528 INTO TABLE temp527.
+    result = _generic(
+        name   = `VariantManagement`
+        t_prop = temp527 ).
+
+  ENDMETHOD.
+
+  METHOD vbox.
+
+    DATA temp529 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp530 LIKE LINE OF temp529.
+    CLEAR temp529.
+    
+    temp530-n = `height`.
+    temp530-v = height.
+    INSERT temp530 INTO TABLE temp529.
+    temp530-n = `id`.
+    temp530-v = id.
+    INSERT temp530 INTO TABLE temp529.
+    temp530-n = `justifyContent`.
+    temp530-v = justifycontent.
+    INSERT temp530 INTO TABLE temp529.
+    temp530-n = `renderType`.
+    temp530-v = rendertype.
+    INSERT temp530 INTO TABLE temp529.
+    temp530-n = `alignContent`.
+    temp530-v = aligncontent.
+    INSERT temp530 INTO TABLE temp529.
+    temp530-n = `alignItems`.
+    temp530-v = alignitems.
+    INSERT temp530 INTO TABLE temp529.
+    temp530-n = `width`.
+    temp530-v = width.
+    INSERT temp530 INTO TABLE temp529.
+    temp530-n = `wrap`.
+    temp530-v = wrap.
+    INSERT temp530 INTO TABLE temp529.
+    temp530-n = `backgroundDesign`.
+    temp530-v = backgrounddesign.
+    INSERT temp530 INTO TABLE temp529.
+    temp530-n = `direction`.
+    temp530-v = direction.
+    INSERT temp530 INTO TABLE temp529.
+    temp530-n = `displayInline`.
+    temp530-v = z2ui5_cl_util=>boolean_abap_2_json( displayinline ).
+    INSERT temp530 INTO TABLE temp529.
+    temp530-n = `visible`.
+    temp530-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp530 INTO TABLE temp529.
+    temp530-n = `fitContainer`.
+    temp530-v = z2ui5_cl_util=>boolean_abap_2_json( fitcontainer ).
+    INSERT temp530 INTO TABLE temp529.
+    temp530-n = `class`.
+    temp530-v = class.
+    INSERT temp530 INTO TABLE temp529.
+    result = _generic(
+        name   = `VBox`
+        t_prop = temp529 ).
+
+  ENDMETHOD.
+
+  METHOD vertical_layout.
+
+    DATA temp531 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp532 LIKE LINE OF temp531.
+    CLEAR temp531.
+    
+    temp532-n = `id`.
+    temp532-v = id.
+    INSERT temp532 INTO TABLE temp531.
+    temp532-n = `visible`.
+    temp532-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp532 INTO TABLE temp531.
+    temp532-n = `enabled`.
+    temp532-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp532 INTO TABLE temp531.
+    temp532-n = `class`.
+    temp532-v = class.
+    INSERT temp532 INTO TABLE temp531.
+    temp532-n = `width`.
+    temp532-v = width.
+    INSERT temp532 INTO TABLE temp531.
+    result = _generic( name   = `VerticalLayout`
+                       ns     = `layout`
+                       t_prop = temp531 ).
+  ENDMETHOD.
+
+  METHOD view_settings_dialog.
+
+    DATA temp533 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp534 LIKE LINE OF temp533.
+    CLEAR temp533.
+    
+    temp534-n = `confirm`.
+    temp534-v = confirm.
+    INSERT temp534 INTO TABLE temp533.
+    temp534-n = `cancel`.
+    temp534-v = cancel.
+    INSERT temp534 INTO TABLE temp533.
+    temp534-n = `filterDetailPageOpened`.
+    temp534-v = filterdetailpageopened.
+    INSERT temp534 INTO TABLE temp533.
+    temp534-n = `reset`.
+    temp534-v = reset.
+    INSERT temp534 INTO TABLE temp533.
+    temp534-n = `resetFilters`.
+    temp534-v = resetfilters.
+    INSERT temp534 INTO TABLE temp533.
+    temp534-n = `filterSearchOperator`.
+    temp534-v = filtersearchoperator.
+    INSERT temp534 INTO TABLE temp533.
+    temp534-n = `groupDescending`.
+    temp534-v = z2ui5_cl_util=>boolean_abap_2_json( groupdescending ).
+    INSERT temp534 INTO TABLE temp533.
+    temp534-n = `sortDescending`.
+    temp534-v = z2ui5_cl_util=>boolean_abap_2_json( sortdescending ).
+    INSERT temp534 INTO TABLE temp533.
+    temp534-n = `title`.
+    temp534-v = title.
+    INSERT temp534 INTO TABLE temp533.
+    temp534-n = `selectedGroupItem`.
+    temp534-v = selectedgroupitem.
+    INSERT temp534 INTO TABLE temp533.
+    temp534-n = `selectedPresetFilterItem`.
+    temp534-v = selectedpresetfilteritem.
+    INSERT temp534 INTO TABLE temp533.
+    temp534-n = `selectedSortItem`.
+    temp534-v = selectedsortitem.
+    INSERT temp534 INTO TABLE temp533.
+    temp534-n = `selectedSortItem`.
+    temp534-v = selectedsortitem.
+    INSERT temp534 INTO TABLE temp533.
+    temp534-n = `filterItems`.
+    temp534-v = filteritems.
+    INSERT temp534 INTO TABLE temp533.
+    temp534-n = `sortItems`.
+    temp534-v = sortitems.
+    INSERT temp534 INTO TABLE temp533.
+    temp534-n = `groupItems`.
+    temp534-v = groupitems.
+    INSERT temp534 INTO TABLE temp533.
+    temp534-n = `titleAlignment`.
+    temp534-v = titlealignment.
+    INSERT temp534 INTO TABLE temp533.
+    result = _generic( name   = `ViewSettingsDialog`
+                       t_prop = temp533 ).
+
+  ENDMETHOD.
+
+  METHOD view_settings_filter_item.
+    DATA temp535 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp536 LIKE LINE OF temp535.
+    CLEAR temp535.
+    
+    temp536-n = `enabled`.
+    temp536-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp536 INTO TABLE temp535.
+    temp536-n = `key`.
+    temp536-v = key.
+    INSERT temp536 INTO TABLE temp535.
+    temp536-n = `selected`.
+    temp536-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    INSERT temp536 INTO TABLE temp535.
+    temp536-n = `text`.
+    temp536-v = text.
+    INSERT temp536 INTO TABLE temp535.
+    temp536-n = `textDirection`.
+    temp536-v = textdirection.
+    INSERT temp536 INTO TABLE temp535.
+    temp536-n = `multiSelect`.
+    temp536-v = z2ui5_cl_util=>boolean_abap_2_json( multiselect ).
+    INSERT temp536 INTO TABLE temp535.
+    result = _generic(
+                 name   = `ViewSettingsFilterItem`
+                 t_prop = temp535 ).
+  ENDMETHOD.
+
+  METHOD view_settings_item.
+    DATA temp537 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp538 LIKE LINE OF temp537.
+    CLEAR temp537.
+    
+    temp538-n = `enabled`.
+    temp538-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp538 INTO TABLE temp537.
+    temp538-n = `key`.
+    temp538-v = key.
+    INSERT temp538 INTO TABLE temp537.
+    temp538-n = `selected`.
+    temp538-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    INSERT temp538 INTO TABLE temp537.
+    temp538-n = `text`.
+    temp538-v = text.
+    INSERT temp538 INTO TABLE temp537.
+    temp538-n = `textDirection`.
+    temp538-v = textdirection.
+    INSERT temp538 INTO TABLE temp537.
     result = _generic( name   = `ViewSettingsItem`
-                       t_prop = temp527 ).
+                       t_prop = temp537 ).
 
   ENDMETHOD.
 
@@ -17088,156 +17371,156 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD wizard.
-    DATA temp529 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp530 LIKE LINE OF temp529.
-    CLEAR temp529.
+    DATA temp539 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp540 LIKE LINE OF temp539.
+    CLEAR temp539.
     
-    temp530-n = `id`.
-    temp530-v = id.
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `class`.
-    temp530-v = class.
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `backgroundDesign`.
-    temp530-v = backgrounddesign.
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `busy`.
-    temp530-v = z2ui5_cl_util=>boolean_abap_2_json( busy ).
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `busyIndicatorDelay`.
-    temp530-v = busyindicatordelay.
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `busyIndicatorSize`.
-    temp530-v = busyindicatorsize.
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `enableBranching`.
-    temp530-v = z2ui5_cl_util=>boolean_abap_2_json( enablebranching ).
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `fieldGroupIds`.
-    temp530-v = fieldgroupids.
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `finishButtonText`.
-    temp530-v = finishbuttontext.
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `height`.
-    temp530-v = height.
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `renderMode`.
-    temp530-v = rendermode.
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `showNextButton`.
-    temp530-v = z2ui5_cl_util=>boolean_abap_2_json( shownextbutton ).
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `stepTitleLevel`.
-    temp530-v = steptitlelevel.
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `visible`.
-    temp530-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `width`.
-    temp530-v = width.
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `complete`.
-    temp530-v = complete.
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `navigationChange`.
-    temp530-v = navigationchange.
-    INSERT temp530 INTO TABLE temp529.
-    temp530-n = `stepActivate`.
-    temp530-v = stepactivate.
-    INSERT temp530 INTO TABLE temp529.
+    temp540-n = `id`.
+    temp540-v = id.
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `class`.
+    temp540-v = class.
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `backgroundDesign`.
+    temp540-v = backgrounddesign.
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `busy`.
+    temp540-v = z2ui5_cl_util=>boolean_abap_2_json( busy ).
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `busyIndicatorDelay`.
+    temp540-v = busyindicatordelay.
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `busyIndicatorSize`.
+    temp540-v = busyindicatorsize.
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `enableBranching`.
+    temp540-v = z2ui5_cl_util=>boolean_abap_2_json( enablebranching ).
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `fieldGroupIds`.
+    temp540-v = fieldgroupids.
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `finishButtonText`.
+    temp540-v = finishbuttontext.
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `height`.
+    temp540-v = height.
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `renderMode`.
+    temp540-v = rendermode.
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `showNextButton`.
+    temp540-v = z2ui5_cl_util=>boolean_abap_2_json( shownextbutton ).
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `stepTitleLevel`.
+    temp540-v = steptitlelevel.
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `visible`.
+    temp540-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `width`.
+    temp540-v = width.
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `complete`.
+    temp540-v = complete.
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `navigationChange`.
+    temp540-v = navigationchange.
+    INSERT temp540 INTO TABLE temp539.
+    temp540-n = `stepActivate`.
+    temp540-v = stepactivate.
+    INSERT temp540 INTO TABLE temp539.
     result = _generic( name   = `Wizard`
-                       t_prop = temp529 ).
+                       t_prop = temp539 ).
 
   ENDMETHOD.
 
   METHOD wizard_step.
 
-    DATA temp531 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp532 LIKE LINE OF temp531.
-    CLEAR temp531.
+    DATA temp541 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp542 LIKE LINE OF temp541.
+    CLEAR temp541.
     
-    temp532-n = `id`.
-    temp532-v = id.
-    INSERT temp532 INTO TABLE temp531.
-    temp532-n = `busy`.
-    temp532-v = z2ui5_cl_util=>boolean_abap_2_json( busy ).
-    INSERT temp532 INTO TABLE temp531.
-    temp532-n = `busyIndicatorDelay`.
-    temp532-v = busyindicatordelay.
-    INSERT temp532 INTO TABLE temp531.
-    temp532-n = `busyIndicatorSize`.
-    temp532-v = busyindicatorsize.
-    INSERT temp532 INTO TABLE temp531.
-    temp532-n = `fieldGroupIds`.
-    temp532-v = fieldgroupids.
-    INSERT temp532 INTO TABLE temp531.
-    temp532-n = `icon`.
-    temp532-v = icon.
-    INSERT temp532 INTO TABLE temp531.
-    temp532-n = `optional`.
-    temp532-v = z2ui5_cl_util=>boolean_abap_2_json( optional ).
-    INSERT temp532 INTO TABLE temp531.
-    temp532-n = `title`.
-    temp532-v = title.
-    INSERT temp532 INTO TABLE temp531.
-    temp532-n = `validated`.
-    temp532-v = z2ui5_cl_util=>boolean_abap_2_json( validated ).
-    INSERT temp532 INTO TABLE temp531.
-    temp532-n = `visible`.
-    temp532-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp532 INTO TABLE temp531.
-    temp532-n = `activate`.
-    temp532-v = activate.
-    INSERT temp532 INTO TABLE temp531.
-    temp532-n = `complete`.
-    temp532-v = complete.
-    INSERT temp532 INTO TABLE temp531.
-    temp532-n = `nextStep`.
-    temp532-v = nextstep.
-    INSERT temp532 INTO TABLE temp531.
-    temp532-n = `subsequentSteps`.
-    temp532-v = subsequentsteps.
-    INSERT temp532 INTO TABLE temp531.
+    temp542-n = `id`.
+    temp542-v = id.
+    INSERT temp542 INTO TABLE temp541.
+    temp542-n = `busy`.
+    temp542-v = z2ui5_cl_util=>boolean_abap_2_json( busy ).
+    INSERT temp542 INTO TABLE temp541.
+    temp542-n = `busyIndicatorDelay`.
+    temp542-v = busyindicatordelay.
+    INSERT temp542 INTO TABLE temp541.
+    temp542-n = `busyIndicatorSize`.
+    temp542-v = busyindicatorsize.
+    INSERT temp542 INTO TABLE temp541.
+    temp542-n = `fieldGroupIds`.
+    temp542-v = fieldgroupids.
+    INSERT temp542 INTO TABLE temp541.
+    temp542-n = `icon`.
+    temp542-v = icon.
+    INSERT temp542 INTO TABLE temp541.
+    temp542-n = `optional`.
+    temp542-v = z2ui5_cl_util=>boolean_abap_2_json( optional ).
+    INSERT temp542 INTO TABLE temp541.
+    temp542-n = `title`.
+    temp542-v = title.
+    INSERT temp542 INTO TABLE temp541.
+    temp542-n = `validated`.
+    temp542-v = z2ui5_cl_util=>boolean_abap_2_json( validated ).
+    INSERT temp542 INTO TABLE temp541.
+    temp542-n = `visible`.
+    temp542-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp542 INTO TABLE temp541.
+    temp542-n = `activate`.
+    temp542-v = activate.
+    INSERT temp542 INTO TABLE temp541.
+    temp542-n = `complete`.
+    temp542-v = complete.
+    INSERT temp542 INTO TABLE temp541.
+    temp542-n = `nextStep`.
+    temp542-v = nextstep.
+    INSERT temp542 INTO TABLE temp541.
+    temp542-n = `subsequentSteps`.
+    temp542-v = subsequentsteps.
+    INSERT temp542 INTO TABLE temp541.
     result = _generic( name   = `WizardStep`
-                       t_prop = temp531 ).
+                       t_prop = temp541 ).
   ENDMETHOD.
 
   METHOD xml_get.
-        DATA temp533 LIKE LINE OF mt_prop.
-        DATA temp534 LIKE sy-tabix.
+        DATA temp543 LIKE LINE OF mt_prop.
+        DATA temp544 LIKE sy-tabix.
       DATA lt_prop TYPE HASHED TABLE OF z2ui5_if_types=>ty_s_name_value WITH UNIQUE KEY n.
-      DATA temp535 LIKE lt_prop.
-      DATA temp536 LIKE LINE OF temp535.
-      DATA temp537 LIKE LINE OF mt_ns.
-      DATA lr_ns LIKE REF TO temp537.
+      DATA temp545 LIKE lt_prop.
+      DATA temp546 LIKE LINE OF temp545.
+      DATA temp547 LIKE LINE OF mt_ns.
+      DATA lr_ns LIKE REF TO temp547.
             DATA ls_prop LIKE LINE OF lt_prop.
             DATA temp4 LIKE LINE OF lt_prop.
             DATA temp5 LIKE sy-tabix.
-            DATA temp538 TYPE z2ui5_if_types=>ty_s_name_value.
-    DATA temp539 TYPE string.
-    DATA lv_tmp2 LIKE temp539.
-    DATA temp540 TYPE string.
+            DATA temp548 TYPE z2ui5_if_types=>ty_s_name_value.
+    DATA temp549 TYPE string.
+    DATA lv_tmp2 LIKE temp549.
+    DATA temp550 TYPE string.
     DATA val TYPE string.
     DATA row LIKE LINE OF mt_prop.
       DATA temp6 TYPE string.
-    DATA lv_tmp3 LIKE temp540.
+    DATA lv_tmp3 LIKE temp550.
     DATA lr_child LIKE LINE OF mt_child.
-      DATA temp541 TYPE REF TO z2ui5_cl_xml_view.
-    DATA temp542 TYPE string.
-    DATA lv_ns LIKE temp542.
+      DATA temp551 TYPE REF TO z2ui5_cl_xml_view.
+    DATA temp552 TYPE string.
+    DATA lv_ns LIKE temp552.
 
     CASE mv_name.
       WHEN `ZZPLAIN`.
         
         
-        temp534 = sy-tabix.
-        READ TABLE mt_prop WITH KEY n = `VALUE` INTO temp533.
-        sy-tabix = temp534.
+        temp544 = sy-tabix.
+        READ TABLE mt_prop WITH KEY n = `VALUE` INTO temp543.
+        sy-tabix = temp544.
         IF sy-subrc <> 0.
           ASSERT 1 = 0.
         ENDIF.
-        result = temp533-v.
+        result = temp543-v.
         RETURN.
       WHEN OTHERS.
     ENDCASE.
@@ -17246,132 +17529,141 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
       
       
-      CLEAR temp535.
+      CLEAR temp545.
       
-      temp536-n = `z2ui5`.
-      temp536-v = `z2ui5`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `layout`.
-      temp536-v = `sap.ui.layout`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `networkgraph`.
-      temp536-v = `sap.suite.ui.commons.networkgraph`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `nglayout`.
-      temp536-v = `sap.suite.ui.commons.networkgraph.layout`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `ngcustom`.
-      temp536-v = `sap.suite.ui.commons.sample.NetworkGraphCustomRendering`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `table`.
-      temp536-v = `sap.ui.table`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `template`.
-      temp536-v = `http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `customData`.
-      temp536-v = `http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `f`.
-      temp536-v = `sap.f`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `columnmenu`.
-      temp536-v = `sap.m.table.columnmenu`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `card`.
-      temp536-v = `sap.f.cards`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `form`.
-      temp536-v = `sap.ui.layout.form`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `editor`.
-      temp536-v = `sap.ui.codeeditor`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `mchart`.
-      temp536-v = `sap.suite.ui.microchart`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `webc`.
-      temp536-v = `sap.ui.webc.main`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `uxap`.
-      temp536-v = `sap.uxap`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `sap`.
-      temp536-v = `sap`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `text`.
-      temp536-v = `sap.ui.richtexteditor`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `html`.
-      temp536-v = `http://www.w3.org/1999/xhtml`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `fb`.
-      temp536-v = `sap.ui.comp.filterbar`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `u`.
-      temp536-v = `sap.ui.unified`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `gantt`.
-      temp536-v = `sap.gantt.simple`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `axistime`.
-      temp536-v = `sap.gantt.axistime`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `config`.
-      temp536-v = `sap.gantt.config`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `shapes`.
-      temp536-v = `sap.gantt.simple.shapes`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `commons`.
-      temp536-v = `sap.suite.ui.commons`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `si`.
-      temp536-v = `sap.suite.ui.commons.statusindicator`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `vm`.
-      temp536-v = `sap.ui.comp.variants`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `viz`.
-      temp536-v = `sap.viz.ui5.controls`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `vk`.
-      temp536-v = `sap.ui.vk`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `vbm`.
-      temp536-v = `sap.ui.vbm`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `ndc`.
-      temp536-v = `sap.ndc`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `svm`.
-      temp536-v = `sap.ui.comp.smartvariants`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `flvm`.
-      temp536-v = `sap.ui.fl.variants`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `p13n`.
-      temp536-v = `sap.m.p13n`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `upload`.
-      temp536-v = `sap.m.upload`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `fl`.
-      temp536-v = `sap.ui.fl`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `plugins`.
-      temp536-v = `sap.m.plugins`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `tnt`.
-      temp536-v = `sap.tnt`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `mdc`.
-      temp536-v = `sap.ui.mdc`.
-      INSERT temp536 INTO TABLE temp535.
-      temp536-n = `trm`.
-      temp536-v = `sap.ui.table.rowmodes`.
-      INSERT temp536 INTO TABLE temp535.
-      lt_prop = temp535.
+      temp546-n = `z2ui5`.
+      temp546-v = `z2ui5`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `layout`.
+      temp546-v = `sap.ui.layout`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `networkgraph`.
+      temp546-v = `sap.suite.ui.commons.networkgraph`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `nglayout`.
+      temp546-v = `sap.suite.ui.commons.networkgraph.layout`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `ngcustom`.
+      temp546-v = `sap.suite.ui.commons.sample.NetworkGraphCustomRendering`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `table`.
+      temp546-v = `sap.ui.table`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `template`.
+      temp546-v = `http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `customData`.
+      temp546-v = `http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `f`.
+      temp546-v = `sap.f`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `columnmenu`.
+      temp546-v = `sap.m.table.columnmenu`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `card`.
+      temp546-v = `sap.f.cards`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `dnd`.
+      temp546-v = `sap.ui.core.dnd`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `dnd-grid`.
+      temp546-v = `sap.f.dnd`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `grid`.
+      temp546-v = `sap.ui.layout.cssgrid`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `form`.
+      temp546-v = `sap.ui.layout.form`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `editor`.
+      temp546-v = `sap.ui.codeeditor`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `mchart`.
+      temp546-v = `sap.suite.ui.microchart`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `webc`.
+      temp546-v = `sap.ui.webc.main`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `uxap`.
+      temp546-v = `sap.uxap`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `sap`.
+      temp546-v = `sap`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `text`.
+      temp546-v = `sap.ui.richtexteditor`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `html`.
+      temp546-v = `http://www.w3.org/1999/xhtml`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `fb`.
+      temp546-v = `sap.ui.comp.filterbar`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `u`.
+      temp546-v = `sap.ui.unified`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `gantt`.
+      temp546-v = `sap.gantt.simple`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `axistime`.
+      temp546-v = `sap.gantt.axistime`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `config`.
+      temp546-v = `sap.gantt.config`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `shapes`.
+      temp546-v = `sap.gantt.simple.shapes`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `commons`.
+      temp546-v = `sap.suite.ui.commons`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `si`.
+      temp546-v = `sap.suite.ui.commons.statusindicator`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `vm`.
+      temp546-v = `sap.ui.comp.variants`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `viz`.
+      temp546-v = `sap.viz.ui5.controls`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `vk`.
+      temp546-v = `sap.ui.vk`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `vbm`.
+      temp546-v = `sap.ui.vbm`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `ndc`.
+      temp546-v = `sap.ndc`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `svm`.
+      temp546-v = `sap.ui.comp.smartvariants`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `flvm`.
+      temp546-v = `sap.ui.fl.variants`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `p13n`.
+      temp546-v = `sap.m.p13n`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `upload`.
+      temp546-v = `sap.m.upload`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `fl`.
+      temp546-v = `sap.ui.fl`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `plugins`.
+      temp546-v = `sap.m.plugins`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `tnt`.
+      temp546-v = `sap.tnt`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `mdc`.
+      temp546-v = `sap.ui.mdc`.
+      INSERT temp546 INTO TABLE temp545.
+      temp546-n = `trm`.
+      temp546-v = `sap.ui.table.rowmodes`.
+      INSERT temp546 INTO TABLE temp545.
+      lt_prop = temp545.
 
       
       
@@ -17390,10 +17682,10 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
             ENDIF.
             ls_prop = temp4.
             
-            CLEAR temp538.
-            temp538-n = |xmlns:{ ls_prop-n }|.
-            temp538-v = ls_prop-v.
-            INSERT temp538 INTO TABLE mt_prop.
+            CLEAR temp548.
+            temp548-n = |xmlns:{ ls_prop-n }|.
+            temp548-v = ls_prop-v.
+            INSERT temp548 INTO TABLE mt_prop.
           CATCH cx_root.
             z2ui5_cl_util=>x_raise( |XML_VIEW_ERROR_NO_NAMESPACE_FOUND_FOR:  { lr_ns->* }| ).
         ENDTRY.
@@ -17403,12 +17695,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
     
     IF mv_ns <> ``.
-      temp539 = |{ mv_ns }:|.
+      temp549 = |{ mv_ns }:|.
     ELSE.
-      CLEAR temp539.
+      CLEAR temp549.
     ENDIF.
     
-    lv_tmp2 = temp539.
+    lv_tmp2 = temp549.
     
     
     val = ``.
@@ -17422,9 +17714,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
       ENDIF.
       val = |{ val } { row-n }="{ escape( val = temp6 format = cl_abap_format=>e_xml_attr ) }"|.
     ENDLOOP.
-    temp540 = val.
+    temp550 = val.
     
-    lv_tmp3 = temp540.
+    lv_tmp3 = temp550.
 
     result = |{ result } <{ lv_tmp2 }{ mv_name }{ lv_tmp3 }|.
 
@@ -17438,46 +17730,46 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     
     LOOP AT mt_child INTO lr_child.
       
-      temp541 ?= lr_child.
-      result = result && temp541->xml_get( ).
+      temp551 ?= lr_child.
+      result = result && temp551->xml_get( ).
     ENDLOOP.
 
     
     IF mv_ns <> ||.
-      temp542 = |{ mv_ns }:|.
+      temp552 = |{ mv_ns }:|.
     ELSE.
-      CLEAR temp542.
+      CLEAR temp552.
     ENDIF.
     
-    lv_ns = temp542.
+    lv_ns = temp552.
     result = |{ result }</{ lv_ns }{ mv_name }>|.
 
   ENDMETHOD.
 
   METHOD _cc_plain_xml.
-    DATA temp543 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp544 LIKE LINE OF temp543.
+    DATA temp553 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp554 LIKE LINE OF temp553.
 
     result = me.
     
-    CLEAR temp543.
+    CLEAR temp553.
     
-    temp544-n = `VALUE`.
-    temp544-v = val.
-    INSERT temp544 INTO TABLE temp543.
+    temp554-n = `VALUE`.
+    temp554-v = val.
+    INSERT temp554 INTO TABLE temp553.
     _generic( name   = `ZZPLAIN`
-              t_prop = temp543 ).
+              t_prop = temp553 ).
 
   ENDMETHOD.
 
   METHOD _generic.
-        DATA temp545 TYPE string.
+        DATA temp555 TYPE string.
     DATA result2 TYPE REF TO z2ui5_cl_xml_view.
 
     TRY.
         
-        temp545 = ns.
-        INSERT temp545 INTO TABLE mo_root->mt_ns.
+        temp555 = ns.
+        INSERT temp555 INTO TABLE mo_root->mt_ns.
       CATCH cx_root.
     ENDTRY.
 
@@ -17509,242 +17801,242 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD p_cell_selector.
-    DATA temp546 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp547 LIKE LINE OF temp546.
+    DATA temp556 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp557 LIKE LINE OF temp556.
 
     result = me.
     
-    CLEAR temp546.
+    CLEAR temp556.
     
-    temp547-n = `id`.
-    temp547-v = id.
-    INSERT temp547 INTO TABLE temp546.
+    temp557-n = `id`.
+    temp557-v = id.
+    INSERT temp557 INTO TABLE temp556.
     _generic( name   = `CellSelector`
               ns     = `plugins`
-              t_prop = temp546 ).
+              t_prop = temp556 ).
 
   ENDMETHOD.
 
   METHOD p_copy_provider.
-    DATA temp548 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp549 LIKE LINE OF temp548.
+    DATA temp558 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp559 LIKE LINE OF temp558.
 
     result = me.
     
-    CLEAR temp548.
+    CLEAR temp558.
     
-    temp549-n = `id`.
-    temp549-v = id.
-    INSERT temp549 INTO TABLE temp548.
-    temp549-n = `copy`.
-    temp549-v = copy.
-    INSERT temp549 INTO TABLE temp548.
-    temp549-n = `extractData`.
-    temp549-v = extract_data.
-    INSERT temp549 INTO TABLE temp548.
+    temp559-n = `id`.
+    temp559-v = id.
+    INSERT temp559 INTO TABLE temp558.
+    temp559-n = `copy`.
+    temp559-v = copy.
+    INSERT temp559 INTO TABLE temp558.
+    temp559-n = `extractData`.
+    temp559-v = extract_data.
+    INSERT temp559 INTO TABLE temp558.
     _generic( name   = `CopyProvider`
               ns     = `plugins`
-              t_prop = temp548 ).
+              t_prop = temp558 ).
 
   ENDMETHOD.
 
   METHOD date_range_selection.
-    DATA temp550 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp551 LIKE LINE OF temp550.
+    DATA temp560 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp561 LIKE LINE OF temp560.
     result = me.
     
-    CLEAR temp550.
+    CLEAR temp560.
     
-    temp551-n = `value`.
-    temp551-v = value.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `displayFormat`.
-    temp551-v = displayformat.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `displayFormatType`.
-    temp551-v = displayformattype.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `valueFormat`.
-    temp551-v = valueformat.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `required`.
-    temp551-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `valueState`.
-    temp551-v = valuestate.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `valueStateText`.
-    temp551-v = valuestatetext.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `placeholder`.
-    temp551-v = placeholder.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `textAlign`.
-    temp551-v = textalign.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `textDirection`.
-    temp551-v = textdirection.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `change`.
-    temp551-v = change.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `maxDate`.
-    temp551-v = maxdate.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `minDate`.
-    temp551-v = mindate.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `width`.
-    temp551-v = width.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `id`.
-    temp551-v = id.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `dateValue`.
-    temp551-v = datevalue.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `secondDateValue`.
-    temp551-v = seconddatevalue.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `name`.
-    temp551-v = name.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `class`.
-    temp551-v = class.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `calendarWeekNumbering`.
-    temp551-v = calendarweeknumbering.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `initialFocusedDateValue`.
-    temp551-v = initialfocuseddatevalue.
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `enabled`.
-    temp551-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `visible`.
-    temp551-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `editable`.
-    temp551-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `hideInput`.
-    temp551-v = z2ui5_cl_util=>boolean_abap_2_json( hideinput ).
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `showFooter`.
-    temp551-v = z2ui5_cl_util=>boolean_abap_2_json( showfooter ).
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `showValueStateMessage`.
-    temp551-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluestatemessage ).
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `showCurrentDateButton`.
-    temp551-v = z2ui5_cl_util=>boolean_abap_2_json( showcurrentdatebutton ).
-    INSERT temp551 INTO TABLE temp550.
-    temp551-n = `delimiter`.
-    temp551-v = delimiter.
-    INSERT temp551 INTO TABLE temp550.
+    temp561-n = `value`.
+    temp561-v = value.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `displayFormat`.
+    temp561-v = displayformat.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `displayFormatType`.
+    temp561-v = displayformattype.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `valueFormat`.
+    temp561-v = valueformat.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `required`.
+    temp561-v = z2ui5_cl_util=>boolean_abap_2_json( required ).
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `valueState`.
+    temp561-v = valuestate.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `valueStateText`.
+    temp561-v = valuestatetext.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `placeholder`.
+    temp561-v = placeholder.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `textAlign`.
+    temp561-v = textalign.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `textDirection`.
+    temp561-v = textdirection.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `change`.
+    temp561-v = change.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `maxDate`.
+    temp561-v = maxdate.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `minDate`.
+    temp561-v = mindate.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `width`.
+    temp561-v = width.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `id`.
+    temp561-v = id.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `dateValue`.
+    temp561-v = datevalue.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `secondDateValue`.
+    temp561-v = seconddatevalue.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `name`.
+    temp561-v = name.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `class`.
+    temp561-v = class.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `calendarWeekNumbering`.
+    temp561-v = calendarweeknumbering.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `initialFocusedDateValue`.
+    temp561-v = initialfocuseddatevalue.
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `enabled`.
+    temp561-v = z2ui5_cl_util=>boolean_abap_2_json( enabled ).
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `visible`.
+    temp561-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `editable`.
+    temp561-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `hideInput`.
+    temp561-v = z2ui5_cl_util=>boolean_abap_2_json( hideinput ).
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `showFooter`.
+    temp561-v = z2ui5_cl_util=>boolean_abap_2_json( showfooter ).
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `showValueStateMessage`.
+    temp561-v = z2ui5_cl_util=>boolean_abap_2_json( showvaluestatemessage ).
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `showCurrentDateButton`.
+    temp561-v = z2ui5_cl_util=>boolean_abap_2_json( showcurrentdatebutton ).
+    INSERT temp561 INTO TABLE temp560.
+    temp561-n = `delimiter`.
+    temp561-v = delimiter.
+    INSERT temp561 INTO TABLE temp560.
     _generic( name   = `DateRangeSelection`
-              t_prop = temp550 ).
+              t_prop = temp560 ).
   ENDMETHOD.
 
   METHOD toolbar_layout_data.
-    DATA temp552 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp553 LIKE LINE OF temp552.
-    CLEAR temp552.
+    DATA temp562 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp563 LIKE LINE OF temp562.
+    CLEAR temp562.
     
-    temp553-n = `id`.
-    temp553-v = id.
-    INSERT temp553 INTO TABLE temp552.
-    temp553-n = `maxWidth`.
-    temp553-v = maxwidth.
-    INSERT temp553 INTO TABLE temp552.
-    temp553-n = `minWidth`.
-    temp553-v = minwidth.
-    INSERT temp553 INTO TABLE temp552.
-    temp553-n = `shrinkable`.
-    temp553-v = z2ui5_cl_util=>boolean_abap_2_json( shrinkable ).
-    INSERT temp553 INTO TABLE temp552.
+    temp563-n = `id`.
+    temp563-v = id.
+    INSERT temp563 INTO TABLE temp562.
+    temp563-n = `maxWidth`.
+    temp563-v = maxwidth.
+    INSERT temp563 INTO TABLE temp562.
+    temp563-n = `minWidth`.
+    temp563-v = minwidth.
+    INSERT temp563 INTO TABLE temp562.
+    temp563-n = `shrinkable`.
+    temp563-v = z2ui5_cl_util=>boolean_abap_2_json( shrinkable ).
+    INSERT temp563 INTO TABLE temp562.
     result = _generic(
                  name   = `ToolbarLayoutData`
-                 t_prop = temp552 ).
+                 t_prop = temp562 ).
   ENDMETHOD.
 
   METHOD feed_content.
-    DATA temp554 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp555 LIKE LINE OF temp554.
-    CLEAR temp554.
+    DATA temp564 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp565 LIKE LINE OF temp564.
+    CLEAR temp564.
     
-    temp555-n = `contentText`.
-    temp555-v = contenttext.
-    INSERT temp555 INTO TABLE temp554.
-    temp555-n = `subheader`.
-    temp555-v = subheader.
-    INSERT temp555 INTO TABLE temp554.
-    temp555-n = `value`.
-    temp555-v = value.
-    INSERT temp555 INTO TABLE temp554.
-    temp555-n = `class`.
-    temp555-v = class.
-    INSERT temp555 INTO TABLE temp554.
-    temp555-n = `press`.
-    temp555-v = press.
-    INSERT temp555 INTO TABLE temp554.
+    temp565-n = `contentText`.
+    temp565-v = contenttext.
+    INSERT temp565 INTO TABLE temp564.
+    temp565-n = `subheader`.
+    temp565-v = subheader.
+    INSERT temp565 INTO TABLE temp564.
+    temp565-n = `value`.
+    temp565-v = value.
+    INSERT temp565 INTO TABLE temp564.
+    temp565-n = `class`.
+    temp565-v = class.
+    INSERT temp565 INTO TABLE temp564.
+    temp565-n = `press`.
+    temp565-v = press.
+    INSERT temp565 INTO TABLE temp564.
     result = _generic( name   = `FeedContent`
-                       t_prop = temp554 ).
+                       t_prop = temp564 ).
 
   ENDMETHOD.
 
   METHOD news_content.
-    DATA temp556 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp557 LIKE LINE OF temp556.
-    CLEAR temp556.
+    DATA temp566 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp567 LIKE LINE OF temp566.
+    CLEAR temp566.
     
-    temp557-n = `contentText`.
-    temp557-v = contenttext.
-    INSERT temp557 INTO TABLE temp556.
-    temp557-n = `subheader`.
-    temp557-v = subheader.
-    INSERT temp557 INTO TABLE temp556.
-    temp557-n = `press`.
-    temp557-v = press.
-    INSERT temp557 INTO TABLE temp556.
+    temp567-n = `contentText`.
+    temp567-v = contenttext.
+    INSERT temp567 INTO TABLE temp566.
+    temp567-n = `subheader`.
+    temp567-v = subheader.
+    INSERT temp567 INTO TABLE temp566.
+    temp567-n = `press`.
+    temp567-v = press.
+    INSERT temp567 INTO TABLE temp566.
     result = _generic( name   = `NewsContent`
-                       t_prop = temp556 ).
+                       t_prop = temp566 ).
 
   ENDMETHOD.
 
   METHOD splitter.
-    DATA temp558 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp559 LIKE LINE OF temp558.
-    CLEAR temp558.
+    DATA temp568 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp569 LIKE LINE OF temp568.
+    CLEAR temp568.
     
-    temp559-n = `height`.
-    temp559-v = height.
-    INSERT temp559 INTO TABLE temp558.
-    temp559-n = `orientation`.
-    temp559-v = orientation.
-    INSERT temp559 INTO TABLE temp558.
-    temp559-n = `width`.
-    temp559-v = width.
-    INSERT temp559 INTO TABLE temp558.
+    temp569-n = `height`.
+    temp569-v = height.
+    INSERT temp569 INTO TABLE temp568.
+    temp569-n = `orientation`.
+    temp569-v = orientation.
+    INSERT temp569 INTO TABLE temp568.
+    temp569-n = `width`.
+    temp569-v = width.
+    INSERT temp569 INTO TABLE temp568.
     result = _generic( name   = `Splitter`
                        ns     = `layout`
-                       t_prop = temp558 ).
+                       t_prop = temp568 ).
   ENDMETHOD.
 
   METHOD invisible_text.
-    DATA temp560 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp561 LIKE LINE OF temp560.
-    CLEAR temp560.
+    DATA temp570 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp571 LIKE LINE OF temp570.
+    CLEAR temp570.
     
-    temp561-n = `id`.
-    temp561-v = id.
-    INSERT temp561 INTO TABLE temp560.
-    temp561-n = `text`.
-    temp561-v = text.
-    INSERT temp561 INTO TABLE temp560.
+    temp571-n = `id`.
+    temp571-v = id.
+    INSERT temp571 INTO TABLE temp570.
+    temp571-n = `text`.
+    temp571-v = text.
+    INSERT temp571 INTO TABLE temp570.
     result = _generic( ns     = ns
                        name   = `InvisibleText`
-                       t_prop = temp560 ).
+                       t_prop = temp570 ).
   ENDMETHOD.
 
   METHOD fix_content.
@@ -17754,19 +18046,19 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD fix_flex.
 
-    DATA temp562 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp563 LIKE LINE OF temp562.
-    CLEAR temp562.
+    DATA temp572 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp573 LIKE LINE OF temp572.
+    CLEAR temp572.
     
-    temp563-n = `class`.
-    temp563-v = class.
-    INSERT temp563 INTO TABLE temp562.
-    temp563-n = `fixContentSize`.
-    temp563-v = fixcontentsize.
-    INSERT temp563 INTO TABLE temp562.
+    temp573-n = `class`.
+    temp573-v = class.
+    INSERT temp573 INTO TABLE temp572.
+    temp573-n = `fixContentSize`.
+    temp573-v = fixcontentsize.
+    INSERT temp573 INTO TABLE temp572.
     result = _generic( ns     = ns
                        name   = `FixFlex`
-                       t_prop = temp562 ).
+                       t_prop = temp572 ).
   ENDMETHOD.
 
   METHOD flex_content.
@@ -17776,22 +18068,22 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
   METHOD side_navigation.
 
-    DATA temp564 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp565 LIKE LINE OF temp564.
-    CLEAR temp564.
+    DATA temp574 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp575 LIKE LINE OF temp574.
+    CLEAR temp574.
     
-    temp565-n = `id`.
-    temp565-v = id.
-    INSERT temp565 INTO TABLE temp564.
-    temp565-n = `class`.
-    temp565-v = class.
-    INSERT temp565 INTO TABLE temp564.
-    temp565-n = `selectedKey`.
-    temp565-v = selectedkey.
-    INSERT temp565 INTO TABLE temp564.
+    temp575-n = `id`.
+    temp575-v = id.
+    INSERT temp575 INTO TABLE temp574.
+    temp575-n = `class`.
+    temp575-v = class.
+    INSERT temp575 INTO TABLE temp574.
+    temp575-n = `selectedKey`.
+    temp575-v = selectedkey.
+    INSERT temp575 INTO TABLE temp574.
     result = _generic( name   = `SideNavigation`
                        ns     = `tnt`
-                       t_prop = temp564 ).
+                       t_prop = temp574 ).
 
   ENDMETHOD.
 
@@ -17803,31 +18095,31 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD navigation_list_item.
-    DATA temp566 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp567 LIKE LINE OF temp566.
+    DATA temp576 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp577 LIKE LINE OF temp576.
 
     result = me.
     
-    CLEAR temp566.
+    CLEAR temp576.
     
-    temp567-n = `text`.
-    temp567-v = text.
-    INSERT temp567 INTO TABLE temp566.
-    temp567-n = `icon`.
-    temp567-v = icon.
-    INSERT temp567 INTO TABLE temp566.
-    temp567-n = `href`.
-    temp567-v = href.
-    INSERT temp567 INTO TABLE temp566.
-    temp567-n = `key`.
-    temp567-v = key.
-    INSERT temp567 INTO TABLE temp566.
-    temp567-n = `select`.
-    temp567-v = select.
-    INSERT temp567 INTO TABLE temp566.
+    temp577-n = `text`.
+    temp577-v = text.
+    INSERT temp577 INTO TABLE temp576.
+    temp577-n = `icon`.
+    temp577-v = icon.
+    INSERT temp577 INTO TABLE temp576.
+    temp577-n = `href`.
+    temp577-v = href.
+    INSERT temp577 INTO TABLE temp576.
+    temp577-n = `key`.
+    temp577-v = key.
+    INSERT temp577 INTO TABLE temp576.
+    temp577-n = `select`.
+    temp577-v = select.
+    INSERT temp577 INTO TABLE temp576.
     _generic( name   = `NavigationListItem`
               ns     = `tnt`
-              t_prop = temp566 ).
+              t_prop = temp576 ).
 
   ENDMETHOD.
 
@@ -17844,51 +18136,51 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD field.
-    DATA temp568 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp569 LIKE LINE OF temp568.
-    CLEAR temp568.
+    DATA temp578 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp579 LIKE LINE OF temp578.
+    CLEAR temp578.
     
-    temp569-n = `id`.
-    temp569-v = id.
-    INSERT temp569 INTO TABLE temp568.
-    temp569-n = `value`.
-    temp569-v = value.
-    INSERT temp569 INTO TABLE temp568.
-    temp569-n = `editMode`.
-    temp569-v = editmode.
-    INSERT temp569 INTO TABLE temp568.
-    temp569-n = `showEmptyIndicator`.
-    temp569-v = z2ui5_cl_util=>boolean_abap_2_json( showemptyindicator ).
-    INSERT temp569 INTO TABLE temp568.
+    temp579-n = `id`.
+    temp579-v = id.
+    INSERT temp579 INTO TABLE temp578.
+    temp579-n = `value`.
+    temp579-v = value.
+    INSERT temp579 INTO TABLE temp578.
+    temp579-n = `editMode`.
+    temp579-v = editmode.
+    INSERT temp579 INTO TABLE temp578.
+    temp579-n = `showEmptyIndicator`.
+    temp579-v = z2ui5_cl_util=>boolean_abap_2_json( showemptyindicator ).
+    INSERT temp579 INTO TABLE temp578.
     result = _generic(
         name   = `Field`
         ns     = ns
-        t_prop = temp568 ).
+        t_prop = temp578 ).
   ENDMETHOD.
 
   METHOD color_picker.
-    DATA temp570 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp571 LIKE LINE OF temp570.
+    DATA temp580 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp581 LIKE LINE OF temp580.
 
     result = me.
     
-    CLEAR temp570.
+    CLEAR temp580.
     
-    temp571-n = `colorString`.
-    temp571-v = colorstring.
-    INSERT temp571 INTO TABLE temp570.
-    temp571-n = `displayMode`.
-    temp571-v = displaymode.
-    INSERT temp571 INTO TABLE temp570.
-    temp571-n = `change`.
-    temp571-v = change.
-    INSERT temp571 INTO TABLE temp570.
-    temp571-n = `liveChange`.
-    temp571-v = livechange.
-    INSERT temp571 INTO TABLE temp570.
+    temp581-n = `colorString`.
+    temp581-v = colorstring.
+    INSERT temp581 INTO TABLE temp580.
+    temp581-n = `displayMode`.
+    temp581-v = displaymode.
+    INSERT temp581 INTO TABLE temp580.
+    temp581-n = `change`.
+    temp581-v = change.
+    INSERT temp581 INTO TABLE temp580.
+    temp581-n = `liveChange`.
+    temp581-v = livechange.
+    INSERT temp581 INTO TABLE temp580.
     _generic( ns     = `u`
               name   = `ColorPicker`
-              t_prop = temp570 ).
+              t_prop = temp580 ).
 
   ENDMETHOD.
 
@@ -17902,38 +18194,38 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD analytical_table.
-    DATA temp572 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp573 LIKE LINE OF temp572.
-    CLEAR temp572.
+    DATA temp582 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp583 LIKE LINE OF temp582.
+    CLEAR temp582.
     
-    temp573-n = `selectionMode`.
-    temp573-v = selectionmode.
-    INSERT temp573 INTO TABLE temp572.
-    temp573-n = `rowMode`.
-    temp573-v = rowmode.
-    INSERT temp573 INTO TABLE temp572.
-    temp573-n = `toolbar`.
-    temp573-v = toolbar.
-    INSERT temp573 INTO TABLE temp572.
-    temp573-n = `columns`.
-    temp573-v = columns.
-    INSERT temp573 INTO TABLE temp572.
+    temp583-n = `selectionMode`.
+    temp583-v = selectionmode.
+    INSERT temp583 INTO TABLE temp582.
+    temp583-n = `rowMode`.
+    temp583-v = rowmode.
+    INSERT temp583 INTO TABLE temp582.
+    temp583-n = `toolbar`.
+    temp583-v = toolbar.
+    INSERT temp583 INTO TABLE temp582.
+    temp583-n = `columns`.
+    temp583-v = columns.
+    INSERT temp583 INTO TABLE temp582.
     result = _generic( name   = `AnalyticalTable`
                        ns     = ns
-                       t_prop = temp572 ).
+                       t_prop = temp582 ).
   ENDMETHOD.
 
   METHOD auto.
-    DATA temp574 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp575 LIKE LINE OF temp574.
-    CLEAR temp574.
+    DATA temp584 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp585 LIKE LINE OF temp584.
+    CLEAR temp584.
     
-    temp575-n = `rowContentHeight`.
-    temp575-v = rowcontentheight.
-    INSERT temp575 INTO TABLE temp574.
+    temp585-n = `rowContentHeight`.
+    temp585-v = rowcontentheight.
+    INSERT temp585 INTO TABLE temp584.
     result = _generic( ns     = ns
                        name   = `Auto`
-                       t_prop = temp574 ).
+                       t_prop = temp584 ).
   ENDMETHOD.
 
   METHOD rowmode.
@@ -17942,42 +18234,42 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD breadcrumbs.
-    DATA temp576 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp577 LIKE LINE OF temp576.
-    CLEAR temp576.
+    DATA temp586 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp587 LIKE LINE OF temp586.
+    CLEAR temp586.
     
-    temp577-n = `link`.
-    temp577-v = link.
-    INSERT temp577 INTO TABLE temp576.
+    temp587-n = `link`.
+    temp587-v = link.
+    INSERT temp587 INTO TABLE temp586.
     result = _generic( ns     = ns
                        name   = `Breadcrumbs`
-                       t_prop = temp576 ).
+                       t_prop = temp586 ).
   ENDMETHOD.
 
   METHOD current_location.
-    DATA temp578 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp579 LIKE LINE OF temp578.
-    CLEAR temp578.
+    DATA temp588 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp589 LIKE LINE OF temp588.
+    CLEAR temp588.
     
-    temp579-n = `link`.
-    temp579-v = link.
-    INSERT temp579 INTO TABLE temp578.
+    temp589-n = `link`.
+    temp589-v = link.
+    INSERT temp589 INTO TABLE temp588.
     result = _generic( ns     = ns
                        name   = `currentLocation`
-                       t_prop = temp578 ).
+                       t_prop = temp588 ).
   ENDMETHOD.
 
   METHOD color_palette.
-    DATA temp580 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp581 LIKE LINE OF temp580.
-    CLEAR temp580.
+    DATA temp590 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp591 LIKE LINE OF temp590.
+    CLEAR temp590.
     
-    temp581-n = `colorSelect`.
-    temp581-v = colorselect.
-    INSERT temp581 INTO TABLE temp580.
+    temp591-n = `colorSelect`.
+    temp591-v = colorselect.
+    INSERT temp591 INTO TABLE temp590.
     result = _generic( ns     = ns
                        name   = `ColorPalette`
-                       t_prop = temp580 ).
+                       t_prop = temp590 ).
   ENDMETHOD.
 
 ENDCLASS.
