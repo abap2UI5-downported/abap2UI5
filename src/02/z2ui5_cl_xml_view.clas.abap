@@ -8860,10 +8860,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD harvey_ball_micro_chart.
+
     DATA temp175 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp176 LIKE LINE OF temp175.
-    result = me.
-    
     CLEAR temp175.
     
     temp176-n = `colorPalette`.
@@ -8905,7 +8904,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp176-n = `totalScale`.
     temp176-v = totalscale.
     INSERT temp176 INTO TABLE temp175.
-    _generic( name   = `HarveyBallMicroChart`
+    result = _generic( name   = `HarveyBallMicroChart`
               ns     = `mchart`
               t_prop = temp175 ).
   ENDMETHOD.
