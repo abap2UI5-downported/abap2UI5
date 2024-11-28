@@ -1882,6 +1882,16 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS harveyballmicrochartitem
+       IMPORTING
+        id            TYPE clike OPTIONAL
+        color         TYPE clike OPTIONAL
+        fraction      TYPE clike OPTIONAL
+        fractionScale TYPE clike OPTIONAL
+       class          TYPE clike OPTIONAL
+       RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS step_input
       IMPORTING
         id                    TYPE clike OPTIONAL
@@ -18272,4 +18282,28 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
                        t_prop = temp590 ).
   ENDMETHOD.
 
+  METHOD HarveyBallMicroChartItem.
+    DATA temp592 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp593 LIKE LINE OF temp592.
+    CLEAR temp592.
+    
+    temp593-n = `id`.
+    temp593-v = id.
+    INSERT temp593 INTO TABLE temp592.
+    temp593-n = `class`.
+    temp593-v = class.
+    INSERT temp593 INTO TABLE temp592.
+    temp593-n = `fraction`.
+    temp593-v = fraction.
+    INSERT temp593 INTO TABLE temp592.
+    temp593-n = `color`.
+    temp593-v = color.
+    INSERT temp593 INTO TABLE temp592.
+    temp593-n = `fractionScale`.
+    temp593-v = fractionScale.
+    INSERT temp593 INTO TABLE temp592.
+    result = _generic( name   = `HarveyBallMicroChartItem`
+                       ns     = `mchart`
+                       t_prop = temp592 ).
+  ENDMETHOD.
 ENDCLASS.
