@@ -1712,8 +1712,10 @@ CLASS z2ui5_cl_xml_view DEFINITION
         VALUE(result)  TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS grid_box_layout
-      IMPORTING boxMinWidth   TYPE clike OPTIONAL
-      RETURNING VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+      IMPORTING boxesperrowconfig TYPE clike OPTIONAL
+                boxMinWidth       TYPE clike OPTIONAL
+                boxWidth          TYPE clike OPTIONAL
+      RETURNING VALUE(result)     TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS grid_data
       IMPORTING
@@ -1762,7 +1764,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 showUnread             TYPE abap_bool OPTIONAL
                 sticky                 TYPE clike     OPTIONAL
                 swipeDirection         TYPE clike     OPTIONAL
-                !visible               TYPE abap_bool default abap_true
+                !visible               TYPE abap_bool DEFAULT abap_true
                 !width                 TYPE clike     OPTIONAL
                 items                  TYPE clike     OPTIONAL
       RETURNING VALUE(result)          TYPE REF TO z2ui5_cl_xml_view.
@@ -1779,7 +1781,11 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 selected           TYPE clike OPTIONAL
                 !type              TYPE clike OPTIONAL
                 unread             TYPE clike OPTIONAL
-                !visible           TYPE clike OPTIONAL
+                !visible           TYPE clike DEFAULT `true`
+                detailPress        TYPE clike OPTIONAL
+                detailTap          TYPE clike OPTIONAL
+                press              TYPE clike OPTIONAL
+                tap                TYPE clike OPTIONAL
       RETURNING VALUE(result)      TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS text_area
@@ -8579,8 +8585,14 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     
     CLEAR temp162.
     
+    temp163-n = `boxesPerRowConfig`.
+    temp163-v = boxesPerRowConfig.
+    INSERT temp163 INTO TABLE temp162.
     temp163-n = `boxMinWidth`.
     temp163-v = boxMinWidth.
+    INSERT temp163 INTO TABLE temp162.
+    temp163-n = `boxWidth`.
+    temp163-v = boxWidth.
     INSERT temp163 INTO TABLE temp162.
     _generic( name   = `GridBoxLayout`
               ns     = `grid`
@@ -8748,7 +8760,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     CLEAR temp170.
     
     temp171-n = `busy`.
-    temp171-v = z2ui5_cl_util=>boolean_abap_2_json( busy ).
+    temp171-v = busy.
     INSERT temp171 INTO TABLE temp170.
     temp171-n = `busyIndicatorDelay`.
     temp171-v = busyIndicatorDelay.
@@ -8769,19 +8781,31 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp171-v = highlightText.
     INSERT temp171 INTO TABLE temp170.
     temp171-n = `navigated`.
-    temp171-v = z2ui5_cl_util=>boolean_abap_2_json( navigated ).
+    temp171-v = navigated.
     INSERT temp171 INTO TABLE temp170.
     temp171-n = `selected`.
-    temp171-v = z2ui5_cl_util=>boolean_abap_2_json( selected ).
+    temp171-v = selected.
     INSERT temp171 INTO TABLE temp170.
     temp171-n = `type`.
     temp171-v = type.
     INSERT temp171 INTO TABLE temp170.
     temp171-n = `unread`.
-    temp171-v = z2ui5_cl_util=>boolean_abap_2_json( unread ).
+    temp171-v = unread.
     INSERT temp171 INTO TABLE temp170.
     temp171-n = `visible`.
-    temp171-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    temp171-v = visible.
+    INSERT temp171 INTO TABLE temp170.
+    temp171-n = `detailPress`.
+    temp171-v = detailPress.
+    INSERT temp171 INTO TABLE temp170.
+    temp171-n = `detailTap`.
+    temp171-v = detailTap.
+    INSERT temp171 INTO TABLE temp170.
+    temp171-n = `press`.
+    temp171-v = press.
+    INSERT temp171 INTO TABLE temp170.
+    temp171-n = `tap`.
+    temp171-v = tap.
     INSERT temp171 INTO TABLE temp170.
     result = _generic( name   = `GridListItem`
                        ns     = `f`
