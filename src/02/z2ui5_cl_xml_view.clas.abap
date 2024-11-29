@@ -4040,6 +4040,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
       IMPORTING
         id               TYPE clike OPTIONAL
         autoadjustheight TYPE clike OPTIONAL
+        showHome         TYPE clike OPTIONAL
       RETURNING
         VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
 
@@ -10703,6 +10704,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp263 INTO TABLE temp262.
     temp263-n = `autoAdjustHeight`.
     temp263-v = z2ui5_cl_util=>boolean_abap_2_json( autoadjustheight ).
+    INSERT temp263 INTO TABLE temp262.
+    temp263-n = `showHome`.
+    temp263-v = z2ui5_cl_util=>boolean_abap_2_json( showHome ).
     INSERT temp263 INTO TABLE temp262.
     result = _generic( name   = `MapContainer`
                        ns     = `vk`
