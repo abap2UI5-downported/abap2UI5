@@ -4063,6 +4063,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         image         TYPE clike OPTIONAL
         icon          TYPE clike OPTIONAL
         click         TYPE clike OPTIONAL
+        text          TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -14840,6 +14841,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp441 INTO TABLE temp440.
     temp441-n = `icon`.
     temp441-v = icon.
+    INSERT temp441 INTO TABLE temp440.
+    temp441-n = `text`.
+    temp441-v = text.
     INSERT temp441 INTO TABLE temp440.
     temp441-n = `click`.
     temp441-v = click.
