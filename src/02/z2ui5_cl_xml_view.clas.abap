@@ -5099,6 +5099,68 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS viz_frame
+      IMPORTING
+        !id                TYPE clike OPTIONAL
+        !legendvisible     TYPE clike OPTIONAL
+        !vizcustomizations TYPE clike OPTIONAL
+        !vizproperties     TYPE clike OPTIONAL
+        !vizscales         TYPE clike OPTIONAL
+        !viztype           TYPE clike OPTIONAL
+        !height            TYPE clike OPTIONAL
+        !width             TYPE clike OPTIONAL
+        !uiconfig          TYPE clike DEFAULT `{applicationSet:'fiori'}`
+        !visible           TYPE clike OPTIONAL
+        !selectdata        TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result)      TYPE REF TO z2ui5_cl_xml_view .
+    METHODS viz_dataset
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS viz_flattened_dataset
+      IMPORTING
+        !data         TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS viz_dimensions
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS viz_dimension_definition
+      IMPORTING
+        !axis         TYPE clike OPTIONAL
+        !datatype     TYPE clike OPTIONAL
+        !displayvalue TYPE clike OPTIONAL
+        !identity     TYPE clike OPTIONAL
+        !name         TYPE clike OPTIONAL
+        !sorter       TYPE clike OPTIONAL
+        !value        TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS viz_measures
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS viz_measure_definition
+      IMPORTING
+        !format       TYPE clike OPTIONAL
+        !group        TYPE clike OPTIONAL
+        !identity     TYPE clike OPTIONAL
+        !name         TYPE clike OPTIONAL
+        !range        TYPE clike OPTIONAL
+        !unit         TYPE clike OPTIONAL
+        !value        TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS viz_feeds
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS viz_feed_item
+      IMPORTING
+        !id           TYPE clike OPTIONAL
+        !uid          TYPE clike OPTIONAL
+        !type         TYPE clike OPTIONAL
+        !values       TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
   PROTECTED SECTION.
     DATA mv_name     TYPE string.
     DATA mv_ns       TYPE string.
@@ -17714,6 +17776,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
       temp548-n = `viz`.
       temp548-v = `sap.viz.ui5.controls`.
       INSERT temp548 INTO TABLE temp547.
+      temp548-n = `xmlns:viz.data`.
+      temp548-v = `sap.viz.ui5.data`.
+      INSERT temp548 INTO TABLE temp547.
+      temp548-n = `xmlns:viz.feeds`.
+      temp548-v = `sap.viz.ui5.controls.common.feeds`.
+      INSERT temp548 INTO TABLE temp547.
       temp548-n = `vk`.
       temp548-v = `sap.ui.vk`.
       INSERT temp548 INTO TABLE temp547.
@@ -18382,5 +18450,206 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     result = _generic( name   = `HarveyBallMicroChartItem`
                        ns     = `mchart`
                        t_prop = temp594 ).
+  ENDMETHOD.
+
+  METHOD viz_dataset.
+    result = _generic( name   = 'dataset'
+                       ns     = 'viz' ).
+  ENDMETHOD.
+
+
+  METHOD viz_dimensions.
+    result = _generic( name   = 'dimensions'
+                       ns     = 'viz.data' ).
+  ENDMETHOD.
+
+
+  METHOD viz_dimension_definition.
+    DATA temp596 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp597 LIKE LINE OF temp596.
+    CLEAR temp596.
+    
+    temp597-n = `axis`.
+    temp597-v = axis.
+    INSERT temp597 INTO TABLE temp596.
+    temp597-n = `dataType`.
+    temp597-v = datatype.
+    INSERT temp597 INTO TABLE temp596.
+    temp597-n = `displayValue`.
+    temp597-v = displayvalue.
+    INSERT temp597 INTO TABLE temp596.
+    temp597-n = `identity`.
+    temp597-v = identity.
+    INSERT temp597 INTO TABLE temp596.
+    temp597-n = `name`.
+    temp597-v = name.
+    INSERT temp597 INTO TABLE temp596.
+    temp597-n = `sorter`.
+    temp597-v = sorter.
+    INSERT temp597 INTO TABLE temp596.
+    temp597-n = `value`.
+    temp597-v = value.
+    INSERT temp597 INTO TABLE temp596.
+    result = _generic( name   = 'DimensionDefinition'
+                       ns     = 'viz.data'
+                       t_prop = temp596 ).
+  ENDMETHOD.
+
+
+  METHOD viz_feeds.
+    result = _generic( name   = 'feeds'
+                       ns     = 'viz' ).
+  ENDMETHOD.
+
+
+  METHOD viz_feed_item.
+    DATA temp598 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp599 LIKE LINE OF temp598.
+    CLEAR temp598.
+    
+    temp599-n = `id`.
+    temp599-v = id.
+    INSERT temp599 INTO TABLE temp598.
+    temp599-n = `uid`.
+    temp599-v = uid.
+    INSERT temp599 INTO TABLE temp598.
+    temp599-n = `type`.
+    temp599-v = type.
+    INSERT temp599 INTO TABLE temp598.
+    temp599-n = `values `.
+    temp599-v = values.
+    INSERT temp599 INTO TABLE temp598.
+    result = _generic( name   = 'FeedItem'
+                       ns     = 'viz.feeds'
+                       t_prop = temp598 ).
+  ENDMETHOD.
+
+
+  METHOD viz_flattened_dataset.
+    DATA temp600 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp601 LIKE LINE OF temp600.
+    CLEAR temp600.
+    
+    temp601-n = `data`.
+    temp601-v = data.
+    INSERT temp601 INTO TABLE temp600.
+    result = _generic( name   = 'FlattenedDataset'
+                       ns     = 'viz.data'
+                       t_prop = temp600 ).
+  ENDMETHOD.
+
+
+  METHOD viz_frame.
+    DATA lv_vizproperties TYPE string.
+    DATA temp602 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp603 LIKE LINE OF temp602.
+    lv_vizproperties = ``.
+    IF vizproperties IS INITIAL.
+      lv_vizproperties = `{` && |\n|  &&
+      `"plotArea": {` && |\n|  &&
+          `"dataLabel": {` && |\n|  &&
+              `"formatString": "",` && |\n|  &&
+              `"visible": false` && |\n|  &&
+          `}` && |\n|  &&
+      `},` && |\n|  &&
+      `"valueAxis": {` && |\n|  &&
+          `"label": {` && |\n|  &&
+              `"formatString": ""` && |\n|  &&
+          `},` && |\n|  &&
+          `"title": {` && |\n|  &&
+              `"visible": false` && |\n|  &&
+          `}` && |\n|  &&
+      `},` && |\n|  &&
+      `"categoryAxis": {` && |\n|  &&
+          `"title": {` && |\n|  &&
+              `"visible": false` && |\n|  &&
+          `}` && |\n|  &&
+      `},` && |\n|  &&
+      `"title": {` && |\n|  &&
+          `"visible": false,` && |\n|  &&
+          `"text": ""` && |\n|  &&
+      `}` && |\n|  &&
+  `}`.
+    ELSE.
+      lv_vizproperties = vizproperties.
+    ENDIF.
+
+    
+    CLEAR temp602.
+    
+    temp603-n = `id`.
+    temp603-v = id.
+    INSERT temp603 INTO TABLE temp602.
+    temp603-n = `legendVisible`.
+    temp603-v = legendvisible.
+    INSERT temp603 INTO TABLE temp602.
+    temp603-n = `vizCustomizations`.
+    temp603-v = vizcustomizations.
+    INSERT temp603 INTO TABLE temp602.
+    temp603-n = `vizProperties`.
+    temp603-v = lv_vizproperties.
+    INSERT temp603 INTO TABLE temp602.
+    temp603-n = `vizScales`.
+    temp603-v = vizscales.
+    INSERT temp603 INTO TABLE temp602.
+    temp603-n = `vizType`.
+    temp603-v = viztype.
+    INSERT temp603 INTO TABLE temp602.
+    temp603-n = `height`.
+    temp603-v = height.
+    INSERT temp603 INTO TABLE temp602.
+    temp603-n = `width`.
+    temp603-v = width.
+    INSERT temp603 INTO TABLE temp602.
+    temp603-n = `uiConfig`.
+    temp603-v = uiconfig.
+    INSERT temp603 INTO TABLE temp602.
+    temp603-n = `visible`.
+    temp603-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp603 INTO TABLE temp602.
+    temp603-n = `selectData`.
+    temp603-v = selectdata.
+    INSERT temp603 INTO TABLE temp602.
+    result = _generic(  name   = 'VizFrame'
+                        ns     = 'viz'
+                        t_prop = temp602 ).
+
+  ENDMETHOD.
+
+
+  METHOD viz_measures.
+    result = _generic( name   = 'measures'
+                       ns     = 'viz.data' ).
+  ENDMETHOD.
+
+  METHOD viz_measure_definition.
+    DATA temp604 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp605 LIKE LINE OF temp604.
+    CLEAR temp604.
+    
+    temp605-n = `format`.
+    temp605-v = format.
+    INSERT temp605 INTO TABLE temp604.
+    temp605-n = `group`.
+    temp605-v = group.
+    INSERT temp605 INTO TABLE temp604.
+    temp605-n = `identity`.
+    temp605-v = identity.
+    INSERT temp605 INTO TABLE temp604.
+    temp605-n = `name`.
+    temp605-v = name.
+    INSERT temp605 INTO TABLE temp604.
+    temp605-n = `range`.
+    temp605-v = range.
+    INSERT temp605 INTO TABLE temp604.
+    temp605-n = `unit`.
+    temp605-v = unit.
+    INSERT temp605 INTO TABLE temp604.
+    temp605-n = `value`.
+    temp605-v = value.
+    INSERT temp605 INTO TABLE temp604.
+    result = _generic( name   = 'MeasureDefinition'
+                       ns     = 'viz.data'
+                       t_prop = temp604 ).
   ENDMETHOD.
 ENDCLASS.
