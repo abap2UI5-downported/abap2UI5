@@ -81,7 +81,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         sanitizecontent TYPE clike OPTIONAL
         visible         TYPE clike OPTIONAL
         id              TYPE clike OPTIONAL
-                  PREFERRED PARAMETER content
+          PREFERRED PARAMETER content
       RETURNING
         VALUE(result)   TYPE REF TO z2ui5_cl_xml_view.
 
@@ -194,7 +194,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         fixedlayout         TYPE clike OPTIONAL
         backgrounddesign    TYPE clike OPTIONAL
         visible             TYPE clike OPTIONAL
-                  PREFERRED PARAMETER items
+          PREFERRED PARAMETER items
       RETURNING
         VALUE(result)       TYPE REF TO z2ui5_cl_xml_view.
 
@@ -252,7 +252,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         visible             TYPE clike OPTIONAL
         showclosebutton     TYPE clike OPTIONAL
         enableformattedtext TYPE clike OPTIONAL
-                  PREFERRED PARAMETER text
+          PREFERRED PARAMETER text
       RETURNING
         VALUE(result)       TYPE REF TO z2ui5_cl_xml_view.
 
@@ -681,7 +681,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         valuestatetext   TYPE clike OPTIONAL
         placeholder      TYPE clike OPTIONAL
         showsuggestion   TYPE clike OPTIONAL
-        VISIBLE          type CLIKE optional
+        visible          TYPE clike OPTIONAL
       RETURNING
         VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
 
@@ -740,7 +740,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         enabletableautopopinmode      TYPE clike OPTIONAL
         arialabelledby                TYPE clike OPTIONAL
         ariadescribedby               TYPE clike OPTIONAL
-                  PREFERRED PARAMETER value
+          PREFERRED PARAMETER value
       RETURNING
         VALUE(result)                 TYPE REF TO z2ui5_cl_xml_view.
 
@@ -765,7 +765,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         type                TYPE clike OPTIONAL
         titlealignment      TYPE clike OPTIONAL
         state               TYPE clike OPTIONAL
-                  PREFERRED PARAMETER title
+          PREFERRED PARAMETER title
       RETURNING
         VALUE(result)       TYPE REF TO z2ui5_cl_xml_view.
 
@@ -840,7 +840,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         autopopinwidth    TYPE clike OPTIONAL
         class             TYPE clike OPTIONAL
         headermenu        TYPE clike OPTIONAL
-                  PREFERRED PARAMETER width
+          PREFERRED PARAMETER width
       RETURNING
         VALUE(result)     TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1178,7 +1178,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         showsubheader    TYPE clike OPTIONAL
         titlealignment   TYPE clike OPTIONAL
         titlelevel       TYPE clike OPTIONAL
-                  PREFERRED PARAMETER title
+          PREFERRED PARAMETER title
       RETURNING
         VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1258,7 +1258,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         id            TYPE clike OPTIONAL
         focusable     TYPE clike OPTIONAL
         visible       TYPE clike OPTIONAL
-                  PREFERRED PARAMETER height
+          PREFERRED PARAMETER height
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1290,7 +1290,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         singlecontainerfullsize TYPE clike OPTIONAL
         visible                 TYPE clike OPTIONAL
         width                   TYPE clike OPTIONAL
-                  PREFERRED PARAMETER title
+          PREFERRED PARAMETER title
       RETURNING
         VALUE(result)           TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1320,7 +1320,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         width         TYPE clike OPTIONAL
         wrappingtype  TYPE clike OPTIONAL
         visible       TYPE clike OPTIONAL
-                  PREFERRED PARAMETER text
+          PREFERRED PARAMETER text
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1420,7 +1420,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         id            TYPE clike OPTIONAL
         class         TYPE clike OPTIONAL
         visible       TYPE clike OPTIONAL
-                  PREFERRED PARAMETER text
+          PREFERRED PARAMETER text
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1477,7 +1477,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         name                    TYPE clike OPTIONAL
         datevalue               TYPE clike OPTIONAL
         initialfocuseddatevalue TYPE clike OPTIONAL
-                  PREFERRED PARAMETER value
+          PREFERRED PARAMETER value
       RETURNING
         VALUE(result)           TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1514,7 +1514,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         change                  TYPE clike OPTIONAL
         aftervaluehelpopen      TYPE clike OPTIONAL
         aftervaluehelpclose     TYPE clike OPTIONAL
-                  PREFERRED PARAMETER value
+          PREFERRED PARAMETER value
       RETURNING
         VALUE(result)           TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1524,7 +1524,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         placeholder   TYPE clike OPTIONAL
         enabled       TYPE clike OPTIONAL
         valuestate    TYPE clike OPTIONAL
-                  PREFERRED PARAMETER value
+          PREFERRED PARAMETER value
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1707,7 +1707,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         hspacing       TYPE clike OPTIONAL
         vspacing       TYPE clike OPTIONAL
         width          TYPE clike OPTIONAL
-                  PREFERRED PARAMETER default_span
+          PREFERRED PARAMETER default_span
       RETURNING
         VALUE(result)  TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1723,7 +1723,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         linebreak     TYPE clike OPTIONAL
         indentl       TYPE clike OPTIONAL
         indentm       TYPE clike OPTIONAL
-                  PREFERRED PARAMETER span
+          PREFERRED PARAMETER span
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1812,7 +1812,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         textdirection         TYPE clike OPTIONAL
         showvaluestatemessage TYPE clike OPTIONAL
         showexceededtext      TYPE clike OPTIONAL
-                  PREFERRED PARAMETER value
+          PREFERRED PARAMETER value
       RETURNING
         VALUE(result)         TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1889,13 +1889,13 @@ CLASS z2ui5_cl_xml_view DEFINITION
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS harveyballmicrochartitem
-       IMPORTING
+      IMPORTING
         id            TYPE clike OPTIONAL
         color         TYPE clike OPTIONAL
         fraction      TYPE clike OPTIONAL
         fractionScale TYPE clike OPTIONAL
-       class          TYPE clike OPTIONAL
-       RETURNING
+        class         TYPE clike OPTIONAL
+      RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS step_input
@@ -1938,7 +1938,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         id               TYPE clike OPTIONAL
         visible          TYPE clike OPTIONAL
         enabled          TYPE clike OPTIONAL
-                  PREFERRED PARAMETER selected_key
+          PREFERRED PARAMETER selected_key
       RETURNING
         VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
 
@@ -1963,7 +1963,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         name              TYPE clike OPTIONAL
         valuestate        TYPE clike OPTIONAL
         required          TYPE clike OPTIONAL
-                  PREFERRED PARAMETER selected
+          PREFERRED PARAMETER selected
       RETURNING
         VALUE(result)     TYPE REF TO z2ui5_cl_xml_view.
 
@@ -2002,7 +2002,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         wrappingtype       TYPE clike OPTIONAL
         id                 TYPE clike OPTIONAL
         visible            TYPE clike OPTIONAL
-                  PREFERRED PARAMETER text
+          PREFERRED PARAMETER text
       RETURNING
         VALUE(result)      TYPE REF TO z2ui5_cl_xml_view.
 
@@ -2019,7 +2019,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         id                          TYPE clike OPTIONAL
         class                       TYPE clike OPTIONAL
         controls                    TYPE clike OPTIONAL
-                  PREFERRED PARAMETER htmltext
+          PREFERRED PARAMETER htmltext
       RETURNING
         VALUE(result)               TYPE REF TO z2ui5_cl_xml_view.
 
@@ -2232,7 +2232,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         flex                     TYPE clike OPTIONAL
         selectionbehavior        TYPE clike OPTIONAL
         rowmode                  TYPE clike OPTIONAL
-                  PREFERRED PARAMETER rows
+          PREFERRED PARAMETER rows
       RETURNING
         VALUE(result)            TYPE REF TO z2ui5_cl_xml_view.
 
@@ -2251,7 +2251,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         minwidth              TYPE clike OPTIONAL
         resizable             TYPE clike OPTIONAL
         visible               TYPE clike OPTIONAL
-                  PREFERRED PARAMETER width
+          PREFERRED PARAMETER width
       RETURNING
         VALUE(result)         TYPE REF TO z2ui5_cl_xml_view.
 
@@ -2339,14 +2339,14 @@ CLASS z2ui5_cl_xml_view DEFINITION
         sidecontentvisibility TYPE clike OPTIONAL
         showsidecontent       TYPE clike OPTIONAL
         containerquery        TYPE clike OPTIONAL
-                  PREFERRED PARAMETER id
+          PREFERRED PARAMETER id
       RETURNING
         VALUE(result)         TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS side_content
       IMPORTING
         width         TYPE clike OPTIONAL
-                  PREFERRED PARAMETER width
+          PREFERRED PARAMETER width
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -2387,7 +2387,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         showrowheaders                TYPE clike OPTIONAL
         multipleappointmentsselection TYPE clike OPTIONAL
         showintervalheaders           TYPE clike OPTIONAL
-                  PREFERRED PARAMETER rows
+          PREFERRED PARAMETER rows
       RETURNING
         VALUE(result)                 TYPE REF TO z2ui5_cl_xml_view.
 
@@ -2429,7 +2429,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         appointmentresize             TYPE clike OPTIONAL
         id                            TYPE clike OPTIONAL
         class                         TYPE clike OPTIONAL
-                  PREFERRED PARAMETER appointments
+          PREFERRED PARAMETER appointments
       RETURNING
         VALUE(result)                 TYPE REF TO z2ui5_cl_xml_view.
 
@@ -2441,7 +2441,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         standarditems    TYPE clike OPTIONAL
         columnwidth      TYPE clike OPTIONAL
         visible          TYPE clike OPTIONAL
-                  PREFERRED PARAMETER items
+          PREFERRED PARAMETER items
       RETURNING
         VALUE(result)    TYPE REF TO z2ui5_cl_xml_view.
 
@@ -2451,7 +2451,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         type          TYPE clike OPTIONAL
         tooltip       TYPE clike OPTIONAL
         color         TYPE clike OPTIONAL
-                  PREFERRED PARAMETER text
+          PREFERRED PARAMETER text
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -2471,7 +2471,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         width         TYPE clike OPTIONAL
         visible       TYPE clike OPTIONAL
         class         TYPE clike OPTIONAL
-                  PREFERRED PARAMETER text
+          PREFERRED PARAMETER text
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -2494,7 +2494,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         tentative     TYPE clike OPTIONAL
         key           TYPE clike OPTIONAL
         selected      TYPE clike OPTIONAL
-                  PREFERRED PARAMETER startdate
+          PREFERRED PARAMETER startdate
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -3928,6 +3928,45 @@ CLASS z2ui5_cl_xml_view DEFINITION
       RETURNING
         VALUE(result)          TYPE REF TO z2ui5_cl_xml_view.
 
+    METHODS smart_filter_bar
+      IMPORTING
+        id             TYPE clike OPTIONAL
+        persistencyKey TYPE clike OPTIONAL
+        entitySet      TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result)  TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS control_configuration
+      IMPORTING
+        id                            TYPE clike OPTIONAL
+        prevInitDataFetchInValHelpDia TYPE clike OPTIONAL
+        visibleInAdvancedArea         TYPE clike OPTIONAL
+        key                           TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result)                 TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS _control_configuration
+      RETURNING
+        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+
+    METHODS smart_table
+      IMPORTING
+        id                      TYPE clike OPTIONAL
+        smartFilterId           TYPE clike OPTIONAL
+        tableType               TYPE clike OPTIONAL
+        editable                TYPE clike OPTIONAL
+        initiallyVisibleFields  TYPE clike OPTIONAL
+        entitySet               TYPE clike OPTIONAL
+        useVariantManagement    TYPE clike OPTIONAL
+        useExportToExcel        TYPE clike OPTIONAL
+        useTablePersonalisation TYPE clike OPTIONAL
+        header                  TYPE clike OPTIONAL
+        showRowCount            TYPE clike OPTIONAL
+        enableExport            TYPE clike OPTIONAL
+        enableAutoBinding       TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result)           TYPE REF TO z2ui5_cl_xml_view.
+
     METHODS form_toolbar
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
@@ -4076,13 +4115,13 @@ CLASS z2ui5_cl_xml_view DEFINITION
                 width           TYPE clike OPTIONAL
                 initialzoom     TYPE clike OPTIONAL
       RETURNING
-        VALUE(result)           TYPE REF TO z2ui5_cl_xml_view.
+                VALUE(result)   TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS spots
       IMPORTING
         id            TYPE clike OPTIONAL
         items         TYPE clike OPTIONAL
-                  PREFERRED PARAMETER items
+          PREFERRED PARAMETER items
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -4801,7 +4840,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
       IMPORTING
         id            TYPE clike OPTIONAL
         items         TYPE clike OPTIONAL
-                  PREFERRED PARAMETER items
+          PREFERRED PARAMETER items
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -4814,7 +4853,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         id            TYPE clike OPTIONAL
         text          TYPE clike OPTIONAL
         color         TYPE clike OPTIONAL
-                  PREFERRED PARAMETER text
+          PREFERRED PARAMETER text
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -4823,7 +4862,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         id            TYPE clike OPTIONAL
         items         TYPE clike OPTIONAL
         caption       TYPE clike OPTIONAL
-                  PREFERRED PARAMETER items
+          PREFERRED PARAMETER items
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
 
@@ -17731,6 +17770,12 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
       temp548-n = `mchart`.
       temp548-v = `sap.suite.ui.microchart`.
       INSERT temp548 INTO TABLE temp547.
+      temp548-n = `smartFilterBar`.
+      temp548-v = `sap.ui.comp.smartfilterbar`.
+      INSERT temp548 INTO TABLE temp547.
+      temp548-n = `smartTable`.
+      temp548-v = `sap.ui.comp.smarttable`.
+      INSERT temp548 INTO TABLE temp547.
       temp548-n = `webc`.
       temp548-v = `sap.ui.webc.main`.
       INSERT temp548 INTO TABLE temp547.
@@ -18428,6 +18473,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD HarveyBallMicroChartItem.
+
     DATA temp594 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp595 LIKE LINE OF temp594.
     CLEAR temp594.
@@ -18452,6 +18498,112 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
                        t_prop = temp594 ).
   ENDMETHOD.
 
+  METHOD smart_filter_bar.
+
+    DATA temp596 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp597 LIKE LINE OF temp596.
+    CLEAR temp596.
+    
+    temp597-n = `id`.
+    temp597-v = id.
+    INSERT temp597 INTO TABLE temp596.
+    temp597-n = `entitySet`.
+    temp597-v = entitySet.
+    INSERT temp597 INTO TABLE temp596.
+    temp597-n = `persistencyKey`.
+    temp597-v = persistencyKey.
+    INSERT temp597 INTO TABLE temp596.
+    result = _generic( name   = `SmartFilterBar`
+                       ns     = `smartFilterBar`
+                       t_prop = temp596 ).
+
+  ENDMETHOD.
+
+  METHOD control_configuration.
+    DATA temp598 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp599 LIKE LINE OF temp598.
+
+    result = me.
+    
+    CLEAR temp598.
+    
+    temp599-n = `id`.
+    temp599-v = id.
+    INSERT temp599 INTO TABLE temp598.
+    temp599-n = `key`.
+    temp599-v = key.
+    INSERT temp599 INTO TABLE temp598.
+    temp599-n = `visibleInAdvancedArea`.
+    temp599-v = z2ui5_cl_util=>boolean_abap_2_json( visibleInAdvancedArea ).
+    INSERT temp599 INTO TABLE temp598.
+    temp599-n = `preventInitialDataFetchInValueHelpDialog`.
+    temp599-v = z2ui5_cl_util=>boolean_abap_2_json( prevInitDataFetchInValHelpDia ).
+    INSERT temp599 INTO TABLE temp598.
+    _generic( name   = `ControlConfiguration`
+                        ns     = `smartFilterBar`
+                        t_prop = temp598 ).
+
+  ENDMETHOD.
+
+  METHOD smart_table.
+
+    DATA temp600 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp601 LIKE LINE OF temp600.
+    CLEAR temp600.
+    
+    temp601-n = `id`.
+    temp601-v = id.
+    INSERT temp601 INTO TABLE temp600.
+    temp601-n = `smartFilterId`.
+    temp601-v = smartFilterId.
+    INSERT temp601 INTO TABLE temp600.
+    temp601-n = `tableType`.
+    temp601-v = tableType.
+    INSERT temp601 INTO TABLE temp600.
+    temp601-n = `editable`.
+    temp601-v = z2ui5_cl_util=>boolean_abap_2_json( editable ).
+    INSERT temp601 INTO TABLE temp600.
+    temp601-n = `initiallyVisibleFields`.
+    temp601-v = initiallyVisibleFields.
+    INSERT temp601 INTO TABLE temp600.
+    temp601-n = `entitySet`.
+    temp601-v = entitySet.
+    INSERT temp601 INTO TABLE temp600.
+    temp601-n = `useVariantManagement`.
+    temp601-v = z2ui5_cl_util=>boolean_abap_2_json( useVariantManagement ).
+    INSERT temp601 INTO TABLE temp600.
+    temp601-n = `useExportToExcel`.
+    temp601-v = z2ui5_cl_util=>boolean_abap_2_json( useExportToExcel ).
+    INSERT temp601 INTO TABLE temp600.
+    temp601-n = `useTablePersonalisation`.
+    temp601-v = z2ui5_cl_util=>boolean_abap_2_json( useTablePersonalisation ).
+    INSERT temp601 INTO TABLE temp600.
+    temp601-n = `header`.
+    temp601-v = header.
+    INSERT temp601 INTO TABLE temp600.
+    temp601-n = `showRowCount`.
+    temp601-v = z2ui5_cl_util=>boolean_abap_2_json( showRowCount ).
+    INSERT temp601 INTO TABLE temp600.
+    temp601-n = `enableExport`.
+    temp601-v = z2ui5_cl_util=>boolean_abap_2_json( enableExport ).
+    INSERT temp601 INTO TABLE temp600.
+    temp601-n = `enableAutoBinding`.
+    temp601-v = z2ui5_cl_util=>boolean_abap_2_json( enableAutoBinding ).
+    INSERT temp601 INTO TABLE temp600.
+    result = _generic( name   = `SmartTable`
+                        ns     = `smartTable`
+                        t_prop = temp600 ).
+
+  ENDMETHOD.
+
+  METHOD _control_configuration.
+
+    result = _generic( name   = `controlConfiguration`
+                        ns     = `smartFilterBar`
+                      ).
+
+  ENDMETHOD.
+
   METHOD viz_dataset.
     result = _generic( name   = 'dataset'
                        ns     = 'viz' ).
@@ -18465,34 +18617,34 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD viz_dimension_definition.
-    DATA temp596 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp597 LIKE LINE OF temp596.
-    CLEAR temp596.
+    DATA temp602 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp603 LIKE LINE OF temp602.
+    CLEAR temp602.
     
-    temp597-n = `axis`.
-    temp597-v = axis.
-    INSERT temp597 INTO TABLE temp596.
-    temp597-n = `dataType`.
-    temp597-v = datatype.
-    INSERT temp597 INTO TABLE temp596.
-    temp597-n = `displayValue`.
-    temp597-v = displayvalue.
-    INSERT temp597 INTO TABLE temp596.
-    temp597-n = `identity`.
-    temp597-v = identity.
-    INSERT temp597 INTO TABLE temp596.
-    temp597-n = `name`.
-    temp597-v = name.
-    INSERT temp597 INTO TABLE temp596.
-    temp597-n = `sorter`.
-    temp597-v = sorter.
-    INSERT temp597 INTO TABLE temp596.
-    temp597-n = `value`.
-    temp597-v = value.
-    INSERT temp597 INTO TABLE temp596.
+    temp603-n = `axis`.
+    temp603-v = axis.
+    INSERT temp603 INTO TABLE temp602.
+    temp603-n = `dataType`.
+    temp603-v = datatype.
+    INSERT temp603 INTO TABLE temp602.
+    temp603-n = `displayValue`.
+    temp603-v = displayvalue.
+    INSERT temp603 INTO TABLE temp602.
+    temp603-n = `identity`.
+    temp603-v = identity.
+    INSERT temp603 INTO TABLE temp602.
+    temp603-n = `name`.
+    temp603-v = name.
+    INSERT temp603 INTO TABLE temp602.
+    temp603-n = `sorter`.
+    temp603-v = sorter.
+    INSERT temp603 INTO TABLE temp602.
+    temp603-n = `value`.
+    temp603-v = value.
+    INSERT temp603 INTO TABLE temp602.
     result = _generic( name   = 'DimensionDefinition'
                        ns     = 'viz.data'
-                       t_prop = temp596 ).
+                       t_prop = temp602 ).
   ENDMETHOD.
 
 
@@ -18503,46 +18655,46 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
 
 
   METHOD viz_feed_item.
-    DATA temp598 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp599 LIKE LINE OF temp598.
-    CLEAR temp598.
+    DATA temp604 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp605 LIKE LINE OF temp604.
+    CLEAR temp604.
     
-    temp599-n = `id`.
-    temp599-v = id.
-    INSERT temp599 INTO TABLE temp598.
-    temp599-n = `uid`.
-    temp599-v = uid.
-    INSERT temp599 INTO TABLE temp598.
-    temp599-n = `type`.
-    temp599-v = type.
-    INSERT temp599 INTO TABLE temp598.
-    temp599-n = `values `.
-    temp599-v = values.
-    INSERT temp599 INTO TABLE temp598.
+    temp605-n = `id`.
+    temp605-v = id.
+    INSERT temp605 INTO TABLE temp604.
+    temp605-n = `uid`.
+    temp605-v = uid.
+    INSERT temp605 INTO TABLE temp604.
+    temp605-n = `type`.
+    temp605-v = type.
+    INSERT temp605 INTO TABLE temp604.
+    temp605-n = `values `.
+    temp605-v = values.
+    INSERT temp605 INTO TABLE temp604.
     result = _generic( name   = 'FeedItem'
                        ns     = 'viz.feeds'
-                       t_prop = temp598 ).
+                       t_prop = temp604 ).
   ENDMETHOD.
 
 
   METHOD viz_flattened_dataset.
-    DATA temp600 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp601 LIKE LINE OF temp600.
-    CLEAR temp600.
+    DATA temp606 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp607 LIKE LINE OF temp606.
+    CLEAR temp606.
     
-    temp601-n = `data`.
-    temp601-v = data.
-    INSERT temp601 INTO TABLE temp600.
+    temp607-n = `data`.
+    temp607-v = data.
+    INSERT temp607 INTO TABLE temp606.
     result = _generic( name   = 'FlattenedDataset'
                        ns     = 'viz.data'
-                       t_prop = temp600 ).
+                       t_prop = temp606 ).
   ENDMETHOD.
 
 
   METHOD viz_frame.
     DATA lv_vizproperties TYPE string.
-    DATA temp602 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp603 LIKE LINE OF temp602.
+    DATA temp608 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp609 LIKE LINE OF temp608.
     lv_vizproperties = ``.
     IF vizproperties IS INITIAL.
       lv_vizproperties = `{` && |\n|  &&
@@ -18575,44 +18727,44 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     ENDIF.
 
     
-    CLEAR temp602.
+    CLEAR temp608.
     
-    temp603-n = `id`.
-    temp603-v = id.
-    INSERT temp603 INTO TABLE temp602.
-    temp603-n = `legendVisible`.
-    temp603-v = legendvisible.
-    INSERT temp603 INTO TABLE temp602.
-    temp603-n = `vizCustomizations`.
-    temp603-v = vizcustomizations.
-    INSERT temp603 INTO TABLE temp602.
-    temp603-n = `vizProperties`.
-    temp603-v = lv_vizproperties.
-    INSERT temp603 INTO TABLE temp602.
-    temp603-n = `vizScales`.
-    temp603-v = vizscales.
-    INSERT temp603 INTO TABLE temp602.
-    temp603-n = `vizType`.
-    temp603-v = viztype.
-    INSERT temp603 INTO TABLE temp602.
-    temp603-n = `height`.
-    temp603-v = height.
-    INSERT temp603 INTO TABLE temp602.
-    temp603-n = `width`.
-    temp603-v = width.
-    INSERT temp603 INTO TABLE temp602.
-    temp603-n = `uiConfig`.
-    temp603-v = uiconfig.
-    INSERT temp603 INTO TABLE temp602.
-    temp603-n = `visible`.
-    temp603-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
-    INSERT temp603 INTO TABLE temp602.
-    temp603-n = `selectData`.
-    temp603-v = selectdata.
-    INSERT temp603 INTO TABLE temp602.
+    temp609-n = `id`.
+    temp609-v = id.
+    INSERT temp609 INTO TABLE temp608.
+    temp609-n = `legendVisible`.
+    temp609-v = legendvisible.
+    INSERT temp609 INTO TABLE temp608.
+    temp609-n = `vizCustomizations`.
+    temp609-v = vizcustomizations.
+    INSERT temp609 INTO TABLE temp608.
+    temp609-n = `vizProperties`.
+    temp609-v = lv_vizproperties.
+    INSERT temp609 INTO TABLE temp608.
+    temp609-n = `vizScales`.
+    temp609-v = vizscales.
+    INSERT temp609 INTO TABLE temp608.
+    temp609-n = `vizType`.
+    temp609-v = viztype.
+    INSERT temp609 INTO TABLE temp608.
+    temp609-n = `height`.
+    temp609-v = height.
+    INSERT temp609 INTO TABLE temp608.
+    temp609-n = `width`.
+    temp609-v = width.
+    INSERT temp609 INTO TABLE temp608.
+    temp609-n = `uiConfig`.
+    temp609-v = uiconfig.
+    INSERT temp609 INTO TABLE temp608.
+    temp609-n = `visible`.
+    temp609-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
+    INSERT temp609 INTO TABLE temp608.
+    temp609-n = `selectData`.
+    temp609-v = selectdata.
+    INSERT temp609 INTO TABLE temp608.
     result = _generic(  name   = 'VizFrame'
                         ns     = 'viz'
-                        t_prop = temp602 ).
+                        t_prop = temp608 ).
 
   ENDMETHOD.
 
@@ -18623,33 +18775,33 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD viz_measure_definition.
-    DATA temp604 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp605 LIKE LINE OF temp604.
-    CLEAR temp604.
+    DATA temp610 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp611 LIKE LINE OF temp610.
+    CLEAR temp610.
     
-    temp605-n = `format`.
-    temp605-v = format.
-    INSERT temp605 INTO TABLE temp604.
-    temp605-n = `group`.
-    temp605-v = group.
-    INSERT temp605 INTO TABLE temp604.
-    temp605-n = `identity`.
-    temp605-v = identity.
-    INSERT temp605 INTO TABLE temp604.
-    temp605-n = `name`.
-    temp605-v = name.
-    INSERT temp605 INTO TABLE temp604.
-    temp605-n = `range`.
-    temp605-v = range.
-    INSERT temp605 INTO TABLE temp604.
-    temp605-n = `unit`.
-    temp605-v = unit.
-    INSERT temp605 INTO TABLE temp604.
-    temp605-n = `value`.
-    temp605-v = value.
-    INSERT temp605 INTO TABLE temp604.
+    temp611-n = `format`.
+    temp611-v = format.
+    INSERT temp611 INTO TABLE temp610.
+    temp611-n = `group`.
+    temp611-v = group.
+    INSERT temp611 INTO TABLE temp610.
+    temp611-n = `identity`.
+    temp611-v = identity.
+    INSERT temp611 INTO TABLE temp610.
+    temp611-n = `name`.
+    temp611-v = name.
+    INSERT temp611 INTO TABLE temp610.
+    temp611-n = `range`.
+    temp611-v = range.
+    INSERT temp611 INTO TABLE temp610.
+    temp611-n = `unit`.
+    temp611-v = unit.
+    INSERT temp611 INTO TABLE temp610.
+    temp611-n = `value`.
+    temp611-v = value.
+    INSERT temp611 INTO TABLE temp610.
     result = _generic( name   = 'MeasureDefinition'
                        ns     = 'viz.data'
-                       t_prop = temp604 ).
+                       t_prop = temp610 ).
   ENDMETHOD.
 ENDCLASS.

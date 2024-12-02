@@ -398,6 +398,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~view_display.
 
     mo_action->ms_next-s_set-s_view-xml = val.
+    mo_action->ms_next-s_set-s_view-switchDefaultModel = switchDefaultModel.
 
   ENDMETHOD.
 
@@ -419,9 +420,12 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     temp12-custom_mapper = custom_mapper.
     temp12-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
     temp12-tab_index = tab_index.
+    temp12-switchDefaultModel = switchDefaultModel.
     result = lo_bind->main( val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
                             type   = z2ui5_if_core_types=>cs_bind_type-one_way
                             config = temp12 ).
+
+
 
   ENDMETHOD.
 
@@ -439,6 +443,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     temp13-custom_mapper_back = custom_mapper_back.
     temp13-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
     temp13-tab_index = tab_index.
+    temp13-switchDefaultModel = switchDefaultModel.
     result = lo_bind->main( val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
                             type   = z2ui5_if_core_types=>cs_bind_type-two_way
                             config = temp13 ).
@@ -455,6 +460,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     temp14-path_only = path.
     temp14-custom_mapper = custom_mapper.
     temp14-custom_filter = custom_filter.
+    temp14-switchDefaultModel = switchDefaultModel.
     result = lo_bind->main_local( val    = val
                                   config = temp14 ).
 
@@ -495,7 +501,8 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     lv_check_sticky = temp15->check_sticky.
     IF lv_check_sticky = abap_true AND stateful = abap_true.
       RAISE EXCEPTION TYPE z2ui5_cx_util_error
-        EXPORTING val = `STATEFUL_ALREADY_ACTIVATED_ERROR`.
+        EXPORTING
+          val = `STATEFUL_ALREADY_ACTIVATED_ERROR`.
     ENDIF.
     IF stateful = abap_true.
       mo_action->ms_next-s_set-s_stateful-active = 1.
