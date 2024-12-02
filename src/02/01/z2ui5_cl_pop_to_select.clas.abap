@@ -74,6 +74,8 @@ CLASS z2ui5_cl_pop_to_select IMPLEMENTATION.
         temp1 = `Single select`.
       ENDIF.
       r_result->title = temp1.
+    ELSE.
+      r_result->title = i_title.
     ENDIF.
 
     r_result->sort_field        = i_sort_field.
