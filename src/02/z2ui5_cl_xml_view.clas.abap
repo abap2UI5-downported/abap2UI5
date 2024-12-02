@@ -17821,10 +17821,10 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
       temp548-n = `viz`.
       temp548-v = `sap.viz.ui5.controls`.
       INSERT temp548 INTO TABLE temp547.
-      temp548-n = `xmlns:viz.data`.
+      temp548-n = `viz.data`.
       temp548-v = `sap.viz.ui5.data`.
       INSERT temp548 INTO TABLE temp547.
-      temp548-n = `xmlns:viz.feeds`.
+      temp548-n = `viz.feeds`.
       temp548-v = `sap.viz.ui5.controls.common.feeds`.
       INSERT temp548 INTO TABLE temp547.
       temp548-n = `vk`.
