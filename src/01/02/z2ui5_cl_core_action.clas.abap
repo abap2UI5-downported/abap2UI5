@@ -98,8 +98,9 @@ CLASS z2ui5_cl_core_action IMPLEMENTATION.
         
       CATCH cx_root INTO x.
         RAISE EXCEPTION TYPE z2ui5_cx_util_error
-          EXPORTING val      = |App with name { mo_http_post->ms_request-s_control-app_start } not found...|
-                    previous = x.
+          EXPORTING
+            val      = |App with name { mo_http_post->ms_request-s_control-app_start } not found...|
+            previous = x.
     ENDTRY.
 
   ENDMETHOD.
@@ -156,6 +157,9 @@ CLASS z2ui5_cl_core_action IMPLEMENTATION.
 
   METHOD prepare_app_stack.
     DATA temp3 TYPE string.
+      DATA lv_action TYPE string.
+      DATA temp1 LIKE LINE OF ms_next-s_set-s_follow_up_action-custom_js.
+      DATA temp2 LIKE sy-tabix.
       DATA lv_dummy TYPE string.
 
     mo_app->db_save( ).
@@ -188,11 +192,19 @@ CLASS z2ui5_cl_core_action IMPLEMENTATION.
     result->ms_next-s_set-s_popover-check_update_model = abap_false.
 
     IF ms_next-s_set-s_follow_up_action IS NOT INITIAL.
-      " .eB(['POPUP_CONFIRM'])
-      " TODO: variable is assigned but never used (ABAP cleaner)
       
-      SPLIT ms_next-s_set-s_follow_up_action-custom_js AT `.eB(['` INTO lv_dummy
-          result->ms_actual-event.
+      
+      
+      temp2 = sy-tabix.
+      READ TABLE ms_next-s_set-s_follow_up_action-custom_js INDEX 1 INTO temp1.
+      sy-tabix = temp2.
+      IF sy-subrc <> 0.
+        ASSERT 1 = 0.
+      ENDIF.
+      lv_action = temp1.
+      
+      SPLIT lv_action AT `.eB(['` INTO lv_dummy
+            result->ms_actual-event.
       SPLIT result->ms_actual-event AT `']` INTO result->ms_actual-event lv_dummy.
     ENDIF.
     result->ms_actual-r_data = ms_next-r_data.
