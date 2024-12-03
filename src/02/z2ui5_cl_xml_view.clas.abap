@@ -2314,6 +2314,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         valuestate     TYPE clike OPTIONAL
         width          TYPE clike OPTIONAL
         select         TYPE clike OPTIONAL
+        visible        TYPE clike OPTIONAL
       RETURNING
         VALUE(result)  TYPE REF TO z2ui5_cl_xml_view.
 
@@ -13807,6 +13808,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp387 INTO TABLE temp386.
     temp387-n = `select`.
     temp387-v = select.
+    INSERT temp387 INTO TABLE temp386.
+    temp387-n = `visible`.
+    temp387-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp387 INTO TABLE temp386.
     result = _generic(
                  name   = `RadioButton`
