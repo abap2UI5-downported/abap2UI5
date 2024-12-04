@@ -14769,22 +14769,22 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD smart_variant_management.
-     DATA temp432 TYPE z2ui5_if_types=>ty_t_name_value.
-     DATA temp433 LIKE LINE OF temp432.
+    DATA temp432 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp433 LIKE LINE OF temp432.
     result = me.
-     
-     CLEAR temp432.
-     
-     temp433-n = `id`.
-     temp433-v = id.
-     INSERT temp433 INTO TABLE temp432.
-     temp433-n = `showExecuteOnSelection`.
-     temp433-v = z2ui5_cl_util=>boolean_abap_2_json( showexecuteonselection ).
-     INSERT temp433 INTO TABLE temp432.
-     temp433-n = `persistencyKey`.
-     temp433-v = persistencyKey.
-     INSERT temp433 INTO TABLE temp432.
-     _generic(
+    
+    CLEAR temp432.
+    
+    temp433-n = `id`.
+    temp433-v = id.
+    INSERT temp433 INTO TABLE temp432.
+    temp433-n = `showExecuteOnSelection`.
+    temp433-v = z2ui5_cl_util=>boolean_abap_2_json( showexecuteonselection ).
+    INSERT temp433 INTO TABLE temp432.
+    temp433-n = `persistencyKey`.
+    temp433-v = persistencyKey.
+    INSERT temp433 INTO TABLE temp432.
+    _generic(
         name   = `SmartVariantManagement`
         ns     = `smartVariantManagement`
         t_prop = temp432 ).
@@ -18818,7 +18818,6 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
                        ns     = 'viz.data'
                        t_prop = temp610 ).
   ENDMETHOD.
-
 
 
 ENDCLASS.
