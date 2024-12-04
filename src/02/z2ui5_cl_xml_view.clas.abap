@@ -3926,6 +3926,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
       IMPORTING
         id                     TYPE clike OPTIONAL
         showexecuteonselection TYPE clike OPTIONAL
+        persistencyKey         TYPE clike OPTIONAL
       RETURNING
         VALUE(result)          TYPE REF TO z2ui5_cl_xml_view.
 
@@ -14768,20 +14769,26 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD smart_variant_management.
-    DATA temp432 TYPE z2ui5_if_types=>ty_t_name_value.
-    DATA temp433 LIKE LINE OF temp432.
-    CLEAR temp432.
-    
-    temp433-n = `id`.
-    temp433-v = id.
-    INSERT temp433 INTO TABLE temp432.
-    temp433-n = `showExecuteOnSelection`.
-    temp433-v = z2ui5_cl_util=>boolean_abap_2_json( showexecuteonselection ).
-    INSERT temp433 INTO TABLE temp432.
-    result = _generic(
+     DATA temp432 TYPE z2ui5_if_types=>ty_t_name_value.
+     DATA temp433 LIKE LINE OF temp432.
+    result = me.
+     
+     CLEAR temp432.
+     
+     temp433-n = `id`.
+     temp433-v = id.
+     INSERT temp433 INTO TABLE temp432.
+     temp433-n = `showExecuteOnSelection`.
+     temp433-v = z2ui5_cl_util=>boolean_abap_2_json( showexecuteonselection ).
+     INSERT temp433 INTO TABLE temp432.
+     temp433-n = `persistencyKey`.
+     temp433-v = persistencyKey.
+     INSERT temp433 INTO TABLE temp432.
+     _generic(
         name   = `SmartVariantManagement`
-        ns     = `svm`
+        ns     = `smartVariantManagement`
         t_prop = temp432 ).
+
   ENDMETHOD.
 
   METHOD snapped_content.
@@ -17777,6 +17784,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
       temp548-n = `smartFilterBar`.
       temp548-v = `sap.ui.comp.smartfilterbar`.
       INSERT temp548 INTO TABLE temp547.
+      temp548-n = `smartVariantManagement`.
+      temp548-v = `sap.ui.comp.smartvariants`.
+      INSERT temp548 INTO TABLE temp547.
       temp548-n = `smartTable`.
       temp548-v = `sap.ui.comp.smarttable`.
       INSERT temp548 INTO TABLE temp547.
@@ -18808,4 +18818,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
                        ns     = 'viz.data'
                        t_prop = temp610 ).
   ENDMETHOD.
+
+
+
 ENDCLASS.
