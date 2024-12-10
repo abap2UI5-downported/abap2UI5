@@ -304,7 +304,7 @@ CLASS z2ui5_cl_core_srv_bind IMPLEMENTATION.
 
     ENDIF.
 
-    IF ms_config-switchdefaultmodel = abap_true.
+    IF ms_config-switch_default_model = abap_true.
       result = |http>{ result }|.
     ENDIF.
 
@@ -379,7 +379,7 @@ CLASS z2ui5_cl_core_srv_bind IMPLEMENTATION.
 
         result = |/{ lv_id }|.
 
-        IF ms_config-switchdefaultmodel = abap_true.
+        IF ms_config-switch_default_model = abap_true.
           result = |http>{ result }|.
         ENDIF.
 

@@ -28,7 +28,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~follow_up_action.
 
 *    mo_action->ms_next-s_set-s_follow_up_action-custom_js = val.
-    insert val into table mo_action->ms_next-s_set-s_follow_up_action-custom_js.
+    INSERT val INTO TABLE mo_action->ms_next-s_set-s_follow_up_action-custom_js.
 
   ENDMETHOD.
 
@@ -399,7 +399,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
   METHOD z2ui5_if_client~view_display.
 
     mo_action->ms_next-s_set-s_view-xml = val.
-    mo_action->ms_next-s_set-s_view-switchDefaultModelPath = switchDefaultModelPath.
+    mo_action->ms_next-s_set-s_view-switch_default_model_path = switch_default_model_path.
 
   ENDMETHOD.
 
@@ -421,11 +421,10 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     temp12-custom_mapper = custom_mapper.
     temp12-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
     temp12-tab_index = tab_index.
-    temp12-switchDefaultModel = switchDefaultModel.
+    temp12-switch_default_model = switch_Default_Model.
     result = lo_bind->main( val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
                             type   = z2ui5_if_core_types=>cs_bind_type-one_way
                             config = temp12 ).
-
 
 
   ENDMETHOD.
@@ -444,7 +443,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     temp13-custom_mapper_back = custom_mapper_back.
     temp13-tab = z2ui5_cl_util=>conv_get_as_data_ref( tab ).
     temp13-tab_index = tab_index.
-    temp13-switchDefaultModel = switchDefaultModel.
+    temp13-switch_default_model = switch_Default_Model.
     result = lo_bind->main( val    = z2ui5_cl_util=>conv_get_as_data_ref( val )
                             type   = z2ui5_if_core_types=>cs_bind_type-two_way
                             config = temp13 ).
@@ -461,7 +460,7 @@ CLASS z2ui5_cl_core_client IMPLEMENTATION.
     temp14-path_only = path.
     temp14-custom_mapper = custom_mapper.
     temp14-custom_filter = custom_filter.
-    temp14-switchDefaultModel = switchDefaultModel.
+    temp14-switch_default_model = switch_Default_Model.
     result = lo_bind->main_local( val    = val
                                   config = temp14 ).
 
