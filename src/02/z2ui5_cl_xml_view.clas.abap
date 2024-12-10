@@ -5215,6 +5215,19 @@ CLASS z2ui5_cl_xml_view DEFINITION
         !values       TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view .
+    METHODS smart_multi_input
+      IMPORTING
+        id                   TYPE clike OPTIONAL
+        entitySet            TYPE clike OPTIONAL
+        value                TYPE clike OPTIONAL
+        supportranges        TYPE clike DEFAULT 'false'
+        enableodataselect    TYPE clike DEFAULT 'false'
+        requestatleastfields TYPE clike OPTIONAL
+        singletokenmode      TYPE clike DEFAULT 'false'
+        supportmultiselect   TYPE clike DEFAULT 'true'
+        textseparator        TYPE clike OPTIONAL
+      RETURNING
+        VALUE(result)        TYPE REF TO z2ui5_cl_xml_view.
   PROTECTED SECTION.
     DATA mv_name     TYPE string.
     DATA mv_ns       TYPE string.
@@ -17915,6 +17928,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
       temp550-n = `trm`.
       temp550-v = `sap.ui.table.rowmodes`.
       INSERT temp550 INTO TABLE temp549.
+      temp550-n = `smi`.
+      temp550-v = `sap.ui.comp.smartmultiinput`.
+      INSERT temp550 INTO TABLE temp549.
       lt_prop = temp549.
 
       
@@ -18857,5 +18873,43 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
                        t_prop = temp612 ).
   ENDMETHOD.
 
+  METHOD smart_multi_input.
+
+    DATA temp614 TYPE z2ui5_if_types=>ty_t_name_value.
+    DATA temp615 LIKE LINE OF temp614.
+    CLEAR temp614.
+    
+    temp615-n = 'id'.
+    temp615-v = id.
+    INSERT temp615 INTO TABLE temp614.
+    temp615-n = 'value'.
+    temp615-v = value.
+    INSERT temp615 INTO TABLE temp614.
+    temp615-n = 'entitySet'.
+    temp615-v = entityset.
+    INSERT temp615 INTO TABLE temp614.
+    temp615-n = 'supportRanges'.
+    temp615-v = supportranges.
+    INSERT temp615 INTO TABLE temp614.
+    temp615-n = 'enableODataSelect'.
+    temp615-v = enableodataselect.
+    INSERT temp615 INTO TABLE temp614.
+    temp615-n = 'requestAtLeastFields'.
+    temp615-v = requestatleastfields.
+    INSERT temp615 INTO TABLE temp614.
+    temp615-n = 'singleTokenMode'.
+    temp615-v = singletokenmode.
+    INSERT temp615 INTO TABLE temp614.
+    temp615-n = 'supportMultiSelect'.
+    temp615-v = supportmultiselect.
+    INSERT temp615 INTO TABLE temp614.
+    temp615-n = 'textSeparator'.
+    temp615-v = textseparator.
+    INSERT temp615 INTO TABLE temp614.
+    result = _generic( name   = 'SmartMultiInput'
+                       ns     = 'smi'
+                       t_prop = temp614 ).
+
+  ENDMETHOD.
 
 ENDCLASS.
