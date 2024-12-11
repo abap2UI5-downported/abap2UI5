@@ -216,10 +216,15 @@ CLASS z2ui5_cl_xml_view DEFINITION
 
     METHODS breadcrumbs
       IMPORTING
-        ns            TYPE clike OPTIONAL
-        link          TYPE clike OPTIONAL
+        ns                  TYPE clike OPTIONAL
+        link                TYPE clike OPTIONAL
+        ID                  type CLIKE optional 
+        CLASS               type CLIKE optional
+        CURRENTLOCATIONTEXT type CLIKE optional
+        SEPARATORSTYLE      type CLIKE optional
+        VISIBLE             type CLIKE optional
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+        VALUE(result)       TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS current_location
       IMPORTING
@@ -18508,6 +18513,21 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     
     temp591-n = `link`.
     temp591-v = link.
+    INSERT temp591 INTO TABLE temp590.
+    temp591-n = `id`.
+    temp591-v = id.
+    INSERT temp591 INTO TABLE temp590.
+    temp591-n = `class`.
+    temp591-v = class.
+    INSERT temp591 INTO TABLE temp590.
+    temp591-n = `currentLocationText`.
+    temp591-v = currentlocationtext.
+    INSERT temp591 INTO TABLE temp590.
+    temp591-n = `separatorStyle`.
+    temp591-v = separatorStyle.
+    INSERT temp591 INTO TABLE temp590.
+    temp591-n = `visible`.
+    temp591-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp591 INTO TABLE temp590.
     result = _generic( ns     = ns
                        name   = `Breadcrumbs`
