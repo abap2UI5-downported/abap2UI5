@@ -5265,6 +5265,11 @@ CLASS z2ui5_cl_xml_view DEFINITION
         singletokenmode      TYPE clike DEFAULT 'false'
         supportmultiselect   TYPE clike DEFAULT 'true'
         textseparator        TYPE clike OPTIONAL
+        textlabel            TYPE clike OPTIONAL
+        tooltiplabel         TYPE clike OPTIONAL
+        textineditmodesource TYPE clike DEFAULT 'None'
+        mandatory            TYPE clike DEFAULT 'false'
+        maxlength            TYPE clike DEFAULT '0'
       RETURNING
         VALUE(result)        TYPE REF TO z2ui5_cl_xml_view.
   PROTECTED SECTION.
@@ -19064,6 +19069,21 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp619 INTO TABLE temp618.
     temp619-n = 'textSeparator'.
     temp619-v = textseparator.
+    INSERT temp619 INTO TABLE temp618.
+    temp619-n = 'textLabel'.
+    temp619-v = textlabel.
+    INSERT temp619 INTO TABLE temp618.
+    temp619-n = 'tooltipLabel'.
+    temp619-v = tooltiplabel.
+    INSERT temp619 INTO TABLE temp618.
+    temp619-n = 'textInEditModeSource'.
+    temp619-v = textineditmodesource.
+    INSERT temp619 INTO TABLE temp618.
+    temp619-n = 'mandatory'.
+    temp619-v = mandatory.
+    INSERT temp619 INTO TABLE temp618.
+    temp619-n = 'maxLength'.
+    temp619-v = maxlength.
     INSERT temp619 INTO TABLE temp618.
     result = _generic( name   = 'SmartMultiInput'
                        ns     = 'smi'
