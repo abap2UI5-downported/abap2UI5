@@ -5611,6 +5611,8 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
   METHOD avatar_group_item.
     DATA temp15 TYPE z2ui5_if_types=>ty_t_name_value.
     DATA temp16 LIKE LINE OF temp15.
+    result = me.
+    
     CLEAR temp15.
     
     temp16-n = `id`.
@@ -5643,7 +5645,7 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     temp16-n = `tooltip`.
     temp16-v = tooltip.
     INSERT temp16 INTO TABLE temp15.
-    result = _generic( name   = `AvatarGroupItem`
+    _generic( name   = `AvatarGroupItem`
                        ns     = `f`
                        t_prop = temp15 ).
   ENDMETHOD.
