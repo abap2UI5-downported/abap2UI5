@@ -152,9 +152,10 @@ CLASS z2ui5_cl_xml_view_cc DEFINITION
 
     METHODS lp_title
       IMPORTING
-        title         TYPE clike OPTIONAL
+        title                TYPE clike OPTIONAL
+        ApplicationFullWidth TYPE clike OPTIONAL
       RETURNING
-        VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
+        VALUE(result)        TYPE REF TO z2ui5_cl_xml_view.
 
     METHODS history
       IMPORTING
@@ -799,9 +800,13 @@ CLASS z2ui5_cl_xml_view_cc IMPLEMENTATION.
     temp38-n = `title`.
     temp38-v = title.
     INSERT temp38 INTO TABLE temp37.
+    temp38-n = `ApplicationFullWidth`.
+    temp38-v = z2ui5_cl_util=>boolean_abap_2_json( ApplicationFullWidth ).
+    INSERT temp38 INTO TABLE temp37.
     mo_view->_generic( name   = `LPTitle`
                        ns     = `z2ui5`
-                       t_prop = temp37 ).
+                       t_prop = temp37
+                         ).
 
   ENDMETHOD.
 
