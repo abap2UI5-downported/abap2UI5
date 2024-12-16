@@ -1505,7 +1505,7 @@ DATA lt_param TYPE temp3.
 
     lv_search = shift_left( val = lv_search
                             sub = `?` ).
-    lv_search = c_trim_lower( lv_search ).
+*    lv_search = c_trim_lower( lv_search ).
 
     
     lv_search2 = substring_after( val = lv_search
@@ -1534,10 +1534,12 @@ DATA lt_param TYPE temp3.
       
       
       SPLIT lr_param->* AT `=` INTO lv_name lv_value.
+*      INSERT VALUE #( n = c_trim_lower( lv_name )
+*                      v = c_trim_lower( lv_value ) ) INTO TABLE rt_params.
       
       CLEAR temp45.
-      temp45-n = c_trim_lower( lv_name ).
-      temp45-v = c_trim_lower( lv_value ).
+      temp45-n = lv_name.
+      temp45-v = lv_value.
       INSERT temp45 INTO TABLE rt_params.
     ENDLOOP.
 
