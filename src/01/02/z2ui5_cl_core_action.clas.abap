@@ -77,12 +77,43 @@ CLASS z2ui5_cl_core_action IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD factory_first_start.
+              DATA lo_app TYPE REF TO z2ui5_cl_core_app.
         DATA temp1 TYPE REF TO z2ui5_if_app.
         DATA li_app LIKE temp1.
         DATA x TYPE REF TO cx_root.
 
     TRY.
         CREATE OBJECT result EXPORTING VAL = mo_http_post.
+
+        IF mo_http_post->ms_request-s_control-app_start_draft IS NOT INITIAL.
+          TRY.
+
+              
+              lo_app = z2ui5_cl_core_app=>db_load( mo_http_post->ms_request-s_control-app_start_draft ).
+              result->mo_app = lo_app.
+              result->ms_actual-check_on_navigated = abap_true.
+              result->mo_app->ms_draft-id_prev_app_stack = ''.
+              " check for new app?
+*              TRY.
+*                  DATA(lo_draft) = NEW z2ui5_cl_core_srv_draft( ).
+*                  DATA(ls_draft) = lo_draft->read_info( ms_next-o_app_leave->id_draft ).
+*                  result->mo_app->ms_draft-id = z2ui5_cl_util=>uuid_get_c32( ).
+*                CATCH cx_root.
+*                  result->mo_app->ms_draft-id_prev_app_stack = mo_app->ms_draft-id_prev_app_stack.
+*                  RETURN.
+*              ENDTRY.
+
+*              " check for already existing app?
+*              IF mo_app->ms_draft-id_prev_app_stack IS NOT INITIAL.
+*                ls_draft = lo_draft->read_info( mo_app->ms_draft-id_prev_app_stack ).
+*                result->mo_app->ms_draft-id_prev_app_stack = ls_draft-id_prev_app_stack.
+*              ENDIF.
+
+              RETURN.
+            CATCH cx_root.
+          ENDTRY.
+        ENDIF.
+
         result->mo_app->ms_draft-id = z2ui5_cl_util=>uuid_get_c32( ).
 
         CREATE OBJECT result->mo_app->mo_app TYPE (mo_http_post->ms_request-s_control-app_start).
