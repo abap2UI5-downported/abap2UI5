@@ -182,7 +182,8 @@ CLASS Z2UI5_CL_CORE_SRV_JSON IMPLEMENTATION.
         DATA lo_model TYPE REF TO z2ui5_if_ajson.
         DATA temp1 TYPE xsdboolean.
             DATA lo_comp LIKE result-s_front-o_comp_data.
-            DATA lv_hash TYPE z2ui5_if_core_types=>ty_s_request-s_front-hash.
+            DATA lv_hash LIKE result-s_front-hash.
+            DATA lv_dummy TYPE string.
         DATA x TYPE REF TO cx_root.
     TRY.
 
@@ -227,7 +228,12 @@ CLASS Z2UI5_CL_CORE_SRV_JSON IMPLEMENTATION.
     "                                         z2ui5_cl_util=>url_param_get( val = `z2ui5-xapp-state`
     "                                                                       url = result-s_front-search ) ).
             
-            lv_hash = result-s_front-hash+2.
+            lv_hash = result-s_front-hash.
+            
+            split lv_hash at '&/' into lv_dummy lv_hash.
+            if lv_hash is initial.
+              lv_hash = result-s_front-hash+2.
+            endif.
             result-s_control-app_start_draft = z2ui5_cl_util=>c_trim_upper(
                                            z2ui5_cl_util=>url_param_get( val = `z2ui5-xapp-state`
                                                                          url = lv_hash ) ).
