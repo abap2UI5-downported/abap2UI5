@@ -36,7 +36,10 @@ CLASS z2ui5_cl_core_srv_json DEFINITION
 ENDCLASS.
 
 
-CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
+
+CLASS Z2UI5_CL_CORE_SRV_JSON IMPLEMENTATION.
+
+
   METHOD model_front_to_back.
 
     DATA temp1 LIKE sy-subrc.
@@ -91,6 +94,7 @@ CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
     ENDLOOP.
 
   ENDMETHOD.
+
 
   METHOD model_back_to_front.
         DATA temp3 TYPE REF TO z2ui5_if_ajson.
@@ -170,6 +174,7 @@ CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
     ENDTRY.
   ENDMETHOD.
 
+
   METHOD request_json_to_abap.
         DATA temp8 TYPE REF TO z2ui5_if_ajson.
         DATA lo_ajson LIKE temp8.
@@ -177,6 +182,7 @@ CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
         DATA lo_model TYPE REF TO z2ui5_if_ajson.
         DATA temp1 TYPE xsdboolean.
             DATA lo_comp LIKE result-s_front-o_comp_data.
+            DATA lv_hash TYPE z2ui5_if_core_types=>ty_s_request-s_front-hash.
         DATA x TYPE REF TO cx_root.
     TRY.
 
@@ -216,10 +222,17 @@ CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
           CATCH cx_root.
         ENDTRY.
 
-        result-s_control-app_start_draft = z2ui5_cl_util=>c_trim_upper(
-                                              z2ui5_cl_util=>url_param_get( val = `z2ui5-xapp-state`
-                                                                            url = result-s_front-search ) ).
-
+        try.
+    "   result-s_control-app_start_draft = z2ui5_cl_util=>c_trim_upper(
+    "                                         z2ui5_cl_util=>url_param_get( val = `z2ui5-xapp-state`
+    "                                                                       url = result-s_front-search ) ).
+            
+            lv_hash = result-s_front-hash+2.
+            result-s_control-app_start_draft = z2ui5_cl_util=>c_trim_upper(
+                                           z2ui5_cl_util=>url_param_get( val = `z2ui5-xapp-state`
+                                                                         url = lv_hash ) ).
+          catch cx_root.
+        endtry.
         IF result-s_control-app_start IS NOT INITIAL.
           IF result-s_control-app_start(1) = `-`.
             REPLACE FIRST OCCURRENCE OF `-` IN result-s_control-app_start WITH `/`.
@@ -240,6 +253,7 @@ CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
             val = x.
     ENDTRY.
   ENDMETHOD.
+
 
   METHOD response_abap_to_json.
         DATA temp9 TYPE REF TO z2ui5_if_ajson.
@@ -272,6 +286,7 @@ CLASS z2ui5_cl_core_srv_json IMPLEMENTATION.
         ASSERT x IS NOT BOUND.
     ENDTRY.
   ENDMETHOD.
+
 
   METHOD z2ui5_if_ajson_filter~keep_node.
 
