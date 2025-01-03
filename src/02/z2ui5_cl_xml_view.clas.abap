@@ -3591,6 +3591,7 @@ CLASS z2ui5_cl_xml_view DEFINITION
         width         TYPE clike OPTIONAL
         hideonnodata  TYPE clike OPTIONAL
         shrinkable    TYPE clike OPTIONAL
+        visible       TYPE clike OPTIONAL
         view          TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_cl_xml_view.
@@ -7038,6 +7039,9 @@ CLASS z2ui5_cl_xml_view IMPLEMENTATION.
     INSERT temp88 INTO TABLE temp87.
     temp88-n = `shrinkable`.
     temp88-v = z2ui5_cl_util=>boolean_abap_2_json( shrinkable ).
+    INSERT temp88 INTO TABLE temp87.
+    temp88-n = `visible`.
+    temp88-v = z2ui5_cl_util=>boolean_abap_2_json( visible ).
     INSERT temp88 INTO TABLE temp87.
     temp88-n = `view`.
     temp88-v = view.
